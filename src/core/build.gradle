@@ -9,3 +9,7 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 eclipse.project {
     name = appName + "-core"
 }
+
+dependencies {
+    compile "org.codetome.hexameter:hexameter.core:2017.1.0"
+}
