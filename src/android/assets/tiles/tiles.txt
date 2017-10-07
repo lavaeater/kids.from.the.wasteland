@@ -1,0 +1,40 @@
+tiles.png
+size: 30, 175
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+dirt_base
+  rotate: false
+  xy: 0, 0
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+grass_base
+  rotate: false
+  xy: 0, 35
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+mars_base
+  rotate: false
+  xy: 0, 70
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+sand_base
+  rotate: false
+  xy: 0, 105
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+stone_base
+  rotate: false
+  xy: 0, 140
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
