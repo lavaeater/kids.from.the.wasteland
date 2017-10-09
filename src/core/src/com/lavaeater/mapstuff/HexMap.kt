@@ -1,30 +1,31 @@
 package com.lavaeater.mapstuff
 
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.lavaeater.Assets
+import com.lavaeater.IRenderable
 import org.codetome.hexameter.core.api.*
-import org.codetome.hexameter.core.api.contract.SatelliteData
 import org.codetome.hexameter.core.api.defaults.DefaultSatelliteData
 
 
 /**
  * Created by tommie on 2017-10-07.
  */
-class HexMap {
+class HexMap : IRenderable {
 
 //    val hexes: HexagonalGridBuilder
     val hexGrid: HexagonalGrid<TileInfo> = HexagonalGridBuilder<TileInfo>()
         .apply {
-            gridHeight = 10
-            gridWidth = 10
-            setGridLayout(HexagonalGridLayout.RECTANGULAR)
+            gridHeight = 11
+            gridWidth = 11
+            setGridLayout(HexagonalGridLayout.HEXAGONAL)
             orientation = HexagonOrientation.POINTY_TOP
-            radius = 15.0
+            radius = 16.5
         }.build()
 
-    fun render(batch:SpriteBatch) {
+    override fun render(batch: Batch) {
         //Not entirely sure  we need the delta, but whatevs
-        hexGrid.hexagons.forEach { it.draw(batch)}
+        hexGrid.hexagons.forEach { it.draw(batch as SpriteBatch)}
     }
 }
 
