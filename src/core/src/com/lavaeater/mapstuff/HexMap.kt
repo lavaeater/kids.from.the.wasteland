@@ -11,9 +11,11 @@ import org.codetome.hexameter.core.api.defaults.DefaultSatelliteData
 /**
  * Created by tommie on 2017-10-07.
  */
-class HexMap : IRenderable {
-
-//    val hexes: HexagonalGridBuilder
+class HexMap<T:SpriteBatch> : IRenderable<T> {
+    override fun render(batch: T) {
+        hexGrid.hexagons.forEach { it.draw(batch) }
+    }
+    //    val hexes: HexagonalGridBuilder
     val hexGrid: HexagonalGrid<TileInfo> = HexagonalGridBuilder<TileInfo>()
         .apply {
             gridHeight = 11
@@ -22,11 +24,6 @@ class HexMap : IRenderable {
             orientation = HexagonOrientation.POINTY_TOP
             radius = 16.5
         }.build()
-
-    override fun render(batch: Batch) {
-        //Not entirely sure  we need the delta, but whatevs
-        hexGrid.hexagons.forEach { it.draw(batch as SpriteBatch)}
-    }
 }
 
 fun Hexagon<TileInfo>.draw(batch: SpriteBatch) {
