@@ -12,7 +12,7 @@ import org.codetome.hexameter.core.api.Hexagon
 class WastelandKids : ApplicationAdapter() {
     lateinit var batch: SpriteBatch
     val worldManager = WorldManager()
-    val map = HexMap()
+    val map = HexMap<SpriteBatch>()
 
     override fun create() {
        batch = SpriteBatch()
