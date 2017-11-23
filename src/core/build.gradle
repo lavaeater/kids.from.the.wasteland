@@ -12,4 +12,6 @@ eclipse.project {
 
 dependencies {
     compile "org.codetome.hexameter:hexameter.core:2017.1.0"
+    compile 'io.github.libktx:ktx-app:1.9.7-b1'
+    compile 'io.github.libktx:ktx-math:1.9.7-b1'
 }

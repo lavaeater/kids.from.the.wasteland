@@ -3,6 +3,7 @@ package com.lavaeater.mapstuff
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
+import ktx.math.vec2
 
 open class Entity(var pos:Vector2, val texture: Texture, val width:Float, val height:Float) {
     fun draw(batch: SpriteBatch) {
