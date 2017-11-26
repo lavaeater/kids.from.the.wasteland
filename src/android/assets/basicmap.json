@@ -1,0 +1,100 @@
+{
+  "name" : "basic",
+  "mapObjects" : [ {
+    "name" : "circle",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 0.0,
+      "y" : 0.0,
+      "zero" : true,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : false
+  }, {
+    "name" : "frame",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 0.0,
+      "y" : 0.0,
+      "zero" : true,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : false
+  }, {
+    "name" : "platform1",
+    "scale" : 4.0,
+    "position" : {
+      "x" : -160.0,
+      "y" : 110.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : true
+  }, {
+    "name" : "platform4",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 160.0,
+      "y" : 110.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : true
+  }, {
+    "name" : "platform3",
+    "scale" : 4.0,
+    "position" : {
+      "x" : -170.0,
+      "y" : -142.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : true
+  }, {
+    "name" : "platform2",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 175.0,
+      "y" : -142.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : true
+  }, {
+    "name" : "platform5",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 85.0,
+      "y" : 47.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : false
+  }, {
+    "name" : "palm",
+    "scale" : 4.0,
+    "position" : {
+      "x" : 73.0,
+      "y" : 65.0,
+      "zero" : false,
+      "unit" : false
+    },
+    "rotation" : 0.0,
+    "z" : 0,
+    "startPoint" : false
+  } ]
+}
