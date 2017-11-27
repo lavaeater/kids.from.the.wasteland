@@ -1,10 +1,9 @@
 buildscript {
-    ext.kotlin_version = '1.2.0-rc-84'
+    ext.kotlin_version = '1.1.60'
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
         jcenter()
     }
     dependencies {
@@ -34,12 +33,12 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
     }
 }
 
 project(":desktop") {
     apply plugin: "java"
+
 
     dependencies {
         compile project(":core")
@@ -87,6 +86,7 @@ project(":ios") {
     apply plugin: "java"
     apply plugin: "robovm"
 
+
     dependencies {
         compile project(":core")
         compile "com.mobidevelop.robovm:robovm-rt:$roboVMVersion"
@@ -100,6 +100,7 @@ project(":ios") {
 
 project(":core") {
     apply plugin: "java"
+
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
