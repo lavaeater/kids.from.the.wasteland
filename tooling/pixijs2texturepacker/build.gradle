@@ -10,8 +10,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        compile("org.codetome.zircon:zircon:2017.4.0-RELEASE")
-        compile 'com.beust:klaxon:2.1.3'
+        //No deps here ya fool
     }
 }
 
@@ -24,8 +23,8 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile("org.codetome.zircon:zircon:2017.4.0-RELEASE")
-    compile 'com.beust:klaxon:2.1.3'
+    compile "org.codetome.zircon:zircon:2017.4.0-RELEASE"
+    compile "com.beust:klaxon:2.1.4"
 }
 
 compileKotlin {
