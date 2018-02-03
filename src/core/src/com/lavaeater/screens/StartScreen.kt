@@ -198,6 +198,16 @@ return false
         batch.enableBlending()
         batch.begin()
 
+        var x=0.0f
+        var y=0.0f
+        for(sprite in Assets.darkDirtSprites.values) {
+            sprite.x = 300 + (x *8)
+            sprite.y = 300 + (y * 8)
+            sprite.draw(batch)
+            x++
+            y++
+        }
+
         var p = 1
         while(p < 5) {
             drawPlayerText(batch, p, Game.instance.hasPlayer(p))

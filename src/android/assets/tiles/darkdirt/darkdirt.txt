@@ -3,147 +3,147 @@ size: 40, 40
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-darkdirt0
+center1
 	rotate: false
 	xy: 0, 0
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt1
+center2
 	rotate: false
 	xy: 8, 0
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt2
+center3
 	rotate: false
 	xy: 16, 0
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt3
+center4
 	rotate: false
 	xy: 24, 0
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt4
+bottomright
 	rotate: false
 	xy: 32, 0
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt5
+bottom
 	rotate: false
 	xy: 0, 8
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt6
+bottomleft
 	rotate: false
 	xy: 8, 8
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt7
+darkcenter1
 	rotate: false
 	xy: 16, 8
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt8
+darkcenter2
 	rotate: false
 	xy: 24, 8
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt9
+darkcenter3
 	rotate: false
 	xy: 32, 8
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt10
+darkcenter4
 	rotate: false
 	xy: 0, 16
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt11
+right
 	rotate: false
 	xy: 8, 16
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt12
+blank1
 	rotate: false
 	xy: 16, 16
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt13
+left
 	rotate: false
 	xy: 24, 16
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt14
+blank2
 	rotate: false
 	xy: 32, 16
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt15
+blank3
 	rotate: false
 	xy: 0, 24
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt16
+blank4
 	rotate: false
 	xy: 8, 24
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt17
+blank5
 	rotate: false
 	xy: 16, 24
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt18
+topright
 	rotate: false
 	xy: 24, 24
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt19
+top
 	rotate: false
 	xy: 32, 24
 	size: 8, 8
 	orig: 8, 8
 	offset: 0, 0
 	index: -1
-darkdirt20
+topleft
 	rotate: false
 	xy: 0, 32
 	size: 8, 8

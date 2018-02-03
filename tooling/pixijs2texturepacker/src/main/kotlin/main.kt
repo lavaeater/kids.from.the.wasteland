@@ -23,7 +23,6 @@ fun main(args: Array<String>) {
 
 class PixiJs2TexturePacker {
     val baseDir = "C:\\projects\\kids.from.the.wasteland\\src\\android\\assets\\tiles"
-    val file = "darkdirt"
     fun convert(): Unit {
 
         val textureAtlas = TextureAtlas()
