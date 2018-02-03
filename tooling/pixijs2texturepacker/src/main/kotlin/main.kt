@@ -30,9 +30,15 @@ class PixiJs2TexturePacker {
                     if (!file.isDirectory) {
                         //Read the json, create txt-file for TexturePacker
                         if (file.extension.equals("json")) {
+                            val metaString = getMetaData("${file.nameWithoutExtension}.png", 64, 64)
                             JsonReader(file.reader()).use {
                                 it.beginObject {
-                                    val metaString = getMetaData("darkdirt.png", 64,64)
+                                    while (it.hasNext()) {
+                                        val currentNode = it.nextName()
+                                        when (currentNode) {
+
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -51,3 +57,5 @@ class PixiJs2TexturePacker {
                 "repeat: none"
     }
 }
+
+data class PixiMeta (val image:String, val format:String, val width:Int, val height:Int)
