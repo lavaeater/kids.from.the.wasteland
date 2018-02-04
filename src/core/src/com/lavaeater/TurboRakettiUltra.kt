@@ -6,12 +6,10 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.lavaeater.gamestate.Context
-import com.lavaeater.gamestate.GameScreenState
 import com.lavaeater.gamestate.GameState
 import com.lavaeater.gamestate.SplashScreenState
-import com.lavaeater.screens.MainGameScreen
 import com.lavaeater.screens.ScreenDispatcher
-import com.lavaeater.screens.StartScreen
+import com.lavaeater.screens.WorldMapScreen
 
 class TurboRakettiUltra : Game(), Context {
     lateinit private var batch: SpriteBatch
@@ -21,22 +19,18 @@ class TurboRakettiUltra : Game(), Context {
     lateinit var am: AssetManager
 
     override fun newState(state: GameState) {
-        when (state)
-        {
-            is SplashScreenState -> setScreen(startScreen)
-            is GameScreenState -> setScreen(mainGameScreen)
+        when (state) {
+            is SplashScreenState -> setScreen(worldMapScreen)
         }
     }
 
-    lateinit private var startScreen: StartScreen
-    lateinit private var mainGameScreen: MainGameScreen
+    lateinit private var worldMapScreen: WorldMapScreen
 
     override fun create() {
         batch = SpriteBatch()
 
         am = Assets.load()
-        startScreen = StartScreen(batch)
-        mainGameScreen = MainGameScreen(batch)
+        worldMapScreen = WorldMapScreen(batch)
 
         com.lavaeater.Game.instance.createExecutor(this)
     }
@@ -55,7 +49,6 @@ class TurboRakettiUltra : Game(), Context {
         super.dispose()
         batch.dispose()
         am.dispose()
-        startScreen.dispose()
-        mainGameScreen.dispose()
+        worldMapScreen.dispose()
     }
 }

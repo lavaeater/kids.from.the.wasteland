@@ -3,13 +3,10 @@ package com.lavaeater
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Sound
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.ParticleEffect
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Disposable
-import com.lavaeater.managers.WorldManager
+import com.lavaeater.managers.MainGameManager
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
@@ -32,11 +29,11 @@ object Assets : Disposable {
         for (region in Assets.textureAtlas.regions) {
             val sprite = Assets.textureAtlas.createSprite(region.name)
             if(region.name == "missile01")
-                sprite.setSize(sprite.width * WorldManager.SCALE * 0.7f, sprite.height * WorldManager.SCALE * 0.7f) //Map items are 4 times the size
+                sprite.setSize(sprite.width * MainGameManager.SCALE * 0.7f, sprite.height * MainGameManager.SCALE * 0.7f) //Map items are 4 times the size
             else if(region.name != "ship")
-                sprite.setSize(sprite.width * WorldManager.SCALE * 4f, sprite.height * WorldManager.SCALE * 4f) //Map items are 4 times the size
+                sprite.setSize(sprite.width * MainGameManager.SCALE * 4f, sprite.height * MainGameManager.SCALE * 4f) //Map items are 4 times the size
             else
-                sprite.setSize(sprite.width * WorldManager.SCALE, sprite.height * WorldManager.SCALE)
+                sprite.setSize(sprite.width * MainGameManager.SCALE, sprite.height * MainGameManager.SCALE)
 
             sprites.put(region.name, sprite)
         }

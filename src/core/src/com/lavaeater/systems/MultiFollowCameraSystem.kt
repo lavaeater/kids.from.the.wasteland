@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.components.FollowCameraComponent
 import com.lavaeater.components.TransformComponent
-import com.lavaeater.managers.WorldManager
+import com.lavaeater.managers.MainGameManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
@@ -17,8 +17,8 @@ class MultiFollowCameraSystem(val camera: OrthographicCamera): EntitySystem() {
 
     private val family = allOf(FollowCameraComponent::class, TransformComponent::class).get()
     private val tc = mapperFor<TransformComponent>()
-    private val aspectRatioHeight = WorldManager.VIEWPORT_HEIGHT / WorldManager.VIEWPORT_WIDTH
-    private val aspectRatioWidth = WorldManager.VIEWPORT_WIDTH / WorldManager.VIEWPORT_HEIGHT
+    private val aspectRatioHeight = MainGameManager.VIEWPORT_HEIGHT / MainGameManager.VIEWPORT_WIDTH
+    private val aspectRatioWidth = MainGameManager.VIEWPORT_WIDTH / MainGameManager.VIEWPORT_HEIGHT
 
     override fun update(deltaTime: Float) {
         val entities = engine.getEntitiesFor(family)
@@ -28,12 +28,12 @@ class MultiFollowCameraSystem(val camera: OrthographicCamera): EntitySystem() {
             val posXs = positions.map { vector3 -> vector3.x }
             val posYs = positions.map { vector3 -> vector3.y }
 
-            var width = MathUtils.clamp(posXs.max()!! - posXs.min()!!, WorldManager.VIEWPORT_WIDTH,
-                    WorldManager.MAX_VIEWPORT_WIDTH) + 50f
+            var width = MathUtils.clamp(posXs.max()!! - posXs.min()!!, MainGameManager.VIEWPORT_WIDTH,
+                    MainGameManager.MAX_VIEWPORT_WIDTH) + 50f
             //val height = width * aspectRatioHeight
             var height = MathUtils.clamp(posYs.max()!! - posYs.min()!!,
-                    WorldManager.VIEWPORT_HEIGHT,
-                    WorldManager.MAX_VIEWPORT_HEIGHT) + 50f
+                    MainGameManager.VIEWPORT_HEIGHT,
+                    MainGameManager.MAX_VIEWPORT_HEIGHT) + 50f
 
             if (width < height * aspectRatioWidth) {
                 width = height * aspectRatioWidth

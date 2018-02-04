@@ -195,7 +195,7 @@ return false
         super.render(delta)
         cam.update()
         batch.projectionMatrix = cam.combined
-        
+
         //batch.enableBlending()
         batch.begin()
 
