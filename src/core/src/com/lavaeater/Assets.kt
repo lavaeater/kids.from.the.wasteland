@@ -17,13 +17,18 @@ import com.lavaeater.managers.WorldManager
 object Assets : Disposable {
     lateinit var am: AssetManager
     val textureAtlas: TextureAtlas by lazy { TextureAtlas("pes/textures.txt") }
-    val darkDirtAtlas: TextureAtlas by lazy {TextureAtlas("tiles/darkdirt/darkdirt.txt")}
+    lateinit var darkDirtAtlas: TextureAtlas
     val sprites = HashMap<String, Sprite>()
     val darkDirtSprites = HashMap<String, Sprite>()
 
     val pewSound: Sound by lazy { Gdx.audio.newSound(Gdx.files.internal("sound/pew.ogg"))}
     fun load(): AssetManager {
         am = AssetManager()
+
+        Assets.darkDirtAtlas = TextureAtlas("tiles/darkdirt/darkdirt.txt")
+
+
+
         for (region in Assets.textureAtlas.regions) {
             val sprite = Assets.textureAtlas.createSprite(region.name)
             if(region.name == "missile01")
@@ -36,8 +41,16 @@ object Assets : Disposable {
             sprites.put(region.name, sprite)
         }
 
+        var i = 1f
+
         for(region in Assets.darkDirtAtlas.regions) {
-            sprites.put(region.name, Assets.darkDirtAtlas.createSprite(region.name))
+            val sprite = Assets.darkDirtAtlas.createSprite(region.name)
+            sprite.setSize(64f,64f)
+            sprite.x = i * 64 + 300f
+            sprite.y = i * 64 + 300f
+
+            Assets.darkDirtSprites.put(region.name, sprite)
+            i++
         }
         return am
     }
