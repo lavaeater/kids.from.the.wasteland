@@ -39,8 +39,13 @@
       <file leaf-file-name="main.kt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/kotlin/main.kt">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
             <state relative-caret-position="38">
               <caret line="18" column="2" lean-forward="true" selection-start-line="18" selection-start-column="2" selection-end-line="18" selection-end-column="2" />
+=======
+            <state relative-caret-position="2366">
+              <caret line="66" column="37" lean-forward="false" selection-start-line="61" selection-start-column="5" selection-end-line="66" selection-end-column="37" />
+>>>>>>> Stashed changes
               <folding>
                 <element signature="e#18#304#0" expanded="true" />
               </folding>
@@ -1006,8 +1011,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/kotlin/main.kt">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="38">
           <caret line="18" column="2" lean-forward="true" selection-start-line="18" selection-start-column="2" selection-end-line="18" selection-end-column="2" />
+=======
+        <state relative-caret-position="2366">
+          <caret line="66" column="37" lean-forward="false" selection-start-line="61" selection-start-column="5" selection-end-line="66" selection-end-column="37" />
+>>>>>>> Stashed changes
           <folding>
             <element signature="e#18#304#0" expanded="true" />
           </folding>
