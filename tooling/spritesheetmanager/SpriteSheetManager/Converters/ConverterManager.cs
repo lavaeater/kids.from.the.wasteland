@@ -24,7 +24,5 @@ namespace SpriteSheetManager.Converters
         }
     }
 
-    internal class PixiJsConverter : IConvertSpriteSheets
-    {
-    }
+
 }

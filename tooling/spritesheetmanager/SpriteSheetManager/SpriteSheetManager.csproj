@@ -66,7 +66,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\ConverterBase.cs" />
-    <Compile Include="Converters\Internal.cs" />
+    <Compile Include="Converters\ConverterManager.cs" />
+    <Compile Include="Converters\InternalConverter.cs" />
+    <Compile Include="Converters\PixiJsConverter.cs" />
     <Compile Include="Interfaces\IConvertSpriteSheets.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -74,8 +76,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\ISpriteSheetFrame.cs" />
+    <Compile Include="Interfaces\ISpriteSheet.cs" />
+    <Compile Include="Interfaces\ISpriteSheetFrame.cs" />
     <Compile Include="Models\SpriteSheet.cs" />
+    <Compile Include="Models\SpriteSheetFrame.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

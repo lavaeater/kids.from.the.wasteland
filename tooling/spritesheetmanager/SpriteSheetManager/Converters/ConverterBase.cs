@@ -6,16 +6,25 @@ namespace SpriteSheetManager.Converters
 {
     public abstract class ConverterBase : IConvertSpriteSheets
     {
+        public abstract bool CanRead { get; }
+        public abstract bool CanWrite { get; }
         public abstract ISpriteSheet FromString(string spriteSheetData);
 
         public abstract string ToString(ISpriteSheet spriteSheet);
 
-        public virtual ISpriteSheet ReadSpriteSheet(string fileName)
+        public virtual ISpriteSheet ReadSpriteSheet(string fullPath)
         {
-            return FromString(File.ReadAllText(fileName));
+            var sheet= FromString(File.ReadAllText(fullPath));
+            SetBaseDir(sheet, fullPath);
+            return sheet;
         }
 
-        public virtual string GetFileName(ISpriteSheet spriteSheet) => $"{Path.Combine(Path.GetDirectoryName(spriteSheet.ImageFileName), Path.GetFileNameWithoutExtension(spriteSheet.ImageFileName))}.spm.json";
+        private void SetBaseDir(ISpriteSheet sheet, string fullPath)
+        {
+            sheet.BaseDir = Path.GetDirectoryName(fullPath);
+        }
+
+        public virtual string GetFileName(ISpriteSheet spriteSheet) => $"{Path.Combine(spriteSheet.BaseDir, Path.GetFileNameWithoutExtension(spriteSheet.ImageFileName))}.spm.json";
 
         public virtual void SaveSpriteSheet(ISpriteSheet spriteSheet)
         {

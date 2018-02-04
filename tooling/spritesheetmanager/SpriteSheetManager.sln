@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManager", "SpriteSheetManager\SpriteSheetManager.csproj", "{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManagerTests", "SpriteSheetManagerTests\SpriteSheetManagerTests.csproj", "{616D9CED-C8D8-4165-BE06-668D9520E7B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{616D9CED-C8D8-4165-BE06-668D9520E7B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{616D9CED-C8D8-4165-BE06-668D9520E7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{616D9CED-C8D8-4165-BE06-668D9520E7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{616D9CED-C8D8-4165-BE06-668D9520E7B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

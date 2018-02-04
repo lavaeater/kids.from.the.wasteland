@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SpriteSheetManager.Models
+namespace SpriteSheetManager.Interfaces
 {
     public interface ISpriteSheetFrame
     {
