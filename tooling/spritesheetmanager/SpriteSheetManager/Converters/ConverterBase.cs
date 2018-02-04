@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using SpriteSheetManager.Interfaces;
 using SpriteSheetManager.Models;
 
-namespace SpriteSheetManager.Interfaces
+namespace SpriteSheetManager.Converters
 {
-    public abstract class BaseConverter : IConvertSpriteSheets, IReadAndWriteSpriteSheets
+    public abstract class ConverterBase : IConvertSpriteSheets
     {
         public abstract ISpriteSheet FromString(string spriteSheetData);
 

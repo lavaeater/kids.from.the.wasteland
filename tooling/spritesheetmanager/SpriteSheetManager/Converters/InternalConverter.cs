@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using SpriteSheetManager.Models;
 
-namespace SpriteSheetManager.Interfaces
+namespace SpriteSheetManager.Converters
 {
-    public class InternalConverter : BaseConverter
+    public class InternalConverter : ConverterBase
     {
         /// <summary>
         /// Accepts a serialized instance of ISpriteSheet and instantiates it.
