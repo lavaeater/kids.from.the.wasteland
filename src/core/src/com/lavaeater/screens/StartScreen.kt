@@ -217,12 +217,12 @@ return false
         }
         batch.end()
 
-        Gdx.gl20.glLineWidth(1f)
-        shapeRenderer.projectionMatrix = cam.combined
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-        shapeRenderer.color = Color.CYAN
-        shapeRenderer.rect(0f, 0f, cam.viewportWidth * Assets.am.getProgress(), cam.viewportHeight / 5f)
-        shapeRenderer.end()
+//        Gdx.gl20.glLineWidth(1f)
+//        shapeRenderer.projectionMatrix = cam.combined
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
+//        shapeRenderer.color = Color.CYAN
+//        shapeRenderer.rect(0f, 0f, cam.viewportWidth * Assets.am.getProgress(), cam.viewportHeight / 5f)
+//        shapeRenderer.end()
     }
 }
 

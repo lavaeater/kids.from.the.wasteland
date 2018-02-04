@@ -97,12 +97,12 @@ class PixiJs2TexturePacker {
 
     fun getRegion(name: String, frame: PixiJsFrame): String {
         return "${name.removeSuffix(".png")}\n" +
-                "\trotate: ${frame.rotated}\n" +
-                "\txy: ${frame.frame.x}, ${frame.frame.y}\n" +
-                "\tsize: ${frame.sourceSize.w}, ${frame.sourceSize.h}\n" +
-                "\torig: ${frame.sourceSize.w}, ${frame.sourceSize.h}\n" +
-                "\toffset: 0, 0\n" + //Offset is the offset of the center of the sprite? Whaaat? For tiles, top left
-                "\tindex: -1\n"
+                "  rotate: ${frame.rotated}\n" +
+                "  xy: ${frame.frame.x}, ${frame.frame.y}\n" +
+                "  size: ${frame.sourceSize.w}, ${frame.sourceSize.h}\n" +
+                "  orig: ${frame.sourceSize.w}, ${frame.sourceSize.h}\n" +
+                "  offset: 0, 0\n" + //Offset is the offset of the center of the sprite? Whaaat? For tiles, top left
+                "  index: -1\n"
     }
 
     fun getMetaData(meta: PixiJsMeta): String {
