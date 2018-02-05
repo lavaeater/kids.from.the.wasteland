@@ -9,6 +9,8 @@ namespace SpriteSheetManager.Converters
 {
     public class ConverterService
     {
+        public static string PixiJjs = "pixijs";
+        public static string Internal = "internal";
         public Dictionary<string, IConvertSpriteSheets> Converters { get; set; }
 
         public ConverterService()
@@ -19,8 +21,8 @@ namespace SpriteSheetManager.Converters
 
         private void SetupConverters()
         {
-            Converters.Add("internal", new InternalConverter());
-            Converters.Add("pixijs", new PixiJsConverter());
+            Converters.Add(Internal, new InternalConverter());
+            Converters.Add(PixiJjs, new PixiJsConverter());
         }
     }
 

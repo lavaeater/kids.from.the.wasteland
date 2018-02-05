@@ -57,6 +57,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\SpriteSheetViewModel.cs" />
+    <Compile Include="Views\SpriteSheetView.xaml.cs">
+      <DependentUpon>SpriteSheetView.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -66,7 +71,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Converters\ConverterBase.cs" />
-    <Compile Include="Converters\ConverterManager.cs" />
+    <Compile Include="Converters\ConverterService.cs" />
     <Compile Include="Converters\InternalConverter.cs" />
     <Compile Include="Converters\PixiJsConverter.cs" />
     <Compile Include="Interfaces\IConvertSpriteSheets.cs" />
@@ -74,6 +79,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\SpriteSheetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\ISpriteSheet.cs" />
@@ -106,8 +115,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

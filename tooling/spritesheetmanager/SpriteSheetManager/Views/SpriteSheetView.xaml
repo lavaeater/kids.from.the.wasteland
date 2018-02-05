@@ -1,0 +1,49 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SpriteSheetManager.Views"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:ViewModels="clr-namespace:SpriteSheetManager.ViewModels" x:Class="SpriteSheetManager.Views.SpriteSheetView"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+
+        <Grid.DataContext>
+            <ViewModels:SpriteSheetViewModel></ViewModels:SpriteSheetViewModel>
+        </Grid.DataContext>
+        <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Top" FlowDirection="LeftToRight" Orientation="Horizontal">
+                <Button>Load</Button>
+                <Button>Save</Button>
+            </StackPanel>
+            <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="{Binding Width}" Height="{Binding Height}">
+                            </Image>
+                            <Label Content="{Binding Frame.Key}"></Label>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+            <Canvas DockPanel.Dock="Right" Name="SpriteSheetCanvas">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SizeChanged">
+                        <i:InvokeCommandAction Command="{Binding CanvasSizeChanged}"></i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding SpriteSheetImage}" Width="{Binding Path=ActualWidth, ElementName=SpriteSheetCanvas}" Height="{Binding Path=ActualHeight, ElementName=SpriteSheetCanvas}"  Stretch="Uniform">
+                </Image>
+                <Rectangle Stroke="Yellow" StrokeThickness="1" Fill="Yellow" Canvas.Left="{Binding SelectedFrame.RecX}" Canvas.Top="{Binding SelectedFrame.RecY}" Width="{Binding SelectedFrame.RecWidth}" Height="{Binding SelectedFrame.RecHeight}"></Rectangle>
+            </Canvas>
+        </DockPanel>
+
+    </Grid>
+</UserControl>
+
+
+
