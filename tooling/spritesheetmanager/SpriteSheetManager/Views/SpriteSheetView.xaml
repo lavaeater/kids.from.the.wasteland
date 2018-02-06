@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SpriteSheetManager.Views"
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-             xmlns:ViewModels="clr-namespace:SpriteSheetManager.ViewModels" x:Class="SpriteSheetManager.Views.SpriteSheetView"
+             
+    xmlns:ViewModels="clr-namespace:SpriteSheetManager.ViewModels"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    x:Class="SpriteSheetManager.Views.SpriteSheetView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -33,7 +36,7 @@
             <Canvas DockPanel.Dock="Right" Name="SpriteSheetCanvas">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SizeChanged">
-                        <i:InvokeCommandAction Command="{Binding CanvasSizeChanged}"></i:InvokeCommandAction>
+                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="RecalculateFrameSize"></ei:CallMethodAction>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Image RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding SpriteSheetImage}" Width="{Binding Path=ActualWidth, ElementName=SpriteSheetCanvas}" Height="{Binding Path=ActualHeight, ElementName=SpriteSheetCanvas}"  Stretch="Uniform">

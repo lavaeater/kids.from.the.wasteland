@@ -25,8 +25,10 @@ namespace SpriteSheetManager.ViewModels
     }
     public class SpriteSheetViewModel : ObservableObject
     {
-        private const string SpriteSheetFileName =
-            "C:\\projects\\kids.from.the.wasteland\\src\\android\\assets\\tiles\\darkdirt\\darkdirt.json";
+        private const string BaseDir = @"c:\projects\private";
+
+        private readonly string _spriteSheetFileName = Path.Combine(BaseDir,
+            @"kids.from.the.wasteland\src\android\assets\tiles\darkdirt\darkdirt.json");
 
         private readonly ConverterService _converterService = new ConverterService();
 
@@ -37,7 +39,7 @@ namespace SpriteSheetManager.ViewModels
         public SpriteSheetViewModel()
         {
             //Load the one with the pixiJSConverter
-            SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(SpriteSheetFileName);
+            SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
             SpriteSheetImage = new BitmapImage();
             SpriteSheetImage.BeginInit();
             SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
@@ -109,11 +111,6 @@ namespace SpriteSheetManager.ViewModels
                 _canvasWidth = value;
                 RaisePropertyChanged(nameof(CanvasWidth));
             }
-        }
-
-        public object CanvasSizeChanged
-        {
-            get { throw new NotImplementedException(); }
         }
 
         private double _canvasHeight;
