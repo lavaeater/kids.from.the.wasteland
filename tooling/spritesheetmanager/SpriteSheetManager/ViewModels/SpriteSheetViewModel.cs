@@ -90,7 +90,10 @@ namespace SpriteSheetManager.ViewModels
             get => _selectedFrame;
             set
             {
+                if (_selectedFrame != null)
+                    _selectedFrame.IsEditing = false;
                 _selectedFrame = value;
+                _selectedFrame.IsEditing = true;
                 RaisePropertyChanged(nameof(SelectedFrame));
             }
         }
@@ -139,6 +142,17 @@ namespace SpriteSheetManager.ViewModels
         public CroppedBitmap Bitmap { get; }
         public int Width => (int)Frame.SourceSize.Width * 3;
         public int Height => (int)Frame.SourceSize.Height * 3;
+
+        private bool _isEditing;
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set
+            {
+                _isEditing = value;
+                RaisePropertyChanged(nameof(IsEditing));
+            }
+        }
 
         public double RecX
         {
