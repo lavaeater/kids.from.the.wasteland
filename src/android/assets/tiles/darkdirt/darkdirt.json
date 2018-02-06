@@ -1,6 +1,6 @@
 {
   "frames": {
-    "darkdirt0.png": {
+    "center1": {
       "frame": {
         "x": 0,
         "y": 0,
@@ -20,7 +20,7 @@
         "h": 8
       }
     },
-    "darkdirt1.png": {
+    "center2.png": {
       "frame": {
         "x": 8,
         "y": 0,
@@ -40,7 +40,7 @@
         "h": 8
       }
     },
-    "darkdirt2.png": {
+    "center3.png": {
       "frame": {
         "x": 16,
         "y": 0,
@@ -60,7 +60,7 @@
         "h": 8
       }
     },
-    "darkdirt3.png": {
+    "center4.png": {
       "frame": {
         "x": 24,
         "y": 0,
@@ -80,7 +80,7 @@
         "h": 8
       }
     },
-    "darkdirt4.png": {
+    "bottomright.png": {
       "frame": {
         "x": 32,
         "y": 0,
@@ -100,7 +100,7 @@
         "h": 8
       }
     },
-    "darkdirt5.png": {
+    "bottom.png": {
       "frame": {
         "x": 0,
         "y": 8,
@@ -120,7 +120,7 @@
         "h": 8
       }
     },
-    "darkdirt6.png": {
+    "bottomleft.png": {
       "frame": {
         "x": 8,
         "y": 8,
@@ -140,7 +140,7 @@
         "h": 8
       }
     },
-    "darkdirt7.png": {
+    "darkcenter1.png": {
       "frame": {
         "x": 16,
         "y": 8,
@@ -160,7 +160,7 @@
         "h": 8
       }
     },
-    "darkdirt8.png": {
+    "darkcenter2.png": {
       "frame": {
         "x": 24,
         "y": 8,
@@ -180,7 +180,7 @@
         "h": 8
       }
     },
-    "darkdirt9.png": {
+    "darkcenter3.png": {
       "frame": {
         "x": 32,
         "y": 8,
@@ -200,7 +200,7 @@
         "h": 8
       }
     },
-    "darkdirt10.png": {
+    "darkcenter4.png": {
       "frame": {
         "x": 0,
         "y": 16,
@@ -220,7 +220,7 @@
         "h": 8
       }
     },
-    "darkdirt11.png": {
+    "right.png": {
       "frame": {
         "x": 8,
         "y": 16,
@@ -240,7 +240,7 @@
         "h": 8
       }
     },
-    "darkdirt12.png": {
+    "blank1.png": {
       "frame": {
         "x": 16,
         "y": 16,
@@ -260,7 +260,7 @@
         "h": 8
       }
     },
-    "darkdirt13.png": {
+    "left.png": {
       "frame": {
         "x": 24,
         "y": 16,
@@ -280,7 +280,7 @@
         "h": 8
       }
     },
-    "darkdirt14.png": {
+    "blank2.png": {
       "frame": {
         "x": 32,
         "y": 16,
@@ -300,7 +300,7 @@
         "h": 8
       }
     },
-    "darkdirt15.png": {
+    "blank3.png": {
       "frame": {
         "x": 0,
         "y": 24,
@@ -320,7 +320,7 @@
         "h": 8
       }
     },
-    "darkdirt16.png": {
+    "blank4.png": {
       "frame": {
         "x": 8,
         "y": 24,
@@ -340,7 +340,7 @@
         "h": 8
       }
     },
-    "darkdirt17.png": {
+    "blank5.png": {
       "frame": {
         "x": 16,
         "y": 24,
@@ -360,7 +360,7 @@
         "h": 8
       }
     },
-    "darkdirt18.png": {
+    "topright.png": {
       "frame": {
         "x": 24,
         "y": 24,
@@ -380,7 +380,7 @@
         "h": 8
       }
     },
-    "darkdirt19.png": {
+    "top.png": {
       "frame": {
         "x": 32,
         "y": 24,
@@ -400,7 +400,7 @@
         "h": 8
       }
     },
-    "darkdirt20.png": {
+    "topleft.png": {
       "frame": {
         "x": 0,
         "y": 32,
