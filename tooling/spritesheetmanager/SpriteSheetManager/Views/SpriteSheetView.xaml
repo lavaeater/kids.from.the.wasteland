@@ -34,14 +34,9 @@
 
             </ListView>
             <Canvas DockPanel.Dock="Right" Name="SpriteSheetCanvas">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SizeChanged">
-                        <ei:CallMethodAction TargetObject="{Binding}" MethodName="RecalculateFrameSize"></ei:CallMethodAction>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding SpriteSheetImage}" Width="{Binding Path=ActualWidth, ElementName=SpriteSheetCanvas}" Height="{Binding Path=ActualHeight, ElementName=SpriteSheetCanvas}"  Stretch="Uniform">
+                <Image Name="SpriteSheetImage" SizeChanged="Image_OnSizeChanged"  RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding SpriteSheetImage}" Width="{Binding Path=ActualWidth, ElementName=SpriteSheetCanvas}" Height="{Binding Path=ActualHeight, ElementName=SpriteSheetCanvas}"  Stretch="Uniform">
                 </Image>
-                <Rectangle Stroke="Yellow" StrokeThickness="1" Fill="Yellow" Canvas.Left="{Binding SelectedFrame.RecX}" Canvas.Top="{Binding SelectedFrame.RecY}" Width="{Binding SelectedFrame.RecWidth}" Height="{Binding SelectedFrame.RecHeight}"></Rectangle>
+                <Rectangle Stroke="Yellow" StrokeThickness="3" Fill="Transparent" Canvas.Left="{Binding SelectedFrame.RecX}" Canvas.Top="{Binding SelectedFrame.RecY}" Width="{Binding SelectedFrame.RecWidth}" Height="{Binding SelectedFrame.RecHeight}"></Rectangle>
             </Canvas>
         </DockPanel>
 

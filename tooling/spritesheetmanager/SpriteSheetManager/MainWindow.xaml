@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpriteSheetManager"
         xmlns:Views="clr-namespace:SpriteSheetManager.Views" x:Class="SpriteSheetManager.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" WindowState="Maximized">
     <Grid>
 
         <Views:SpriteSheetView/>

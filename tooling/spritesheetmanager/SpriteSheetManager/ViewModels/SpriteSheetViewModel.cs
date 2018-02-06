@@ -25,7 +25,7 @@ namespace SpriteSheetManager.ViewModels
     }
     public class SpriteSheetViewModel : ObservableObject
     {
-        private const string BaseDir = @"c:\projects\private";
+        private const string BaseDir = @"c:\projects";
 
         private readonly string _spriteSheetFileName = Path.Combine(BaseDir,
             @"kids.from.the.wasteland\src\android\assets\tiles\darkdirt\darkdirt.json");
@@ -90,38 +90,21 @@ namespace SpriteSheetManager.ViewModels
             get => _selectedFrame;
             set
             {
-                _selectedFrame = value; 
+                _selectedFrame = value;
                 RaisePropertyChanged(nameof(SelectedFrame));
             }
         }
 
-        public double CanvasHeight { get => _canvasHeight;
-            set
-            {
-                _canvasHeight = value;
-                RaisePropertyChanged(nameof(CanvasHeight));
-            }
-        }
+        private double _imageHeight;
+        private double _imageWidth;
+        private double _imageY;
+        private double _imageX;
 
-        public double CanvasWidth
-        {
-            get => _canvasWidth;
-            set
-            {
-                _canvasWidth = value;
-                RaisePropertyChanged(nameof(CanvasWidth));
-            }
-        }
-
-        private double _canvasHeight;
-        private double _canvasWidth;
 
         protected override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             switch (propertyName)
             {
-                case "CanvasHeight":
-                case "CanvasWidth":
                 case "SelectedFrame":
                     RecalculateFrameSize();
                     break;
@@ -131,8 +114,18 @@ namespace SpriteSheetManager.ViewModels
 
         private void RecalculateFrameSize()
         {
-            var scale = CanvasWidth / SpriteSheetImage.PixelWidth;
-            SelectedFrame?.Rescale(scale);
+            var xScale = _imageWidth / SpriteSheetImage.PixelWidth;
+            var yScale = xScale; //Preserve aspect ratio, maybe?
+            SelectedFrame?.Rescale(xScale, yScale, _imageX, _imageY);
+        }
+
+        internal void ImageSizeChanged(double x, double y, double width, double height)
+        {
+            _imageX = x;
+            _imageY = y;
+            _imageWidth = width;
+            _imageHeight = height;
+            RecalculateFrameSize();
         }
     }
 
@@ -144,8 +137,8 @@ namespace SpriteSheetManager.ViewModels
         private double _recHeight;
         public ISpriteSheetFrame Frame { get; }
         public CroppedBitmap Bitmap { get; }
-        public int Width => (int) Frame.SourceSize.Width * 3;
-        public int Height => (int) Frame.SourceSize.Height * 3;
+        public int Width => (int)Frame.SourceSize.Width * 3;
+        public int Height => (int)Frame.SourceSize.Height * 3;
 
         public double RecX
         {
@@ -162,7 +155,7 @@ namespace SpriteSheetManager.ViewModels
             get => _recY;
             set
             {
-                _recY = value; 
+                _recY = value;
                 RaisePropertyChanged(nameof(RecY));
             }
         }
@@ -182,7 +175,7 @@ namespace SpriteSheetManager.ViewModels
             get => _recHeight;
             set
             {
-                _recHeight = value; 
+                _recHeight = value;
                 RaisePropertyChanged(nameof(RecHeight));
             }
         }
@@ -191,15 +184,15 @@ namespace SpriteSheetManager.ViewModels
         {
             Frame = frame;
             Bitmap = bitmap;
-            Rescale(1.0);
+            Rescale(1.0, 1.0, 0, 0);
         }
 
-        public void Rescale(double scale)
+        public void Rescale(double xScale, double yScale, double startX, double startY)
         {
-            RecX = Frame.TextureRegion.X * scale;
-            RecY = Frame.TextureRegion.Y * scale;
-            RecWidth = Frame.TextureRegion.Width * scale;
-            RecHeight = Frame.TextureRegion.Height * scale;
+            RecX = startX + Frame.TextureRegion.X * xScale;
+            RecY = startY +  Frame.TextureRegion.Y * yScale;
+            RecWidth = Frame.TextureRegion.Width * xScale;
+            RecHeight = Frame.TextureRegion.Height * yScale;
         }
     }
 }
