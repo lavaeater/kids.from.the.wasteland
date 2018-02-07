@@ -60,6 +60,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\ObservableObject.cs" />
+    <Compile Include="ViewModels\SpriteSheetFrameViewModel.cs" />
     <Compile Include="ViewModels\SpriteSheetViewModel.cs" />
     <Compile Include="Views\SpriteSheetView.xaml.cs">
       <DependentUpon>SpriteSheetView.xaml</DependentUpon>
