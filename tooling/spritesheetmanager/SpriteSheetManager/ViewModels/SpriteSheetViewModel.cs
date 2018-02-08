@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using SpriteSheetManager.Commands;
 using SpriteSheetManager.Converters;
 using SpriteSheetManager.Interfaces;
 
@@ -15,7 +17,7 @@ namespace SpriteSheetManager.ViewModels
     {
         private const string BaseDir = @"c:\projects";
 
-        private readonly string _spriteSheetFileName = Path.Combine(BaseDir,
+        private string _spriteSheetFileName = Path.Combine(BaseDir,
             @"kids.from.the.wasteland\src\android\assets\tiles\darkdirt\darkdirt.json");
 
         private readonly ConverterService _converterService = new ConverterService();
@@ -27,13 +29,53 @@ namespace SpriteSheetManager.ViewModels
         public SpriteSheetViewModel()
         {
             //Load the one with the pixiJSConverter
-            SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
-            SpriteSheetImage = new BitmapImage();
-            SpriteSheetImage.BeginInit();
-            SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
-            SpriteSheetImage.EndInit();
-            SetupFrames();
+            //SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
+            //SpriteSheetImage = new BitmapImage();
+            //SpriteSheetImage.BeginInit();
+            //SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
+            //SpriteSheetImage.EndInit();
+            //SetupFrames();
+
+            OpenCommand = new RelayCommand(OnOpen);
+            SaveCommand = new RelayCommand(OnSave);
+            ExportCommand = new RelayCommand(OnExport);
         }
+
+        private void OnExport()
+        {
+            _converterService.Converters[ConverterService.TexturePacker].SaveSpriteSheet(SpriteSheet);
+        }
+
+        private void OnSave()
+        {
+            //var folderToSaveIn = Path.GetDirectoryName(_spriteSheetFileName);
+            _converterService.Converters[ConverterService.Internal].SaveSpriteSheet(SpriteSheet);
+        }
+
+        private void OnOpen()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "PixiJS (*.json)|*.json|All files (*.*)|*.*",
+                InitialDirectory = BaseDir
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                _spriteSheetFileName = dialog.FileName;
+                SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
+                SpriteSheetImage = new BitmapImage();
+                SpriteSheetImage.BeginInit();
+                SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
+                SpriteSheetImage.EndInit();
+                SetupFrames();
+            }
+        }
+
+        public RelayCommand ExportCommand { get; set; }
+
+        public RelayCommand SaveCommand { get; set; }
+
+        public RelayCommand OpenCommand { get; set; }
 
         private void SetupFrames()
         {
