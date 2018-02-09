@@ -39,7 +39,7 @@ namespace SpriteSheetManager.ViewModels
 
         private void OnSave()
         {
-            string suggestedFileName = Path.GetFileName(_converterService.Converters[ConverterService.Internal].GetFileName(SpriteSheet));
+            string suggestedFileName = Path.GetFileName(_converterService.Converters[ConverterService.Internal].GetFileName(SpriteSheet)) ?? "somefile.spm";
             var saveFileDialog = new SaveFileDialog()
             {
                 Filter = _converterService.Converters[ConverterService.Internal].FileFilter,
