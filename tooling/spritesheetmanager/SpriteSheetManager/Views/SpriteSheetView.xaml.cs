@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using SpriteSheetManager.ViewModels;
 
 namespace SpriteSheetManager.Views
@@ -33,19 +35,24 @@ namespace SpriteSheetManager.Views
         {
             //OK, mixing and matching, todo is to move this into the viewModel or something or another
             (sender as TextBox)?.SelectAll();
-        }
-
-        private void FrameKeyTextBox_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.Property.Name == nameof(IsVisible) && (bool) e.NewValue && sender is TextBox)
-            {
-                FocusManager.SetFocusedElement(((Control) sender), ((IInputElement) sender));
-            }
+            var who = Keyboard.FocusedElement;
         }
 
         private void FrameKeyTextBox_OnGotFocus(object sender, RoutedEventArgs e)
         {
-            Keyboard.Focus(sender as IInputElement);
+            Dispatcher.BeginInvoke(DispatcherPriority.Input,
+                new Action(delegate () {
+                    Keyboard.Focus(sender as IInputElement); // Set Keyboard Focus
+                }));
+        }
+
+        private void FrameKeyTextBox_OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            var whatsgoingon = sender;
+
+            Console.WriteLine(sender.ToString());
+            Console.WriteLine((sender as Control)?.Name);
+            Console.WriteLine(Keyboard.FocusedElement.ToString());
         }
     }
 }

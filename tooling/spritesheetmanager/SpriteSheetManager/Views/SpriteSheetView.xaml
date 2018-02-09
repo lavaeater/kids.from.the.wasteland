@@ -11,6 +11,14 @@
     x:Class="SpriteSheetManager.Views.SpriteSheetView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <Grid>
 
         <Grid.DataContext>
@@ -23,27 +31,31 @@
                 <Button Command="{Binding ExportCommand}">Export</Button>
             </StackPanel>
             <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single" KeyboardNavigation.TabNavigation="Continue">
-                <!--<ListView.ItemContainerStyle>
-                    <Style>
-                        <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
-                    </Style>
-                </ListView.ItemContainerStyle>-->
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="{Binding Width}" Height="{Binding Height}">
                             </Image>
                             <Label Name="FrameKeyLabel" Content="{Binding Frame.Key}" Visibility="Visible"></Label>
-                            <TextBox Name="FrameKeyTextBox" Text="{Binding Frame.Key}" Visibility="Collapsed" Focusable="True" GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus" GotFocus="FrameKeyTextBox_OnGotFocus" IsVisibleChanged="FrameKeyTextBox_OnIsVisibleChanged" KeyboardNavigation.IsTabStop="False"></TextBox>
+                            <TextBox Name="FrameKeyTextBox" 
+                                     Text="{Binding Frame.Key}" 
+                                     Visibility="Collapsed" 
+                                     Focusable="True" 
+                                     GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus"
+                                     GotFocus="FrameKeyTextBox_OnGotFocus"
+                                     KeyboardNavigation.IsTabStop="False"
+                                     Style="{StaticResource TextBoxStyle}"
+                                     LostKeyboardFocus="FrameKeyTextBox_OnLostKeyboardFocus">
+                            </TextBox>
                         </StackPanel>
                         <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
-                                <Setter TargetName="FrameKeyLabel" Property="Visibility" Value="Collapsed"></Setter>
-                                <Setter TargetName="FrameKeyTextBox" Property="Visibility" Value="Visible"></Setter>
-                            </DataTrigger>
                             <DataTrigger Binding="{Binding IsEditing}" Value="False">
                                 <Setter TargetName="FrameKeyLabel" Property="Visibility" Value="Visible"></Setter>
                                 <Setter TargetName="FrameKeyTextBox" Property="Visibility" Value="Collapsed"></Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                <Setter TargetName="FrameKeyLabel" Property="Visibility" Value="Collapsed"></Setter>
+                                <Setter TargetName="FrameKeyTextBox" Property="Visibility" Value="Visible"></Setter>
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
