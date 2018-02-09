@@ -17,18 +17,17 @@
             <ViewModels:SpriteSheetViewModel></ViewModels:SpriteSheetViewModel>
         </Grid.DataContext>
         <DockPanel LastChildFill="True">
-            <StackPanel DockPanel.Dock="Top" FlowDirection="LeftToRight" Orientation="Horizontal">
+            <StackPanel Name="MenuRow" DockPanel.Dock="Top" FlowDirection="LeftToRight" Orientation="Horizontal">
                 <Button Command="{Binding OpenCommand}">Open</Button>
                 <Button Command="{Binding SaveCommand}">Save</Button>
                 <Button Command="{Binding ExportCommand}">Export</Button>
             </StackPanel>
-            <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single" KeyboardNavigation.TabNavigation="Continue" KeyboardNavigation.IsTabStop="True">
-                <ListView.ItemContainerStyle>
+            <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single" KeyboardNavigation.TabNavigation="Continue">
+                <!--<ListView.ItemContainerStyle>
                     <Style>
                         <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
-                        <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
                     </Style>
-                </ListView.ItemContainerStyle>
+                </ListView.ItemContainerStyle>-->
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
