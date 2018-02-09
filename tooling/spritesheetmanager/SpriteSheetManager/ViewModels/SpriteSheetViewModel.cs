@@ -59,6 +59,7 @@ namespace SpriteSheetManager.ViewModels
                 Filter = _converterService.LoadableExtensions,
                 InitialDirectory = _baseDir
             };
+
             if (dialog.ShowDialog() == true)
             {
                 _spriteSheetFileName = dialog.FileName;

@@ -22,14 +22,20 @@
                 <Button Command="{Binding SaveCommand}">Save</Button>
                 <Button Command="{Binding ExportCommand}">Export</Button>
             </StackPanel>
-            <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single">
+            <ListView DockPanel.Dock="Left" ItemsSource="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" SelectionMode="Single" KeyboardNavigation.TabNavigation="Continue" KeyboardNavigation.IsTabStop="True">
+                <ListView.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+                        <Setter Property="KeyboardNavigation.TabNavigation" Value="Continue" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="{Binding Width}" Height="{Binding Height}">
                             </Image>
                             <Label Name="FrameKeyLabel" Content="{Binding Frame.Key}" Visibility="Visible"></Label>
-                            <TextBox Name="FrameKeyTextBox" Text="{Binding Frame.Key}" Visibility="Collapsed"></TextBox>
+                            <TextBox Name="FrameKeyTextBox" Text="{Binding Frame.Key}" Visibility="Collapsed" Focusable="True" GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus" IsVisibleChanged="FrameKeyTextBox_OnIsVisibleChanged" KeyboardNavigation.IsTabStop="True"></TextBox>
                         </StackPanel>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsEditing}" Value="True">
