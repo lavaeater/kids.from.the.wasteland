@@ -37,8 +37,15 @@ namespace SpriteSheetManager.Views
 
         private void FrameKeyTextBox_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if(e.Property.Name == nameof(IsVisible) && (bool)e.NewValue)
-               Keyboard.Focus(sender as IInputElement);
+            if (e.Property.Name == nameof(IsVisible) && (bool) e.NewValue && sender is TextBox)
+            {
+                FocusManager.SetFocusedElement(((Control) sender), ((IInputElement) sender));
+            }
+        }
+
+        private void FrameKeyTextBox_OnGotFocus(object sender, RoutedEventArgs e)
+        {
+            Keyboard.Focus(sender as IInputElement);
         }
     }
 }

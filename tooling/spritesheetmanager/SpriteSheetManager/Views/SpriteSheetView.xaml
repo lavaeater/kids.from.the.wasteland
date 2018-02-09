@@ -34,7 +34,7 @@
                             <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="NearestNeighbor" Width="{Binding Width}" Height="{Binding Height}">
                             </Image>
                             <Label Name="FrameKeyLabel" Content="{Binding Frame.Key}" Visibility="Visible"></Label>
-                            <TextBox Name="FrameKeyTextBox" Text="{Binding Frame.Key}" Visibility="Collapsed" Focusable="True" GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus" IsVisibleChanged="FrameKeyTextBox_OnIsVisibleChanged" KeyboardNavigation.IsTabStop="True"></TextBox>
+                            <TextBox Name="FrameKeyTextBox" Text="{Binding Frame.Key}" Visibility="Collapsed" Focusable="True" GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus" GotFocus="FrameKeyTextBox_OnGotFocus" IsVisibleChanged="FrameKeyTextBox_OnIsVisibleChanged" KeyboardNavigation.IsTabStop="False"></TextBox>
                         </StackPanel>
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding IsEditing}" Value="True">
