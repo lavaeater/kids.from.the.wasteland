@@ -8,6 +8,8 @@ namespace SpriteSheetManager.Converters
     {
         public abstract bool CanRead { get; }
         public abstract bool CanWrite { get; }
+        public abstract string FileFilter { get; }
+        public abstract string FileExtension { get; }
         public abstract ISpriteSheet FromString(string spriteSheetData);
 
         public abstract string ToString(ISpriteSheet spriteSheet);
@@ -24,11 +26,16 @@ namespace SpriteSheetManager.Converters
             sheet.BaseDir = Path.GetDirectoryName(fullPath);
         }
 
-        public virtual string GetFileName(ISpriteSheet spriteSheet) => $"{Path.Combine(spriteSheet.BaseDir, Path.GetFileNameWithoutExtension(spriteSheet.ImageFileName))}.spm.json";
+        public virtual string GetFileName(ISpriteSheet spriteSheet) => $"{Path.Combine(spriteSheet.BaseDir, Path.GetFileNameWithoutExtension(spriteSheet.ImageFileName))}.{FileExtension}";
 
         public virtual void SaveSpriteSheet(ISpriteSheet spriteSheet)
         {
             File.WriteAllText(GetFileName(spriteSheet), ToString(spriteSheet));
+        }
+
+        public virtual void SaveSpriteSheet(ISpriteSheet spriteSheet, string fileName)
+        {
+            File.WriteAllText(fileName, ToString(spriteSheet));
         }
     }
 }

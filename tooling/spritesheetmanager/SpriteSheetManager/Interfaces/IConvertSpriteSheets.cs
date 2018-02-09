@@ -6,6 +6,8 @@ namespace SpriteSheetManager.Interfaces
     {
         bool CanRead { get; }
         bool CanWrite { get; }
+        string FileFilter { get; }
+        string FileExtension { get; }
         ISpriteSheet FromString(string spriteSheetData);
         string ToString(ISpriteSheet spriteSheet);
         /// <summary>
@@ -16,5 +18,7 @@ namespace SpriteSheetManager.Interfaces
         ISpriteSheet ReadSpriteSheet(string fullPath);
         string GetFileName(ISpriteSheet spriteSheet);
         void SaveSpriteSheet(ISpriteSheet spriteSheet);
+
+        void SaveSpriteSheet(ISpriteSheet spriteSheet, string fileName);
     }
 }

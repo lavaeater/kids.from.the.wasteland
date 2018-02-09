@@ -26,7 +26,15 @@ namespace SpriteSheetManager.Converters
             Converters.Add(PixiJjs, new PixiJsConverter());
             Converters.Add(TexturePacker, new TexturePackerConverter());
         }
+
+        public IConvertSpriteSheets GetConverter(string fileExtension)
+        {
+            return Converters.Values.FirstOrDefault(c => fileExtension.Contains(c.FileExtension));
+        }
+
+        public string LoadableExtensions => Converters.Values.Where(c => c.CanRead).Select(c => c.FileFilter).Aggregate((i, j) => i + "|" + j) + "|All files(*.*)|*.*"; 
+
+        public string WriteableExtensions => Converters.Values.Where(c => c.CanWrite).Select(c => c.FileFilter)
+                    .Aggregate((i, j) => i + "|" + j);
     }
-
-
 }

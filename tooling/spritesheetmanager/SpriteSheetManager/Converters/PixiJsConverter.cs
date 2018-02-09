@@ -11,6 +11,8 @@ namespace SpriteSheetManager.Converters
     {
         public override bool CanRead => true;
         public override bool CanWrite => false;
+        public override string FileFilter => $"PixiJS (*.{FileExtension})|*.{FileExtension}";
+        public override string FileExtension => "json";
 
         public override ISpriteSheet FromString(string spriteSheetData)
         {
@@ -45,22 +47,6 @@ namespace SpriteSheetManager.Converters
             }
 
             return spriteSheet;
-        }
-
-        public override string ToString(ISpriteSheet spriteSheet)
-        {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class TexturePackerConverter : ConverterBase
-    {
-        public override bool CanRead => false;
-        public override bool CanWrite => true;
-
-        public override ISpriteSheet FromString(string spriteSheetData)
-        {
-            throw new System.NotImplementedException();
         }
 
         public override string ToString(ISpriteSheet spriteSheet)

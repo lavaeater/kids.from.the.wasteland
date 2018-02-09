@@ -15,10 +15,9 @@ namespace SpriteSheetManager.ViewModels
 {
     public class SpriteSheetViewModel : ObservableObject
     {
-        private const string BaseDir = @"c:\projects";
+        private string _baseDir = @"C:\projects\private\kids.from.the.wasteland\src\android\assets\tiles";
 
-        private string _spriteSheetFileName = Path.Combine(BaseDir,
-            @"kids.from.the.wasteland\src\android\assets\tiles\darkdirt\darkdirt.json");
+        private string _spriteSheetFileName;
 
         private readonly ConverterService _converterService = new ConverterService();
 
@@ -28,14 +27,6 @@ namespace SpriteSheetManager.ViewModels
         public ObservableCollection<SpriteSheetFrameViewModel> Frames { get; set; }
         public SpriteSheetViewModel()
         {
-            //Load the one with the pixiJSConverter
-            //SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
-            //SpriteSheetImage = new BitmapImage();
-            //SpriteSheetImage.BeginInit();
-            //SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
-            //SpriteSheetImage.EndInit();
-            //SetupFrames();
-
             OpenCommand = new RelayCommand(OnOpen);
             SaveCommand = new RelayCommand(OnSave);
             ExportCommand = new RelayCommand(OnExport);
@@ -48,26 +39,36 @@ namespace SpriteSheetManager.ViewModels
 
         private void OnSave()
         {
-            //var folderToSaveIn = Path.GetDirectoryName(_spriteSheetFileName);
-            _converterService.Converters[ConverterService.Internal].SaveSpriteSheet(SpriteSheet);
+            string suggestedFileName = Path.GetFileName(_converterService.Converters[ConverterService.Internal].GetFileName(SpriteSheet));
+            var saveFileDialog = new SaveFileDialog()
+            {
+                Filter = _converterService.Converters[ConverterService.Internal].FileFilter,
+                InitialDirectory = _baseDir,
+                FileName = suggestedFileName
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _converterService.GetConverter(Path.GetExtension(saveFileDialog.FileName)).SaveSpriteSheet(SpriteSheet, saveFileDialog.FileName);
+            }
         }
 
         private void OnOpen()
         {
             var dialog = new OpenFileDialog
             {
-                Filter = "PixiJS (*.json)|*.json|All files (*.*)|*.*",
-                InitialDirectory = BaseDir
+                Filter = _converterService.LoadableExtensions,
+                InitialDirectory = _baseDir
             };
             if (dialog.ShowDialog() == true)
             {
                 _spriteSheetFileName = dialog.FileName;
-                SpriteSheet = _converterService.Converters[ConverterService.PixiJjs].ReadSpriteSheet(_spriteSheetFileName);
+                SpriteSheet = _converterService.GetConverter(Path.GetExtension(_spriteSheetFileName)).ReadSpriteSheet(_spriteSheetFileName);
                 SpriteSheetImage = new BitmapImage();
                 SpriteSheetImage.BeginInit();
                 SpriteSheetImage.UriSource = new Uri(Path.Combine(SpriteSheet.BaseDir, SpriteSheet.ImageFileName));
                 SpriteSheetImage.EndInit();
                 SetupFrames();
+                _baseDir = Path.GetDirectoryName(dialog.FileName);
             }
         }
 
@@ -122,9 +123,12 @@ namespace SpriteSheetManager.ViewModels
             {
                 if (_selectedFrame != null)
                     _selectedFrame.IsEditing = false;
-                _selectedFrame = value;
-                _selectedFrame.IsEditing = true;
-                RaisePropertyChanged(nameof(SelectedFrame));
+                if (value != null)
+                {
+                    _selectedFrame = value;
+                    _selectedFrame.IsEditing = true;
+                    RaisePropertyChanged(nameof(SelectedFrame));
+                }
             }
         }
 
