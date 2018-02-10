@@ -3,15 +3,12 @@ package com.lavaeater.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.lavaeater.Assets
 import com.lavaeater.Game
 import com.lavaeater.Hud
-import com.lavaeater.managers.MainGameManager
 import com.lavaeater.gamestate.GameOverEvent
 import com.lavaeater.managers.WorldManager
 
-/**
- * Created by barry on 12/9/15 @ 11:12 PM.
- */
 class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
     var isInitialized = false
     var elapsedTime = 0f
@@ -37,7 +34,7 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
         if(!isInitialized)
             init()
 
-        initWorldAndPlayers()
+        //initWorldAndPlayers()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -51,6 +48,17 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
 
     override fun render(delta: Float) {
         update(delta)
+
+//        cam.update()
+//        batch.projectionMatrix = cam.combined
+
+        //batch.enableBlending()
+        batch.begin()
+
+        for(sprite in Assets.desertSprites.values) {
+            sprite.draw(batch)
+        }
+        batch.end()
     }
 
     fun gameOver(): Unit {

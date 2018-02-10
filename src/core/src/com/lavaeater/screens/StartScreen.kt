@@ -199,7 +199,7 @@ return false
         //batch.enableBlending()
         batch.begin()
 
-        for(sprite in Assets.darkDirtSprites.values) {
+        for(sprite in Assets.dirtSprites.values) {
             sprite.draw(batch)
         }
 
