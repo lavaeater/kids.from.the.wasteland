@@ -45,14 +45,5 @@ namespace SpriteSheetManager.Views
                     Keyboard.Focus(sender as IInputElement); // Set Keyboard Focus
                 }));
         }
-
-        private void FrameKeyTextBox_OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {
-            var whatsgoingon = sender;
-
-            Console.WriteLine(sender.ToString());
-            Console.WriteLine((sender as Control)?.Name);
-            Console.WriteLine(Keyboard.FocusedElement.ToString());
-        }
     }
 }

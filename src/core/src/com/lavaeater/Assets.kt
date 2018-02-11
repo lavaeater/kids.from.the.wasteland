@@ -45,26 +45,26 @@ object Assets : Disposable {
 
         var i = 1f
 
-        for(region in Assets.darkDirtAtlas.regions) {
-            val sprite = Assets.darkDirtAtlas.createSprite(region.name)
-            sprite.setSize(64f,64f)
-            sprite.x = i * 64 + 300f
-            sprite.y = i * 64 + 300f
-
-            Assets.darkDirtSprites.put(region.name, sprite)
-            i++
-        }
-
-        for(region in Assets.desertAtlas.regions) {
-            if(region.name != "blank") {
-                val sprite = Assets.desertAtlas.createSprite(region.name)
-                sprite.setSize(64f, 64f)
-                sprite.x = i * 64 + 300f
-                sprite.y = i * 64 + 300f
-                Assets.desertSprites.put(region.name, sprite)
-                i++
-            }
-        }
+//        for(region in Assets.darkDirtAtlas.regions) {
+//            val sprite = Assets.darkDirtAtlas.createSprite(region.name)
+//            sprite.setSize(64f,64f)
+//            sprite.x = i * 64 + 300f
+//            sprite.y = i * 64 + 300f
+//
+//            Assets.darkDirtSprites.put(region.name, sprite)
+//            i++
+//        }
+//
+//        for(region in Assets.desertAtlas.regions) {
+//            if(region.name != "blank") {
+//                val sprite = Assets.desertAtlas.createSprite(region.name)
+//                sprite.setSize(64f, 64f)
+//                sprite.x = i * 64 + 300f
+//                sprite.y = i * 64 + 300f
+//                Assets.desertSprites.put(region.name, sprite)
+//                i++
+//            }
+//        }
 
         for(region in Assets.dirtAtlas.regions) {
             if(region.name != "blank") {

@@ -44,8 +44,7 @@
                                      GotKeyboardFocus="FrameKeyTextBox_OnGotKeyboardFocus"
                                      GotFocus="FrameKeyTextBox_OnGotFocus"
                                      KeyboardNavigation.IsTabStop="False"
-                                     Style="{StaticResource TextBoxStyle}"
-                                     LostKeyboardFocus="FrameKeyTextBox_OnLostKeyboardFocus">
+                                     Style="{StaticResource TextBoxStyle}">
                             </TextBox>
                         </StackPanel>
                         <DataTemplate.Triggers>

@@ -31,21 +31,21 @@ center4
   orig: 8, 8
   offset: 0, 0
   index: -1
-bottomright
+northwest
   rotate: False
   xy: 32, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-bottom
+north
   rotate: False
   xy: 0, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-bottomleft
+northeast
   rotate: False
   xy: 8, 8
   size: 8, 8
@@ -80,7 +80,7 @@ center8
   orig: 8, 8
   offset: 0, 0
   index: -1
-right
+west
   rotate: False
   xy: 8, 16
   size: 8, 8
@@ -94,7 +94,7 @@ blank
   orig: 8, 8
   offset: 0, 0
   index: -1
-left
+east
   rotate: False
   xy: 24, 16
   size: 8, 8
@@ -129,21 +129,21 @@ blank
   orig: 8, 8
   offset: 0, 0
   index: -1
-topright
+southwest
   rotate: False
   xy: 24, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-top
+south
   rotate: False
   xy: 32, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-topleft
+southeast
   rotate: False
   xy: 0, 32
   size: 8, 8

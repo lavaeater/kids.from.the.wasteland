@@ -21,7 +21,7 @@ class TurboRakettiUltra : Game(), Context {
 
     override fun newState(state: GameState) {
         when (state) {
-            is SplashScreenState -> setScreen(startScreen)
+            is SplashScreenState -> setScreen(worldMapScreen)
         }
     }
 

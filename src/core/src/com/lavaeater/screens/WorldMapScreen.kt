@@ -13,7 +13,7 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
     var isInitialized = false
     var elapsedTime = 0f
     val worldManager: WorldManager by lazy { WorldManager(batch = batch, gameOver = this::gameOver) }
-    private val hud = Hud(batch)
+//    private val hud = Hud(batch)
 
     private fun init() {
         Gdx.app.log("GameScreen", "Initializing")
@@ -22,9 +22,9 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
 
     private fun update(delta: Float) {
         worldManager.update(delta)
-        hud.update(delta)
-        batch.projectionMatrix = hud.stage.camera.combined
-        hud.stage.draw()
+//        hud.update(delta)
+//        batch.projectionMatrix = combined//hud.stage.camera.combined
+  //      hud.stage.draw()
 
         elapsedTime += delta
     }
@@ -53,12 +53,6 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
 //        batch.projectionMatrix = cam.combined
 
         //batch.enableBlending()
-        batch.begin()
-
-        for(sprite in Assets.desertSprites.values) {
-            sprite.draw(batch)
-        }
-        batch.end()
     }
 
     fun gameOver(): Unit {
@@ -76,12 +70,12 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
         }
 
         worldManager.processAllSystems()
-        hud.setup()
+//        hud.setup()
     }
 
     private fun clearWorld() {
         //clear the HUD
-        hud.clear()
+  //      hud.clear()
 
         worldManager.clearWorld()
         worldManager.stopProcessing()
