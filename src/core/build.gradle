@@ -11,11 +11,11 @@ eclipse.project {
     name = appName + "-core"
 }
 buildscript {
-    ext.kotlin_version = '1.2.0-rc-84'
-    ext.ktxVersion = '1.9.6-b5'
+    ext.kotlin_version = '1.2.30-eap-16'
+    ext.ktxVersion = '1.9.8-b1'
     repositories {
         mavenCentral()
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -23,7 +23,7 @@ buildscript {
 }
 repositories {
     mavenCentral()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
@@ -34,7 +34,6 @@ dependencies {
     implementation "io.github.libktx:ktx-math:$ktxVersion"
     implementation "io.github.libktx:ktx-scene2d:$ktxVersion"
     implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-    implementation 'com.kennycason:gdx-controller:1.1'
     implementation "com.codeandweb.physicseditor:gdx-pe-loader:1.1.0"
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1"
 }

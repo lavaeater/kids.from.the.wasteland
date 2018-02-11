@@ -19,8 +19,9 @@ android {
     }
     defaultConfig {
         applicationId "com.lavaeater"
-        minSdkVersion 15
+        minSdkVersion 20
         targetSdkVersion 26
+       // multiDexEnabled true
     }
 }
 
@@ -130,7 +131,7 @@ idea {
 apply plugin: 'kotlin-android'
 repositories {
     mavenCentral()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"

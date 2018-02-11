@@ -1,10 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.2.0-rc-84'
+    ext.kotlin_version = '1.2.30-eap-16'
     repositories {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
         jcenter()
         google()
     }
@@ -112,7 +112,8 @@ tasks.eclipse.doLast {
 }
 repositories {
     mavenCentral()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
+    google()
 }
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
