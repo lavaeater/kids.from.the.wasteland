@@ -26,14 +26,14 @@ class TurboRakettiUltra : Game(), Context {
     }
 
     lateinit private var worldMapScreen: WorldMapScreen
-    lateinit private var startScreen: StartScreen
+    //lateinit private var startScreen: StartScreen
 
     override fun create() {
         batch = SpriteBatch()
 
         am = Assets.load()
-        //worldMapScreen = WorldMapScreen(batch)
-        startScreen = StartScreen(batch)
+        worldMapScreen = WorldMapScreen(batch)
+        //startScreen = StartScreen(batch)
         com.lavaeater.Game.instance.createExecutor(this)
     }
 

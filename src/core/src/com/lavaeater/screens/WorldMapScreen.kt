@@ -22,6 +22,8 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
 
     private fun update(delta: Float) {
         worldManager.update(delta)
+
+        //Keep below
 //        hud.update(delta)
 //        batch.projectionMatrix = combined//hud.stage.camera.combined
   //      hud.stage.draw()
@@ -34,7 +36,7 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
         if(!isInitialized)
             init()
 
-        //initWorldAndPlayers()
+        initWorldAndPlayers()
     }
 
     override fun resize(width: Int, height: Int) {
@@ -48,11 +50,6 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
 
     override fun render(delta: Float) {
         update(delta)
-
-//        cam.update()
-//        batch.projectionMatrix = cam.combined
-
-        //batch.enableBlending()
     }
 
     fun gameOver(): Unit {
@@ -60,14 +57,14 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
     }
 
     fun initWorldAndPlayers() {
-        worldManager.createMap()
-        val startPositions = worldManager.map.mapObjects.filter { it.isStartPoint }
-        var startPos = 0
-        for ((player, controller) in Game.instance.players) {
-            player.reset()
-            worldManager.createPlayer(startPositions[startPos], player, controller)
-            startPos++
-        }
+//        worldManager.createMap()
+        //val startPositions = worldManager.map.mapObjects.filter { it.isStartPoint }
+  //      var startPos = 0
+//        for ((player, controller) in Game.instance.players) {
+//            player.reset()
+//            worldManager.createPlayer(startPositions[startPos], player, controller)
+//            startPos++
+//        }
 
         worldManager.processAllSystems()
 //        hud.setup()
@@ -76,7 +73,6 @@ class WorldMapScreen(val batch: SpriteBatch) : ScreenAdapter() {
     private fun clearWorld() {
         //clear the HUD
   //      hud.clear()
-
         worldManager.clearWorld()
         worldManager.stopProcessing()
     }
