@@ -55,10 +55,10 @@ task afterEclipseImport(description: "Post processing after project generation",
   }
 }
 buildscript {
-    ext.kotlin_version = '1.2.0-rc-84'
+    ext.kotlin_version = '1.2.30-eap-16'
     repositories {
         mavenCentral()
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -66,9 +66,9 @@ buildscript {
 }
 repositories {
     mavenCentral()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2/" }
+    maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 }

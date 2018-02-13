@@ -9,6 +9,7 @@ import com.lavaeater.gamestate.Context
 import com.lavaeater.gamestate.GameState
 import com.lavaeater.gamestate.SplashScreenState
 import com.lavaeater.screens.ScreenDispatcher
+import com.lavaeater.screens.StartScreen
 import com.lavaeater.screens.WorldMapScreen
 
 class TurboRakettiUltra : Game(), Context {
@@ -25,13 +26,14 @@ class TurboRakettiUltra : Game(), Context {
     }
 
     lateinit private var worldMapScreen: WorldMapScreen
+    //lateinit private var startScreen: StartScreen
 
     override fun create() {
         batch = SpriteBatch()
 
         am = Assets.load()
         worldMapScreen = WorldMapScreen(batch)
-
+        //startScreen = StartScreen(batch)
         com.lavaeater.Game.instance.createExecutor(this)
     }
 

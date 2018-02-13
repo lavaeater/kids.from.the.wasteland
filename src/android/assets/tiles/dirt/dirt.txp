@@ -1,150 +1,150 @@
 dirt.png
 size: 40, 40
 format: RGBA8888
-filter: Linear,Linear
+filter: Linear, Linear
 repeat: none
-dirt0
-  rotate: false
+center1
+  rotate: False
   xy: 0, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt1
-  rotate: false
+center2
+  rotate: False
   xy: 8, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt2
-  rotate: false
+center3
+  rotate: False
   xy: 16, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt3
-  rotate: false
+center4
+  rotate: False
   xy: 24, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt4
-  rotate: false
+northwest
+  rotate: False
   xy: 32, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt5
-  rotate: false
+north
+  rotate: False
   xy: 0, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt6
-  rotate: false
+northeast
+  rotate: False
   xy: 8, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt7
-  rotate: false
+center5
+  rotate: False
   xy: 16, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt8
-  rotate: false
+center6
+  rotate: False
   xy: 24, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt9
-  rotate: false
+center7
+  rotate: False
   xy: 32, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt10
-  rotate: false
+center8
+  rotate: False
   xy: 0, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt11
-  rotate: false
+west
+  rotate: False
   xy: 8, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt12
-  rotate: false
+blank
+  rotate: False
   xy: 16, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt13
-  rotate: false
+east
+  rotate: False
   xy: 24, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt14
-  rotate: false
+blank
+  rotate: False
   xy: 32, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt15
-  rotate: false
+blank
+  rotate: False
   xy: 0, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt16
-  rotate: false
+blank
+  rotate: False
   xy: 8, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt17
-  rotate: false
+blank
+  rotate: False
   xy: 16, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt18
-  rotate: false
+southwest
+  rotate: False
   xy: 24, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt19
-  rotate: false
+south
+  rotate: False
   xy: 32, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt20
-  rotate: false
+southeast
+  rotate: False
   xy: 0, 32
   size: 8, 8
   orig: 8, 8
