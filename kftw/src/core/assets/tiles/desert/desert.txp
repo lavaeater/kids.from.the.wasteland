@@ -1,150 +1,150 @@
-darkgrass.png
+desert.png
 size: 40, 40
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest, Nearest
 repeat: none
-darkgrass0
-  rotate: false
+center1
+  rotate: False
   xy: 0, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass1
-  rotate: false
+center2
+  rotate: False
   xy: 8, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass2
-  rotate: false
+center3
+  rotate: False
   xy: 16, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass3
-  rotate: false
+center4
+  rotate: False
   xy: 24, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass4
-  rotate: false
+northwest
+  rotate: False
   xy: 32, 0
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass5
-  rotate: false
+north
+  rotate: False
   xy: 0, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass6
-  rotate: false
+northeast
+  rotate: False
   xy: 8, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass7
-  rotate: false
+center5
+  rotate: False
   xy: 16, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass8
-  rotate: false
+center6
+  rotate: False
   xy: 24, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass9
-  rotate: false
+center7
+  rotate: False
   xy: 32, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass10
-  rotate: false
+center8
+  rotate: False
   xy: 0, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass11
-  rotate: false
+west
+  rotate: False
   xy: 8, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass12
-  rotate: false
+blank
+  rotate: False
   xy: 16, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass13
-  rotate: false
+east
+  rotate: False
   xy: 24, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass14
-  rotate: false
+blank
+  rotate: False
   xy: 32, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass15
-  rotate: false
+blank
+  rotate: False
   xy: 0, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass16
-  rotate: false
+blank
+  rotate: False
   xy: 8, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass17
-  rotate: false
+blank
+  rotate: False
   xy: 16, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass18
-  rotate: false
+southwest
+  rotate: False
   xy: 24, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass19
-  rotate: false
+south
+  rotate: False
   xy: 32, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-darkgrass20
-  rotate: false
+southeast
+  rotate: False
   xy: 0, 32
   size: 8, 8
   orig: 8, 8
