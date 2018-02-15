@@ -2,8 +2,6 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.Disposable
@@ -13,13 +11,21 @@ import com.badlogic.gdx.utils.Disposable
  */
 object Assets : Disposable {
     lateinit var am: AssetManager
-    val atlases = mapOf("dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")))
+    val atlases = mapOf(
+            "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
+            "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
+            "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
+            "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
+            "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
+            "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
+            "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
     val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
 
     fun load(): AssetManager {
         am = AssetManager()
 
-        var i = 1f
+        var yFactor = 1f
+        var xFactor = 1f
         for(atlasMap in atlases) {
             val atlas = atlasMap.value
             sprites.put(atlasMap.key, hashMapOf())
@@ -27,12 +33,14 @@ object Assets : Disposable {
                 if (region.name != "blank") {
                     val sprite = atlas.createSprite(region.name)
                     sprite.setSize(64f, 64f)
-                    sprite.x = i * 64 + 300f
-                    sprite.y = i * 64 + 300f
+                    sprite.x = xFactor * 64f
+                    sprite.y = yFactor * 64f
                     sprites[atlasMap.key]!!.put(region.name, sprite)
-                    i++
+                    yFactor++
                 }
             }
+            xFactor++
+            yFactor = 1f
         }
 
         return am
