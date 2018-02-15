@@ -1,0 +1,152 @@
+darkdirt.png
+size: 40, 40
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+center1
+  rotate: false
+  xy: 0, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center2
+  rotate: false
+  xy: 8, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center3
+  rotate: false
+  xy: 16, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center4
+  rotate: false
+  xy: 24, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+bottomright
+  rotate: false
+  xy: 32, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+bottom
+  rotate: false
+  xy: 0, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+bottomleft
+  rotate: false
+  xy: 8, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+darkcenter1
+  rotate: false
+  xy: 16, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+darkcenter2
+  rotate: false
+  xy: 24, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+darkcenter3
+  rotate: false
+  xy: 32, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+darkcenter4
+  rotate: false
+  xy: 0, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+right
+  rotate: false
+  xy: 8, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank1
+  rotate: false
+  xy: 16, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+left
+  rotate: false
+  xy: 24, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank2
+  rotate: false
+  xy: 32, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank3
+  rotate: false
+  xy: 0, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank4
+  rotate: false
+  xy: 8, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank5
+  rotate: false
+  xy: 16, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+topright
+  rotate: false
+  xy: 24, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+top
+  rotate: false
+  xy: 32, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+topleft
+  rotate: false
+  xy: 0, 32
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
