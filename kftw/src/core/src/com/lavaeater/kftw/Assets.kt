@@ -2,7 +2,8 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.Disposable
@@ -12,7 +13,7 @@ import com.badlogic.gdx.utils.Disposable
  */
 object Assets : Disposable {
     lateinit var am: AssetManager
-    val atlases = mapOf("dirt" to TextureAtlas("tiles/dirt/dirt.txp"))
+    val atlases = mapOf("dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")))
     val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
 
     fun load(): AssetManager {

@@ -12,6 +12,7 @@ class KidsFromTheWasteLandGame : ApplicationAdapter() {
     override fun create() {
         //You cannot init the spritebatch before the create method!
         batch = SpriteBatch()
+        Assets.load()
     }
 
     override fun render() {
