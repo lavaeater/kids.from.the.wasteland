@@ -8,7 +8,9 @@ object DesktopLauncher {
     @JvmStatic
     fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration()
-        config.fullscreen = true
+        config.fullscreen = false
+        config.width = 640
+        config.height = 480
         LwjglApplication(KidsFromTheWasteLandGame(), config)
     }
 }
