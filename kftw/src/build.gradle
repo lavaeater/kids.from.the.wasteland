@@ -1,5 +1,4 @@
 buildscript {
-    
 
     repositories {
         mavenLocal()
@@ -8,7 +7,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        
 
     }
 }
