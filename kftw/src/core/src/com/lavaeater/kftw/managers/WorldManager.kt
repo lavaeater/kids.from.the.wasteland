@@ -1,25 +1,34 @@
 package com.lavaeater.kftw.managers
 
+import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.core.PooledEngine
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.kftw.components.*
+import com.lavaeater.kftw.components.Transform
+import com.lavaeater.kftw.components.WorldMapComponent
+import com.lavaeater.kftw.systems.KeyboardCameraControlSystem
 import com.lavaeater.kftw.systems.RenderMapSystem
-import ktx.ashley.*
-
+import ktx.ashley.add
+import ktx.ashley.entity
 
 class WorldManager(val batch:SpriteBatch = SpriteBatch(),
-                   val engine: PooledEngine = PooledEngine(),
+                   val engine: Engine = Engine(),
                    val camera: OrthographicCamera = OrthographicCamera()):Disposable {
 
     val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
 
     init {
+        val inputSystem = KeyboardCameraControlSystem(camera)
+        Gdx.input.inputProcessor = inputSystem
+        engine.addSystem(inputSystem)
         engine.addSystem(RenderMapSystem(batch))
+
         initMapEntity()
+        camera.position.x = 300f
+        camera.position.y = 300f
     }
 
     fun update(delta:Float) {
@@ -48,7 +57,7 @@ class WorldManager(val batch:SpriteBatch = SpriteBatch(),
     }
 
     companion object {
-        val VIEWPORT_HEIGHT = 27f
-        val VIEWPORT_WIDTH = 48f
+        val VIEWPORT_HEIGHT = 640f
+        val VIEWPORT_WIDTH = 480f
     }
 }
