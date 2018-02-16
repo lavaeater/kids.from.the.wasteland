@@ -60,7 +60,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "io.github.libktx:ktx-app:$ktxVersion"
-        compile "net.onedaybeard.artemis:artemis-odb:2.2.0-SNAPSHOT"
+        compile "io.github.libktx:ktx-ashley:$ktxVersion"
     }
 }
 
