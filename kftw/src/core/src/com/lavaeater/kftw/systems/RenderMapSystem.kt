@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
+import com.lavaeater.kftw.managers.MapManager
 import ktx.app.use
 import ktx.ashley.allOf
 import kotlin.math.roundToInt
@@ -16,21 +17,7 @@ import kotlin.reflect.KProperty
 
 class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : IteratingSystem(allOf(WorldMapComponent::class).get()) {
 
-    //val currentTileVector  get() = camera.toTile(8)
-    val mapStructure = mutableMapOf<Pair<Int, Int>, String>()
-//    val currentTileString get() = mapStructure[currentTileVector]
-    val textureName = "grass"
-
-    init {
-        for (x in -100..100)
-            for(y in -100..100) {
-                val key = Pair(x, y)
-                val index = MathUtils.random.nextInt(3) + 1
-                val tileString = "center$index"
-                mapStructure[key] = tileString
-            }
-    }
-
+    val mapManager = MapManager()
     override fun processEntity(entity: Entity?, deltaTime: Float) {
 
         //This method will actually update the map? No?
@@ -41,10 +28,17 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
 
         batch.projectionMatrix = camera.combined
         batch.use {
-            for (tile in mapStructure){
-                val sprite = Assets.sprites[textureName]!![tile.value]!!
+            for (tile in mapManager.mapStructure.values){
+
+                val sprite = Assets.sprites[tile.tileType]!![tile.subType]!!
                 sprite.setPosition(tile.key.first*8f, tile.key.second*8f)
                 sprite.draw(batch)
+
+                for(extra in tile.extraSprites) {
+                    val extraSprite = Assets.sprites[extra.key]!![extra.value]!!
+                    extraSprite.setPosition(tile.key.first*8f, tile.key.second*8f)
+                    extraSprite.draw(batch)
+                }
             }
         }
     }
