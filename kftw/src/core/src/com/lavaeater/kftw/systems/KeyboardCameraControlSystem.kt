@@ -4,53 +4,37 @@ import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import ktx.app.KtxInputAdapter
-import javax.print.DocFlavor
-
-enum class Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    NONE
-}
 
 class KeyboardCameraControlSystem(val camera: OrthographicCamera):
         KtxInputAdapter,
         EntitySystem(299) {
 
-    val directions =
-            mapOf(
-                    Input.Keys.A to Direction.LEFT,
-                    Input.Keys.D to Direction.RIGHT,
-                    Input.Keys.W to Direction.UP,
-                    Input.Keys.S to Direction.DOWN
-            )
-    var currentDirection: Direction = Direction.NONE
+    val speed = 5f
+    var y = 0f;
+    var x = 0f
+
     override fun update(deltaTime: Float) {
-        when(currentDirection) {
-            Direction.UP -> camera.position.y--
-            Direction.DOWN -> camera.position.y++
-            Direction.LEFT -> camera.position.x--
-            Direction.RIGHT -> camera.position.x++
-        }
+        camera.position.x += x * speed
+        camera.position.y += y * speed
+        camera.update(true)
     }
 
     override fun keyDown(keycode: Int): Boolean {
         when(keycode) {
-            Input.Keys.A -> currentDirection = Direction.LEFT
-            Input.Keys.D -> currentDirection = Direction.RIGHT
-            Input.Keys.W -> currentDirection = Direction.UP
-            Input.Keys.S -> currentDirection = Direction.DOWN
+            Input.Keys.A -> x = -1f
+            Input.Keys.D -> x = 1f
+            Input.Keys.W -> y = 1f
+            Input.Keys.S -> y = -1f
         }
         return true
     }
 
     override fun keyUp(keycode: Int): Boolean {
         when(keycode) {
-            Input.Keys.A,
-            Input.Keys.D,
-            Input.Keys.W,
-            Input.Keys.S -> currentDirection = Direction.NONE
+            Input.Keys.A -> x = 0f
+            Input.Keys.D -> x = 0f
+            Input.Keys.W -> y = 0f
+            Input.Keys.S -> y = 0f
         }
         return true
     }

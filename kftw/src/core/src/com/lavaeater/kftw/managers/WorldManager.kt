@@ -24,7 +24,7 @@ class WorldManager(val batch:SpriteBatch = SpriteBatch(),
         val inputSystem = KeyboardCameraControlSystem(camera)
         Gdx.input.inputProcessor = inputSystem
         engine.addSystem(inputSystem)
-        engine.addSystem(RenderMapSystem(batch))
+        engine.addSystem(RenderMapSystem(batch, camera))
 
         initMapEntity()
         camera.position.x = 300f
