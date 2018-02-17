@@ -3,7 +3,9 @@ package com.lavaeater.kftw.managers
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.systems.toTile
+import com.lavaeater.kftw.util.SimplexNoise
 import com.sun.org.apache.xpath.internal.operations.Bool
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class MapManager {
@@ -29,12 +31,36 @@ class MapManager {
             2 to "desert",
             3 to "rock")
 
+
     fun getTileForKey(key: Pair<Int,Int>, createIfNotExists : Boolean = true):Tile? {
         if(mapStructure.containsKey(key)) return mapStructure[key]!!
         if(createIfNotExists) {
-            mapStructure[key] = createTile(key)
+            mapStructure[key] = createTileWithPerlinNoise(key)
         }
         return mapStructure[key]
+    }
+
+    private fun createTileWithPerlinNoise(key: Pair<Int, Int>): Tile {
+        val randomInt = (getCoolInt(key.first, key.second, 0.5, 0.25, 0.12) * 100).roundToInt()
+        var priority = 0
+        if(randomInt in 0..40)
+            priority = 0
+        if(randomInt in 41..70)
+            priority = 1
+        if(randomInt in 71..85)
+            priority = 2
+        if(randomInt in 85..99)
+            priority = 3
+        val tileType = terrains[priority]!!
+        val subType = getSubType()
+        val tile = Tile(key, priority, tileType, subType)
+
+        return tile
+    }
+
+    fun getCoolInt(x: Int, y: Int, vararg frequencies: Double): Double {
+        val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1/ it), y.toDouble() * (1/ it))).absoluteValue }
+        return noiseVal
     }
 
     val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
