@@ -28,7 +28,7 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
 
         batch.projectionMatrix = camera.combined
         batch.use {
-            for (tile in mapManager.mapStructure.values){
+            for (tile in mapManager.getVisibleTiles(camera.position)){
 
                 val sprite = Assets.sprites[tile.tileType]!![tile.subType]!!
                 sprite.setPosition(tile.key.first*8f, tile.key.second*8f)
@@ -45,7 +45,11 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
 }
 
 fun OrthographicCamera.toTile(factor: Int) : Pair<Int, Int> {
-    return Pair(this.position.tileX(factor), this.position.tileY(factor))
+    return this.position.toTile(factor)
+}
+
+fun Vector3.toTile(factor: Int) : Pair<Int, Int> {
+    return Pair(this.tileX(factor), this.tileY(factor));
 }
 
 fun Vector3.tileX(factor: Int) : Int {

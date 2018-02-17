@@ -59,5 +59,6 @@ class WorldManager(val batch:SpriteBatch = SpriteBatch(),
     companion object {
         val VIEWPORT_HEIGHT = 64f
         val VIEWPORT_WIDTH = 48f
+        val TILE_SIZE = 8
     }
 }
