@@ -9,7 +9,7 @@ class KeyboardCameraControlSystem(val camera: OrthographicCamera):
         KtxInputAdapter,
         EntitySystem(299) {
 
-    val speed = 5f
+    val speed = 0.5f
     var y = 0f;
     var x = 0f
 

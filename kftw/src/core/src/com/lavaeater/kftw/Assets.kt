@@ -32,9 +32,9 @@ object Assets : Disposable {
             for (region in atlas.regions) {
                 if (region.name != "blank") {
                     val sprite = atlas.createSprite(region.name)
-                    sprite.setSize(64f, 64f)
-                    sprite.x = xFactor * 64f
-                    sprite.y = yFactor * 64f
+                    sprite.setSize(8f, 8f)
+                    sprite.x = xFactor * 8f
+                    sprite.y = yFactor * 8f
                     sprites[atlasMap.key]!!.put(region.name, sprite)
                     yFactor++
                 }

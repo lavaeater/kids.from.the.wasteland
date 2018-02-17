@@ -27,8 +27,8 @@ class WorldManager(val batch:SpriteBatch = SpriteBatch(),
         engine.addSystem(RenderMapSystem(batch, camera))
 
         initMapEntity()
-        camera.position.x = 300f
-        camera.position.y = 300f
+        camera.position.x = 0f
+        camera.position.y = 0f
     }
 
     fun update(delta:Float) {
@@ -57,7 +57,7 @@ class WorldManager(val batch:SpriteBatch = SpriteBatch(),
     }
 
     companion object {
-        val VIEWPORT_HEIGHT = 640f
-        val VIEWPORT_WIDTH = 480f
+        val VIEWPORT_HEIGHT = 64f
+        val VIEWPORT_WIDTH = 48f
     }
 }

@@ -11,6 +11,7 @@ object DesktopLauncher {
         config.fullscreen = false
         config.width = 640
         config.height = 480
+        config.vSyncEnabled = true
         LwjglApplication(KidsFromTheWasteLandGame(), config)
     }
 }
