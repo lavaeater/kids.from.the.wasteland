@@ -27,11 +27,12 @@ class AreaMapManager : MapManagerBase() {
     }
 
     val scale = 10.0f
+    val numberOfTiles = 100
 
     init {
         var tileType = "water"
-        for (x in -50..50)
-            for(y in -50..50)
+        for (x in -numberOfTiles..numberOfTiles)
+            for(y in -numberOfTiles..numberOfTiles)
             {
                 val nX = x / scale
                 val nY = y / scale
