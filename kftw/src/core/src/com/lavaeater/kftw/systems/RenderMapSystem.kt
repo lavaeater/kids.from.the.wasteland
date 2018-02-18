@@ -4,20 +4,17 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
-import com.lavaeater.kftw.managers.MapManager
+import com.lavaeater.kftw.map.DynamicMapManager
 import ktx.app.use
 import ktx.ashley.allOf
 import kotlin.math.roundToInt
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : IteratingSystem(allOf(WorldMapComponent::class).get()) {
 
-    val mapManager = MapManager()
+    val mapManager = DynamicMapManager()
     override fun processEntity(entity: Entity?, deltaTime: Float) {
 
         //This method will actually update the map? No?
