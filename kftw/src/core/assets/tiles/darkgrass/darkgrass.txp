@@ -1,7 +1,7 @@
 darkgrass.png
 size: 40, 40
 format: RGBA8888
-filter: Linear, Linear
+filter: Nearest, Nearest
 repeat: none
 center1
   rotate: False

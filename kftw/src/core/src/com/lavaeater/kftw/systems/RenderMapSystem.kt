@@ -30,6 +30,9 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
         batch.use {
             for (tile in mapManager.getVisibleTiles(camera.position)){
 
+                if(!Assets.sprites[tile.tileType]!!.containsKey(tile.subType) || Assets.sprites[tile.tileType]!![tile.subType] == null) {
+                    val missingTile = "${tile.tileType} - ${tile.subType}"
+                }
                 val sprite = Assets.sprites[tile.tileType]!![tile.subType]!!
                 sprite.setPosition(tile.key.first*8f, tile.key.second*8f)
                 sprite.draw(batch)

@@ -1,7 +1,7 @@
 water.png
 size: 40, 40
 format: RGBA8888
-filter: Linear, Linear
+filter: Nearest, Nearest
 repeat: none
 center5
   rotate: False

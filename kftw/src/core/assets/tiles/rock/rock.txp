@@ -1,7 +1,7 @@
 rock.png
 size: 40, 40
 format: RGBA8888
-filter: Linear, Linear
+filter: Nearest, Nearest
 repeat: none
 center1
   rotate: False
@@ -10,7 +10,7 @@ center1
   orig: 8, 8
   offset: 0, 0
   index: -1
-center2c
+center2
   rotate: False
   xy: 8, 0
   size: 8, 8
