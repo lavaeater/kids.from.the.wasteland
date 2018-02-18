@@ -4,9 +4,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using SpriteSheetManager.ViewModels;
+using SpriteSheetManagerUI.ViewModels;
 
-namespace SpriteSheetManager.Views
+namespace SpriteSheetManagerUI.Views
 {
     /// <summary>
     /// Interaction logic for SpriteSheetView.xaml

@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Interfaces;
 
-namespace SpriteSheetManagerLibraries.Converters
+namespace SpriteSheetManager.Converters
 {
     public class TexturePackerConverter : ConverterBase
     {
@@ -29,7 +29,7 @@ namespace SpriteSheetManagerLibraries.Converters
             sb.AppendLine(spriteSheet.ImageFileName);
             sb.AppendLine($"size: {spriteSheet.Size.Width}, {spriteSheet.Size.Height}");
             sb.AppendLine($"format: {spriteSheet.Format}");
-            sb.AppendLine("filter: Linear, Linear");
+            sb.AppendLine("filter: Nearest, Nearest");
             sb.AppendLine("repeat: none");
             /*
              * return "$fileName\n" +

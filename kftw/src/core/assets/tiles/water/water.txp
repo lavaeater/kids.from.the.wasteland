@@ -1,7 +1,7 @@
 water.png
 size: 40, 40
 format: RGBA8888
-filter: Nearest, Nearest
+filter: Linear, Linear
 repeat: none
 center5
   rotate: False
@@ -52,28 +52,28 @@ northeast
   orig: 8, 8
   offset: 0, 0
   index: -1
-center1
+center9
   rotate: False
   xy: 16, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-center2
+center10
   rotate: False
   xy: 24, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-center3
+center11
   rotate: False
   xy: 32, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-center4
+center12
   rotate: False
   xy: 0, 16
   size: 8, 8
@@ -87,7 +87,7 @@ west
   orig: 8, 8
   offset: 0, 0
   index: -1
-blank
+blank1
   rotate: False
   xy: 16, 16
   size: 8, 8
@@ -101,28 +101,28 @@ east
   orig: 8, 8
   offset: 0, 0
   index: -1
-blank
+center1
   rotate: False
   xy: 32, 16
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-blank
+center2
   rotate: False
   xy: 0, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-blank
+center3
   rotate: False
   xy: 8, 24
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-blank
+center4
   rotate: False
   xy: 16, 24
   size: 8, 8

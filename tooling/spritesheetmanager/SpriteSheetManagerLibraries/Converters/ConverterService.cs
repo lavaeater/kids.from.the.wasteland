@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Interfaces;
 
-namespace SpriteSheetManagerLibraries.Converters
+namespace SpriteSheetManager.Converters
 {
     public class ConverterService
     {

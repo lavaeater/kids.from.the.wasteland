@@ -8,7 +8,8 @@
              
     xmlns:ViewModels="clr-namespace:SpriteSheetManager.ViewModels"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-    x:Class="SpriteSheetManager.Views.SpriteSheetView"
+    xmlns:viewModels="clr-namespace:SpriteSheetManagerUI.ViewModels"
+    x:Class="SpriteSheetManagerUI.Views.SpriteSheetView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -22,7 +23,7 @@
     <Grid>
 
         <Grid.DataContext>
-            <ViewModels:SpriteSheetViewModel></ViewModels:SpriteSheetViewModel>
+            <viewModels:SpriteSheetViewModel></viewModels:SpriteSheetViewModel>
         </Grid.DataContext>
         <DockPanel LastChildFill="True">
             <StackPanel Name="MenuRow" DockPanel.Dock="Top" FlowDirection="LeftToRight" Orientation="Horizontal">

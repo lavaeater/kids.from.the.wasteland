@@ -1,7 +1,8 @@
 ﻿using System.Windows.Media.Imaging;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Interfaces;
+using SpriteSheetManager.ViewModels;
 
-namespace SpriteSheetManager.ViewModels
+namespace SpriteSheetManagerUI.ViewModels
 {
     public class SpriteSheetFrameViewModel : ObservableObject
     {

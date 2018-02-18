@@ -1,4 +1,4 @@
-﻿namespace SpriteSheetManagerLibraries.Interfaces
+﻿namespace SpriteSheetManager.Interfaces
 {
     public interface IConvertSpriteSheets
     {

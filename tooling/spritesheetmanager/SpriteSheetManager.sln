@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManager", "SpriteSheetManager\SpriteSheetManager.csproj", "{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManagerUI", "SpriteSheetManager\SpriteSheetManagerUI.csproj", "{4913E5A3-73EC-43A3-97CF-DE91E2ABCD95}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManagerTests", "SpriteSheetManagerTests\SpriteSheetManagerTests.csproj", "{616D9CED-C8D8-4165-BE06-668D9520E7B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManagerLibraries", "SpriteSheetManagerLibraries\SpriteSheetManagerLibraries.csproj", "{CF5FDCFA-CACF-42C7-8F7A-7A9C3A080311}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetManager", "SpriteSheetManagerLibraries\SpriteSheetManager.csproj", "{CF5FDCFA-CACF-42C7-8F7A-7A9C3A080311}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpriteSheetConverter", "SpriteSheetConverter\SpriteSheetConverter.csproj", "{DD6ECFFC-2671-429A-A30A-947AB2A1FD47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{CF5FDCFA-CACF-42C7-8F7A-7A9C3A080311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF5FDCFA-CACF-42C7-8F7A-7A9C3A080311}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF5FDCFA-CACF-42C7-8F7A-7A9C3A080311}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD6ECFFC-2671-429A-A30A-947AB2A1FD47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD6ECFFC-2671-429A-A30A-947AB2A1FD47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD6ECFFC-2671-429A-A30A-947AB2A1FD47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD6ECFFC-2671-429A-A30A-947AB2A1FD47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

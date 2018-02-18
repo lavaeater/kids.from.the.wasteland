@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using Newtonsoft.Json.Linq;
-using SpriteSheetManagerLibraries.Interfaces;
-using SpriteSheetManagerLibraries.Models;
+using SpriteSheetManager.Interfaces;
+using SpriteSheetManager.Models;
 
-namespace SpriteSheetManagerLibraries.Converters
+namespace SpriteSheetManager.Converters
 {
     public class PixiJsConverter : ConverterBase
     {

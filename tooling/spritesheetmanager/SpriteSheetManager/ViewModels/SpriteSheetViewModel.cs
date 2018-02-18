@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using SpriteSheetManager.Commands;
-using SpriteSheetManagerLibraries.Converters;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Converters;
+using SpriteSheetManager.Interfaces;
+using SpriteSheetManager.ViewModels;
 
-namespace SpriteSheetManager.ViewModels
+namespace SpriteSheetManagerUI.ViewModels
 {
     public class SpriteSheetViewModel : ObservableObject
     {

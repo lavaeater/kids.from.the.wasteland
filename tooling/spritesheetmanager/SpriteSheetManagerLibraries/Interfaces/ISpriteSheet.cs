@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 
-namespace SpriteSheetManagerLibraries.Interfaces
+namespace SpriteSheetManager.Interfaces
 {
     public interface ISpriteSheet
     {

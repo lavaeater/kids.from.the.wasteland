@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Interfaces;
 
-namespace SpriteSheetManagerLibraries.Converters
+namespace SpriteSheetManager.Converters
 {
     public abstract class ConverterBase : IConvertSpriteSheets
     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using SpriteSheetManagerLibraries.Interfaces;
+using SpriteSheetManager.Interfaces;
 
-namespace SpriteSheetManagerLibraries.Models
+namespace SpriteSheetManager.Models
 {
     public class SpriteSheetFrame : ISpriteSheetFrame
     {
