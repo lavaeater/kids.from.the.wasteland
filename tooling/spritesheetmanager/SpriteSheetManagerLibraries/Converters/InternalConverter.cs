@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
-using SpriteSheetManager.Interfaces;
-using SpriteSheetManager.Models;
+using SpriteSheetManagerLibraries.Interfaces;
 
-namespace SpriteSheetManager.Converters
+namespace SpriteSheetManagerLibraries.Converters
 {
     public class InternalConverter : ConverterBase
     {

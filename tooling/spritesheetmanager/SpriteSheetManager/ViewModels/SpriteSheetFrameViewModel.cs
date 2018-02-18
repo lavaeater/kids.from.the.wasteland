@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
-using SpriteSheetManager.Interfaces;
+using SpriteSheetManagerLibraries.Interfaces;
 
 namespace SpriteSheetManager.ViewModels
 {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using SpriteSheetManager.Interfaces;
+using SpriteSheetManagerLibraries.Interfaces;
 
-namespace SpriteSheetManager.Models
+namespace SpriteSheetManagerLibraries.Models
 {
     public class SpriteSheet : ISpriteSheet
     {

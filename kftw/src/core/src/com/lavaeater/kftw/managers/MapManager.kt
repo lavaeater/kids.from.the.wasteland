@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.systems.toTile
 import com.lavaeater.kftw.util.SimplexNoise
-import com.sun.org.apache.xpath.internal.operations.Bool
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -41,11 +40,11 @@ class MapManager {
     }
 
     private fun createTileWithPerlinNoise(key: Pair<Int, Int>): Tile {
-        val randomInt = (getCoolInt(key.first, key.second, 0.5, 0.25, 0.12) * 100).roundToInt()
+        val randomInt = (getNoise(key.first, key.second, 1.0,0.5) * 100).roundToInt()
         var priority = 0
-        if(randomInt in 0..40)
+        if(randomInt in 0..10)
             priority = 0
-        if(randomInt in 41..70)
+        if(randomInt in 11..70)
             priority = 1
         if(randomInt in 71..85)
             priority = 2
@@ -58,7 +57,7 @@ class MapManager {
         return tile
     }
 
-    fun getCoolInt(x: Int, y: Int, vararg frequencies: Double): Double {
+    fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
         val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1/ it), y.toDouble() * (1/ it))).absoluteValue }
         return noiseVal
     }

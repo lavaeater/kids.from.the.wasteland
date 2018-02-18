@@ -8,8 +8,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using SpriteSheetManager.Commands;
-using SpriteSheetManager.Converters;
-using SpriteSheetManager.Interfaces;
+using SpriteSheetManagerLibraries.Converters;
+using SpriteSheetManagerLibraries.Interfaces;
 
 namespace SpriteSheetManager.ViewModels
 {

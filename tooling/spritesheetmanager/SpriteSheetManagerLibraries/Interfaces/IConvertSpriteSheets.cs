@@ -1,6 +1,4 @@
-﻿using SpriteSheetManager.Models;
-
-namespace SpriteSheetManager.Interfaces
+﻿namespace SpriteSheetManagerLibraries.Interfaces
 {
     public interface IConvertSpriteSheets
     {

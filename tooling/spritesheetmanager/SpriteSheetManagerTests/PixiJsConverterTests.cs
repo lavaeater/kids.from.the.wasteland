@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using NUnit.Framework;
-using SpriteSheetManager.Converters;
+using SpriteSheetManagerLibraries.Converters;
 
 namespace SpriteSheetManagerTests
 {
