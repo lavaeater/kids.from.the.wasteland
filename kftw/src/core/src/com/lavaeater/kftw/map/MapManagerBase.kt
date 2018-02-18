@@ -7,10 +7,13 @@ import com.lavaeater.kftw.systems.toTile
 import kotlin.math.roundToInt
 
 abstract class MapManagerBase: IMapManager {
+
+    //This should really be up to every implementation of a mapmanager
     val mapStructure = mutableMapOf<Pair<Int, Int>, Tile>()
+
     val complexDirections = mapOf(
-                        Pair(-1, -1) to "northeast",
-              Pair(-1, 1) to "southeast",
+            Pair(-1, -1) to "northeast",
+            Pair(-1, 1) to "southeast",
             Pair(1, 1) to "southwest",
             Pair(1, -1) to "northwest")
     val simpleDirections = mapOf(
@@ -28,6 +31,7 @@ abstract class MapManagerBase: IMapManager {
     val heightInTiles = (WorldManager.VIEWPORT_HEIGHT / WorldManager.TILE_SIZE).roundToInt() + 5
     var currentKey = Pair(-100,-100)
     val visibleTiles = mutableListOf<Tile>()
+    val visibleMap = mutableMapOf<Pair<Int,Int>, Tile>()
 
     fun getSubType() : String {
         return "center${MathUtils.random.nextInt(3) + 1}"
@@ -46,23 +50,18 @@ abstract class MapManagerBase: IMapManager {
 
             if (diffTiles.any()) {
                 if (diffTiles.count() == 1) {
-                    val nTile = diffTiles.first()
-                    val directionPair = getDirection(ourTile.key, nTile.key)
-                    if (simpleDirections.containsKey(directionPair)) {
-                        val directionString = simpleDirections[directionPair]!!
-                        ourTile.extraSprites.put(nTile.tileType, directionString)
-                    }
+                    val diffTile = diffTiles.first()
+                    fixOneDiffTile(diffTile, ourTile)
                 } else {
                     val tileTypes = diffTiles.map { it.tileType }
+
                     for (tileType in tileTypes) {
                         val sameTiles = diffTiles.filter { it.tileType == tileType }
+
                         if (sameTiles.count() == 1) {
-                            val nTile = diffTiles.first()
-                            val directionPair = getDirection(ourTile.key, nTile.key)
-                            if (simpleDirections.containsKey(directionPair)) {
-                                val directionString = simpleDirections[directionPair]!!
-                                ourTile.extraSprites.put(tileType, directionString)
-                            }
+                            val sameTile = sameTiles.first()
+                            //Just this one was actually a silly bug!
+                            fixOneDiffTile(sameTile, ourTile)
                         } else {
                             /*
                         if these two tiles are in the same direction, we need to add
@@ -91,8 +90,10 @@ abstract class MapManagerBase: IMapManager {
                         }
                     }
                 }
+            } else {
+                ourTile.extraSpritesInitialized = true
             }
-            ourTile.extraSpritesInitialized = nTiles.count() == 8
+            if(!ourTile.extraSpritesInitialized) ourTile.extraSpritesInitialized = nTiles.count() == 8
         }
 
 //        for (nTile in diffTiles)
@@ -103,6 +104,14 @@ abstract class MapManagerBase: IMapManager {
 //            val directionString = simpleDirections[directionPair]!!
 //            ourTile.extraSprites.put(nTile.tileType, directionString)
 //        }
+    }
+
+    protected fun fixOneDiffTile(diffTile: Tile, ourTile: Tile) {
+        val directionPair = getDirection(ourTile.key, diffTile.key)
+        if (simpleDirections.containsKey(directionPair)) {
+            val directionString = simpleDirections[directionPair]!!
+            ourTile.extraSprites.put(diffTile.tileType, directionString)
+        }
     }
 
     open fun createTile(key: Pair<Int, Int>) : Tile {
@@ -137,4 +146,5 @@ abstract class MapManagerBase: IMapManager {
 
         return mapStructure.filterKeys { returnValue.contains(it)}.values
     }
+
 }

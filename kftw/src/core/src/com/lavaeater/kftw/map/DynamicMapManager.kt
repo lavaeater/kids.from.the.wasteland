@@ -48,11 +48,6 @@ class DynamicMapManager : MapManagerBase() {
         return tile
     }
 
-    fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
-        val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))).absoluteValue }
-        return noiseVal
-    }
-
     override fun getVisibleTiles(position: Vector3) : List<Tile> {
         if(doWeNeedNewVisibleTiles(position)) {
             currentKey = position.toTile(WorldManager.TILE_SIZE)
