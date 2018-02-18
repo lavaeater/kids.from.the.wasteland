@@ -36,7 +36,7 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
                 sprite.draw(batch)
 
                 for(extra in tile.extraSprites) {
-                    val extraSprite = Assets.sprites[extra.key]!![extra.value]!!
+                    val extraSprite = Assets.sprites[extra.first]!![extra.second]!!
                     extraSprite.setPosition(tile.key.first*8f, tile.key.second*8f)
                     extraSprite.draw(batch)
                 }

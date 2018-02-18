@@ -26,7 +26,7 @@ class AreaMapManager : MapManagerBase() {
         return priority
     }
 
-    val scale = 7.0f
+    val scale = 10.0f
 
     init {
         var tileType = "water"
@@ -37,16 +37,16 @@ class AreaMapManager : MapManagerBase() {
                 val nY = y / scale
                 val priority = getTilePriorityFromNoise(nX,nY)
                 tileType = terrains[priority]!!
-                val x1 = x * 2
-                val x2 = if(x < 0) x * 2 + 1 else x * 2 - 1
-                val y1 = y * 2
-                val y2 = if(y < 0) y * 2 + 1 else y * 2 - 1
-                for(actualX in x1..x2)
-                    for(actualY in y1..y2) {
-                        val key = Pair(actualX, actualY)
+//                val x1 = x * 2
+//                val x2 = if(x < 0) x * 2 + 1 else x * 2 - 1
+//                val y1 = y * 2
+//                val y2 = if(y < 0) y * 2 + 1 else y * 2 - 1
+//                for(actualX in x1..x2)
+//                    for(actualY in y1..y2) {
+                        val key = Pair(x, y)
                         val subType = "center${MathUtils.random.nextInt(3) + 1}"
                         mapStructure[key] =  Tile(key, priority, tileType, subType)
-                    }
+//                    }
             }
         mapStructure.forEach {
             setExtraSprites(it.value)
