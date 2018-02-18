@@ -7,17 +7,18 @@ import com.lavaeater.kftw.systems.toTile
 
 class AreaMapManager : MapManagerBase() {
 
-    fun getTilePriorityFromNoise(x:Int, y:Int) : Int {
-        val noiseValue = (getNoiseNotAbs(x, y, 1.0,0.5) * 100)
+    fun getTilePriorityFromNoise(x:Float, y:Float) : Int {
+
+        val noiseValue = (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)
         var priority = 0
 
         //Hmm, most likely this distribution is not from -1 .. 1 but more like -.75..0.75
 
-        if(noiseValue in -100..-55)
+        if(noiseValue in -100..-65)
             priority = 0
-        if(noiseValue in -54..15)
+        if(noiseValue in -64..25)
             priority = 1
-        if(noiseValue in 16..55)
+        if(noiseValue in 26..55)
             priority = 2
         if(noiseValue in 56..99)
             priority = 3
@@ -25,12 +26,16 @@ class AreaMapManager : MapManagerBase() {
         return priority
     }
 
+    val scale = 7.0f
+
     init {
         var tileType = "water"
         for (x in -50..50)
             for(y in -50..50)
             {
-                val priority = getTilePriorityFromNoise(x,y)
+                val nX = x / scale
+                val nY = y / scale
+                val priority = getTilePriorityFromNoise(nX,nY)
                 tileType = terrains[priority]!!
                 val x1 = x * 2
                 val x2 = if(x < 0) x * 2 + 1 else x * 2 - 1

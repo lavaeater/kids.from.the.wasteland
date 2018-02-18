@@ -24,8 +24,8 @@ abstract class MapManagerBase: IMapManager {
     )
     val terrains = mapOf(
             0 to "water",
-            1 to "grass",
-            2 to "desert",
+            2 to "grass",
+            1 to "desert",
             3 to "rock")
     val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
     val heightInTiles = (WorldManager.VIEWPORT_HEIGHT / WorldManager.TILE_SIZE).roundToInt() + 5

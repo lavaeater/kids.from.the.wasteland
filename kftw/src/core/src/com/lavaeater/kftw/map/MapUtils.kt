@@ -14,6 +14,10 @@ fun getNoiseNotAbs(x: Int, y: Int, vararg frequencies: Double): Double {
     return frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))) }
 }
 
+fun getNoiseNotAbs(x: Float, y: Float, vararg frequencies: Double): Double {
+    return frequencies.sumByDouble { it * (SimplexNoise.noise(x * (1 / it), y * (1 / it))) }
+}
+
 fun Pair<Int, Int>.getXRange(range:Int) : Pair<Int,Int> {
     return this.first.getMinMax(range)
 }
