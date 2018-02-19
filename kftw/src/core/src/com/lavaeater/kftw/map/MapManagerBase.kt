@@ -70,6 +70,9 @@ abstract class MapManagerBase: IMapManager {
 
             val nTiles = getNeighbours(ourKey)
 
+
+
+
             val diffTiles = nTiles.filter { it.tileType != ourTile.tileType && it.priority > ourTile.priority }
 
             val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
