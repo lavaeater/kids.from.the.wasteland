@@ -4,7 +4,7 @@ import com.lavaeater.kftw.util.SimplexNoise
 import kotlin.math.absoluteValue
 
 data class TileKey(val x:Int, val y:Int)
-data class Tile(val priority : Int, val tileType:String, val subType: String, var extraSpritesInitialized : Boolean = false, val extraSprites : MutableList<Pair<String, String>> = mutableListOf())
+data class Tile(val priority : Int, val tileType:String, val subType: String, val extraSprites : MutableList<Pair<String, String>> = mutableListOf())
 
 fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
     val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))).absoluteValue }

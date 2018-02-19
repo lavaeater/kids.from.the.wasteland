@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
 import com.lavaeater.kftw.map.AreaMapManager
-import com.lavaeater.kftw.map.DynamicMapManager
 import ktx.app.use
 import ktx.ashley.allOf
 import kotlin.math.roundToInt
@@ -26,18 +25,20 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
 
         batch.projectionMatrix = camera.combined
         batch.use {
-            for (tile in mapManager.getVisibleTiles(camera.position)){
+            for (tileAndKey in mapManager.getVisibleTiles(camera.position)){
+                val tile = tileAndKey.value
+                val key = tileAndKey.key
 
                 if(!Assets.sprites[tile.tileType]!!.containsKey(tile.subType) || Assets.sprites[tile.tileType]!![tile.subType] == null) {
                     val missingTile = "${tile.tileType} - ${tile.subType}"
                 }
                 val sprite = Assets.sprites[tile.tileType]!![tile.subType]!!
-                sprite.setPosition(tile.key.first*8f, tile.key.second*8f)
+                sprite.setPosition(key.x*8f, key.y*8f)
                 sprite.draw(batch)
 
                 for(extra in tile.extraSprites) {
                     val extraSprite = Assets.sprites[extra.first]!![extra.second]!!
-                    extraSprite.setPosition(tile.key.first*8f, tile.key.second*8f)
+                    extraSprite.setPosition(key.x*8f, key.y*8f)
                     extraSprite.draw(batch)
                 }
             }

@@ -20,22 +20,18 @@ abstract class MapManagerBase: IMapManager {
                 "eastnorth" to "northeast"
         )
 
-        val complexDirections = mapOf(
-                Pair(-1, -1) to "southwest",
-                Pair(-1, 1) to "southeast",
-                Pair(1, 1) to "northeast",
-                Pair(1, -1) to "northwest")
         val simpleDirections = mapOf(
-                Pair(-1,0) to "east",
-                Pair(0, 1) to "south",
-                Pair(1, 0) to "west",
-                Pair(0, -1) to "north"
+                TileKey(-1,0) to "east",
+                TileKey(0, 1) to "south",
+                TileKey(1, 0) to "west",
+                TileKey(0, -1) to "north"
         )
         val simpleDirectionsInverse = mapOf(
                 "east" to TileKey(-1,0),
                 "south" to TileKey(0, 1),
                 "west" to TileKey(1, 0),
                 "north" to TileKey(0, -1))
+
         val terrains = mapOf(
                 0 to "water",
                 2 to "grass",
@@ -44,7 +40,6 @@ abstract class MapManagerBase: IMapManager {
     }
 
     //This should really be up to every implementation of a mapmanager
-    val mapStructure = mutableMapOf<TileKey, Tile>()
     val crazyMapStructure = mutableMapOf<TileKey, Int>()
     val crazyTileStructure = mutableMapOf<Int, Tile>()
 
@@ -62,96 +57,75 @@ abstract class MapManagerBase: IMapManager {
         return !centerTileKey.isInRange(currentKey, 2)
     }
 
-    fun setExtraSprites(ourKey: TileKey, ourTile: Tile) {
-        if (!ourTile.extraSpritesInitialized) {
-            //Do not get neighbours. Loop over them instead!
-            //Make a map for every tile, this will contain the correct stuff!
+    fun setExtraSprites(ourKey: TileKey) {
 
+        //Make a copy of this tile for comparison later!
+        val tempTile = crazyTileStructure[crazyMapStructure[ourKey]]!!.copy(extraSprites = mutableListOf())
 
-            val nTiles = getNeighbours(ourKey)
+        val nTiles = getNeighbours(ourKey)
 
+        val diffTiles = nTiles.filter { it.value.tileType != tempTile.tileType && it.value.priority > tempTile.priority }
 
+        val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
 
+        for (diffTile in diffTiles) {
+            val directionPair = getNeighbourDirection(ourKey, diffTile.key)
+            if (simpleDirections.containsKey(directionPair)) {
+                val diffDirection = simpleDirections[directionPair]!!
+                //Bam, just add it, then clean it up afterwards!
+                if(tempTile.extraSprites.any { it.first == diffTile.value.tileType }) {
+                    for (extraSprite in tempTile.extraSprites.filter { it.first == diffTile.value.tileType }) {
 
-            val diffTiles = nTiles.filter { it.tileType != ourTile.tileType && it.priority > ourTile.priority }
-
-            val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
-
-            for (diffTile in diffTiles) {
-                val directionPair = getDirection(ourTile.key, diffTile.key)
-                if (simpleDirections.containsKey(directionPair)) {
-                    val diffDirection = simpleDirections[directionPair]!!
-                    //Bam, just add it, then clean it up afterwards!
-                    if(ourTile.extraSprites.any { it.first == diffTile.tileType }) {
-                        for (extraSprite in ourTile.extraSprites.filter { it.first == diffTile.tileType }) {
-
-                            /*
-                        This type of tile exists, it might actually be relevant to
-                        remove the existing one in favor of this one!
-                         */
-                            if (weirdDirections.containsKey("$diffDirection${extraSprite.second}")) {
-                                //Modify existing one, making it weird!
-                                extraSpritesToRemove.add(extraSprite)
-                                ourTile.extraSprites.add(Pair(extraSprite.first, weirdDirections["$diffDirection${extraSprite.second}"]!!))
-                            } else {
-                                ourTile.extraSprites.add(Pair(diffTile.tileType, diffDirection))
-                            }
+                        /*
+                    This type of tile exists, it might actually be relevant to
+                    remove the existing one in favor of this one!
+                     */
+                        if (weirdDirections.containsKey("$diffDirection${extraSprite.second}")) {
+                            //Modify existing one, making it weird!
+                            extraSpritesToRemove.add(extraSprite)
+                            tempTile.extraSprites.add(Pair(extraSprite.first, weirdDirections["$diffDirection${extraSprite.second}"]!!))
+                        } else {
+                            tempTile.extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
                         }
-                    } else {
-                        ourTile.extraSprites.add(Pair(diffTile.tileType, diffDirection))
                     }
+                } else {
+                    tempTile.extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
                 }
+            }
 
+        }
+        for(extraSprite in extraSpritesToRemove) {
+            tempTile.extraSprites.remove(extraSprite)
+        }
+        //Now, check if the hashcodes still match!
+        val newHashCode = tempTile.hashCode()
+        if(crazyMapStructure[ourKey] != newHashCode){
+            //Add this new tile to the tile storage!
+            if(!crazyTileStructure.containsKey(newHashCode)) {
+                crazyTileStructure.put(newHashCode, tempTile)
             }
-            for(extraSprite in extraSpritesToRemove) {
-                ourTile.extraSprites.remove(extraSprite)
-            }
-            ourTile.extraSpritesInitialized = true
+            crazyMapStructure[ourKey] = newHashCode
         }
     }
 
     open fun createTile(key: Pair<Int, Int>) : Tile {
-        val randomInt = MathUtils.random.nextInt(100)
-        var priority = 0
-        if(randomInt in 0..60)
-            priority = 0
-        if(randomInt in 61..80)
-            priority = 1
-        if(randomInt in 81..90)
-            priority = 2
-        if(randomInt in 91..99)
-            priority = 3
-        val tileType = terrains[priority]!!
-        val subType = getSubType()
-        val tile = Tile(key, priority, tileType, subType)
-
-        return tile
+        return Tile(0, "water", "center1")
     }
 
-    fun getDirection(inputKey : Pair<Int, Int>, otherKey : Pair<Int, Int>) : Pair<Int, Int> {
-        return Pair(inputKey.first - otherKey.first, inputKey.second - otherKey.second )
+    fun getNeighbourDirection(inputKey : TileKey, otherKey : TileKey) : TileKey {
+        return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
     }
 
-//    open fun getNeighbours(key: Pair<Int, Int>) : Collection<Tile> {
-//        val returnValue = mutableListOf<Pair<Int, Int>>()
-//        for(x in -1..1)
-//            (-1..1)
-//                    .asSequence()
-//                    .filter { x != 0 && it != 0 }
-//                    .forEach { returnValue.add(Pair(key.first + x, key.second + it)) }
-//
-//        return mapStructure.filterKeys { returnValue.contains(it)}.values
-//    }
-
-    open fun getNeighbours(inKey:TileKey) : Map<TileKey, Int> {
+    open fun getNeighbours(inKey:TileKey) : Map<TileKey, Tile> {
 
         val some = simpleDirectionsInverse.map {(direction, key)-> crazyMapStructure.getTileKeyForDirection(inKey, direction, key)}
 
-        return crazyMapStructure.filter { entry -> some.contains(entry.key) }
+        //The mapValues function MUST return values, otherwise
+        return crazyMapStructure.filter { entry -> some.contains(entry.key) }.mapValues{ crazyTileStructure[it.value]!! }
     }
 }
 
-fun Map<TileKey, Int>.getTileKeyForDirection(key: TileKey, direction: String, directionKey: TileKey) : TileKey {
+fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, direction: String, directionKey: TileKey) : TileKey {
     val entryKey = TileKey(key.x + directionKey.x, key.y + directionKey.y)
     return entryKey
 }

@@ -27,7 +27,7 @@ class AreaMapManager : MapManagerBase() {
     }
 
     val scale = 10.0f
-    val numberOfTiles = 100
+    val numberOfTiles = 50
 
     init {
         var tileType = "water"
@@ -38,24 +38,22 @@ class AreaMapManager : MapManagerBase() {
                 val nY = y / scale
                 val priority = getTilePriorityFromNoise(nX,nY)
                 tileType = terrains[priority]!!
-//                val x1 = x * 2
-//                val x2 = if(x < 0) x * 2 + 1 else x * 2 - 1
-//                val y1 = y * 2
-//                val y2 = if(y < 0) y * 2 + 1 else y * 2 - 1
-//                for(actualX in x1..x2)
-//                    for(actualY in y1..y2) {
-                        val key = Pair(x, y)
-                        val subType = "center${MathUtils.random.nextInt(3) + 1}"
-                        mapStructure[key] =  Tile(key, priority, tileType, subType)
-//                    }
+                val key = TileKey(x, y)
+                val subType = "center${MathUtils.random.nextInt(3) + 1}"
+                val possibleNewTile = Tile(priority, tileType, subType)
+                val newHashCode = possibleNewTile.hashCode()
+                if(!crazyTileStructure.containsKey(newHashCode)) {
+                    crazyTileStructure.put(newHashCode, possibleNewTile)
+                }
+                crazyMapStructure.put(key, newHashCode)
             }
-        mapStructure.forEach {
-            setExtraSprites(it.value)
+        crazyMapStructure.forEach {
+            setExtraSprites(it.key)
         }
     }
 
 
-    override fun getVisibleTiles(position: Vector3): List<Tile> {
+    override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
         if(doWeNeedNewVisibleTiles(position)) {
             visibleTiles.clear()
             currentKey = position.toTile(WorldManager.TILE_SIZE)
@@ -67,9 +65,9 @@ class AreaMapManager : MapManagerBase() {
 
             for (x in minX..maxX)
                 (minY..maxY)
-                        .map { Pair(x, it) }
-                        .filter { mapStructure.containsKey(it) }
-                        .forEach { visibleTiles.add(mapStructure[it]!!) }
+                        .map { TileKey(x, it) }
+                        .filter { crazyMapStructure.containsKey(it) }
+                        .forEach{ visibleTiles.put(it, crazyTileStructure[crazyMapStructure[it]!!]!!) }
         }
         return visibleTiles
     }
