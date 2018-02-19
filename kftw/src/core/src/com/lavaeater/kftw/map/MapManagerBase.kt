@@ -44,7 +44,7 @@ abstract class MapManagerBase: IMapManager {
     }
 
     //This should really be up to every implementation of a mapmanager
-    val mapStructure = mutableMapOf<Pair<Int, Int>, Tile>()
+    val mapStructure = mutableMapOf<TileKey, Tile>()
 
 
 
@@ -56,8 +56,7 @@ abstract class MapManagerBase: IMapManager {
     val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
     val heightInTiles = (WorldManager.VIEWPORT_HEIGHT / WorldManager.TILE_SIZE).roundToInt() + 5
     var currentKey = Pair(-100,-100)
-    val visibleTiles = mutableListOf<Tile>()
-    val visibleMap = mutableMapOf<Pair<Int,Int>, Tile>()
+    val visibleTiles = mutableMapOf<TileKey, Tile>()
 
     fun getSubType() : String {
         return "center${MathUtils.random.nextInt(3) + 1}"
