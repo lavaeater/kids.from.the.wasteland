@@ -32,10 +32,10 @@ abstract class MapManagerBase: IMapManager {
                 Pair(0, -1) to "north"
         )
         val simpleDirectionsInverse = mapOf(
-                "east" to Pair(-1,0),
-                "south" to Pair(0, 1),
-                "west" to Pair(1, 0),
-                "north" to Pair(0, -1))
+                "east" to TileKey(-1,0),
+                "south" to TileKey(0, 1),
+                "west" to TileKey(1, 0),
+                "north" to TileKey(0, -1))
         val terrains = mapOf(
                 0 to "water",
                 2 to "grass",
@@ -45,13 +45,8 @@ abstract class MapManagerBase: IMapManager {
 
     //This should really be up to every implementation of a mapmanager
     val mapStructure = mutableMapOf<TileKey, Tile>()
-
-
-
-
-
-
-
+    val crazyMapStructure = mutableMapOf<TileKey, Int>()
+    val crazyTileStructure = mutableMapOf<Int, Tile>()
 
     val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
     val heightInTiles = (WorldManager.VIEWPORT_HEIGHT / WorldManager.TILE_SIZE).roundToInt() + 5
@@ -67,13 +62,13 @@ abstract class MapManagerBase: IMapManager {
         return !centerTileKey.isInRange(currentKey, 2)
     }
 
-    fun setExtraSprites(ourTile: Tile) {
+    fun setExtraSprites(ourKey: TileKey, ourTile: Tile) {
         if (!ourTile.extraSpritesInitialized) {
             //Do not get neighbours. Loop over them instead!
             //Make a map for every tile, this will contain the correct stuff!
 
 
-            val nTiles = getNeighbours(ourTile.key)
+            val nTiles = getNeighbours(ourKey)
 
             val diffTiles = nTiles.filter { it.tileType != ourTile.tileType && it.priority > ourTile.priority }
 
@@ -145,15 +140,15 @@ abstract class MapManagerBase: IMapManager {
 //        return mapStructure.filterKeys { returnValue.contains(it)}.values
 //    }
 
-    open fun getNeighbours(key:Pair<Int, Int>) : List<Tile> {
-        return simpleDirectionsInverse.keys.mapNotNull { mapStructure.getNeighbourTileAt(key, it) }
+    open fun getNeighbours(inKey:TileKey) : Map<TileKey, Int> {
+
+        val some = simpleDirectionsInverse.map {(direction, key)-> crazyMapStructure.getTileKeyForDirection(inKey, direction, key)}
+
+        return crazyMapStructure.filter { entry -> some.contains(entry.key) }
     }
 }
 
-
-
-fun MutableMap<Pair<Int, Int>, Tile>.getNeighbourTileAt(key : Pair<Int, Int>, direction: String): Tile? {
-    val dirKey = MapManagerBase.simpleDirectionsInverse[direction]!!
-    val neighbourKey = Pair(key.first + dirKey.first, key.second + dirKey.second)
-    return this[neighbourKey]
+fun Map<TileKey, Int>.getTileKeyForDirection(key: TileKey, direction: String, directionKey: TileKey) : TileKey {
+    val entryKey = TileKey(key.x + directionKey.x, key.y + directionKey.y)
+    return entryKey
 }
