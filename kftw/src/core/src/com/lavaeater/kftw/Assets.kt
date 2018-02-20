@@ -19,14 +19,38 @@ object Assets : Disposable {
             "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
             "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
             "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+
+    val characters = mapOf(
+            "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp"))
+    )
     val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
 
     fun load(): AssetManager {
         am = AssetManager()
 
+        initializeMapTiles()
+        initializeCharacterSprites()
+
+        return am
+    }
+
+    private fun initializeCharacterSprites() {
+        for (atlasMap in characters) {
+            val atlas = atlasMap.value
+            sprites.put(atlasMap.key, hashMapOf())
+            for(region in atlas.regions)
+            {
+                val sprite = atlas.createSprite(region.name)
+                sprite.setSize(4f,4.5f)
+                sprites[atlasMap.key]!!.put(region.name, sprite)
+            }
+        }
+    }
+
+    private fun initializeMapTiles() {
         var yFactor = 1f
         var xFactor = 1f
-        for(atlasMap in atlases) {
+        for (atlasMap in atlases) {
             val atlas = atlasMap.value
             sprites.put(atlasMap.key, hashMapOf())
             for (region in atlas.regions) {
@@ -42,8 +66,6 @@ object Assets : Disposable {
             xFactor++
             yFactor = 1f
         }
-
-        return am
     }
 
     override fun dispose() {
