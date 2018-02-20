@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.systems.toTile
-import kotlin.system.measureTimeMillis
 
 class AreaMapManager : MapManagerBase() {
 

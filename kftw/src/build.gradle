@@ -55,6 +55,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+        compile "com.badlogicgames.gdx:gdx-ai:1.8.1"
         compile "io.github.libktx:ktx-app:$ktxVersion"
         compile "io.github.libktx:ktx-ashley:$ktxVersion"
     }
