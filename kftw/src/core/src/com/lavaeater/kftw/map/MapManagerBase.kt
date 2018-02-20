@@ -2,7 +2,7 @@ package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
-import com.lavaeater.kftw.managers.WorldManager
+import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.systems.toTile
 import kotlin.math.roundToInt
 
@@ -43,8 +43,8 @@ abstract class MapManagerBase: IMapManager {
     val crazyMapStructure = mutableMapOf<TileKey, Int>()
     val crazyTileStructure = mutableMapOf<Int, Tile>()
 
-    val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
-    val heightInTiles = (WorldManager.VIEWPORT_HEIGHT / WorldManager.TILE_SIZE).roundToInt() + 5
+    val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
+    val heightInTiles = (GameManager.VIEWPORT_HEIGHT / GameManager.TILE_SIZE).roundToInt() + 5
     var currentKey = Pair(-100,-100)
     val visibleTiles = mutableMapOf<TileKey, Tile>()
 
@@ -53,7 +53,7 @@ abstract class MapManagerBase: IMapManager {
     }
 
     fun doWeNeedNewVisibleTiles(position: Vector3) : Boolean {
-        val centerTileKey = position.toTile(WorldManager.TILE_SIZE)
+        val centerTileKey = position.toTile(GameManager.TILE_SIZE)
         return !centerTileKey.isInRange(currentKey, 2)
     }
 

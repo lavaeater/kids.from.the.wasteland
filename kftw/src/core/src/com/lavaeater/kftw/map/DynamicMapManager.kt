@@ -1,12 +1,5 @@
 package com.lavaeater.kftw.map
 
-import com.badlogic.gdx.math.Vector3
-import com.lavaeater.kftw.managers.WorldManager
-import com.lavaeater.kftw.systems.toTile
-import com.lavaeater.kftw.util.SimplexNoise
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
-
 //class DynamicMapManager : MapManagerBase() {
 
 //    override fun getNeighbours(key: Pair<Int, Int>) : List<Tile> {
@@ -50,7 +43,7 @@ import kotlin.math.roundToInt
 //
 //    override fun getVisibleTiles(position: Vector3) : List<Tile> {
 //        if(doWeNeedNewVisibleTiles(position)) {
-//            currentKey = position.toTile(WorldManager.TILE_SIZE)
+//            currentKey = position.toTile(GameManager.TILE_SIZE)
 //            visibleTiles.clear()
 //            val startX = currentKey.first - widthInTiles
 //            val stopX = currentKey.first + widthInTiles
