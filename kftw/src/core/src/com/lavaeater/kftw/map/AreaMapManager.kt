@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.managers.WorldManager
 import com.lavaeater.kftw.systems.toTile
+import kotlin.system.measureTimeMillis
 
 class AreaMapManager : MapManagerBase() {
 
@@ -30,6 +31,7 @@ class AreaMapManager : MapManagerBase() {
     val numberOfTiles = 50
 
     init {
+        val mapCreation = measureTimeMillis {
         var tileType = "water"
         for (x in -numberOfTiles..numberOfTiles)
             for(y in -numberOfTiles..numberOfTiles)
@@ -47,9 +49,15 @@ class AreaMapManager : MapManagerBase() {
                 }
                 crazyMapStructure.put(key, newHashCode)
             }
-        crazyMapStructure.forEach {
-            setExtraSprites(it.key)
         }
+        val fixExtraTiles = measureTimeMillis {
+            crazyMapStructure.forEach {
+                setExtraSprites(it.key)
+            }
+        }
+
+        val placeHolder = "hold the place!"
+
     }
 
 
