@@ -5,24 +5,9 @@ import com.badlogic.gdx.ai.btree.Task
 import com.badlogic.gdx.ai.btree.annotation.TaskAttribute
 import com.badlogic.gdx.ai.utils.random.ConstantIntegerDistribution
 import com.badlogic.gdx.ai.utils.random.IntegerDistribution
-import com.lavaeater.kftw.components.Npc
-import com.lavaeater.kftw.components.Dog
-import com.lavaeater.kftw.components.Dog
-import com.lavaeater.kftw.components.Dog
 import com.lavaeater.kftw.components.Dog
 
-
-
-
-
-
-
-
-
-/** @author implicit-invocation
- * @author davebaol
- */
-class BarkTask : LeafTask<Npc>() {
+class BarkTask : LeafTask<Dog>() {
 
     @TaskAttribute
     var times: IntegerDistribution = ConstantIntegerDistribution.ONE
@@ -55,13 +40,6 @@ class BarkTask : LeafTask<Npc>() {
     }
 }
 
-import com.badlogic.gdx.ai.btree.LeafTask
-import com.badlogic.gdx.ai.btree.Task
-import com.badlogic.gdx.ai.btree.annotation .TaskAttribute
-
-/** @author implicit-invocation
- * @author davebaol
- */
 class CareTask : LeafTask<Dog>() {
 
     @TaskAttribute(required = true)
