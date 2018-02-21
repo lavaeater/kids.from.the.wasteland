@@ -1,16 +1,21 @@
 package com.lavaeater.kftw.systems
 
-import com.badlogic.gdx.ai
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.ai.steer.Steerable
-import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.ai.btree.BehaviorTree
+import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
+import com.lavaeater.kftw.components.Npc
 import com.lavaeater.kftw.components.NpcComponent
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
 class NpcSystem : IteratingSystem(allOf(NpcComponent::class).get()) {
 
+    val npcBTree = BehaviorTree<Npc>()
+    val bTree = BehaviorTreeParser<Npc>()
+    init {
+        val some = bTree.parse()
+    }
     /*
     Lets make some decisions!
 
@@ -32,12 +37,4 @@ class NpcSystem : IteratingSystem(allOf(NpcComponent::class).get()) {
         var npcComponent = mapper[entity]
 
     }
-}
-
-
-
-class AiDef {
-    val def = "root" +
-            "   selector" +
-            "       "
 }
