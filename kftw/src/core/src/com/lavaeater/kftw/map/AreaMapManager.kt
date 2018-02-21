@@ -51,23 +51,4 @@ class AreaMapManager : MapManagerBase() {
             setExtraSprites(it.key)
         }
     }
-
-
-    override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
-        if (doWeNeedNewVisibleTiles(position)) {
-            visibleTiles.clear()
-            currentKey = position.toTile(GameManager.TILE_SIZE)
-            val minX = currentKey.x.coordAtDistanceFrom(-widthInTiles)
-            val maxX = currentKey.x.coordAtDistanceFrom(widthInTiles)
-            val minY = currentKey.y.coordAtDistanceFrom(-widthInTiles)
-            val maxY = currentKey.y.coordAtDistanceFrom(widthInTiles)
-
-            for (x in minX..maxX)
-                (minY..maxY)
-                        .map { TileKey(x, it) }
-                        .filter { crazyMapStructure.containsKey(it) }
-                        .forEach { visibleTiles.put(it, crazyTileStructure[crazyMapStructure[it]!!]!!) }
-        }
-        return visibleTiles
-    }
 }

@@ -112,6 +112,15 @@ abstract class MapManagerBase: IMapManager {
         return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
     }
 
+    override fun getTileAt(x: Int, y: Int): Tile {
+        return crazyTileStructure[crazyMapStructure[TileKey(x,y)]]!!
+    }
+
+    override fun findTileOfType(x: Int, y: Int, tileType: String, range: Int): TileKey? {
+      val tilesInRange = getTilesInRange(TileKey(x,y), range)
+      return tilesInRange.filter { it.value.tileType == tileType }.keys.firstOrNull()
+    }
+
     open fun getNeighbours(inKey:TileKey) : Map<TileKey, Tile> {
 
         val some = simpleDirectionsInverse.map {(direction, key)-> crazyMapStructure.getTileKeyForDirection(inKey, direction, key)}
@@ -123,6 +132,31 @@ abstract class MapManagerBase: IMapManager {
     override fun getTileForPosition(position: Vector3): Tile {
         val tileKey = position.toTile(GameManager.TILE_SIZE)
         return crazyTileStructure[crazyMapStructure[tileKey]]!!
+    }
+
+    override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
+        if (doWeNeedNewVisibleTiles(position)) {
+            currentKey = position.toTile(GameManager.TILE_SIZE)
+          visibleTiles.clear()
+          visibleTiles.putAll(getTilesInRange(currentKey, widthInTiles))
+        }
+      return visibleTiles
+    }
+
+    override fun getTilesInRange(posKey:TileKey, range:Int) : Map<TileKey, Tile> {
+
+      val tilesInRange = mutableMapOf<TileKey, Tile>()
+      val minX = posKey.x.coordAtDistanceFrom(-range)
+      val maxX = posKey.x.coordAtDistanceFrom(range)
+      val minY = posKey.y.coordAtDistanceFrom(-range)
+      val maxY = posKey.y.coordAtDistanceFrom(range)
+
+      for (x in minX..maxX)
+        (minY..maxY)
+            .map { TileKey(x, it) }
+            .filter { crazyMapStructure.containsKey(it) }
+            .forEach { tilesInRange.put(it, crazyTileStructure[crazyMapStructure[it]!!]!!) }
+      return tilesInRange
     }
 }
 

@@ -8,14 +8,14 @@ import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
 import com.lavaeater.kftw.map.AreaMapManager
+import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import ktx.app.use
 import ktx.ashley.allOf
 import kotlin.math.roundToInt
 
-class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : IteratingSystem(allOf(WorldMapComponent::class).get()) {
+class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera, val mapManager: IMapManager) : IteratingSystem(allOf(WorldMapComponent::class).get()) {
 
-    val mapManager = AreaMapManager()
     override fun processEntity(entity: Entity?, deltaTime: Float) {
 
         //This method will actually update the map? No?
