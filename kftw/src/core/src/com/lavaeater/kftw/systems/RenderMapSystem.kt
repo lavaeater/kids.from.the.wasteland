@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
 import com.lavaeater.kftw.map.AreaMapManager
+import com.lavaeater.kftw.map.TileKey
 import ktx.app.use
 import ktx.ashley.allOf
 import kotlin.math.roundToInt
@@ -46,12 +47,12 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera) : It
     }
 }
 
-fun OrthographicCamera.toTile(factor: Int) : Pair<Int, Int> {
+fun OrthographicCamera.toTile(factor: Int) : TileKey {
     return this.position.toTile(factor)
 }
 
-fun Vector3.toTile(factor: Int) : Pair<Int, Int> {
-    return Pair(this.tileX(factor), this.tileY(factor));
+fun Vector3.toTile(factor: Int) : TileKey {
+    return TileKey(this.tileX(factor), this.tileY(factor));
 }
 
 fun Vector3.tileX(factor: Int) : Int {

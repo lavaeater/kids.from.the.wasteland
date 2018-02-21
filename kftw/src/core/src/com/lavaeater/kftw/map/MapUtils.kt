@@ -39,13 +39,13 @@ fun Int.coordAtDistanceFrom(range:Int) : Int {
     return this + range
 }
 
-fun Pair<Int, Int>.isInRange(key : Pair<Int, Int>, range: Int) : Boolean {
-    return this.isInRange(key.first.getMin(range),
-            key.first.coordAtDistanceFrom(range),
-            key.second.getMin(range),
-            key.second.coordAtDistanceFrom(range))
+fun TileKey.isInRange(key : TileKey, range: Int) : Boolean {
+    return this.isInRange(key.x.getMin(range),
+            key.x.coordAtDistanceFrom(range),
+            key.y.getMin(range),
+            key.y.coordAtDistanceFrom(range))
 }
 
-fun Pair<Int, Int>.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
-    return (this.first in (minX)..(maxX) && this.second in (minY)..(maxY))
+fun TileKey.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
+    return (this.x in (minX)..(maxX) && this.y in (minY)..(maxY))
 }

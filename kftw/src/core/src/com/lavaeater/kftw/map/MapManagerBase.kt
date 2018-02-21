@@ -45,7 +45,7 @@ abstract class MapManagerBase: IMapManager {
 
     val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
     val heightInTiles = (GameManager.VIEWPORT_HEIGHT / GameManager.TILE_SIZE).roundToInt() + 5
-    var currentKey = Pair(-100,-100)
+    var currentKey = TileKey(-100,-100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
     val visibleTiles = mutableMapOf<TileKey, Tile>()
 
     fun getSubType() : String {
@@ -108,10 +108,6 @@ abstract class MapManagerBase: IMapManager {
         }
     }
 
-    open fun createTile(key: Pair<Int, Int>) : Tile {
-        return Tile(0, "water", "center1")
-    }
-
     fun getNeighbourDirection(inputKey : TileKey, otherKey : TileKey) : TileKey {
         return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
     }
@@ -122,6 +118,11 @@ abstract class MapManagerBase: IMapManager {
 
         //The mapValues function MUST return values, otherwise
         return crazyMapStructure.filter { entry -> some.contains(entry.key) }.mapValues{ crazyTileStructure[it.value]!! }
+    }
+
+    override fun getTileForPosition(position: Vector3): Tile {
+        val tileKey = position.toTile(GameManager.TILE_SIZE)
+        return crazyTileStructure[crazyMapStructure[tileKey]]!!
     }
 }
 

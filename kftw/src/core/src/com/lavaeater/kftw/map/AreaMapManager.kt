@@ -57,10 +57,10 @@ class AreaMapManager : MapManagerBase() {
         if (doWeNeedNewVisibleTiles(position)) {
             visibleTiles.clear()
             currentKey = position.toTile(GameManager.TILE_SIZE)
-            val minX = currentKey.first.coordAtDistanceFrom(-widthInTiles)
-            val maxX = currentKey.first.coordAtDistanceFrom(widthInTiles)
-            val minY = currentKey.second.coordAtDistanceFrom(-widthInTiles)
-            val maxY = currentKey.second.coordAtDistanceFrom(widthInTiles)
+            val minX = currentKey.x.coordAtDistanceFrom(-widthInTiles)
+            val maxX = currentKey.x.coordAtDistanceFrom(widthInTiles)
+            val minY = currentKey.y.coordAtDistanceFrom(-widthInTiles)
+            val maxY = currentKey.y.coordAtDistanceFrom(widthInTiles)
 
             for (x in minX..maxX)
                 (minY..maxY)
