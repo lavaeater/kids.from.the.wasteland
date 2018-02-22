@@ -1,5 +1,6 @@
 package com.lavaeater.kftw.components
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.map.MapManagerBase
@@ -15,7 +16,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   val range = 2
 
   fun log(message: String) {
-    brainLog += message + "\n"
+    Gdx.app.log("NPC", message)
   }
 
   fun lostInterest() {

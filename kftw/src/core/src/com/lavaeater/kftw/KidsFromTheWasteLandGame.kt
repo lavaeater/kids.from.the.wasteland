@@ -1,5 +1,7 @@
 package com.lavaeater.kftw
 
+import com.badlogic.gdx.Application
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.GameManager
@@ -25,6 +27,7 @@ class GameScreen : KtxScreen {
 class KidsFromTheWasteLandGame : KtxGame<Screen>() {
 
     override fun create() {
+        Gdx.app.logLevel = Application.LOG_INFO
         Assets.load()
         addScreen(GameScreen())
         setScreen<GameScreen>()

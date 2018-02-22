@@ -37,14 +37,14 @@ class NpcControlSystem : IteratingSystem(allOf(NpcComponent::class, TransformCom
 
   private fun walkToTile(foundTile: TileKey, transform: TransformComponent) {
     val desiredPos = foundTile.tileWorldCenter(GameManager.TILE_SIZE)
-    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 1f) //Take characters speed into consideration
-    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 1f)
+    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 0.05f) //Take characters speed into consideration
+    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 0.05f)
   }
 
   private fun comeWalkWithMe(npc: Npc, transform: TransformComponent) {
     //The Npc manages its own state, preferrably?
     val desiredPos = npc.wanderTarget.tileWorldCenter(GameManager.TILE_SIZE)
-    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 1f) //Take characters speed into consideration
-    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 1f)
+    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 0.1f) //Take characters speed into consideration
+    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 0.1f)
   }
 }

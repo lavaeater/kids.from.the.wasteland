@@ -8,7 +8,7 @@ import com.lavaeater.kftw.components.Npc
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class AiSystem : IntervalIteratingSystem(allOf(AiComponent::class).get(), 1f, 5) {
+class AiSystem : IntervalIteratingSystem(allOf(AiComponent::class).get(), 5f, 5) {
   val mapper = mapperFor<AiComponent<Npc>>()
 
   override fun processEntity(entity: Entity?) {
