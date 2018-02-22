@@ -13,7 +13,7 @@ import findtile:"com.lavaeater.kftw.ai.FindTile"
 
 # Tree definition (note that root is optional)
 root
-  selectora
+  selector
     sequence
       findtile
       walkto
