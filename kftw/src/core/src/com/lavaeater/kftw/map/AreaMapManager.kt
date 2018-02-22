@@ -27,28 +27,38 @@ class AreaMapManager : MapManagerBase() {
     }
 
     val scale = 40.0f
-    val numberOfTiles = 200
+    val numberOfTiles = 25
 
     init {
+
+        generateTilesFor(0,0)
+    }
+
+    override fun generateTilesFor(xCenter:Int, yCenter:Int) {
         var tileType: String
+        val newTiles = mutableListOf<TileKey>()
         for (x in -numberOfTiles..numberOfTiles)
             for (y in -numberOfTiles..numberOfTiles) {
-                val nX = x / scale
-                val nY = y / scale
-                val priority = getTilePriorityFromNoise(nX, nY)
-                tileType = terrains[priority]!!
-                val key = TileKey(x, y)
-                val subType = "center${MathUtils.random.nextInt(3) + 1}"
-                val possibleNewTile = Tile(priority, tileType, subType)
-                val newHashCode = possibleNewTile.hashCode()
-                if (!crazyTileStructure.containsKey(newHashCode)) {
-                    crazyTileStructure.put(newHashCode, possibleNewTile)
+                val offsetX = x + xCenter
+                val offsetY = y + yCenter
+                val key = TileKey(offsetX, offsetY)
+                if(!crazyMapStructure.containsKey(key)) {
+                    newTiles.add(key)
+                    val nX = offsetX / scale
+                    val nY = offsetY / scale
+                    val priority = getTilePriorityFromNoise(nX, nY)
+                    tileType = terrains[priority]!!
+                    val subType = "center${MathUtils.random.nextInt(3) + 1}"
+                    val possibleNewTile = Tile(priority, tileType, subType)
+                    val newHashCode = possibleNewTile.hashCode()
+                    if (!crazyTileStructure.containsKey(newHashCode)) {
+                        crazyTileStructure.put(newHashCode, possibleNewTile)
+                    }
+                    crazyMapStructure.put(key, newHashCode)
                 }
-                crazyMapStructure.put(key, newHashCode)
             }
 
-        crazyMapStructure.forEach {
-            setExtraSprites(it.key)
-        }
+        newTiles.forEach { setExtraSprites(it) }
+        newTiles.clear()
     }
 }

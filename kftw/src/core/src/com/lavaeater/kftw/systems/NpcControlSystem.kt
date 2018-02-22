@@ -1,8 +1,7 @@
 package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.Vector2
 import com.lavaeater.kftw.components.Npc
 import com.lavaeater.kftw.components.NpcComponent
@@ -13,13 +12,13 @@ import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
+import ktx.math
 
-class NpcControlSystem : IteratingSystem(allOf(NpcComponent::class, TransformComponent::class).get(), 10) {
-
+class NpcControlSystem : IntervalIteratingSystem(allOf(NpcComponent::class, TransformComponent::class).get(), 0.1f, 10) {
   val npcMapper = mapperFor<NpcComponent>()
   val transformMapper = mapperFor<TransformComponent>()
 
-  override fun processEntity(entity: Entity, deltaTime: Float) {
+  override fun processEntity(entity: Entity) {
     val npc = npcMapper[entity].npc
     val transform = transformMapper[entity]!!
 
@@ -36,15 +35,18 @@ class NpcControlSystem : IteratingSystem(allOf(NpcComponent::class, TransformCom
   }
 
   private fun walkToTile(foundTile: TileKey, transform: TransformComponent) {
-    val desiredPos = foundTile.tileWorldCenter(GameManager.TILE_SIZE)
-    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 0.01f) //Take characters speed into consideration
-    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 0.01f)
+      moveFromTo(transform, foundTile.tileWorldCenter(GameManager.TILE_SIZE))
   }
 
   private fun comeWalkWithMe(npc: Npc, transform: TransformComponent) {
     //The Npc manages its own state, preferrably?
-    val desiredPos = npc.wanderTarget.tileWorldCenter(GameManager.TILE_SIZE)
-    transform.x = MathUtils.lerp(transform.x, desiredPos.x, 0.01f) //Take characters speed into consideration
-    transform.y = MathUtils.lerp(transform.y, desiredPos.y, 0.01f)
+    moveFromTo(transform, npc.wanderTarget.tileWorldCenter(GameManager.TILE_SIZE))
+  }
+
+  private fun moveFromTo(transform: TransformComponent, desiredPos: Vector2) {
+//    val vel = desiredPos - transform.position
+
+//    transform.x += transform.x - desiredPos.x + 0.05f //Take characters speed into consideration
+//    transform.y += transform.y - desiredPos.y + 0.05f
   }
 }

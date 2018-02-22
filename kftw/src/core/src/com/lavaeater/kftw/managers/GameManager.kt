@@ -20,11 +20,31 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val npcTypes = mapOf("townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
+  val npcNames = mapOf(1 to "Brage",
+      2 to "Bork",
+      3 to "Rygar",
+      4 to "Bror",
+      5 to "Fjalar",
+      6 to "Yngve",
+      7 to "Huggvold",
+      8 to "Drago",
+      9 to "Marjasin",
+      10 to "Kingdok",
+      11 to "Ronja",
+      12 to "Signe",
+      13 to "Ylwa",
+      14 to "Skölda",
+      15 to "Tagg",
+      16 to "Farmor Ben",
+      17 to "Hypatia",
+      18 to "Wanja",
+      19 to "Erika",
+      20 to "Olga")
 
   init {
-//    val inputSystem = KeyboardCameraControlSystem(camera)
-//    Gdx.input.inputProcessor = inputSystem
-//    engine.addSystem(inputSystem)
+    val inputSystem = KeyboardCameraControlSystem(camera)
+    Gdx.input.inputProcessor = inputSystem
+    engine.addSystem(inputSystem)
     engine.addSystem(RenderMapSystem(batch, camera, MapManager))
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
@@ -34,7 +54,10 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     camera.position.x = 0f
     camera.position.y = 0f
-    engine.addSystem(FollowCameraSystem(camera, createNpc("townsfolk")))
+
+    for (i in 1..20)
+      createNpc(npcNames[i]!!, "townsfolk")
+//    engine.addSystem(FollowCameraSystem(camera, ))
 
   }
 
@@ -63,12 +86,12 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     }
   }
 
-  fun createNpc(type: String): Entity {
+  fun createNpc(name: String, type: String): Entity {
 
-    val npc = Npc(npcTypes[type]!!)
+    val npc = Npc(name, npcTypes[type]!!)
     val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_HIGH)
-    val tree    = parser.parse(reader, npc)
+    val tree = parser.parse(reader, npc)
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())

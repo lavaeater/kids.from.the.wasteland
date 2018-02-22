@@ -58,6 +58,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "io.github.libktx:ktx-app:$ktxVersion"
         compile "io.github.libktx:ktx-ashley:$ktxVersion"
+        compile "io.github.libktx:ktx-math:$ktxVersion"
     }
 }
 

@@ -10,7 +10,7 @@ import ktx.ashley.mapperFor
 class FollowCameraSystem(val camera: OrthographicCamera, val trackedEntity : Entity) : EntitySystem(300){
 
     val transformComponet = mapperFor<TransformComponent>()[trackedEntity]
-    val speed = 0.1f
+    val speed = 0.2f
     var y = 0f
     var x = 0f
 
