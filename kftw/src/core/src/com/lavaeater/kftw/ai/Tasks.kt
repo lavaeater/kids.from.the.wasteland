@@ -25,7 +25,7 @@ class LostInterest : LeafTask<Npc>() {
     return task!!
   }
 
-  val probability = 0.5f
+  val probability = 0.25f
   override fun execute(): Status {
     if(MathUtils.random() < probability) {
       //Change desired tile type to something other than we have now!

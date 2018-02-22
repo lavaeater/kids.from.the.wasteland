@@ -27,7 +27,7 @@ class AreaMapManager : MapManagerBase() {
     }
 
     val scale = 40.0f
-    val numberOfTiles = 25
+    val numberOfTiles = 200
 
     init {
         var tileType: String

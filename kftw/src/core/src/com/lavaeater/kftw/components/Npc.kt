@@ -10,7 +10,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "rock"
-  var currentTile = TileKey(0,0)
+  var currentTile = TileKey(0, 0)
   var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
   val range = 2
@@ -40,27 +40,29 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
     return false
   }
 
-  fun wander() : Boolean {
-    if(state == NpcState.Idle) //Idle means we're at the tile we're going for!
+  fun wander(): Boolean {
+    if (state == NpcState.Wandering && wanderTarget == currentTile) {
+      state = NpcState.Idle
       return false
-    if(state != NpcState.Idle && state != NpcState.Wandering) {
+    }
+
+    if (state == NpcState.Idle || state == NpcState.Scavenging)
+      return false //I am NOT doing this right, I realize. I have to read more
+
+    if (state != NpcState.Wandering) {
       val possibleTargets = GameManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
-      wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size -1)]
+      wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
       state = NpcState.Wandering
     }
-    if(state == NpcState.Wandering) {
-        if(wanderTarget == currentTile)
-            return false
-    }
+
     return true
   }
 
   fun walkTo(): Boolean {
-
     if (state != NpcState.WalkingTo)
       state = NpcState.WalkingTo
 
-    if(currentTile == foundTile) {
+    if (currentTile == foundTile) {
       foundTile = null
       state = NpcState.Idle //Need more states?
       return false //This returning false means we are at our destination!
@@ -69,14 +71,14 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   }
 
   fun findTile(): Boolean {
-    if(state == NpcState.WalkingTo) return true
+    if (state == NpcState.WalkingTo) return true
 
     state = NpcState.Searching
     foundTile = GameManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
     return foundTile != null
   }
 
-  var wanderTarget: TileKey = TileKey(0,0)
+  var wanderTarget: TileKey = TileKey(0, 0)
 }
 
 enum class NpcState {
