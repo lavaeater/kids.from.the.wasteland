@@ -41,7 +41,8 @@ class LostInterest : LeafTask<Npc>() {
 class Wander : LeafTask<Npc>() {
   override fun execute(): Status {
     val npc = `object`
-    npc.wander()
+    if(npc.wander())
+        return Status.SUCCEEDED //As long as the npc is wandering, we keep wandering. The npccontrol will find a tile and when there, will change to idle and then we fail!
     return Status.FAILED
   }
 

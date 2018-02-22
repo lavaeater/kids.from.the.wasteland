@@ -11,10 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.systems.AiSystem
-import com.lavaeater.kftw.systems.KeyboardCameraControlSystem
-import com.lavaeater.kftw.systems.RenderCharactersSystem
-import com.lavaeater.kftw.systems.RenderMapSystem
+import com.lavaeater.kftw.systems.*
 import ktx.ashley.entity
 
 class GameManager(val batch: SpriteBatch = SpriteBatch(),
@@ -25,17 +22,20 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
   val npcTypes = mapOf("townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
 
   init {
-    val inputSystem = KeyboardCameraControlSystem(camera)
-    Gdx.input.inputProcessor = inputSystem
-    engine.addSystem(inputSystem)
+//    val inputSystem = KeyboardCameraControlSystem(camera)
+//    Gdx.input.inputProcessor = inputSystem
+//    engine.addSystem(inputSystem)
     engine.addSystem(RenderMapSystem(batch, camera, MapManager))
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
+    engine.addSystem(NpcControlSystem())
 
     initMapEntity()
-    createNpc("townsfolk")
+
     camera.position.x = 0f
     camera.position.y = 0f
+    engine.addSystem(FollowCameraSystem(camera, createNpc("townsfolk")))
+
   }
 
   fun update(delta: Float) {
@@ -63,7 +63,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     }
   }
 
-  fun createNpc(type: String): Unit {
+  fun createNpc(type: String): Entity {
 
     val npc = Npc(npcTypes[type]!!)
     val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
@@ -77,6 +77,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       add(CharacterSpriteComponent(type))
     }
     engine.addEntity(entity)
+    return entity
   }
 
   companion object {

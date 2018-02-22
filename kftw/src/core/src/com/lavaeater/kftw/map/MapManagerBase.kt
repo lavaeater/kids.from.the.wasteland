@@ -116,9 +116,17 @@ abstract class MapManagerBase: IMapManager {
         return crazyTileStructure[crazyMapStructure[TileKey(x,y)]]!!
     }
 
+    override fun getTileAt(key: TileKey): Tile {
+        return crazyTileStructure[crazyMapStructure[key]]!!
+    }
+
     override fun findTileOfType(x: Int, y: Int, tileType: String, range: Int): TileKey? {
-      val tilesInRange = getTilesInRange(TileKey(x,y), range)
-      return tilesInRange.filter { it.value.tileType == tileType }.keys.firstOrNull()
+      return findTileOfType(TileKey(x,y), tileType, range)
+    }
+
+    override fun findTileOfType(key: TileKey, tileType: String, range: Int): TileKey? {
+        val tilesInRange = getTilesInRange(key, range)
+        return tilesInRange.filter { it.value.tileType == tileType }.keys.firstOrNull()
     }
 
     open fun getNeighbours(inKey:TileKey) : Map<TileKey, Tile> {
@@ -141,6 +149,14 @@ abstract class MapManagerBase: IMapManager {
           visibleTiles.putAll(getTilesInRange(currentKey, widthInTiles))
         }
       return visibleTiles
+    }
+
+    override fun getRingOfTiles(tileKey: TileKey, range: Int): List<TileKey> {
+        if(range < 1) return listOf()
+
+        val tilesInRange = getTilesInRange(tileKey, range)
+        val tilesToExclude = getTilesInRange(tileKey, range - 1)
+        return tilesInRange.keys.minus(tilesToExclude.keys).toList()
     }
 
     override fun getTilesInRange(posKey:TileKey, range:Int) : Map<TileKey, Tile> {

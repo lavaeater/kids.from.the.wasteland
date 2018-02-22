@@ -34,8 +34,8 @@ fun Int.getMinMax(range:Int) : Pair<Int, Int> {
 }
 
 fun TileKey.tileWorldCenter(tileSize:Int) : Vector2 {
-  val x = (this.x.toFloat() * GameManager.TILE_SIZE - GameManager.TILE_SIZE / 2)
-  val y = (this.y.toFloat() * GameManager.TILE_SIZE - GameManager.TILE_SIZE / 2)
+  val x = (this.x.toFloat() * tileSize - tileSize / 2)
+  val y = (this.y.toFloat() * tileSize - tileSize / 2)
   return Vector2(x,y)
 }
 

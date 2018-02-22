@@ -9,8 +9,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "rock"
-  var x: Int = 0
-  var y: Int = 0
+  var currentTile = TileKey(0,0)
   var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
   val range = 2
@@ -32,7 +31,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
     //A little goeey, but what's the best way?
     if (state == NpcState.Scavenging) return true // already scavening, early exit
 
-    if (GameManager.MapManager.getTileAt(x, y).tileType == desiredTileType) {
+    if (GameManager.MapManager.getTileAt(currentTile).tileType == desiredTileType) {
       state = NpcState.Scavenging
       log("I am now scavenging at $foundTile!!")
       return true
@@ -40,8 +39,19 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
     return false
   }
 
-  fun wander() {
-    state = NpcState.Wandering
+  fun wander() : Boolean {
+    if(state == NpcState.Idle) //Idle means we're at the tile we're going for!
+      return false
+    if(state != NpcState.Idle && state != NpcState.Wandering) {
+      val possibleTargets = GameManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
+      wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size -1)]
+      state = NpcState.Wandering
+    }
+    if(state == NpcState.Wandering) {
+        if(wanderTarget == currentTile)
+            return false
+    }
+    return true
   }
 
   fun walkTo(): Boolean {
@@ -53,9 +63,11 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
 
   fun findTile(): Boolean {
     state = NpcState.Searching
-    foundTile = GameManager.MapManager.findTileOfType(x, y, desiredTileType, range)
+    foundTile = GameManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
     return foundTile != null
   }
+
+  var wanderTarget: TileKey = TileKey(0,0)
 }
 
 enum class NpcState {

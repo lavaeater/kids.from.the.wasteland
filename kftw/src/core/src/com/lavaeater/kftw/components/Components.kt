@@ -8,5 +8,6 @@ class WorldMapComponent : Component
 class AiComponent<T>(val behaviorTree: BehaviorTree<T>) : Component
 class CharacterSpriteComponent(val spriteKey: String) : Component
 class NpcComponent(val npc: Npc):Component
+class CameraFollowComponent : Component
 
 data class NpcType(val strength:Int, val health: Int, val speed: Int, val attack: Int, val attackString: String)

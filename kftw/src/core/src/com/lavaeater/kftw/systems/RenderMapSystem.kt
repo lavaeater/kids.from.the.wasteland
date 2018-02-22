@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.WorldMapComponent
@@ -53,6 +54,17 @@ fun OrthographicCamera.toTile(factor: Int) : TileKey {
 
 fun Vector3.toTile(factor: Int) : TileKey {
     return TileKey(this.tileX(factor), this.tileY(factor));
+}
+
+fun Vector2.toTile(factor: Int) : TileKey {
+    return TileKey(this.tileX(factor), this.tileY(factor))
+}
+
+fun Vector2.tileX(factor:Int):Int {
+    return (this.x / factor).roundToInt()
+}
+fun Vector2.tileY(factor:Int) : Int {
+    return (this.y / factor).roundToInt()
 }
 
 fun Vector3.tileX(factor: Int) : Int {
