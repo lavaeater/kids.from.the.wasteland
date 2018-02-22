@@ -72,7 +72,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(AiComponent(npc, tree))
+      add(AiComponent(tree))
+      add(NpcComponent(npc))
       add(CharacterSpriteComponent(type))
     }
     engine.addEntity(entity)

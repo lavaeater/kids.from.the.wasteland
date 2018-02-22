@@ -11,7 +11,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   var desiredTileType = "rock"
   var x: Int = 0
   var y: Int = 0
-  var foundTile : TileKey? = null
+  var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
   val range = 2
 
@@ -30,8 +30,11 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
 
   fun scavenge(): Boolean {
     //A little goeey, but what's the best way?
+    if (state == NpcState.Scavenging) return true // already scavening, early exit
+
     if (GameManager.MapManager.getTileAt(x, y).tileType == desiredTileType) {
       state = NpcState.Scavenging
+      log("I am now scavenging at $foundTile!!")
       return true
     }
     return false
@@ -49,6 +52,7 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   }
 
   fun findTile(): Boolean {
+    state = NpcState.Searching
     foundTile = GameManager.MapManager.findTileOfType(x, y, desiredTileType, range)
     return foundTile != null
   }

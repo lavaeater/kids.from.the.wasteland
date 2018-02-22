@@ -1,5 +1,7 @@
 package com.lavaeater.kftw.map
 
+import com.badlogic.gdx.math.Vector2
+import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
 import kotlin.math.absoluteValue
 
@@ -29,6 +31,12 @@ fun Pair<Int, Int>.getYRange(range:Int) : Pair<Int,Int> {
 
 fun Int.getMinMax(range:Int) : Pair<Int, Int> {
     return Pair(this - range, this + range)
+}
+
+fun TileKey.tileWorldCenter(tileSize:Int) : Vector2 {
+  val x = (this.x.toFloat() * GameManager.TILE_SIZE - GameManager.TILE_SIZE / 2)
+  val y = (this.y.toFloat() * GameManager.TILE_SIZE - GameManager.TILE_SIZE / 2)
+  return Vector2(x,y)
 }
 
 fun Int.getMin(range:Int) : Int {
