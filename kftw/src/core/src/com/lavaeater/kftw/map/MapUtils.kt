@@ -6,7 +6,7 @@ import com.lavaeater.kftw.util.SimplexNoise
 import kotlin.math.absoluteValue
 
 data class TileKey(val x:Int, val y:Int)
-data class Tile(val priority : Int, val tileType:String, val subType: String, val extraSprites : MutableList<Pair<String, String>> = mutableListOf())
+data class Tile(val priority : Int, val tileType:String, val subType: String, val extraSprites : MutableList<Pair<String, String>> = mutableListOf(), var code:String)
 
 fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
     val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))).absoluteValue }
@@ -19,14 +19,6 @@ fun getNoiseNotAbs(x: Int, y: Int, vararg frequencies: Double): Double {
 
 fun getNoiseNotAbs(x: Float, y: Float, vararg frequencies: Double): Double {
     return frequencies.sumByDouble { it * (SimplexNoise.noise(x * (1 / it), y * (1 / it))) }
-}
-
-fun Pair<Int, Int>.getXRange(range:Int) : Pair<Int,Int> {
-    return this.first.getMinMax(range)
-}
-
-fun Pair<Int, Int>.getYRange(range:Int) : Pair<Int,Int> {
-    return this.second.getMinMax(range)
 }
 
 fun Int.getMinMax(range:Int) : Pair<Int, Int> {

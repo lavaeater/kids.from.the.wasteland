@@ -35,6 +35,12 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera, val 
                 sprite.setPosition(key.x*8f, key.y*8f)
                 sprite.draw(batch)
 
+                //Fix this
+                val west = tile.code[0]
+                val east = tile.code[1]
+                val north = tile.code[2]
+                val south= tile.code[3]
+
                 for(extra in tile.extraSprites) {
                     val extraSprite = Assets.sprites[extra.first]!![extra.second]!!
                     extraSprite.setPosition(key.x*8f, key.y*8f)

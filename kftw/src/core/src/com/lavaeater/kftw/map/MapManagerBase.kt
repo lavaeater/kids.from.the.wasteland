@@ -40,13 +40,29 @@ abstract class MapManagerBase : IMapManager {
   }
 
   //This should really be up to every implementation of a mapmanager
-  val crazyMapStructure = mutableMapOf<TileKey, Int>()
+  var currentMap = mutableMapOf<TileKey, Int>()
+
+  /*
+  Naah, fuck the arrays.
+  For now.
+
+  I will instead use a map of mapstructures, how fucking insane is THAT?
+   */
+
   val crazyTileStructure = mutableMapOf<Int, Tile>()
 
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
   val heightInTiles = (GameManager.VIEWPORT_HEIGHT / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
+  val scale = 40.0f
+  val numberOfTiles = 25
+  val neibOr =
+      mapOf(
+        -1 to 0,
+        1 to 0,
+        0 to -1,
+        0 to 1)
 
   fun getSubType(): String {
     return "center${MathUtils.random.nextInt(3) + 1}"
@@ -60,7 +76,7 @@ abstract class MapManagerBase : IMapManager {
   fun setExtraSprites(ourKey: TileKey) {
 
     //Make a copy of this tile for comparison later!
-    val tempTile = crazyTileStructure[crazyMapStructure[ourKey]]!!.copy(extraSprites = mutableListOf())
+    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy(extraSprites = mutableListOf())
 
     val nTiles = getNeighbours(ourKey)
 
@@ -99,13 +115,20 @@ abstract class MapManagerBase : IMapManager {
     }
     //Now, check if the hashcodes still match!
     val newHashCode = tempTile.hashCode()
-    if (crazyMapStructure[ourKey] != newHashCode) {
+    if (currentMap[ourKey] != newHashCode) {
       //Add this new tile to the tile storage!
       if (!crazyTileStructure.containsKey(newHashCode)) {
         crazyTileStructure.put(newHashCode, tempTile)
       }
-      crazyMapStructure[ourKey] = newHashCode
+      currentMap[ourKey] = newHashCode
     }
+  }
+
+  fun setCode(ourKey: TileKey) {
+    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy(code = "")
+    neibOr.mapNotNull {(x,y) ->
+      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]] }
+        .forEach { tempTile.code += it.priority }
   }
 
   fun getNeighbourDirection(inputKey: TileKey, otherKey: TileKey): TileKey {
@@ -113,11 +136,11 @@ abstract class MapManagerBase : IMapManager {
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
-    return crazyTileStructure[crazyMapStructure[TileKey(x, y)]]!!
+    return crazyTileStructure[currentMap[TileKey(x, y)]]!!
   }
 
   override fun getTileAt(key: TileKey): Tile {
-    return crazyTileStructure[crazyMapStructure[key]]!!
+    return crazyTileStructure[currentMap[key]]!!
   }
 
   override fun findTileOfType(x: Int, y: Int, tileType: String, range: Int): TileKey? {
@@ -131,15 +154,15 @@ abstract class MapManagerBase : IMapManager {
 
   open fun getNeighbours(inKey: TileKey): Map<TileKey, Tile> {
 
-    val some = simpleDirectionsInverse.values.map { crazyMapStructure.getTileKeyForDirection(inKey, it) }
+    val some = simpleDirectionsInverse.values.map { currentMap.getTileKeyForDirection(inKey, it) }
 
     //The mapValues function MUST return values, otherwise
-    return crazyMapStructure.filter { entry -> some.contains(entry.key) }.mapValues { crazyTileStructure[it.value]!! }
+    return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { crazyTileStructure[it.value]!! }
   }
 
   override fun getTileForPosition(position: Vector3): Tile {
     val tileKey = position.toTile(GameManager.TILE_SIZE)
-    return crazyTileStructure[crazyMapStructure[tileKey]]!!
+    return crazyTileStructure[currentMap[tileKey]]!!
   }
 
   override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
@@ -177,8 +200,8 @@ abstract class MapManagerBase : IMapManager {
     for (x in minX..maxX)
       (minY..maxY)
           .map { TileKey(x, it) }
-          .filter { crazyMapStructure.containsKey(it) }
-          .forEach { tilesInRange.put(it, crazyTileStructure[crazyMapStructure[it]!!]!!) }
+          .filter { currentMap.containsKey(it) }
+          .forEach { tilesInRange.put(it, crazyTileStructure[currentMap[it]!!]!!) }
     return tilesInRange
   }
 }

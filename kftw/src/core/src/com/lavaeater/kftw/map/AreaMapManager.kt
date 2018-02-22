@@ -1,9 +1,7 @@
 package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector3
-import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.systems.toTile
+import kotlin.system.measureTimeMillis
 
 class AreaMapManager : MapManagerBase() {
 
@@ -26,9 +24,6 @@ class AreaMapManager : MapManagerBase() {
         return priority
     }
 
-    val scale = 40.0f
-    val numberOfTiles = 25
-
     init {
 
         generateTilesFor(0,0)
@@ -42,7 +37,7 @@ class AreaMapManager : MapManagerBase() {
                 val offsetX = x + xCenter
                 val offsetY = y + yCenter
                 val key = TileKey(offsetX, offsetY)
-                if(!crazyMapStructure.containsKey(key)) {
+                if(!currentMap.containsKey(key)) {
                     newTiles.add(key)
                     val nX = offsetX / scale
                     val nY = offsetY / scale
@@ -54,11 +49,19 @@ class AreaMapManager : MapManagerBase() {
                     if (!crazyTileStructure.containsKey(newHashCode)) {
                         crazyTileStructure.put(newHashCode, possibleNewTile)
                     }
-                    crazyMapStructure.put(key, newHashCode)
+                    currentMap.put(key, newHashCode)
                 }
             }
 
-        newTiles.forEach { setExtraSprites(it) }
-        newTiles.clear()
+        val oldWay = measureTimeMillis {
+            newTiles.forEach { setExtraSprites(it) }
+        }
+
+        val newWay = measureTimeMillis {
+            newTiles.forEach {
+                setCode(it)
+            }
+        }
+       newTiles.clear()
     }
 }
