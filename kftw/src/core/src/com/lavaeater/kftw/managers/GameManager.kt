@@ -6,6 +6,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.components.*
@@ -13,9 +16,14 @@ import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.systems.*
 import ktx.ashley.entity
+import ktx.box2d.body
+import ktx.box2d.box
+import ktx.box2d.createWorld
+import ktx.math.vec2
 
 class GameManager(val batch: SpriteBatch = SpriteBatch(),
                   val engine: Engine = Engine(),
+                  val world: World = createWorld(),
                   val camera: OrthographicCamera = OrthographicCamera()) : Disposable {
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
@@ -101,6 +109,23 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     }
     engine.addEntity(entity)
     return entity
+  }
+
+  fun createBody(width:Float,
+                 height: Float,
+                 densityIn:Float,
+                 position: Vector2 = vec2(0f,0f)): Body {
+
+    val body = world.body {
+      box(width, height) {
+        density = densityIn
+      }
+    }
+// Adding box polygon fixture to an existing body:
+    val fixture = body.box(width, height) {
+      density = 40f
+    }
+    return body
   }
 
   companion object {
