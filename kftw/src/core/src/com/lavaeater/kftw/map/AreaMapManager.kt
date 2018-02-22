@@ -26,8 +26,8 @@ class AreaMapManager : MapManagerBase() {
         return priority
     }
 
-    val scale = 20.0f
-    val numberOfTiles = 50
+    val scale = 40.0f
+    val numberOfTiles = 25
 
     init {
         var tileType: String

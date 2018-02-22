@@ -56,13 +56,21 @@ class Npc(val npcType: NpcType, var strength: Int = npcType.strength, var health
   }
 
   fun walkTo(): Boolean {
-    if (!tileFound) return false
+
     if (state != NpcState.WalkingTo)
       state = NpcState.WalkingTo
+
+    if(currentTile == foundTile) {
+      foundTile = null
+      state = NpcState.Idle //Need more states?
+      return false //This returning false means we are at our destination!
+    }
     return true
   }
 
   fun findTile(): Boolean {
+    if(state == NpcState.WalkingTo) return true
+
     state = NpcState.Searching
     foundTile = GameManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
     return foundTile != null
