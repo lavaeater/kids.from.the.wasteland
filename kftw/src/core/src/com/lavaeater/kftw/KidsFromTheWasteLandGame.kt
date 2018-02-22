@@ -9,18 +9,18 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
 class GameScreen : KtxScreen {
-    val worldManager = GameManager()
+    private val gameManager = GameManager()
 
     override fun render(delta: Float) {
-        worldManager.update(delta)
+        gameManager.update(delta)
     }
     override fun resize(width: Int, height: Int) {
         super.resize(width, height)
-        worldManager.resize(width, height)
+        gameManager.resize(width, height)
     }
     override fun dispose() {
         super.dispose()
-        worldManager.dispose()
+        gameManager.dispose()
     }
 }
 

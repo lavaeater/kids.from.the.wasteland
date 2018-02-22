@@ -131,7 +131,7 @@ abstract class MapManagerBase : IMapManager {
 
   open fun getNeighbours(inKey: TileKey): Map<TileKey, Tile> {
 
-    val some = simpleDirectionsInverse.map { (direction, key) -> crazyMapStructure.getTileKeyForDirection(inKey, direction, key) }
+    val some = simpleDirectionsInverse.values.map { crazyMapStructure.getTileKeyForDirection(inKey, it) }
 
     //The mapValues function MUST return values, otherwise
     return crazyMapStructure.filter { entry -> some.contains(entry.key) }.mapValues { crazyTileStructure[it.value]!! }
@@ -183,7 +183,7 @@ abstract class MapManagerBase : IMapManager {
   }
 }
 
-fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, direction: String, directionKey: TileKey): TileKey {
+fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
   val entryKey = TileKey(key.x + directionKey.x, key.y + directionKey.y)
   return entryKey
 }

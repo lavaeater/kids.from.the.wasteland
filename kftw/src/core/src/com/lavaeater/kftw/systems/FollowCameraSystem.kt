@@ -15,8 +15,8 @@ class FollowCameraSystem(val camera: OrthographicCamera, val trackedEntity : Ent
     var x = 0f
 
     override fun update(deltaTime: Float) {
-        camera.position.x = MathUtils.lerp(camera.position.x, transformComponet.x, speed)
-        camera.position.y = MathUtils.lerp(camera.position.y, transformComponet.y, speed)
+        camera.position.x = MathUtils.lerp(camera.position.x, transformComponet.position.x, speed)
+        camera.position.y = MathUtils.lerp(camera.position.y, transformComponet.position.y, speed)
         camera.update(true)
     }
 }

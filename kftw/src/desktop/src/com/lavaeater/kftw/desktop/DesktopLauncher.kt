@@ -9,8 +9,8 @@ object DesktopLauncher {
     fun main(arg: Array<String>) {
         val config = LwjglApplicationConfiguration()
         config.fullscreen = false
-        config.width = 1024
-        config.height = 768
+        config.width = 2048
+        config.height = 1536
         config.vSyncEnabled = true
         LwjglApplication(KidsFromTheWasteLandGame(), config)
     }

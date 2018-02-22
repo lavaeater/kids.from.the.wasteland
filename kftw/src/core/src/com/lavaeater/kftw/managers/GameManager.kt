@@ -104,8 +104,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 64f
-    val VIEWPORT_WIDTH = 48f
+    val VIEWPORT_HEIGHT = 128f
+    val VIEWPORT_WIDTH = 96f
     val TILE_SIZE = 8
     val MapManager: IMapManager = AreaMapManager()
   }

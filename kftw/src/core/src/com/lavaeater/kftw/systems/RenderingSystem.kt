@@ -14,18 +14,24 @@ import ktx.ashley.mapperFor
 class RenderCharactersSystem(val batch: SpriteBatch, val camera : OrthographicCamera) : IteratingSystem(allOf(CharacterSpriteComponent::class, TransformComponent::class).get()) {
     val transformMapper = mapperFor<TransformComponent>()
     val spriteMapper = mapperFor<CharacterSpriteComponent>()
+    val renderQueue = mutableListOf<Entity>()
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
+        renderQueue.add(entity)
         val transform = transformMapper[entity]
         val spriteComponent = spriteMapper[entity]
         val sprite = Assets.sprites[spriteComponent.spriteKey]!!.entries.first().value //Just to test it
-        sprite.setPosition(transform.x, transform.y)
+        sprite.setPosition(transform.position.x, transform.position.y)
         batch.projectionMatrix = camera.combined
 
-        //This might be inefficient.
-        batch.use {
-            sprite.draw(batch)
-        }
+        sprite.draw(batch)
 
+
+    }
+
+    override fun update(deltaTime: Float) {
+        batch.use {
+            super.update(deltaTime)
+        }
     }
 }
