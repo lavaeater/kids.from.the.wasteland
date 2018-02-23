@@ -37,6 +37,16 @@ abstract class MapManagerBase : IMapManager {
         2 to "grass",
         1 to "desert",
         3 to "rock")
+
+    val neiborMap = mapOf(
+        Pair(0, 1) to "north",
+        Pair(1, 1) to "northeast",
+        Pair(1, 0) to "east",
+        Pair(1, -1) to "southeast",
+        Pair(0, -1) to "south",
+        Pair(-1, -1) to "southwest",
+        Pair(-1, 0) to "west",
+        Pair(-1, 1) to "northwest")
   }
 
   //This should really be up to every implementation of a mapmanager
@@ -59,10 +69,14 @@ abstract class MapManagerBase : IMapManager {
   val numberOfTiles = 25
   val neibOr =
       mapOf(
-        -1 to 0,
-        1 to 0,
-        0 to -1,
-        0 to 1)
+          0 to 1, //north
+          1 to 1, //northeast
+          1 to 0, //east
+          1 to -1, //southeast
+          0 to -1, //south
+          -1 to -1, //southwest
+          -1 to 0, //west
+          -1 to 1) //northwest
 
   fun getSubType(): String {
     return "center${MathUtils.random.nextInt(3) + 1}"
@@ -126,9 +140,10 @@ abstract class MapManagerBase : IMapManager {
 
   fun setCode(ourKey: TileKey) {
     val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy(code = "")
-    neibOr.mapNotNull {(x,y) ->
-      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]] }
-        .forEach { tempTile.code += it.priority }
+    neiborMap.keys.map { (x, y) ->
+      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
+    }
+        .forEach { tempTile.code += if(it != null) it.priority else 8 }
   }
 
   fun getNeighbourDirection(inputKey: TileKey, otherKey: TileKey): TileKey {
@@ -171,8 +186,7 @@ abstract class MapManagerBase : IMapManager {
       visibleTiles.clear()
       val range = (widthInTiles * 0.75).roundToInt()
       var vbt = getTilesInRange(currentKey, range)
-      if(vbt.size < (range * 2  * range * 2) - range)
-      {
+      if (vbt.size < (range * 2 * range * 2) - range) {
         generateTilesFor(currentKey.x, currentKey.y)
         vbt = getTilesInRange(currentKey, widthInTiles)
       }
