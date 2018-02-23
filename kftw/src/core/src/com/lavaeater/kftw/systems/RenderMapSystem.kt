@@ -62,7 +62,15 @@ fun String.codeToExtraTiles() : Map<String, String> {
 
     Most efficient way to do this?
      */
+    val shortCode = this.codeToShort()
+}
 
+fun Array<Char>.isDirectionEqual(dir1:Int, dir2:Int) : Boolean {
+    return this[dir1] == this[dir2]
+}
+
+fun String.codeToShort():Array<Char> {
+    return arrayOf(this[0], this[2],this[4],this[6])
 }
 
 fun OrthographicCamera.toTile(factor: Int) : TileKey {
