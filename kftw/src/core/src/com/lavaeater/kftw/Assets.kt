@@ -23,6 +23,9 @@ object Assets : Disposable {
     val characters = mapOf(
             "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp"))
     )
+
+    val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
+
     val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
 
     fun load(): AssetManager {

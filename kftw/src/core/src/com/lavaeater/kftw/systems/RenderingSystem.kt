@@ -25,8 +25,6 @@ class RenderCharactersSystem(val batch: SpriteBatch, val camera : OrthographicCa
         batch.projectionMatrix = camera.combined
 
         sprite.draw(batch)
-
-
     }
 
     override fun update(deltaTime: Float) {

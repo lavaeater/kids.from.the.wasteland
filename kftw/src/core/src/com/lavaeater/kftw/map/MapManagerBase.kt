@@ -2,8 +2,8 @@ package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
+import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.systems.codeToShort
 import com.lavaeater.kftw.systems.toTile
 import kotlin.math.roundToInt
 
@@ -28,10 +28,10 @@ abstract class MapManagerBase : IMapManager {
         TileKey(0, -1) to "north"
     )
     val simpleDirectionsInverse = mapOf(
+        "north" to TileKey(0, -1),
         "east" to TileKey(-1, 0),
         "south" to TileKey(0, 1),
-        "west" to TileKey(1, 0),
-        "north" to TileKey(0, -1))
+        "west" to TileKey(1, 0))
 
     val terrains = mapOf(
         0 to "water",
@@ -51,6 +51,12 @@ abstract class MapManagerBase : IMapManager {
         3 to "r"
     )
 
+    val shortLongTerrains = mapOf(
+       'w' to "water",
+       'd' to "desert",
+       'g' to "grass",
+       'r' to "rock")
+
     val neiborMap = mapOf(
         Pair(0, 1) to "north",
         Pair(1, 1) to "northeast",
@@ -60,17 +66,14 @@ abstract class MapManagerBase : IMapManager {
         Pair(-1, -1) to "southwest",
         Pair(-1, 0) to "west",
         Pair(-1, 1) to "northwest")
+
+    val noExtraSprites = hashSetOf<String>()
+
+    val scale = 40.0f
+    val numberOfTiles = 100
   }
 
-  //This should really be up to every implementation of a mapmanager
   var currentMap = mutableMapOf<TileKey, Int>()
-
-  /*
-  Naah, fuck the arrays.
-  For now.
-
-  I will instead use a map of mapstructures, how fucking insane is THAT?
-   */
 
   val crazyTileStructure = mutableMapOf<Int, Tile>()
 
@@ -78,18 +81,7 @@ abstract class MapManagerBase : IMapManager {
   val heightInTiles = (GameManager.VIEWPORT_HEIGHT / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
-  val scale = 40.0f
-  val numberOfTiles = 25
-  val neibOr =
-      mapOf(
-          0 to 1, //north
-          1 to 1, //northeast
-          1 to 0, //east
-          1 to -1, //southeast
-          0 to -1, //south
-          -1 to -1, //southwest
-          -1 to 0, //west
-          -1 to 1) //northwest
+
 
   fun getSubType(): String {
     return "center${MathUtils.random.nextInt(3) + 1}"
@@ -100,71 +92,73 @@ abstract class MapManagerBase : IMapManager {
     return !centerTileKey.isInRange(currentKey, 2)
   }
 
-  fun setExtraSprites(ourKey: TileKey) {
+  fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority:Int) {
 
-    //Make a copy of this tile for comparison later!
-    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy(extraSprites = mutableListOf())
+    //CHECK THE SHORT CODE - THAT IS THE RELEVANT CODE! THIS WILL WORK!
+    if(!noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode) ) {
+      val extraSprites = mutableListOf<Pair<String, String>>()
 
-    val nTiles = getNeighbours(ourKey)
+      val nTiles = getNeighbours(ourKey)
 
-    val diffTiles = nTiles.filter { it.value.tileType != tempTile.tileType && it.value.priority > tempTile.priority }
+      val diffTiles = nTiles.filter { it.value.tileType != tileType && it.value.priority > priority }
 
-    val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
+      val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
 
-    for (diffTile in diffTiles) {
-      val directionPair = getNeighbourDirection(ourKey, diffTile.key)
-      if (simpleDirections.containsKey(directionPair)) {
-        val diffDirection = simpleDirections[directionPair]!!
-        //Bam, just add it, then clean it up afterwards!
-        if (tempTile.extraSprites.any { it.first == diffTile.value.tileType }) {
-          for (extraSprite in tempTile.extraSprites.filter { it.first == diffTile.value.tileType }) {
+      for (diffTile in diffTiles) {
+        val directionPair = getNeighbourDirection(ourKey, diffTile.key)
+        if (simpleDirections.containsKey(directionPair)) {
+          val diffDirection = simpleDirections[directionPair]!!
+          //Bam, just add it, then clean it up afterwards!
+          if (extraSprites.any { it.first == diffTile.value.tileType }) {
+            for (extraSprite in extraSprites.filter { it.first == diffTile.value.tileType }) {
 
-            /*
+              /*
         This type of tile exists, it might actually be relevant to
         remove the existing one in favor of this one!
          */
-            if (weirdDirections.containsKey("$diffDirection${extraSprite.second}")) {
-              //Modify existing one, making it weird!
-              extraSpritesToRemove.add(extraSprite)
-              tempTile.extraSprites.add(Pair(extraSprite.first, weirdDirections["$diffDirection${extraSprite.second}"]!!))
-            } else {
-              tempTile.extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
+              if (weirdDirections.containsKey("$diffDirection${extraSprite.second}")) {
+                //Modify existing one, making it weird!
+                extraSpritesToRemove.add(extraSprite)
+                extraSprites.add(Pair(extraSprite.first, weirdDirections["$diffDirection${extraSprite.second}"]!!))
+              } else {
+                extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
+              }
             }
+          } else {
+            extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
           }
-        } else {
-          tempTile.extraSprites.add(Pair(diffTile.value.tileType, diffDirection))
         }
       }
-
-    }
-    for (extraSprite in extraSpritesToRemove) {
-      tempTile.extraSprites.remove(extraSprite)
-    }
-
-    //Now, check if the hashcodes still match!
-    val newHashCode = tempTile.hashCode()
-    if (currentMap[ourKey] != newHashCode) {
-      //Add this new tile to the tile storage!
-      if (!crazyTileStructure.containsKey(newHashCode)) {
-        crazyTileStructure.put(newHashCode, tempTile)
+      for (extraSprite in extraSpritesToRemove) {
+        extraSprites.remove(extraSprite)
       }
-      currentMap[ourKey] = newHashCode
+
+      if(extraSprites.any())
+        Assets.codeToExtraTiles.put(shortCode, extraSprites.map { Assets.sprites[it.first]!![it.second]!! })
+      else
+        noExtraSprites.add(shortCode)
     }
   }
 
   fun setCode(ourKey: TileKey) {
-    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy(code = "")
-    neiborMap.keys.map { (x, y) ->
-      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
-    }
-        .forEach { tempTile.code += if(it != null)
-        { if(tempTile.tileType != it.tileType) shortTerrains[it.priority]!! else "s" } else { "b"} }
-     crazyCodes.add(tempTile.code)
-    crazyShortCodes.add(tempTile.code.codeToShort())
-  }
 
-  val crazyCodes = hashSetOf<String>()
-  val crazyShortCodes = hashSetOf<String>()
+    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy()
+    neiborMap.keys.map { (x, y) ->
+      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]}
+        .forEach { tempTile.code += if(it != null) shortTerrains[it.priority]!! else "b" }
+
+    tempTile.shortCode = tempTile.code.toShortCode()
+
+      val newHashCode = tempTile.hashCode()
+      if (currentMap[ourKey] != newHashCode) {
+        //Add this new tile to the tile storage!
+        if (!crazyTileStructure.containsKey(newHashCode)) {
+          crazyTileStructure.put(newHashCode, tempTile)
+        }
+        currentMap[ourKey] = newHashCode
+      }
+    checkExtraSprites(ourKey, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+  }
 
   fun getNeighbourDirection(inputKey: TileKey, otherKey: TileKey): TileKey {
     return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)

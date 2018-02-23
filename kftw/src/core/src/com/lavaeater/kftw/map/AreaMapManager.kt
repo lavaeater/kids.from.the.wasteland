@@ -43,8 +43,9 @@ class AreaMapManager : MapManagerBase() {
                     val nY = offsetY / scale
                     val priority = getTilePriorityFromNoise(nX, nY)
                     tileType = terrains[priority]!!
+                    val code = shortTerrains[priority]!!
                     val subType = "center${MathUtils.random.nextInt(3) + 1}"
-                    val possibleNewTile = Tile(priority, tileType, subType)
+                    val possibleNewTile = Tile(priority, tileType, subType, code, code)
                     val newHashCode = possibleNewTile.hashCode()
                     if (!crazyTileStructure.containsKey(newHashCode)) {
                         crazyTileStructure.put(newHashCode, possibleNewTile)
@@ -52,18 +53,12 @@ class AreaMapManager : MapManagerBase() {
                     currentMap.put(key, newHashCode)
                 }
             }
-
-        val oldWay = measureTimeMillis {
-            newTiles.forEach { setExtraSprites(it) }
-        }
-
         val newWay = measureTimeMillis {
             newTiles.forEach {
                 setCode(it)
             }
         }
-        val count = crazyCodes.count()
-        val otherCount = crazyShortCodes.count()
+
        newTiles.clear()
     }
 }
