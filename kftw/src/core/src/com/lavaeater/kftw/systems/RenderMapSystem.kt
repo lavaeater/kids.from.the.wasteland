@@ -51,6 +51,20 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera, val 
     }
 }
 
+fun String.codeToExtraTiles() : Map<String, String> {
+    /*
+    The code is in chuncks, north to northwest, clockwise
+    for this purpose, we basically only care about... north, east, south, west, right?
+
+    The code is the type of tile in that direction
+
+    if north AND west are the grass, the map returned should be <"grass", "northwest">
+
+    Most efficient way to do this?
+     */
+
+}
+
 fun OrthographicCamera.toTile(factor: Int) : TileKey {
     return this.position.toTile(factor)
 }
