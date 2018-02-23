@@ -27,6 +27,7 @@ class GameScreen : KtxScreen {
 class KidsFromTheWasteLandGame : KtxGame<Screen>() {
 
     override fun create() {
+
         Gdx.app.logLevel = Application.LOG_INFO
         Assets.load()
         addScreen(GameScreen())

@@ -62,6 +62,8 @@ class AreaMapManager : MapManagerBase() {
                 setCode(it)
             }
         }
+        val count = crazyCodes.count()
+        val otherCount = crazyShortCodes.count()
        newTiles.clear()
     }
 }

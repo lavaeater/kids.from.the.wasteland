@@ -50,27 +50,31 @@ class RenderMapSystem(val batch:SpriteBatch, val camera:OrthographicCamera, val 
         }
     }
 }
-
-fun String.codeToExtraTiles() : Map<String, String> {
-    /*
-    The code is in chuncks, north to northwest, clockwise
-    for this purpose, we basically only care about... north, east, south, west, right?
-
-    The code is the type of tile in that direction
-
-    if north AND west are the grass, the map returned should be <"grass", "northwest">
-
-    Most efficient way to do this?
-     */
-    val shortCode = this.codeToShort()
-}
+//
+//fun String.codeToExtraTiles() : Map<String, String> {
+//    /*
+//    The code is in chuncks, north to northwest, clockwise
+//    for this purpose, we basically only care about... north, east, south, west, right?
+//
+//    The code is the type of tile in that direction
+//
+//    if north AND west are the grass, the map returned should be <"grass", "northwest">
+//
+//    Most efficient way to do this?
+//     */
+//    val shortCode = this.codeToShort()
+//}
 
 fun Array<Char>.isDirectionEqual(dir1:Int, dir2:Int) : Boolean {
     return this[dir1] == this[dir2]
 }
 
-fun String.codeToShort():Array<Char> {
+fun String.codeToShortArr():Array<Char> {
     return arrayOf(this[0], this[2],this[4],this[6])
+}
+
+fun String.codeToShort():String {
+    return "${this[0]}${this[2]}${this[4]}${this[6]}"
 }
 
 fun OrthographicCamera.toTile(factor: Int) : TileKey {

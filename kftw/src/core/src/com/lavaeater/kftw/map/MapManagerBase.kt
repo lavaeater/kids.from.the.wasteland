@@ -3,6 +3,7 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.systems.codeToShort
 import com.lavaeater.kftw.systems.toTile
 import kotlin.math.roundToInt
 
@@ -34,9 +35,21 @@ abstract class MapManagerBase : IMapManager {
 
     val terrains = mapOf(
         0 to "water",
-        2 to "grass",
         1 to "desert",
+        2 to "grass",
         3 to "rock")
+    val terrainPriorities = mapOf(
+        "water" to 0,
+        "desert" to 1,
+        "grass" to 2,
+        "rock" to 3)
+
+    val shortTerrains = mapOf(
+        0 to "w",
+        1 to "d",
+        2 to "g",
+        3 to "r"
+    )
 
     val neiborMap = mapOf(
         Pair(0, 1) to "north",
@@ -127,6 +140,7 @@ abstract class MapManagerBase : IMapManager {
     for (extraSprite in extraSpritesToRemove) {
       tempTile.extraSprites.remove(extraSprite)
     }
+
     //Now, check if the hashcodes still match!
     val newHashCode = tempTile.hashCode()
     if (currentMap[ourKey] != newHashCode) {
@@ -143,8 +157,14 @@ abstract class MapManagerBase : IMapManager {
     neiborMap.keys.map { (x, y) ->
       crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
     }
-        .forEach { tempTile.code += if(it != null) it.priority else 8 }
+        .forEach { tempTile.code += if(it != null)
+        { if(tempTile.tileType != it.tileType) shortTerrains[it.priority]!! else "s" } else { "b"} }
+     crazyCodes.add(tempTile.code)
+    crazyShortCodes.add(tempTile.code.codeToShort())
   }
+
+  val crazyCodes = hashSetOf<String>()
+  val crazyShortCodes = hashSetOf<String>()
 
   fun getNeighbourDirection(inputKey: TileKey, otherKey: TileKey): TileKey {
     return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
