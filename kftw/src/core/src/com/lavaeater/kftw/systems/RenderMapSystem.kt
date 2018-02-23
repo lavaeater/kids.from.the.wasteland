@@ -74,7 +74,7 @@ fun String.codeToShortArr():Array<Char> {
 }
 
 fun String.codeFormatting() {
-    
+
 }
 
 fun String.codeToShort():String {
