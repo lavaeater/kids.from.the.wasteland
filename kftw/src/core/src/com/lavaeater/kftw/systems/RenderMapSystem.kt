@@ -73,6 +73,10 @@ fun String.codeToShortArr():Array<Char> {
     return arrayOf(this[0], this[2],this[4],this[6])
 }
 
+fun String.codeFormatting() {
+    
+}
+
 fun String.codeToShort():String {
     return "${this[0]}${this[2]}${this[4]}${this[6]}"
 }
