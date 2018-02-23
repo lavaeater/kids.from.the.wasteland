@@ -70,7 +70,7 @@ abstract class MapManagerBase : IMapManager {
     val noExtraSprites = hashSetOf<String>()
 
     val scale = 40.0f
-    val numberOfTiles = 100
+    val numberOfTiles = 200
   }
 
   var currentMap = mutableMapOf<TileKey, Int>()
@@ -90,6 +90,10 @@ abstract class MapManagerBase : IMapManager {
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
     return !centerTileKey.isInRange(currentKey, 2)
+  }
+
+  fun fixHitBox(key: TileKey) {
+
   }
 
   fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority:Int) {

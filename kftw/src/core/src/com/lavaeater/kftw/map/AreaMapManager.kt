@@ -56,6 +56,13 @@ class AreaMapManager : MapManagerBase() {
         val newWay = measureTimeMillis {
             newTiles.forEach {
                 setCode(it)
+
+            }
+        }
+
+        val hitBox = measureTimeMillis {
+            newTiles.forEach {
+                fixHitBox(it)
             }
         }
 
