@@ -10,69 +10,69 @@ import com.badlogic.gdx.utils.Disposable
  * Created by barry on 12/9/15 @ 11:17 PM.
  */
 object Assets : Disposable {
-    lateinit var am: AssetManager
-    val atlases = mapOf(
-            "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
-            "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
-            "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
-            "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
-            "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
-            "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
-            "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  lateinit var am: AssetManager
+  val atlases = mapOf(
+      "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
+      "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
+      "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
+      "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
+      "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
+      "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
+      "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
 
-    val characters = mapOf(
-            "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp"))
-    )
+  val characters = mapOf(
+      "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
+      "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
+  )
 
-    val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
+  val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
 
-    val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
+  val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
 
-    fun load(): AssetManager {
-        am = AssetManager()
+  fun load(): AssetManager {
+    am = AssetManager()
 
-        initializeMapTiles()
-        initializeCharacterSprites()
+    initializeMapTiles()
+    initializeCharacterSprites()
 
-        return am
+    return am
+  }
+
+  private fun initializeCharacterSprites() {
+    for (atlasMap in characters) {
+      val atlas = atlasMap.value
+      sprites.put(atlasMap.key, hashMapOf())
+      for (region in atlas.regions) {
+        val sprite = atlas.createSprite(region.name)
+        sprite.setSize(4f, 4.5f)
+        sprites[atlasMap.key]!!.put(region.name, sprite)
+      }
     }
+  }
 
-    private fun initializeCharacterSprites() {
-        for (atlasMap in characters) {
-            val atlas = atlasMap.value
-            sprites.put(atlasMap.key, hashMapOf())
-            for(region in atlas.regions)
-            {
-                val sprite = atlas.createSprite(region.name)
-                sprite.setSize(4f,4.5f)
-                sprites[atlasMap.key]!!.put(region.name, sprite)
-            }
+  private fun initializeMapTiles() {
+    var yFactor = 1f
+    var xFactor = 1f
+    for (atlasMap in atlases) {
+      val atlas = atlasMap.value
+      sprites.put(atlasMap.key, hashMapOf())
+      for (region in atlas.regions) {
+        if (region.name != "blank") {
+          val sprite = atlas.createSprite(region.name)
+          sprite.setSize(8f, 8f)
+          sprite.x = xFactor * 8f
+          sprite.y = yFactor * 8f
+          sprites[atlasMap.key]!!.put(region.name, sprite)
+          yFactor++
         }
+      }
+      xFactor++
+      yFactor = 1f
     }
+  }
 
-    private fun initializeMapTiles() {
-        var yFactor = 1f
-        var xFactor = 1f
-        for (atlasMap in atlases) {
-            val atlas = atlasMap.value
-            sprites.put(atlasMap.key, hashMapOf())
-            for (region in atlas.regions) {
-                if (region.name != "blank") {
-                    val sprite = atlas.createSprite(region.name)
-                    sprite.setSize(8f, 8f)
-                    sprite.x = xFactor * 8f
-                    sprite.y = yFactor * 8f
-                    sprites[atlasMap.key]!!.put(region.name, sprite)
-                    yFactor++
-                }
-            }
-            xFactor++
-            yFactor = 1f
-        }
-    }
-
-    override fun dispose() {
-        for(atlas in atlases.values)
-            atlas.dispose()
-    }
+  override fun dispose() {
+    for (atlas in atlases.values)
+      atlas.dispose()
+  }
 }

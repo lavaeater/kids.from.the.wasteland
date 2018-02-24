@@ -50,3 +50,7 @@ class NpcControlSystem : IteratingSystem(allOf(NpcComponent::class, TransformCom
     transform.position += vel * deltaTime
   }
 }
+
+fun Vector2.directionalVelocity(velocity : Float) : Vector2 {
+  return (vec2(0f,0f) - this).nor() * velocity
+}

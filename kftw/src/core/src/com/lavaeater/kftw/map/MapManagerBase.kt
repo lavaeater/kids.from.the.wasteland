@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.GameManager.Companion.createBody
 import com.lavaeater.kftw.systems.toTile
 import ktx.box2d.body
 import ktx.box2d.box
@@ -108,27 +109,10 @@ abstract class MapManagerBase(val world: World) : IMapManager {
           GameManager.TILE_SIZE.toFloat(),
           GameManager.TILE_SIZE.toFloat(),
           10f,
-          pos)
+          pos,
+          BodyDef.BodyType.StaticBody)
       hitBoxes[key] = hitBox
     }
-  }
-
-  fun createBody(width: Float,
-                 height: Float,
-                 densityIn: Float,
-                 position: Vector2): Body {
-
-    val body = world.body {
-      this.position.set(position)
-      angle = 0f
-      fixedRotation = true
-      type = BodyDef.BodyType.StaticBody
-
-      box(width, height) {
-        density = densityIn
-      }
-    }
-    return body
   }
 
   fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority: Int) {

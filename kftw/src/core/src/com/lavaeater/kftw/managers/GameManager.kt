@@ -8,16 +8,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.systems.*
+import ktx.ashley.add
 import ktx.ashley.entity
 import ktx.box2d.body
-import ktx.box2d.box
 import ktx.box2d.createWorld
 import ktx.math.vec2
 
@@ -49,15 +49,19 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       20 to "Olga")
 
   init {
-    val inputSystem = KeyboardCameraControlSystem(camera)
-    Gdx.input.inputProcessor = inputSystem
-    engine.addSystem(inputSystem)
+//    val inputSystem = KeyboardCameraControlSystem(camera)
+//    Gdx.input.inputProcessor = inputSystem
     engine.addSystem(RenderMapSystem(batch, camera, MapManager))
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
     engine.addSystem(NpcControlSystem())
     engine.addSystem(PhysicsSystem(world))
     engine.addSystem(PhysicsDebugSystem(world, camera))
+
+    engine.addSystem(FollowCameraSystem(camera, addHero()))
+    val inputSystem = KeyboardCharacterControlSystem()
+    Gdx.input.inputProcessor = inputSystem
+    engine.addSystem(inputSystem)
 
     initMapEntity()
 
@@ -66,6 +70,19 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     for (i in 1..20)
       createNpc(npcNames[i]!!, "townsfolk")
+
+  }
+
+  private fun addHero() : Entity {
+
+    val entity = engine.createEntity().apply {
+      add(TransformComponent())
+      add(CharacterSpriteComponent("femaleranger"))
+      add(KeyboardControlComponent())
+      add(Box2dBody(createBody(2f, 2.5f, 15f, vec2(0f,0f), BodyDef.BodyType.DynamicBody)))
+    }
+    engine.addEntity(entity)
+    return entity
   }
 
   fun update(delta: Float) {
@@ -116,5 +133,23 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     val TILE_SIZE = 8
     val world = createWorld()
     val MapManager: IMapManager = AreaMapManager(world)
+
+    fun createBody(width: Float,
+                   height: Float,
+                   densityIn: Float,
+                   position: Vector2,
+                   bodyType: BodyDef.BodyType): Body {
+
+      val body = world.body {
+        this.position.set(position)
+        angle = 0f
+        fixedRotation = true
+        type = bodyType
+        box(width, height) {
+          density = densityIn
+        }
+      }
+      return body
+    }
   }
 }

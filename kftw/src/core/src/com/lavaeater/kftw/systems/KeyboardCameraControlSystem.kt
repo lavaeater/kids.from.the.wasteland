@@ -39,3 +39,4 @@ class KeyboardCameraControlSystem(val camera: OrthographicCamera):
         return true
     }
 }
+
