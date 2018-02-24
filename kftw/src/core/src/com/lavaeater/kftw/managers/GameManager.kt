@@ -56,8 +56,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
     engine.addSystem(NpcControlSystem())
-//    engine.addSystem(PhysicsSystem(world))
-//    engine.addSystem(PhysicsDebugSystem(world, camera))
+    engine.addSystem(PhysicsSystem(world))
+    engine.addSystem(PhysicsDebugSystem(world, camera))
 
     initMapEntity()
 

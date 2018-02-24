@@ -57,7 +57,6 @@ class AreaMapManager(world: World) : MapManagerBase(world) {
         val newWay = measureTimeMillis {
             newTiles.forEach {
                 setCode(it)
-
             }
         }
        newTiles.clear()

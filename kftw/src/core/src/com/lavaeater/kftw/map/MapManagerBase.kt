@@ -95,8 +95,10 @@ abstract class MapManagerBase(val world: World) : IMapManager {
   }
 
   fun checkHitBoxes() {
-    val impassibleTiles = visibleTiles.filter {
-      it.value.priority == 0 || it.value.priority == 3 }.filter {
+    val impassibleTiles = visibleTiles
+        .filter {
+      (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain() }
+        .filter {
       !hitBoxes.containsKey(it.key) }
 
     for ((key, tile) in impassibleTiles) {

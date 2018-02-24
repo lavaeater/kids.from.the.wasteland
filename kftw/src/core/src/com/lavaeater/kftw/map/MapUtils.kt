@@ -21,6 +21,10 @@ fun getNoiseNotAbs(x: Float, y: Float, vararg frequencies: Double): Double {
     return frequencies.sumByDouble { it * (SimplexNoise.noise(x * (1 / it), y * (1 / it))) }
 }
 
+fun String.isOneTerrain() : Boolean {
+  return this == "ggggg" || this == "ddddd" || this == "wwwww" || this == "rrrrr"
+}
+
 fun Int.getMinMax(range:Int) : Pair<Int, Int> {
     return Pair(this - range, this + range)
 }
