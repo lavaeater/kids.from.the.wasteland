@@ -23,7 +23,6 @@ import ktx.math.vec2
 
 class GameManager(val batch: SpriteBatch = SpriteBatch(),
                   val engine: Engine = Engine(),
-                  val world: World = createWorld(),
                   val camera: OrthographicCamera = OrthographicCamera()) : Disposable {
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
@@ -57,6 +56,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
     engine.addSystem(NpcControlSystem())
+//    engine.addSystem(PhysicsSystem(world))
+//    engine.addSystem(PhysicsDebugSystem(world, camera))
 
     initMapEntity()
 
@@ -65,8 +66,6 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     for (i in 1..20)
       createNpc(npcNames[i]!!, "townsfolk")
-//    engine.addSystem(FollowCameraSystem(camera, ))
-
   }
 
   fun update(delta: Float) {
@@ -111,27 +110,11 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     return entity
   }
 
-  fun createBody(width:Float,
-                 height: Float,
-                 densityIn:Float,
-                 position: Vector2 = vec2(0f,0f)): Body {
-
-    val body = world.body {
-      box(width, height) {
-        density = densityIn
-      }
-    }
-// Adding box polygon fixture to an existing body:
-    val fixture = body.box(width, height) {
-      density = 40f
-    }
-    return body
-  }
-
   companion object {
     val VIEWPORT_HEIGHT = 128f
     val VIEWPORT_WIDTH = 96f
     val TILE_SIZE = 8
-    val MapManager: IMapManager = AreaMapManager()
+    val world = createWorld()
+    val MapManager: IMapManager = AreaMapManager(world)
   }
 }

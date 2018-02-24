@@ -1,12 +1,8 @@
 package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.Vector2
-import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
 import kotlin.math.absoluteValue
-
-data class TileKey(val x:Int, val y:Int)
-data class Tile(val priority : Int, val tileType:String, val subType: String, var code :String ="", var shortCode : String = "")
 
 fun String.toShortCode() : String {
   return "${this[0]}${this[1]}${this[3]}${this[5]}${this[7]}"
@@ -52,4 +48,9 @@ fun TileKey.isInRange(key : TileKey, range: Int) : Boolean {
 
 fun TileKey.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
     return (this.x in (minX)..(maxX) && this.y in (minY)..(maxY))
+}
+
+fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
+  val entryKey = TileKey(key.x + directionKey.x, key.y + directionKey.y)
+  return entryKey
 }

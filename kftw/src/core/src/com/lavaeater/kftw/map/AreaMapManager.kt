@@ -1,9 +1,10 @@
 package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.physics.box2d.World
 import kotlin.system.measureTimeMillis
 
-class AreaMapManager : MapManagerBase() {
+class AreaMapManager(world: World) : MapManagerBase(world) {
 
     fun getTilePriorityFromNoise(x: Float, y: Float): Int {
 
@@ -59,13 +60,6 @@ class AreaMapManager : MapManagerBase() {
 
             }
         }
-
-        val hitBox = measureTimeMillis {
-            newTiles.forEach {
-                fixHitBox(it)
-            }
-        }
-
        newTiles.clear()
     }
 }

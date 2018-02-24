@@ -1,13 +1,20 @@
 package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.systems.toTile
+import ktx.box2d.body
+import ktx.box2d.box
+import ktx.math.vec2
 import kotlin.math.roundToInt
 
-abstract class MapManagerBase : IMapManager {
+abstract class MapManagerBase(val world: World) : IMapManager {
 
   companion object {
     val weirdDirections = mapOf(
@@ -52,10 +59,10 @@ abstract class MapManagerBase : IMapManager {
     )
 
     val shortLongTerrains = mapOf(
-       'w' to "water",
-       'd' to "desert",
-       'g' to "grass",
-       'r' to "rock")
+        'w' to "water",
+        'd' to "desert",
+        'g' to "grass",
+        'r' to "rock")
 
     val neiborMap = mapOf(
         Pair(0, 1) to "north",
@@ -76,30 +83,56 @@ abstract class MapManagerBase : IMapManager {
   var currentMap = mutableMapOf<TileKey, Int>()
 
   val crazyTileStructure = mutableMapOf<Int, Tile>()
+  val hitBoxes = mutableMapOf<TileKey, Body>()
 
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
-  val heightInTiles = (GameManager.VIEWPORT_HEIGHT / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
 
-
-  fun getSubType(): String {
-    return "center${MathUtils.random.nextInt(3) + 1}"
-  }
-
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
-    return !centerTileKey.isInRange(currentKey, 2)
+    return !centerTileKey.isInRange(currentKey, 3)
   }
 
-  fun fixHitBox(key: TileKey) {
+  fun checkHitBoxes() {
+    val impassibleTiles = visibleTiles.filter {
+      it.value.priority == 0 || it.value.priority == 3 }.filter {
+      !hitBoxes.containsKey(it.key) }
 
+    for ((key, tile) in impassibleTiles) {
+      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+      val hitBox = createBody(
+          GameManager.TILE_SIZE.toFloat(),
+          GameManager.TILE_SIZE.toFloat(),
+          10f,
+          pos)
+      hitBoxes[key] = hitBox
+    }
   }
 
-  fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority:Int) {
+  fun createBody(width: Float,
+                 height: Float,
+                 densityIn: Float,
+                 position: Vector2): Body {
+
+    val body = world.body {
+      this.position.set(position)
+      angle = 0f
+      fixedRotation = true
+      type = BodyDef.BodyType.StaticBody
+
+      box(width, height) {
+        density = densityIn
+      }
+    }
+    return body
+  }
+
+  fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority: Int) {
 
     //CHECK THE SHORT CODE - THAT IS THE RELEVANT CODE! THIS WILL WORK!
-    if(!noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode) ) {
+    if (!noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
       val extraSprites = mutableListOf<Pair<String, String>>()
 
       val nTiles = getNeighbours(ourKey)
@@ -137,7 +170,7 @@ abstract class MapManagerBase : IMapManager {
         extraSprites.remove(extraSprite)
       }
 
-      if(extraSprites.any())
+      if (extraSprites.any())
         Assets.codeToExtraTiles.put(shortCode, extraSprites.map { Assets.sprites[it.first]!![it.second]!! })
       else
         noExtraSprites.add(shortCode)
@@ -148,19 +181,20 @@ abstract class MapManagerBase : IMapManager {
 
     val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy()
     neiborMap.keys.map { (x, y) ->
-      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]}
-        .forEach { tempTile.code += if(it != null) shortTerrains[it.priority]!! else "b" }
+      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
+    }
+        .forEach { tempTile.code += if (it != null) shortTerrains[it.priority]!! else "b" }
 
     tempTile.shortCode = tempTile.code.toShortCode()
 
-      val newHashCode = tempTile.hashCode()
-      if (currentMap[ourKey] != newHashCode) {
-        //Add this new tile to the tile storage!
-        if (!crazyTileStructure.containsKey(newHashCode)) {
-          crazyTileStructure.put(newHashCode, tempTile)
-        }
-        currentMap[ourKey] = newHashCode
+    val newHashCode = tempTile.hashCode()
+    if (currentMap[ourKey] != newHashCode) {
+      //Add this new tile to the tile storage!
+      if (!crazyTileStructure.containsKey(newHashCode)) {
+        crazyTileStructure.put(newHashCode, tempTile)
       }
+      currentMap[ourKey] = newHashCode
+    }
     checkExtraSprites(ourKey, tempTile.shortCode, tempTile.tileType, tempTile.priority)
   }
 
@@ -209,6 +243,7 @@ abstract class MapManagerBase : IMapManager {
         vbt = getTilesInRange(currentKey, widthInTiles)
       }
       visibleTiles.putAll(vbt)
+      checkHitBoxes()
     }
     return visibleTiles
   }
@@ -236,9 +271,4 @@ abstract class MapManagerBase : IMapManager {
           .forEach { tilesInRange.put(it, crazyTileStructure[currentMap[it]!!]!!) }
     return tilesInRange
   }
-}
-
-fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
-  val entryKey = TileKey(key.x + directionKey.x, key.y + directionKey.y)
-  return entryKey
 }
