@@ -61,25 +61,25 @@ object Assets : Disposable {
 
       spriteCollection[IDLE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(IDLE) }) {
-        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name))
+        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
       }
       spriteCollection[WALK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(WALK) }) {
-        spriteCollection[WALK]!!.add(atlas.createSprite(region.name))
+        spriteCollection[WALK]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
       }
       spriteCollection[GESTURE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(GESTURE) }) {
-        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name))
+        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
       }
 
       spriteCollection[ATTACK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(ATTACK) }) {
-        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name))
+        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
       }
 
       spriteCollection[DEATH] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(DEATH) }) {
-        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name))
+        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
       }
     }
     animatedCharacterSprites.putAll(finalMap)

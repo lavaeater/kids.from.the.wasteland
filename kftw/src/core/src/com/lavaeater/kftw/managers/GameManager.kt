@@ -98,7 +98,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(CharacterSpriteComponent("femaleranger"))
+      add(CharacterSpriteComponent("femalerogue", true))
       add(KeyboardControlComponent())
       add(Box2dBodyComponent(createBody(2f, 2.5f, 15f, vec2(0f,0f), BodyDef.BodyType.DynamicBody)))
     }

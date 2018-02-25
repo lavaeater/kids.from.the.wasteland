@@ -10,7 +10,11 @@ import java.util.*
 class TransformComponent(var position: Vector2 = vec2(0f,0f), var rotation:Float = 0f): Component
 class WorldMapComponent : Component
 class AiComponent<T>(val behaviorTree: BehaviorTree<T>) : Component
-class CharacterSpriteComponent(val spriteKey: String) : Component
+class CharacterSpriteComponent(val spriteKey: String,
+                               val animated:Boolean = false,
+                               var currentAnim:String = "idle",
+                               var currentIndex : Int = 0,
+                               var deltaTime: Float = 0f) : Component
 class AnimatedCharacterSpriteComponent(val spriteKey: String) : Component
 class NpcComponent(val npc: Npc):Component
 class CameraFollowComponent : Component
