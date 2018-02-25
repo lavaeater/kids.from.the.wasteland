@@ -1,7 +1,6 @@
 package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -11,22 +10,6 @@ import com.lavaeater.kftw.components.TransformComponent
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
-
-class EntityYOrderComparator : Comparator<Entity> {
-
-  val transMpr = mapperFor<TransformComponent>()
-
-  override fun compare(o1: Entity?, o2: Entity?): Int {
-    if (o1 != null || o2 != null) {
-      val t1 = transMpr[o1]!!
-      val t2 = transMpr[o2]!!
-      if (t1.position.y == t2.position.y) return 0
-      return if (t1.position.y > t2.position.y) -1 else 1
-    }
-    return 0
-  }
-
-}
 
 class RenderCharactersSystem(val batch: SpriteBatch, val camera: OrthographicCamera) :
     SortedIteratingSystem(allOf(CharacterSpriteComponent::class,
