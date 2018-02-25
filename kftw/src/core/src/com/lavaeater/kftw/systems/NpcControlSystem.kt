@@ -2,10 +2,13 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.ai.msg.Telegram
+import com.badlogic.gdx.ai.msg.Telegraph
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.Messages
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
 import ktx.ashley.allOf
@@ -14,7 +17,14 @@ import ktx.math.*
 
 class NpcControlSystem : IteratingSystem(allOf(
     NpcComponent::class,
-    Box2dBodyComponent::class).get(),10) {
+    Box2dBodyComponent::class).get(),10), Telegraph {
+  override fun handleMessage(msg: Telegram): Boolean {
+    if(msg.message == Messages.CollidedWithImpassibleTerrain) {
+      val npc = msg.extraInfo as Npc
+    }
+    return true
+  }
+
   val npcMpr = mapperFor<NpcComponent>()
   val bodyMpr = mapperFor<Box2dBodyComponent>()
 
