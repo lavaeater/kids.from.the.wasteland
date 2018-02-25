@@ -61,8 +61,6 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       20 to "Olga")
 
   init {
-//    val inputSystem = KeyboardCameraControlSystem(camera)
-//    Gdx.input.inputProcessor = inputSystem
     engine.addSystem(RenderMapSystem(batch, camera, MapManager))
     engine.addSystem(RenderCharactersSystem(batch, camera))
     engine.addSystem(AiSystem())
@@ -73,7 +71,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
 
     engine.addSystem(npcControlSystem)
     engine.addSystem(PhysicsSystem(world))
-    engine.addSystem(PhysicsDebugSystem(world, camera))
+    //engine.addSystem(PhysicsDebugSystem(world, camera))
 
     engine.addSystem(FollowCameraSystem(camera, addHero()))
     val inputSystem = KeyboardCharacterControlSystem()
@@ -85,7 +83,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
     camera.position.x = 0f
     camera.position.y = 0f
 
-    val potentialStartTiles = MapManager.getTilesInRange(TileKey(0,0), 15)
+    val potentialStartTiles = MapManager.getTilesInRange(TileKey(0,0), 25)
         .filter { it.value.tileType == "grass" || it.value.tileType == "desert" }
         .map { it.key.tileWorldCenter(TILE_SIZE) }
         .toTypedArray()

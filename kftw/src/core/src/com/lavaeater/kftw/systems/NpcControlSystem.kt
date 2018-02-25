@@ -21,6 +21,7 @@ class NpcControlSystem : IteratingSystem(allOf(
   override fun handleMessage(msg: Telegram): Boolean {
     if(msg.message == Messages.CollidedWithImpassibleTerrain) {
       val npc = msg.extraInfo as Npc
+      npc.lostInterest()
     }
     return true
   }

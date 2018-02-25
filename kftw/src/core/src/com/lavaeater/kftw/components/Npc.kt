@@ -9,7 +9,7 @@ import com.lavaeater.kftw.map.TileKey
 class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = npcType.strength, var health: Int = npcType.health, var speed: Int = npcType.speed, var attack: Int = npcType.attack, var attackString: String = npcType.attackString) {
   var brainLog = ""
   var state = NpcState.Idle
-  var desiredTileType = "rock"
+  var desiredTileType = "grass"
   var currentTile = TileKey(0, 0)
   var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
@@ -22,7 +22,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
 
   fun lostInterest() {
     state = NpcState.Searching
-    val terrainArr = MapManagerBase.terrains.filterValues { it != desiredTileType }.values.toTypedArray()
+    val terrainArr = MapManagerBase.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
     val randomIndex = MathUtils.random(0, terrainArr.size - 1)
     desiredTileType = terrainArr[randomIndex]
     foundTile = null
