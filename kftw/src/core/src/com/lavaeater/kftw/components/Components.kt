@@ -14,6 +14,6 @@ class CharacterSpriteComponent(val spriteKey: String) : Component
 class NpcComponent(val npc: Npc):Component
 class CameraFollowComponent : Component
 class KeyboardControlComponent(val id : UUID = UUID.randomUUID()): Component
-class Box2dBody(val body: Body) : Component
+class Box2dBodyComponent(val body: Body) : Component
 
 data class NpcType(val strength:Int, val health: Int, val speed: Int, val attack: Int, val attackString: String)

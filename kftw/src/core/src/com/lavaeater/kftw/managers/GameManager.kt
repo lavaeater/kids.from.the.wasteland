@@ -15,7 +15,6 @@ import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.systems.*
-import ktx.ashley.add
 import ktx.ashley.entity
 import ktx.box2d.body
 import ktx.box2d.createWorld
@@ -79,7 +78,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       add(TransformComponent())
       add(CharacterSpriteComponent("femaleranger"))
       add(KeyboardControlComponent())
-      add(Box2dBody(createBody(2f, 2.5f, 15f, vec2(0f,0f), BodyDef.BodyType.DynamicBody)))
+      add(Box2dBodyComponent(createBody(2f, 2.5f, 15f, vec2(0f,0f), BodyDef.BodyType.DynamicBody)))
     }
     engine.addEntity(entity)
     return entity
@@ -122,6 +121,7 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       add(AiComponent(tree))
       add(NpcComponent(npc))
       add(CharacterSpriteComponent(type))
+      add(Box2dBodyComponent(createBody(2f, 2.5f, 15f, vec2(0f,0f), BodyDef.BodyType.DynamicBody)))
     }
     engine.addEntity(entity)
     return entity

@@ -16,6 +16,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
   val range = 2
 
   fun log(message: String) {
+    brainLog += "$name: $message\n"
     Gdx.app.log(name, message)
   }
 

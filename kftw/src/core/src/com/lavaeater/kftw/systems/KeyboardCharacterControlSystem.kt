@@ -4,9 +4,8 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.physics.box2d.Body
-import com.lavaeater.kftw.components.Box2dBody
+import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.KeyboardControlComponent
-import com.lavaeater.kftw.components.TransformComponent
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
@@ -15,14 +14,13 @@ import java.util.*
 
 class KeyboardCharacterControlSystem(val speed: Float = 20f):
     KtxInputAdapter,
-    IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBody::class, TransformComponent::class).get(),45) {
+    IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(),45) {
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         val component = kbCtrlMpr[entity]!!
         if(ctrlId != null || ctrlId != component.id) {
             ctrlId = component.id
             ctrlBody = b2bBMpr[entity]!!.body
-            transform = tranMpr[entity]!!
         }
     }
 
@@ -30,18 +28,15 @@ class KeyboardCharacterControlSystem(val speed: Float = 20f):
         super.update(deltaTime)
 
         ctrlBody?.linearVelocity = vec2(x, y).directionalVelocity(speed)
-        transform?.position?.set(ctrlBody?.position)
     }
 
     var y = 0f;
     var x = 0f
     val kbCtrlMpr = mapperFor<KeyboardControlComponent>()
-    val b2bBMpr = mapperFor<Box2dBody>()
-    val tranMpr = mapperFor<TransformComponent>()
+    val b2bBMpr = mapperFor<Box2dBodyComponent>()
 
     var ctrlId : UUID? = null
     var ctrlBody : Body? = null
-    var transform : TransformComponent? = null
 
     override fun keyDown(keycode: Int): Boolean {
         when(keycode) {
