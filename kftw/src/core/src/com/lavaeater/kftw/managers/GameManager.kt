@@ -38,7 +38,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
                   val messageDispatcher: MessageDispatcher = MessageManager.getInstance()) : Disposable {
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
-  val npcTypes = mapOf("townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
+  val npcTypes = mapOf(
+      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
       3 to "Rygar",
@@ -130,6 +131,8 @@ class GameManager(val batch: SpriteBatch = SpriteBatch(),
       with<TransformComponent>()
     }
   }
+
+//  fun createMonster(name: String = "JabberWocky", type: )
 
   fun createNpc(name: String, type: String, startTiles : Array<Vector2>): Entity {
 

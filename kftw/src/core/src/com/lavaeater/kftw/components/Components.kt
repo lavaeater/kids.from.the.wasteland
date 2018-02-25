@@ -11,6 +11,7 @@ class TransformComponent(var position: Vector2 = vec2(0f,0f), var rotation:Float
 class WorldMapComponent : Component
 class AiComponent<T>(val behaviorTree: BehaviorTree<T>) : Component
 class CharacterSpriteComponent(val spriteKey: String) : Component
+class AnimatedCharacterSpriteComponent(val spriteKey: String) : Component
 class NpcComponent(val npc: Npc):Component
 class CameraFollowComponent : Component
 class KeyboardControlComponent(val id : UUID = UUID.randomUUID()): Component

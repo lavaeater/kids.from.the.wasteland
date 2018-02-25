@@ -25,6 +25,16 @@ object Assets : Disposable {
       "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
   )
 
+  val IDLE = "idle"
+  val WALK = "walk"
+  val GESTURE = "gesture"
+  val ATTACK = "attack"
+  val DEATH = "death"
+
+  val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")))
+
+  val animatedCharacterSprites = mutableMapOf<String, Map<String, List<Sprite>>>()
+
   val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
 
   val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
@@ -35,7 +45,44 @@ object Assets : Disposable {
     initializeMapTiles()
     initializeCharacterSprites()
 
+    initAnimatedCharacterSprites()
+
     return am
+  }
+
+  private fun initAnimatedCharacterSprites() {
+    //We group the animations, this is good
+    val finalMap = mutableMapOf<String, MutableMap<String, MutableList<Sprite>>>()
+    for(atlasMap in animatedCharacters) {
+      val atlas = atlasMap.value
+
+      val spriteCollection = hashMapOf<String, MutableList<Sprite>>()
+      finalMap[atlasMap.key] = spriteCollection
+
+      spriteCollection[IDLE] = mutableListOf()
+      for (region in atlas.regions.filter { it.name.contains(IDLE) }) {
+        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name))
+      }
+      spriteCollection[WALK] = mutableListOf()
+      for (region in atlas.regions.filter { it.name.contains(WALK) }) {
+        spriteCollection[WALK]!!.add(atlas.createSprite(region.name))
+      }
+      spriteCollection[GESTURE] = mutableListOf()
+      for (region in atlas.regions.filter { it.name.contains(GESTURE) }) {
+        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name))
+      }
+
+      spriteCollection[ATTACK] = mutableListOf()
+      for (region in atlas.regions.filter { it.name.contains(ATTACK) }) {
+        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name))
+      }
+
+      spriteCollection[DEATH] = mutableListOf()
+      for (region in atlas.regions.filter { it.name.contains(DEATH) }) {
+        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name))
+      }
+    }
+    animatedCharacterSprites.putAll(finalMap)
   }
 
   private fun initializeCharacterSprites() {
