@@ -4,6 +4,8 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
+import com.badlogic.gdx.ai.msg.MessageDispatcher
+import com.badlogic.gdx.ai.msg.MessageManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
@@ -22,7 +24,8 @@ import ktx.math.vec2
 
 class GameManager(val batch: SpriteBatch = SpriteBatch(),
                   val engine: Engine = Engine(),
-                  val camera: OrthographicCamera = OrthographicCamera()) : Disposable {
+                  val camera: OrthographicCamera = OrthographicCamera(),
+                  val messageDispatcher: MessageDispatcher = MessageManager.getInstance()) : Disposable {
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val npcTypes = mapOf("townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
