@@ -52,6 +52,8 @@ object Assets : Disposable {
 
   private fun initAnimatedCharacterSprites() {
     //We group the animations, this is good
+    val width = 6f
+    val height = 8f
     val finalMap = mutableMapOf<String, MutableMap<String, MutableList<Sprite>>>()
     for(atlasMap in animatedCharacters) {
       val atlas = atlasMap.value
@@ -61,25 +63,25 @@ object Assets : Disposable {
 
       spriteCollection[IDLE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(IDLE) }) {
-        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
+        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
       }
       spriteCollection[WALK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(WALK) }) {
-        spriteCollection[WALK]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
+        spriteCollection[WALK]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
       }
       spriteCollection[GESTURE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(GESTURE) }) {
-        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
+        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
       }
 
       spriteCollection[ATTACK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(ATTACK) }) {
-        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
+        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
       }
 
       spriteCollection[DEATH] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(DEATH) }) {
-        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name).apply { setSize(4f, 4.5f) })
+        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
       }
     }
     animatedCharacterSprites.putAll(finalMap)
