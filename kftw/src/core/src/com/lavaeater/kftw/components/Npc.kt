@@ -59,6 +59,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
 
     if (state != NpcState.Wandering) {
       val possibleTargets = GameManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
+      if(!possibleTargets.any()) return false
       wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
       log("Jag hittar inte ${translate(desiredTileType)}, jag går till $wanderTarget och letar.")
       state = NpcState.Wandering
