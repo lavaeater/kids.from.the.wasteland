@@ -53,7 +53,7 @@ object Assets : Disposable {
   private fun initAnimatedCharacterSprites() {
     //We group the animations, this is good
     val width = 6f
-    val height = 8f
+    val height = 7f
     val finalMap = mutableMapOf<String, MutableMap<String, MutableList<Sprite>>>()
     for(atlasMap in animatedCharacters) {
       val atlas = atlasMap.value
