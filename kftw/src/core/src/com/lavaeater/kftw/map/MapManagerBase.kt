@@ -78,7 +78,7 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     val noExtraSprites = hashSetOf<String>()
 
     val scale = 40.0f
-    val numberOfTiles = 200
+    val numberOfTiles = 50
   }
 
   var currentMap = mutableMapOf<TileKey, Int>()
