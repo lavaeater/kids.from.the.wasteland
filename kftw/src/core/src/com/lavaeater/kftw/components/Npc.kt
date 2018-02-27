@@ -2,7 +2,7 @@ package com.lavaeater.kftw.components
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.WorldManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
 
@@ -41,7 +41,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
     //A little goeey, but what's the best way?
     if (state == NpcState.Scavenging) return true // already scavening, early exit
 
-    if (GameManager.MapManager.getTileAt(currentTile).tileType == desiredTileType) {
+    if (WorldManager.MapManager.getTileAt(currentTile).tileType == desiredTileType) {
       state = NpcState.Scavenging
       log("Jag letar mat vid $currentTile nu.")
       return true
@@ -59,7 +59,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
       return false //I am NOT doing this right, I realize. I have to read more
 
     if (state != NpcState.Wandering) {
-      val possibleTargets = GameManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
+      val possibleTargets = WorldManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
       if(!possibleTargets.any()) return false
       wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
       log("Jag hittar inte ${translate(desiredTileType)}, jag går till $wanderTarget och letar.")
@@ -87,7 +87,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
 
     log("Jag försöker hitta $desiredTileType nu!")
     state = NpcState.Searching
-    foundTile = GameManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
+    foundTile = WorldManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
     return foundTile != null
   }
 

@@ -4,12 +4,12 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.lavaeater.Assets
-import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.WorldManager
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 
 class GameScreen : KtxScreen {
-    private val gameManager = GameManager()
+    private val gameManager = WorldManager()
 
     override fun render(delta: Float) {
         gameManager.update(delta)

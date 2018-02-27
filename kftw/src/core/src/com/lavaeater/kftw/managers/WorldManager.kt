@@ -32,10 +32,10 @@ class Messages {
   }
 }
 
-class GameManager(val batch: SpriteBatch = SpriteBatch(),
-                  val engine: Engine = Engine(),
-                  val camera: OrthographicCamera = OrthographicCamera(),
-                  val messageDispatcher: MessageDispatcher = MessageManager.getInstance()) : Disposable {
+class WorldManager(val batch: SpriteBatch = SpriteBatch(),
+                   val engine: Engine = Engine(),
+                   val camera: OrthographicCamera = OrthographicCamera(),
+                   val messageDispatcher: MessageDispatcher = MessageManager.getInstance()) : Disposable {
 
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val npcTypes = mapOf(

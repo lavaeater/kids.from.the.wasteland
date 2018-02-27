@@ -1,17 +1,13 @@
 package com.lavaeater.kftw.map
 
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
-import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.managers.GameManager.Companion.createBody
+import com.lavaeater.kftw.managers.WorldManager
+import com.lavaeater.kftw.managers.WorldManager.Companion.createBody
 import com.lavaeater.kftw.systems.toTile
-import ktx.box2d.body
-import ktx.box2d.box
 import ktx.math.vec2
 import kotlin.math.roundToInt
 
@@ -86,12 +82,12 @@ abstract class MapManagerBase(val world: World) : IMapManager {
   val crazyTileStructure = mutableMapOf<Int, Tile>()
   val hitBoxes = mutableMapOf<TileKey, Body>()
 
-  val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
+  val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
-    val centerTileKey = position.toTile(GameManager.TILE_SIZE)
+    val centerTileKey = position.toTile(WorldManager.TILE_SIZE)
     return !centerTileKey.isInRange(currentKey, 3)
   }
 
@@ -103,11 +99,11 @@ abstract class MapManagerBase(val world: World) : IMapManager {
       !hitBoxes.containsKey(it.key) }
 
     for ((key, tile) in impassibleTiles) {
-      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
-          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+      val pos = vec2((key.x * WorldManager.TILE_SIZE).toFloat() + WorldManager.TILE_SIZE / 2,
+          (key.y * WorldManager.TILE_SIZE).toFloat() + WorldManager.TILE_SIZE / 2)
       val hitBox = createBody(
-          GameManager.TILE_SIZE.toFloat(),
-          GameManager.TILE_SIZE.toFloat(),
+          WorldManager.TILE_SIZE.toFloat(),
+          WorldManager.TILE_SIZE.toFloat(),
           10f,
           pos,
           BodyDef.BodyType.StaticBody)
@@ -214,13 +210,13 @@ abstract class MapManagerBase(val world: World) : IMapManager {
   }
 
   override fun getTileForPosition(position: Vector3): Tile {
-    val tileKey = position.toTile(GameManager.TILE_SIZE)
+    val tileKey = position.toTile(WorldManager.TILE_SIZE)
     return crazyTileStructure[currentMap[tileKey]]!!
   }
 
   override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
     if (doWeNeedNewVisibleTiles(position)) {
-      currentKey = position.toTile(GameManager.TILE_SIZE)
+      currentKey = position.toTile(WorldManager.TILE_SIZE)
       visibleTiles.clear()
       val range = (widthInTiles * 0.75).roundToInt()
       var vbt = getTilesInRange(currentKey, range)
