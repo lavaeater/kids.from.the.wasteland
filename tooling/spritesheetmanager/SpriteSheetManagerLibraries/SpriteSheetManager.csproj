@@ -49,6 +49,7 @@
     <Compile Include="Converters\InternalConverter.cs" />
     <Compile Include="Converters\PixiJsConverter.cs" />
     <Compile Include="Converters\TexturePackerConverter.cs" />
+    <Compile Include="Converters\TiledConverter.cs" />
     <Compile Include="Interfaces\IConvertSpriteSheets.cs" />
     <Compile Include="Interfaces\ISpriteSheet.cs" />
     <Compile Include="Interfaces\ISpriteSheetFrame.cs" />
