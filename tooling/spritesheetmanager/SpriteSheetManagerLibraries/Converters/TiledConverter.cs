@@ -63,8 +63,8 @@ namespace SpriteSheetManager.Converters
             int imageIndex = Int32.Parse(tiled.Attribute("id").Value);
             int currentRow = imageIndex / _tilesPerRow;
 
-            var location = new Point(imageIndex * _tileWidth, currentRow * _tileHeight);
-            var size = new Vector(_tileWidth, _tileHeight);
+            var topLeft = new Point(imageIndex * _tileWidth, currentRow * _tileHeight);
+            var lowerRight = new Point(imageIndex * _tileWidth + _tileWidth, currentRow * _tileHeight + _tileHeight);
 
             return new SpriteSheetFrame()
             {
@@ -72,7 +72,7 @@ namespace SpriteSheetManager.Converters
                 Rotated = false,
                 SourceSize = new Size(_tileWidth, _tileHeight),
                 SpriteSourceSize = new Rect(),
-                TextureRegion = new Rect(location, size),
+                TextureRegion = new Rect(topLeft, lowerRight),
                 Trimmed = false               
             };
         }
