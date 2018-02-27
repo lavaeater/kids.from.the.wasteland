@@ -8,6 +8,7 @@ namespace SpriteSheetManager.Converters
     {
         public static string PixiJjs = "pixijs";
         public static string Internal = "internal";
+        public static string Tiled = "tiled";
         public Dictionary<string, IConvertSpriteSheets> Converters { get; set; }
         public static string TexturePacker = "TexturePacker";
 
@@ -22,6 +23,7 @@ namespace SpriteSheetManager.Converters
             Converters.Add(Internal, new InternalConverter());
             Converters.Add(PixiJjs, new PixiJsConverter());
             Converters.Add(TexturePacker, new TexturePackerConverter());
+            Converters.Add(Tiled, new TiledConverter());
         }
 
         public IConvertSpriteSheets GetConverter(string fileExtension)

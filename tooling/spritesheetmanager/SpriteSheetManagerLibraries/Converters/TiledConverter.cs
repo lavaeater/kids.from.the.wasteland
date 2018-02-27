@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Linq;
 using SpriteSheetManager.Interfaces;
 using SpriteSheetManager.Models;
@@ -12,6 +14,11 @@ namespace SpriteSheetManager.Converters
     public class TiledConverter : ConverterBase
     {
         private int _tilesPerRow;
+        private int _tileWidth;
+        private int _tileHeight;
+        private string _imageSource;
+        private int _imageWidth;
+        private int _imageHeight;
         public override bool CanRead => true;
         public override bool CanWrite => false;
         public override string FileFilter => $"PixiJS (*.{FileExtension})|*.{FileExtension}";
@@ -21,37 +28,53 @@ namespace SpriteSheetManager.Converters
             var xDoc = XDocument.Parse(spriteSheetData);
             var spriteSheet = new SpriteSheet();
 
-            var tileWidth = Int32.Parse(xDoc.Root.Element("tileset").Attribute("tilewidth").Value);
-            var tileHeight = Int32.Parse(xDoc.Root.Element("tileset").Attribute("tileheight").Value);
+            _tileWidth = Int32.Parse(xDoc.Element("tileset").Attribute("tilewidth").Value);
+            _tileHeight = Int32.Parse(xDoc.Element("tileset").Attribute("tileheight").Value);
 
-            var imageSource = xDoc.Root.Element("image").Attribute("source").Value;
-            var imageWidth = Int32.Parse(xDoc.Root.Element("image").Attribute("width").Value);
-            var imageHeight = Int32.Parse(xDoc.Root.Element("image").Attribute("height").Value);
+            _imageSource = xDoc.Root.Element("image").Attribute("source").Value;
+            _imageWidth = Int32.Parse(xDoc.Root.Element("image").Attribute("width").Value);
+            _imageHeight = Int32.Parse(xDoc.Root.Element("image").Attribute("height").Value);
 
-            _tilesPerRow = imageWidth / tileWidth;
+            _tilesPerRow = _imageWidth / _tileWidth;
 
             var terrainTypes = xDoc.Root.Element("terraintypes").Elements().ToDictionary(element => element.Attribute("name").Value, element => Int32.Parse(element.Attribute("tile").Value));
 
-            var tiles = xDoc.Root.Elements("tile").Select(TiledElementToSheetFrame);
+            spriteSheet.Application = "";
 
+            spriteSheet.ImageFileName = _imageSource;
+            spriteSheet.Size = new Size(_imageWidth, _imageHeight);
+           
+
+            int i = 0;
             foreach (var terrainType in terrainTypes)
             {
-                //Get the tiles for this terraintype?
-                var id = terrainType.Value;
+                var tiles = xDoc.Root.Elements("tile").Where(element => element.IsOfTerrainType(i));
+
+                spriteSheet.Frames.AddRange(tiles.Select(t => TiledElementToSheetFrame(t, terrainType.Key)));
+
+                i++;
             }
 
             return spriteSheet;
         }
 
-        private SpriteSheetFrame TiledElementToSheetFrame(XElement tiled)
+        private SpriteSheetFrame TiledElementToSheetFrame(XElement tiled, string terrainType)
         {
             int imageIndex = Int32.Parse(tiled.Attribute("id").Value);
             int currentRow = imageIndex / _tilesPerRow;
 
-            int terrainType = tiled.Attribute("terrain").Value.GetTerrainType();
+            var location = new Point(imageIndex * _tileWidth, currentRow * _tileHeight);
+            var size = new Vector(_tileWidth, _tileHeight);
 
-
-
+            return new SpriteSheetFrame()
+            {
+                Key = terrainType,
+                Rotated = false,
+                SourceSize = new Size(_tileWidth, _tileHeight),
+                SpriteSourceSize = new Rect(),
+                TextureRegion = new Rect(location, size),
+                Trimmed = false               
+            };
         }
 
         public override string ToString(ISpriteSheet spriteSheet)
