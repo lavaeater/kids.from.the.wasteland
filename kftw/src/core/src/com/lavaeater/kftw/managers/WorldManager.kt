@@ -184,4 +184,8 @@ class WorldManager(val batch: SpriteBatch = SpriteBatch(),
       return body
     }
   }
+
+  fun pause() {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
 }
