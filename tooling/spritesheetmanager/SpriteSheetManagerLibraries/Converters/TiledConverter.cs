@@ -19,6 +19,7 @@ namespace SpriteSheetManager.Converters
         private string _imageSource;
         private int _imageWidth;
         private int _imageHeight;
+        private Dictionary<int, string> _terrainTypes = new Dictionary<int, string>();
         public override bool CanRead => true;
         public override bool CanWrite => false;
         public override string FileFilter => $"PixiJS (*.{FileExtension})|*.{FileExtension}";
@@ -37,43 +38,35 @@ namespace SpriteSheetManager.Converters
 
             _tilesPerRow = _imageWidth / _tileWidth;
 
-            var terrainTypes = xDoc.Root.Element("terraintypes").Elements().ToDictionary(element => element.Attribute("name").Value, element => Int32.Parse(element.Attribute("tile").Value));
-
+            _terrainTypes = xDoc.Root.Element("terraintypes").Elements()
+                .Select((element, i) => (i, element.Attribute("name").Value)).ToDictionary(tuple => tuple.Item1, tuple => tuple.Item2); 
             spriteSheet.Application = "";
 
             spriteSheet.ImageFileName = _imageSource;
             spriteSheet.Size = new Size(_imageWidth, _imageHeight);
-           
 
-            int i = 0;
-            foreach (var terrainType in terrainTypes)
-            {
-                var tiles = xDoc.Root.Elements("tile").Where(element => element.IsOfTerrainType(i));
-
-                spriteSheet.Frames.AddRange(tiles.Select(t => TiledElementToSheetFrame(t, terrainType.Key)));
-
-                i++;
-            }
+            spriteSheet.Frames.AddRange(xDoc.Root.Elements("tile").Select(TiledElementToSheetFrame));
 
             return spriteSheet;
         }
 
-        private SpriteSheetFrame TiledElementToSheetFrame(XElement tiled, string terrainType)
+        private SpriteSheetFrame TiledElementToSheetFrame(XElement tiled, int imageIndex)
         {
-            int imageIndex = Int32.Parse(tiled.Attribute("id").Value);
+//            int imageIndex = Int32.Parse(tiled.Attribute("id").Value) - 1;
             int currentRow = imageIndex / _tilesPerRow;
+            int currentColumn = imageIndex - (currentRow * _tilesPerRow);
 
-            var topLeft = new Point(imageIndex * _tileWidth, currentRow * _tileHeight);
-            var lowerRight = new Point(imageIndex * _tileWidth + _tileWidth, currentRow * _tileHeight + _tileHeight);
+            var topLeft = new Point(currentColumn * _tileWidth, currentRow * _tileHeight);
+            var lowerRight = new Point(currentColumn * _tileWidth + _tileWidth, currentRow * _tileHeight + _tileHeight);
 
             return new SpriteSheetFrame()
             {
-                Key = terrainType,
+                Key = _terrainTypes[tiled.GetTerrainType()],
                 Rotated = false,
                 SourceSize = new Size(_tileWidth, _tileHeight),
                 SpriteSourceSize = new Rect(),
                 TextureRegion = new Rect(topLeft, lowerRight),
-                Trimmed = false               
+                Trimmed = false
             };
         }
 
@@ -89,6 +82,12 @@ namespace SpriteSheetManager.Converters
         {
             return tile.Attribute("terrain").Value.GetTerrainType() == terrainType;
         }
+
+        public static Int32 GetTerrainType(this XElement tile)
+        {
+            return tile.Attribute("terrain").Value.GetTerrainType();
+        }
+
         public static Int32 GetTerrainType(this string terrain)
         {
             var stringVal = terrain.Split(',').First(s => !string.IsNullOrEmpty(s));
