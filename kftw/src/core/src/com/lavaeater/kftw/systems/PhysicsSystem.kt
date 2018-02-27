@@ -8,12 +8,14 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.TransformComponent
+import com.lavaeater.kftw.screens.Ctx
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class PhysicsSystem(private val world: World) : IteratingSystem(allOf(TransformComponent::class, Box2dBodyComponent::class).get()) {
+class PhysicsSystem() : IteratingSystem(allOf(TransformComponent::class, Box2dBodyComponent::class).get()) {
   val bodyMpr = mapperFor<Box2dBodyComponent>()
   val transMpr = mapperFor<TransformComponent>()
+  val world = Ctx.context.inject<World>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     transMpr[entity]!!.position = bodyMpr[entity]!!.body.position
@@ -35,7 +37,9 @@ class PhysicsSystem(private val world: World) : IteratingSystem(allOf(TransformC
   }
 }
 
-class PhysicsDebugSystem(private val world: World, private val camera: OrthographicCamera) : EntitySystem() {
+class PhysicsDebugSystem : EntitySystem() {
+  val world = Ctx.context.inject<World>()
+  val camera = Ctx.context.inject<OrthographicCamera>()
 
   private val debugRenderer: Box2DDebugRenderer = Box2DDebugRenderer()
 

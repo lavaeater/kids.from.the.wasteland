@@ -8,7 +8,6 @@ import ktx.math.vec2
 import java.util.*
 
 class TransformComponent(var position: Vector2 = vec2(0f,0f), var rotation:Float = 0f): Component
-class WorldMapComponent : Component
 class AiComponent<T>(val behaviorTree: BehaviorTree<T>) : Component
 class CharacterSpriteComponent(val spriteKey: String,
                                val animated:Boolean = false,

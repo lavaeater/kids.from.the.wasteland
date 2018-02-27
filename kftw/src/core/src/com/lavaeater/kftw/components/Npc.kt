@@ -2,9 +2,11 @@ package com.lavaeater.kftw.components
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.managers.WorldManager
+import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
+import com.lavaeater.kftw.screens.Ctx
 
 class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = npcType.strength, var health: Int = npcType.health, var speed: Int = npcType.speed, var attack: Int = npcType.attack, var attackString: String = npcType.attackString) {
   var brainLog = ""
@@ -14,6 +16,8 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
   var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
   val range = 2
+
+  val mapManager = Ctx.context.inject<IMapManager>()
 
   fun log(message: String) {
     brainLog += "$name: $message\n"
@@ -41,7 +45,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
     //A little goeey, but what's the best way?
     if (state == NpcState.Scavenging) return true // already scavening, early exit
 
-    if (WorldManager.MapManager.getTileAt(currentTile).tileType == desiredTileType) {
+    if (mapManager.getTileAt(currentTile).tileType == desiredTileType) {
       state = NpcState.Scavenging
       log("Jag letar mat vid $currentTile nu.")
       return true
@@ -59,7 +63,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
       return false //I am NOT doing this right, I realize. I have to read more
 
     if (state != NpcState.Wandering) {
-      val possibleTargets = WorldManager.MapManager.getRingOfTiles(currentTile, 5).toTypedArray()
+      val possibleTargets = mapManager.getRingOfTiles(currentTile, 5).toTypedArray()
       if(!possibleTargets.any()) return false
       wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
       log("Jag hittar inte ${translate(desiredTileType)}, jag går till $wanderTarget och letar.")
@@ -87,7 +91,7 @@ class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = n
 
     log("Jag försöker hitta $desiredTileType nu!")
     state = NpcState.Searching
-    foundTile = WorldManager.MapManager.findTileOfType(currentTile, desiredTileType, range)
+    foundTile =  mapManager.findTileOfTypeInRange(currentTile, desiredTileType, range)
     return foundTile != null
   }
 

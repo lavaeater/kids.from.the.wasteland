@@ -60,6 +60,7 @@ project(":core") {
         compile "io.github.libktx:ktx-ashley:$ktxVersion"
         compile "io.github.libktx:ktx-math:$ktxVersion"
         compile "io.github.libktx:ktx-box2d:$ktxVersion"
+        compile "io.github.libktx:ktx-inject:$ktxVersion"
     }
 }
 

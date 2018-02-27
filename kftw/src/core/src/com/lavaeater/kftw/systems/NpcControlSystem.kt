@@ -7,7 +7,7 @@ import com.badlogic.gdx.ai.msg.Telegraph
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.*
-import com.lavaeater.kftw.managers.WorldManager
+import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.managers.Messages
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
@@ -40,17 +40,17 @@ class NpcControlSystem : IteratingSystem(allOf(
       NpcState.Searching -> return //This code doesn't need to do anything for this state, maybe anim later?
     }
 
-    val currentPos = body.position.toTile(WorldManager.TILE_SIZE)
+    val currentPos = body.position.toTile(GameManager.TILE_SIZE)
     npc.currentTile = currentPos
   }
 
   private fun walkToTile(foundTile: TileKey, body: Body) {
-      moveFromTo(foundTile.tileWorldCenter(WorldManager.TILE_SIZE),body)
+      moveFromTo(foundTile.tileWorldCenter(GameManager.TILE_SIZE),body)
   }
 
   private fun comeWalkWithMe(npc: Npc, body: Body) {
     //The Npc manages its own state, preferrably?
-    moveFromTo(npc.wanderTarget.tileWorldCenter(WorldManager.TILE_SIZE), body)
+    moveFromTo(npc.wanderTarget.tileWorldCenter(GameManager.TILE_SIZE), body)
   }
 
   private fun moveFromTo(desiredPos: Vector2, body: Body) {

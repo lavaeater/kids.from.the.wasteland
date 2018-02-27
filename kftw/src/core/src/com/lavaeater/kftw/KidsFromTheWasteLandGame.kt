@@ -4,6 +4,8 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.lavaeater.Assets
+import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.screens.MainGameScreen
 import com.lavaeater.kftw.statemachine.BaseEvent
 import com.lavaeater.kftw.statemachine.BaseState
 import com.lavaeater.kftw.statemachine.StateMachine
@@ -36,27 +38,29 @@ class KidsFromTheWasteLandGame : KtxGame<Screen>() {
   val gameStateMachine = StateMachine.buildStateMachine(initialStateName = WorldMap()) {
     state(WorldMap()) {
       action {
-        setScreen<GameScreen>() //When the WorldMap state enters, we show the worldmap screen.
-        gameScreen.resume()
+        setScreen<MainGameScreen>() //When the WorldMap state enters, we show the worldmap screen.
+        mainGameScreen.resume()
       }
       edge(FoundSomeLoot(), Inventory()) {
-        action { gameScreen.pause()}
+        action { mainGameScreen.pause()}
       }
     }
     state(Inventory()) {
       action {
-        gameScreen
+        mainGameScreen
       }
     }
   }
 
-  private lateinit var gameScreen: GameScreen
+  private lateinit var mainGameScreen: MainGameScreen
 
   override fun create() {
     Gdx.app.logLevel = Application.LOG_INFO
+
     Assets.load()
-    gameScreen = GameScreen()
-    addScreen(gameScreen)
-    setScreen<GameScreen>()
+    Ctx.buildContext()
+    mainGameScreen = MainGameScreen()
+    addScreen(mainGameScreen)
+    setScreen<MainGameScreen>()
   }
 }

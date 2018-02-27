@@ -3,8 +3,11 @@ package com.lavaeater.kftw.managers
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
 import com.lavaeater.kftw.components.Npc
+import com.lavaeater.kftw.screens.Ctx
 
-class CollisionMessageManager(val messageDispatcher: MessageDispatcher) : ContactListener {
+class CollisionMessageManager() : ContactListener {
+  val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
+
   override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
 
   }

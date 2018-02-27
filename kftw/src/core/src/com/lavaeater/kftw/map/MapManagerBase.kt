@@ -3,15 +3,17 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
-import com.lavaeater.kftw.managers.WorldManager
-import com.lavaeater.kftw.managers.WorldManager.Companion.createBody
+import com.lavaeater.kftw.managers.BodyManager
+import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.screens.Ctx
 import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
 import kotlin.math.roundToInt
 
-abstract class MapManagerBase(val world: World) : IMapManager {
+abstract class MapManagerBase() : IMapManager {
+
+  val bodyManager = Ctx.context.inject<BodyManager>()
 
   companion object {
     val weirdDirections = mapOf(
@@ -76,34 +78,31 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     val scale = 40.0f
     val numberOfTiles = 50
   }
-
   var currentMap = mutableMapOf<TileKey, Int>()
-
   val crazyTileStructure = mutableMapOf<Int, Tile>()
   val hitBoxes = mutableMapOf<TileKey, Body>()
-
-  val widthInTiles = (WorldManager.VIEWPORT_WIDTH / WorldManager.TILE_SIZE).roundToInt() + 5
+  val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
-    val centerTileKey = position.toTile(WorldManager.TILE_SIZE)
+    val centerTileKey = position.toTile(GameManager.TILE_SIZE)
     return !centerTileKey.isInRange(currentKey, 3)
   }
 
-  fun checkHitBoxes() {
+  fun checkHitBoxesForImpassibleTiles() {
     val impassibleTiles = visibleTiles
         .filter {
       (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain() }
         .filter {
       !hitBoxes.containsKey(it.key) }
 
-    for ((key, tile) in impassibleTiles) {
-      val pos = vec2((key.x * WorldManager.TILE_SIZE).toFloat() + WorldManager.TILE_SIZE / 2,
-          (key.y * WorldManager.TILE_SIZE).toFloat() + WorldManager.TILE_SIZE / 2)
-      val hitBox = createBody(
-          WorldManager.TILE_SIZE.toFloat(),
-          WorldManager.TILE_SIZE.toFloat(),
+    for (key in impassibleTiles.keys) {
+      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+      val hitBox = bodyManager.createBody(
+          GameManager.TILE_SIZE.toFloat(),
+          GameManager.TILE_SIZE.toFloat(),
           10f,
           pos,
           BodyDef.BodyType.StaticBody)
@@ -111,7 +110,7 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     }
   }
 
-  fun checkExtraSprites(ourKey: TileKey, shortCode: String, tileType: String, priority: Int) {
+  fun addEdgeSpritesForTile(ourKey: TileKey, shortCode: String, tileType: String, priority: Int) {
 
     //CHECK THE SHORT CODE - THAT IS THE RELEVANT CODE! THIS WILL WORK!
     if (!noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
@@ -124,7 +123,7 @@ abstract class MapManagerBase(val world: World) : IMapManager {
       val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
 
       for (diffTile in diffTiles) {
-        val directionPair = getNeighbourDirection(ourKey, diffTile.key)
+        val directionPair = getDirectionOfNeighbour(ourKey, diffTile.key)
         if (simpleDirections.containsKey(directionPair)) {
           val diffDirection = simpleDirections[directionPair]!!
           //Bam, just add it, then clean it up afterwards!
@@ -159,7 +158,7 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     }
   }
 
-  fun setCode(ourKey: TileKey) {
+  fun generateCodeForTile(ourKey: TileKey) {
 
     val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy()
     neiborMap.keys.map { (x, y) ->
@@ -177,10 +176,10 @@ abstract class MapManagerBase(val world: World) : IMapManager {
       }
       currentMap[ourKey] = newHashCode
     }
-    checkExtraSprites(ourKey, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+    addEdgeSpritesForTile(ourKey, tempTile.shortCode, tempTile.tileType, tempTile.priority)
   }
 
-  fun getNeighbourDirection(inputKey: TileKey, otherKey: TileKey): TileKey {
+  fun getDirectionOfNeighbour(inputKey: TileKey, otherKey: TileKey): TileKey {
     return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
   }
 
@@ -192,11 +191,11 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     return crazyTileStructure[currentMap[key]]!!
   }
 
-  override fun findTileOfType(x: Int, y: Int, tileType: String, range: Int): TileKey? {
-    return findTileOfType(TileKey(x, y), tileType, range)
+  override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey? {
+    return findTileOfTypeInRange(TileKey(x, y), tileType, range)
   }
 
-  override fun findTileOfType(key: TileKey, tileType: String, range: Int): TileKey? {
+  override fun findTileOfTypeInRange(key: TileKey, tileType: String, range: Int): TileKey? {
     val tilesInRange = getTilesInRange(key, range)
     return tilesInRange.filter { it.value.tileType == tileType }.keys.firstOrNull()
   }
@@ -209,14 +208,14 @@ abstract class MapManagerBase(val world: World) : IMapManager {
     return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { crazyTileStructure[it.value]!! }
   }
 
-  override fun getTileForPosition(position: Vector3): Tile {
-    val tileKey = position.toTile(WorldManager.TILE_SIZE)
+  override fun tileForWorldPosition(position: Vector3): Tile {
+    val tileKey = position.toTile(GameManager.TILE_SIZE)
     return crazyTileStructure[currentMap[tileKey]]!!
   }
 
   override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
     if (doWeNeedNewVisibleTiles(position)) {
-      currentKey = position.toTile(WorldManager.TILE_SIZE)
+      currentKey = position.toTile(GameManager.TILE_SIZE)
       visibleTiles.clear()
       val range = (widthInTiles * 0.75).roundToInt()
       var vbt = getTilesInRange(currentKey, range)
@@ -225,7 +224,7 @@ abstract class MapManagerBase(val world: World) : IMapManager {
         vbt = getTilesInRange(currentKey, widthInTiles)
       }
       visibleTiles.putAll(vbt)
-      checkHitBoxes()
+      checkHitBoxesForImpassibleTiles()
     }
     return visibleTiles
   }
@@ -239,18 +238,12 @@ abstract class MapManagerBase(val world: World) : IMapManager {
   }
 
   override fun getTilesInRange(posKey: TileKey, range: Int): Map<TileKey, Tile> {
-
-    val tilesInRange = mutableMapOf<TileKey, Tile>()
     val minX = posKey.x.coordAtDistanceFrom(-range)
     val maxX = posKey.x.coordAtDistanceFrom(range)
     val minY = posKey.y.coordAtDistanceFrom(-range)
     val maxY = posKey.y.coordAtDistanceFrom(range)
 
-    for (x in minX..maxX)
-      (minY..maxY)
-          .map { TileKey(x, it) }
-          .filter { currentMap.containsKey(it) }
-          .forEach { tilesInRange.put(it, crazyTileStructure[currentMap[it]!!]!!) }
-    return tilesInRange
+    return currentMap.filter { it.key.x in minX..maxX && it.key.y in minY..maxY }
+        .mapValues { crazyTileStructure[it.value]!! }
   }
 }

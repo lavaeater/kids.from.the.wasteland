@@ -1,25 +1,22 @@
 package com.lavaeater.kftw.systems
 
-import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
-import com.lavaeater.kftw.components.WorldMapComponent
-import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
+import com.lavaeater.kftw.screens.Ctx
 import ktx.app.use
-import ktx.ashley.allOf
 import kotlin.math.roundToInt
 
-class RenderMapSystem(val batch: SpriteBatch, val camera: OrthographicCamera, val mapManager: IMapManager) : IteratingSystem(allOf(WorldMapComponent::class).get()) {
+class RenderMapSystem : EntitySystem(0) {
 
-  override fun processEntity(entity: Entity?, deltaTime: Float) {
-  }
+  val batch = Ctx.context.inject<SpriteBatch>()
+  val camera = Ctx.context.inject<OrthographicCamera>()
+  val mapManager = Ctx.context.inject<IMapManager>()
 
   override fun update(deltaTime: Float) {
     super.update(deltaTime)

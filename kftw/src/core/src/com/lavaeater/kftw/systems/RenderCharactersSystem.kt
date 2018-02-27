@@ -4,18 +4,23 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.CharacterSpriteComponent
 import com.lavaeater.kftw.components.TransformComponent
+import com.lavaeater.kftw.screens.Ctx
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class RenderCharactersSystem(val batch: SpriteBatch, val camera: OrthographicCamera) :
+class RenderCharactersSystem() :
     SortedIteratingSystem(allOf(CharacterSpriteComponent::class,
         TransformComponent::class).get(), EntityYOrderComparator()) {
   val transformMapper = mapperFor<TransformComponent>()
   val spriteMapper = mapperFor<CharacterSpriteComponent>()
+
+  val batch = Ctx.context.inject<SpriteBatch>()
+  val camera = Ctx.context.inject<OrthographicCamera>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val transform = transformMapper[entity]
@@ -24,7 +29,6 @@ class RenderCharactersSystem(val batch: SpriteBatch, val camera: OrthographicCam
       true -> renderAnimatedCharacter(transform, spriteComponent, deltaTime)
       false -> renderRegularCharacter(transform, spriteComponent)
     }
-//    batch.projectionMatrix = camera.combined
   }
   val frameRate = 1f / 6f
   private fun renderAnimatedCharacter(transform: TransformComponent,
