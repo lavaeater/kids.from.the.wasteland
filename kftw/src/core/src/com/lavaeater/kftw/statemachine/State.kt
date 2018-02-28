@@ -4,7 +4,7 @@ package com.lavaeater.kftw.statemachine
  *
  */
 class State<S,E>(val name: S) {
-    private val edges = hashMapOf<E, Edge>()   // Convert to HashMap with event as key
+    private val edges = hashMapOf<E, Edge<S,E>>()   // Convert to HashMap with event as key
     private val stateActions = mutableListOf<(State<S,E>) -> Unit>()
 
     /**
@@ -13,7 +13,7 @@ class State<S,E>(val name: S) {
      * @param targetState: Next state
      * @param init: I find it as weird as you do, here you go https://kotlinlang.org/docs/reference/lambdas.html
      */
-    fun edge(event: E, targetState: S, init: Edge.() -> Unit) {
+    fun edge(event: E, targetState: S, init: Edge<S,E>.() -> Unit) {
         val edge = Edge(event, targetState)
         edge.init()
 
@@ -42,7 +42,7 @@ class State<S,E>(val name: S) {
     /**
      * Get the appropriate com.lavaeater.kftw.statemachine.Edge for the Event
      */
-    fun getEdgeForEvent(event: E): Edge {
+    fun getEdgeForEvent(event: E): Edge<S,E> {
         try {
             return edges[event]!!
         } catch (e: KotlinNullPointerException) {

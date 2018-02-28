@@ -4,11 +4,11 @@ package com.lavaeater.kftw.statemachine
  * Builds and operates state machines
  */
 class StateMachine<S,E> private constructor(private val initialState: S) {
-    private lateinit var currentState: State
-    private val states = mutableListOf<State>()
+    private lateinit var currentState: State<S,E>
+    private val states = mutableListOf<State<S,E>>()
 
-    fun state(stateName: S, init: State.() -> Unit) {
-        val state = State(stateName)
+    fun state(stateName: S, init: State<S,E>.() -> Unit) {
+        val state = State<S,E>(stateName)
         state.init()
 
         states.add(state)
@@ -17,7 +17,7 @@ class StateMachine<S,E> private constructor(private val initialState: S) {
     /**
      * Translates state name to an object
      */
-    private fun getState(state: S): State {
+    private fun getState(state: S): State<S,E> {
         return states.firstOrNull { state == it} ?:
                 throw NoSuchElementException(state.toString())
     }
