@@ -29,18 +29,17 @@ fun handleEvent(event: GameEvent) {
     gameStateMachine.acceptEvent(event)
   }
 
-  private lateinit var gameStateMachine : StateMachine<GameState, GameEvent>
+  private val gameStateMachine : StateMachine<GameState, GameEvent> = StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
+    state(GameState.WorldMap) {
+      edge(GameEvent.LootFound, GameState.Inventory) {}
+      edge(GameEvent.InventoryOpened, GameState.Inventory) {}
+    }
+    state(GameState.Inventory) {
+      edge(GameEvent.InventoryClosed, GameState.WorldMap) {}
+    }
+  }
 
   init {
-    gameStateMachine = StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
-      state(GameState.WorldMap) {
-        edge(GameEvent.LootFound, GameState.Inventory) {}
-        edge(GameEvent.InventoryOpened, GameState.Inventory) {}
-      }
-      state(GameState.Inventory) {
-        edge(GameEvent.InventoryClosed, GameState.WorldMap) {}
-      }
-    }
     gameStateMachine.initialize()
   }
 }
