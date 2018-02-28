@@ -1,10 +1,8 @@
 package com.lavaeater.kftw.managers
 
-import com.lavaeater.kftw.screens.MainGameScreen
 import com.lavaeater.kftw.statemachine.BaseEvent
 import com.lavaeater.kftw.statemachine.BaseState
 import com.lavaeater.kftw.statemachine.StateMachine
-import com.lavaeater.kftw.statemachine.State
 
 enum class GameState {
   WorldMap,
@@ -14,7 +12,7 @@ enum class GameState {
   CharacterScreen
 }
 
-enum class GameEvents {
+enum class GameEvent {
   GameStarted,
   CombatStarted,
   CombatEnded,
@@ -28,27 +26,19 @@ enum class GameEvents {
   CharacterScreenClosed
 }
 
-class GameStateManager(stateChange: (newState: State)-> Unit) {
+class GameStateManager(private val stateChange: (newState: GameState)-> Unit) {
 
-  fun handleEvent(event: BaseEvent) {
+  fun handleEvent(event: GameEvent) {
     gameStateMachine.acceptEvent(event)
   }
 
-  val gameStateMachine = StateMachine.buildStateMachine(initialStateName = WorldMap()) {
-    state(WorldMap()) {
-      action {
-        stateChange(it) //Maybe some other stuff some day
-      }
-      edge(FoundSomeLoot(), Inventory()) {
-      }
+  val gameStateMachine = StateMachine.buildStateMachine<GameState, GameEvent>(GameState.WorldMap, stateChange) {
+    state(GameState.WorldMap) {
+      edge(GameEvent.LootFound, GameState.Inventory) {}
+      
     }
-    state(Inventory()) {
-      action {
-        stateChange(it)
-      }
-      edge(InventoryClosed(), WorldMap())
+    state(GameState.Inventory) {
+      edge(GameEvent.InventoryClosed, GameState.WorldMap) {}
     }
   }
 }
-
-class InventoryClosed : BaseEvent()

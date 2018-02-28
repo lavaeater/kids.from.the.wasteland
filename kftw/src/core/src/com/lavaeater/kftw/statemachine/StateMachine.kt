@@ -3,7 +3,7 @@ package com.lavaeater.kftw.statemachine
 /**
  * Builds and operates state machines
  */
-class StateMachine<S,E> private constructor(private val initialState: S) {
+class StateMachine<S,E> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
     private lateinit var currentState: State<S,E>
     private val states = mutableListOf<State<S,E>>()
 
@@ -15,7 +15,7 @@ class StateMachine<S,E> private constructor(private val initialState: S) {
     }
 
     /**
-     * Translates state name to an object
+     * Translates state state to an object
      */
     private fun getState(state: S): State<S,E> {
         return states.firstOrNull { state == it} ?:
@@ -28,6 +28,7 @@ class StateMachine<S,E> private constructor(private val initialState: S) {
     fun initialize() {
         currentState = getState(initialState)
         currentState.enter()
+        globalStateAction(currentState.state)
     }
 
     /**
@@ -40,12 +41,13 @@ class StateMachine<S,E> private constructor(private val initialState: S) {
             // Indirectly get the state stored in edge
             // The syntax is weird to guarantee that the states are changed
             // once the actions are performed
-            // This line just queries the next state name (Class) from the
+            // This line just queries the next state state (Class) from the
             // state list and retrieves the corresponding state object.
             val state = edge.applyTransition { getState(it) }
             state.enter()
 
             currentState = state
+            globalStateAction(currentState.state)
         } catch (exc: NoSuchElementException) {
             throw IllegalStateException("This state doesn't support " +
                     "transition on ${e}")
@@ -53,8 +55,8 @@ class StateMachine<S,E> private constructor(private val initialState: S) {
     }
 
     companion object {
-        fun <S,E>buildStateMachine(initialStateName: S, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
-            val stateMachine = StateMachine<S,E>(initialStateName)
+        fun <S,E>buildStateMachine(initialStateName: S, globalStateAction: (S) -> Unit, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
+            val stateMachine = StateMachine<S,E>(initialStateName, globalStateAction)
             stateMachine.init()
             return stateMachine
         }

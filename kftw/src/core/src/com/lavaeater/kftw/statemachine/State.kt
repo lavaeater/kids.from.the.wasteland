@@ -3,7 +3,7 @@ package com.lavaeater.kftw.statemachine
 /**
  *
  */
-class State<S,E>(val name: S) {
+class State<S,E>(val state: S) {
     private val edges = hashMapOf<E, Edge<S,E>>()   // Convert to HashMap with event as key
     private val stateActions = mutableListOf<(State<S,E>) -> Unit>()
 
@@ -46,12 +46,12 @@ class State<S,E>(val name: S) {
         try {
             return edges[event]!!
         } catch (e: KotlinNullPointerException) {
-            throw IllegalStateException("Event $event isn't registered with state ${this.name}")
+            throw IllegalStateException("Event $event isn't registered with state ${this.state}")
         }
     }
 
     override fun toString(): String {
-        return name.toString()
+        return state.toString()
     }
 
 }
