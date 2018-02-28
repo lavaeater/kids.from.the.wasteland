@@ -28,7 +28,6 @@ class Ctx {
         bindSingleton(ActorManager())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(GameManager())
-        bindSingleton(GameStateManager(this.inject<GameManager>()::gameStateChanged))
       }
     }
   }

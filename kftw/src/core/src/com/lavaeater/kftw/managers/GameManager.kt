@@ -11,10 +11,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 
-class GameStateMachine {
-
-}
-
 class GameManager : Disposable {
 
   val batch = Ctx.context.inject<SpriteBatch>()
@@ -24,9 +20,14 @@ class GameManager : Disposable {
   val actorManager = Ctx.context.inject<ActorManager>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
-  val gameStateManager = Ctx.context.inject<GameStateManager>()
+  val gameStateManager = GameStateManager(::gameStateChanged)
+
 
   init {
+    Ctx.context.register {
+      bindSingleton(gameStateManager)
+    }
+
     setupSystems()
 
     camera.position.x = 0f

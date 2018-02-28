@@ -3,7 +3,7 @@ package com.lavaeater.kftw.statemachine
 /**
  * Builds and operates state machines
  */
-class StateMachine<S,E> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
+class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
     private lateinit var currentState: State<S,E>
     private val states = mutableListOf<State<S,E>>()
 
@@ -18,8 +18,7 @@ class StateMachine<S,E> private constructor(private val initialState: S, private
      * Translates state state to an object
      */
     private fun getState(state: S): State<S,E> {
-        return states.firstOrNull { state == it} ?:
-                throw NoSuchElementException(state.toString())
+        return states.first { s -> s.state == state  }
     }
 
     /**
@@ -55,8 +54,8 @@ class StateMachine<S,E> private constructor(private val initialState: S, private
     }
 
     companion object {
-        fun <S,E>buildStateMachine(initialStateName: S, globalStateAction: (S) -> Unit, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
-            val stateMachine = StateMachine<S,E>(initialStateName, globalStateAction)
+        fun <S : kotlin.Enum<S>,E : kotlin.Enum<E>>buildStateMachine(initialState: S, globalStateAction: (S) -> Unit, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
+            val stateMachine = StateMachine<S,E>(initialState, globalStateAction)
             stateMachine.init()
             return stateMachine
         }
