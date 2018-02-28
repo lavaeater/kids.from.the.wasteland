@@ -4,11 +4,10 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.CharacterSpriteComponent
 import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor

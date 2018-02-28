@@ -6,6 +6,9 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.KeyboardControlComponent
+import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.managers.GameEvent
+import com.lavaeater.kftw.managers.GameStateManager
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
@@ -15,6 +18,8 @@ import java.util.*
 class KeyboardCharacterControlSystem(val speed: Float = 20f) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
+
+  val gameStateManager = Ctx.context.inject<GameStateManager>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val component = kbCtrlMpr[entity]!!
@@ -44,6 +49,7 @@ class KeyboardCharacterControlSystem(val speed: Float = 20f) :
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
+      Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryOpened)
     }
     return true
   }

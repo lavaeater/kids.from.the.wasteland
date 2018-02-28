@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.screens
+package com.lavaeater.kftw.injection
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
@@ -7,9 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.lavaeater.kftw.managers.ActorManager
 import com.lavaeater.kftw.managers.BodyManager
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManagerBase
 import ktx.box2d.createWorld
 import ktx.inject.Context
 
@@ -28,6 +28,7 @@ class Ctx {
         bindSingleton(ActorManager())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(GameManager())
+        bindSingleton(GameStateManager(this.inject<GameManager>()::gameStateChanged))
       }
     }
   }

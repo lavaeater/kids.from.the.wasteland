@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 

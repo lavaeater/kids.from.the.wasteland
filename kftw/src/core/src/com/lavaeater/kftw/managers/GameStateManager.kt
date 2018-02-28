@@ -1,7 +1,5 @@
 package com.lavaeater.kftw.managers
 
-import com.lavaeater.kftw.statemachine.BaseEvent
-import com.lavaeater.kftw.statemachine.BaseState
 import com.lavaeater.kftw.statemachine.StateMachine
 
 enum class GameState {
@@ -35,7 +33,7 @@ class GameStateManager(private val stateChange: (newState: GameState)-> Unit) {
   val gameStateMachine = StateMachine.buildStateMachine<GameState, GameEvent>(GameState.WorldMap, stateChange) {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
-      
+      edge(GameEvent.InventoryOpened, GameState.Inventory) {}
     }
     state(GameState.Inventory) {
       edge(GameEvent.InventoryClosed, GameState.WorldMap) {}

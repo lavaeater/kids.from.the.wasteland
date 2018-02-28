@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.BodyManager
 import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
 import kotlin.math.roundToInt

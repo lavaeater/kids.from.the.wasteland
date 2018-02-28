@@ -2,11 +2,10 @@ package com.lavaeater.kftw.components
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 
 class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = npcType.strength, var health: Int = npcType.health, var speed: Int = npcType.speed, var attack: Int = npcType.attack, var attackString: String = npcType.attackString) {
   var brainLog = ""

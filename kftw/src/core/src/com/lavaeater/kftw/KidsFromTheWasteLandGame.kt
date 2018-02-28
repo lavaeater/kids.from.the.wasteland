@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.lavaeater.Assets
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.screens.MainGameScreen
 import ktx.app.KtxGame
 

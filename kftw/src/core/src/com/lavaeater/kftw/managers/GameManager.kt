@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 
 class GameStateMachine {
@@ -24,6 +24,7 @@ class GameManager : Disposable {
   val actorManager = Ctx.context.inject<ActorManager>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
+  val gameStateManager = Ctx.context.inject<GameStateManager>()
 
   init {
     setupSystems()
@@ -74,6 +75,20 @@ class GameManager : Disposable {
   }
 
   fun pause() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
+  fun gameStateChanged(newState: GameState) {
+    when(newState){
+      GameState.WorldMap -> resumeWorldMap()
+      GameState.Inventory -> showInventory()
+    }
+  }
+
+  private fun showInventory() {
+    Gdx.app.log("StateMachine","Showing inventory")
+  }
+
+  private fun resumeWorldMap() {
+    Gdx.app.log("StateMachine","Going back to the game!")
   }
 }

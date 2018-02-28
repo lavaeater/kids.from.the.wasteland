@@ -1,5 +1,6 @@
 package com.lavaeater.kftw.screens
 
+import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import ktx.app.KtxScreen
 

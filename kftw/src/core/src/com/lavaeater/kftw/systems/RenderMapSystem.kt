@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import ktx.app.use
 import kotlin.math.roundToInt
 

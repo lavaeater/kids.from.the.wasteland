@@ -3,7 +3,7 @@ package com.lavaeater.kftw.systems
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxInputAdapter
 
 class KeyboardCameraControlSystem():

@@ -12,7 +12,7 @@ import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
-import com.lavaeater.kftw.screens.Ctx
+import com.lavaeater.kftw.injection.Ctx
 import ktx.math.vec2
 
 class ActorManager {
