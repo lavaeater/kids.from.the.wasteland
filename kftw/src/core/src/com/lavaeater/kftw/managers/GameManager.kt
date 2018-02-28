@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.screens.Ctx
 import com.lavaeater.kftw.systems.*
 
+class GameStateMachine {
+
+}
 
 class GameManager : Disposable {
 
@@ -45,7 +47,7 @@ class GameManager : Disposable {
     engine.addSystem(PhysicsSystem())
     //engine.addSystem(PhysicsDebugSystem(world, camera))
 
-    engine.addSystem(FollowCameraSystem(actorManager.addHero()))
+    engine.addSystem(FollowCameraSystem(actorManager.addHeroEntity()))
     val inputSystem = KeyboardCharacterControlSystem()
     Gdx.input.inputProcessor = inputSystem
     engine.addSystem(inputSystem)

@@ -15,7 +15,7 @@ import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.screens.Ctx
 import ktx.math.vec2
 
-class ActorManager() {
+class ActorManager {
   val engine = Ctx.context.inject<Engine>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val bodyManager = Ctx.context.inject<BodyManager>()
@@ -50,9 +50,10 @@ class ActorManager() {
         .toTypedArray()
 
     for (i in 1..20)
-      createNpc(npcNames[i]!!, "townsfolk", potentialStartTiles)
+      addNpcEntity(npcNames[i]!!, "townsfolk", potentialStartTiles)
   }
-  fun createNpc(name: String, type: String, startTiles : Array<Vector2>): Entity {
+
+  fun addNpcEntity(name: String, type: String, startTiles : Array<Vector2>): Entity {
 
     val startPosition = startTiles[MathUtils.random(0, startTiles.size - 1)]
 
@@ -72,7 +73,7 @@ class ActorManager() {
     return entity
   }
 
-  fun addHero() : Entity {
+  fun addHeroEntity() : Entity {
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())

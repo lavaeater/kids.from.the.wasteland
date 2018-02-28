@@ -3,11 +3,11 @@ package com.lavaeater.kftw.statemachine
 /**
  * Builds and operates state machines
  */
-class StateMachine private constructor(private val initialState: BaseState) {
+class StateMachine<S,E> private constructor(private val initialState: S) {
     private lateinit var currentState: State
     private val states = mutableListOf<State>()
 
-    fun state(stateName: BaseState, init: State.() -> Unit) {
+    fun state(stateName: S, init: State.() -> Unit) {
         val state = State(stateName)
         state.init()
 
@@ -17,9 +17,9 @@ class StateMachine private constructor(private val initialState: BaseState) {
     /**
      * Translates state name to an object
      */
-    private fun getState(stateType: BaseState): State {
-        return states.firstOrNull { stateType.javaClass == it.name.javaClass } ?:
-                throw NoSuchElementException(stateType.javaClass.canonicalName)
+    private fun getState(state: S): State {
+        return states.firstOrNull { state == it} ?:
+                throw NoSuchElementException(state.toString())
     }
 
     /**
@@ -33,7 +33,7 @@ class StateMachine private constructor(private val initialState: BaseState) {
     /**
      * Gives the FSM an event to act upon, state is then changed and actions are performed
      */
-    fun acceptEvent(e: BaseEvent) {
+    fun acceptEvent(e: E) {
         try {
             val edge = currentState.getEdgeForEvent(e)
 
@@ -48,13 +48,13 @@ class StateMachine private constructor(private val initialState: BaseState) {
             currentState = state
         } catch (exc: NoSuchElementException) {
             throw IllegalStateException("This state doesn't support " +
-                    "transition on ${e.javaClass.simpleName}")
+                    "transition on ${e}")
         }
     }
 
     companion object {
-        fun buildStateMachine(initialStateName: BaseState, init: StateMachine.() -> Unit): StateMachine {
-            val stateMachine = StateMachine(initialStateName)
+        fun <S,E>buildStateMachine(initialStateName: S, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
+            val stateMachine = StateMachine<S,E>(initialStateName)
             stateMachine.init()
             return stateMachine
         }

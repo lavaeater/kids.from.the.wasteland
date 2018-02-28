@@ -11,21 +11,6 @@ import com.lavaeater.kftw.statemachine.BaseState
 import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.app.KtxGame
 
-class Initial : BaseState()
-class WorldMap : BaseState()
-class Combat : BaseState()
-class Dialog : BaseState()
-class Inventory : BaseState()
-class CharacterCreation : BaseState()
-
-class GameStarted : BaseEvent()
-class CombatStarted : BaseEvent()
-class DialogStarted : BaseEvent()
-class FoundSomeLoot: BaseEvent()
-class InventoryOpened : BaseEvent()
-class GameEnded : BaseEvent()
-class CharacterCreated : BaseEvent()
-class FoundAreaOfInterest : BaseEvent()
 
 class KidsFromTheWasteLandGame : KtxGame<Screen>() {
   /*
@@ -35,22 +20,6 @@ class KidsFromTheWasteLandGame : KtxGame<Screen>() {
   perhaps?
 
   */
-  val gameStateMachine = StateMachine.buildStateMachine(initialStateName = WorldMap()) {
-    state(WorldMap()) {
-      action {
-        setScreen<MainGameScreen>() //When the WorldMap state enters, we show the worldmap screen.
-        mainGameScreen.resume()
-      }
-      edge(FoundSomeLoot(), Inventory()) {
-        action { mainGameScreen.pause()}
-      }
-    }
-    state(Inventory()) {
-      action {
-        mainGameScreen
-      }
-    }
-  }
 
   private lateinit var mainGameScreen: MainGameScreen
 

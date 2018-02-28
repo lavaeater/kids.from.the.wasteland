@@ -4,26 +4,26 @@ package com.lavaeater.kftw.statemachine
  * A transition between states when an [BaseEvent] occurs that goes
  * to a next [State]
  */
-class Edge(private val event: BaseEvent, private val targetState: BaseState) {
-    private val actionList = mutableListOf<(Edge) -> Unit>()
+class Edge<S,E>(private val event: E, private val targetState: S) {
+    private val actionList = mutableListOf<(Edge<S,E>) -> Unit>()
 
     /**
      * Add an action to be performed upon transition
      */
-    fun action(action: (Edge) -> Unit) {
+    fun action(action: (Edge<S,E>) -> Unit) {
         actionList.add(action)
     }
 
     /**
      * Apply the transition actions
      */
-    fun applyTransition(getNextState: (BaseState) -> State): State {
+    fun applyTransition(getNextState: (S) -> State<S,E>): State<S,E> {
         actionList.forEach { it(this) }
 
         return getNextState(targetState)
     }
 
     override fun toString(): String {
-        return "Edge to ${targetState.javaClass.simpleName} on ${event.javaClass.simpleName}"
+        return "Edge to ${targetState} on ${event}"
     }
 }
