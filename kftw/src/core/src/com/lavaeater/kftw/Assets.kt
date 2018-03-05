@@ -2,8 +2,11 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.utils.Disposable
 
 /**
@@ -24,6 +27,13 @@ object Assets : Disposable {
       "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
       "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
   )
+  val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
+
+  val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+    color = Color.GRAY
+    size = 12
+  }
+  val standardFont: BitmapFont = fontGenerator.generateFont(fontParams)
 
   val IDLE = "idle"
   val WALK = "walk"
@@ -55,7 +65,7 @@ object Assets : Disposable {
     val width = 6f
     val height = 7f
     val finalMap = mutableMapOf<String, MutableMap<String, MutableList<Sprite>>>()
-    for(atlasMap in animatedCharacters) {
+    for (atlasMap in animatedCharacters) {
       val atlas = atlasMap.value
 
       val spriteCollection = hashMapOf<String, MutableList<Sprite>>()

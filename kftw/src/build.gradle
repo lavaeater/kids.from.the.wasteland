@@ -61,6 +61,10 @@ project(":core") {
         compile "io.github.libktx:ktx-math:$ktxVersion"
         compile "io.github.libktx:ktx-box2d:$ktxVersion"
         compile "io.github.libktx:ktx-inject:$ktxVersion"
+        compile "io.github.libktx:ktx-vis:$ktxVersion"
+        compile "io.github.libktx:ktx-vis-style:$ktxVersion"
+        compile "io.github.libktx:ktx-scene2d:$ktxVersion"
+        implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
 }
 
