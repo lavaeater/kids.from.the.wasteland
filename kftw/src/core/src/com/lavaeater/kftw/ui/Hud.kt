@@ -4,14 +4,11 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
 import com.lavaeater.kftw.injection.Ctx
-import ktx.scene2d.Scene2DSkin
-import ktx.vis.table
 import ktx.vis.window
 
 
@@ -54,6 +51,8 @@ class Hud : Disposable {
       isModal = false
       isMovable = false
       isResizable = false
+      height = Gdx.graphics.height.toFloat()
+      width = Gdx.graphics.width.toFloat() / 4
       label("This window is for user data")
     }
 
