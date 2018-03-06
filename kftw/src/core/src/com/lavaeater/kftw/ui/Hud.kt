@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.kotcrab.vis.ui.VisUI
 import com.lavaeater.kftw.injection.Ctx
 import ktx.scene2d.Scene2DSkin
 import ktx.vis.table
@@ -21,7 +22,9 @@ class Hud : Disposable {
   val batch = Ctx.context.inject<SpriteBatch>()
 
   init {
-    Scene2DSkin.defaultSkin =  Skin(Gdx.files.internal("skins/uiskin.json"))
+    //No skin needed?
+//    Vis
+//    Scene2DSkin.defaultSkin =  Skin(Gdx.files.internal("skins/uiskin.json"))
     //setup the HUD viewport using a new camera seperate from gamecam
     //define stage using that viewport and games spritebatch
     viewport = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
@@ -35,6 +38,7 @@ class Hud : Disposable {
   }
 
   override fun dispose() {
+    VisUI.dispose()
     stage.dispose()
   }
 
@@ -44,6 +48,7 @@ class Hud : Disposable {
 
   fun setup() {
     stage.clear()
+    VisUI.load()
     val table = table {
       label("Just a teststring")
     }
