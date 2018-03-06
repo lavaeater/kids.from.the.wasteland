@@ -27,13 +27,8 @@ object Assets : Disposable {
       "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
       "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
   )
-  val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
 
-  val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-    color = Color.GRAY
-    size = 12
-  }
-  val standardFont: BitmapFont = fontGenerator.generateFont(fontParams)
+  lateinit var standardFont: BitmapFont
 
   val IDLE = "idle"
   val WALK = "walk"
@@ -57,7 +52,22 @@ object Assets : Disposable {
 
     initAnimatedCharacterSprites()
 
+    initializeFonts()
+
     return am
+  }
+
+  private fun initializeFonts() {
+    val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
+
+    val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+      color = Color.GRAY
+      size = 12
+    }
+
+    standardFont =  fontGenerator.generateFont(fontParams)
+
+    fontGenerator.dispose()
   }
 
   private fun initAnimatedCharacterSprites() {

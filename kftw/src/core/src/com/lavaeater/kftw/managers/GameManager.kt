@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
+import com.lavaeater.kftw.ui.Hud
 
 class GameManager : Disposable {
 
@@ -21,6 +22,7 @@ class GameManager : Disposable {
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val gameStateManager = GameStateManager(::gameStateChanged)
+  val hud = Ctx.context.inject<Hud>()
 
 
   init {
@@ -89,7 +91,7 @@ class GameManager : Disposable {
   }
 
   private fun showInventory() {
-    Gdx.app.log("StateMachine","Showing inventory")
+    hud.showInventory()
 
   }
 

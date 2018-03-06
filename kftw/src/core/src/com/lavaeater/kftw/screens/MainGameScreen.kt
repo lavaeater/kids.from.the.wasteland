@@ -9,14 +9,11 @@ import ktx.app.KtxScreen
 class MainGameScreen : KtxScreen {
   private val batch = Ctx.context.inject<SpriteBatch>()
   private val gameManager = Ctx.context.inject<GameManager>()
-  private val hud = Hud(batch) //Can we inject /
+  private val hud = Ctx.context.inject<Hud>()
 
   private fun update(delta:Float) {
     gameManager.update(delta)
     hud.update(delta)
-    batch.projectionMatrix = hud.stage.camera.combined
-    hud.stage.draw()
-
   }
 
   override fun render(delta: Float) {

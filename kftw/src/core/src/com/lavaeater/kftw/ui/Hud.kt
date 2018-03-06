@@ -9,26 +9,33 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.lavaeater.kftw.injection.Ctx
 import ktx.scene2d.Scene2DSkin
 import ktx.vis.table
 
 
 
-class Hud(sb: SpriteBatch) : Disposable {
+class Hud() : Disposable {
 
   var stage: Stage
   private val viewport: Viewport
+  val batch = Ctx.context.inject<SpriteBatch>()
 
   init {
     Scene2DSkin.defaultSkin =  Skin(Gdx.files.internal("skins/uiskin.json"))
     //setup the HUD viewport using a new camera seperate from gamecam
     //define stage using that viewport and games spritebatch
+
+
+
+
     viewport = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
-    stage = Stage(viewport, sb)
+    stage = Stage(viewport, batch)
   }
 
-  fun update(dt: Float) {
-
+  fun update(delta: Float) {
+    batch.projectionMatrix = stage.camera.combined
+    stage.draw()
   }
 
   override fun dispose() {
@@ -47,5 +54,9 @@ class Hud(sb: SpriteBatch) : Disposable {
 //
 //    //add table to the stage
 //    stage.addActor(table)
+  }
+
+  fun showInventory() {
+    Gdx.app.log("StateMachine","Showing inventory")
   }
 }
