@@ -19,12 +19,6 @@ class Hud(sb: SpriteBatch) : Disposable {
   var stage: Stage
   private val viewport: Viewport
 
-  //score && time tracking variables
-  var isTimeUp: Boolean = false
-    private set
-
-  private val playerLabels = HashMap<Int, ArrayList<Label>>()
-
   init {
     Scene2DSkin.defaultSkin =  Skin(Gdx.files.internal("skins/uiskin.json"))
     //setup the HUD viewport using a new camera seperate from gamecam
@@ -47,11 +41,11 @@ class Hud(sb: SpriteBatch) : Disposable {
 
   fun setup() {
     stage.clear()
-    val table = table {
-    }
-    table.setFillParent(true)
-
-    //add table to the stage
-    stage.addActor(table)
+//    val table = table {
+//    }
+//    table.setFillParent(true)
+//
+//    //add table to the stage
+//    stage.addActor(table)
   }
 }

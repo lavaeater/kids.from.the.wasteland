@@ -82,11 +82,15 @@ class GameManager : Disposable {
     when(newState){
       GameState.WorldMap -> resumeWorldMap()
       GameState.Inventory -> showInventory()
+      else -> {
+        //These aren't defined yet!
+      }
     }
   }
 
   private fun showInventory() {
     Gdx.app.log("StateMachine","Showing inventory")
+
   }
 
   private fun resumeWorldMap() {
