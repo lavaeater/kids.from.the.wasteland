@@ -12,7 +12,7 @@ import com.kotcrab.vis.ui.VisUI
 import com.lavaeater.kftw.injection.Ctx
 import ktx.scene2d.Scene2DSkin
 import ktx.vis.table
-
+import ktx.vis.window
 
 
 class Hud : Disposable {
@@ -48,14 +48,22 @@ class Hud : Disposable {
 
   fun setup() {
     stage.clear()
-    VisUI.load()
-    val table = table {
-      label("Just a teststring")
+    VisUI.load(VisUI.SkinScale.X2) //("tixel/tixel.json")
+
+    val window = window("Data Window") {
+      isModal = false
+      isMovable = false
+      isResizable = false
+      label("This window is for user data")
     }
-    table.setFillParent(true)
+
+//    val table = table {
+//      label("Just a teststring")
+//    }
+//    table.setFillParent(true)
 
     //add table to the stage
-    stage.addActor(table)
+    stage.addActor(window)
   }
 
   fun showInventory() {
