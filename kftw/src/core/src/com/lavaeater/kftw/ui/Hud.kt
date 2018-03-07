@@ -47,15 +47,17 @@ class Hud : Disposable {
     stage.clear()
     VisUI.load(VisUI.SkinScale.X2) //("tixel/tixel.json")
 
-    val window = window("Data Window") {
+    val window = window("") {
       isModal = false
       isMovable = false
       isResizable = false
       height = Gdx.graphics.height.toFloat()
       width = Gdx.graphics.width.toFloat() / 4
-      label("This window is for user data")
+      table {
+        setFillParent(true)
+        row()
+      }
     }
-
 //    val table = table {
 //      label("Just a teststring")
 //    }
