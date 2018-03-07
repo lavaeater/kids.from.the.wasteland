@@ -2,8 +2,10 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.CharacterSpriteComponent
 import com.lavaeater.kftw.components.TransformComponent
@@ -17,6 +19,8 @@ class RenderCharactersSystem() :
         TransformComponent::class).get(), EntityYOrderComparator()) {
   val transformMapper = mapperFor<TransformComponent>()
   val spriteMapper = mapperFor<CharacterSpriteComponent>()
+
+
 
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
@@ -46,8 +50,38 @@ class RenderCharactersSystem() :
         spriteComponent.currentIndex = 0
     }
     val sprite = spriteSet[spriteComponent.currentIndex]
+    val texture = sprite.texture
     sprite.setPosition(transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3)
+
+    /*
+    Use the texture to draw a shadow?
+     */
+
+    batch.color = Color.BLACK
+//    batch.draw(texture,
+//        transform.position.x - sprite.width / 2 +1f,
+//        transform.position.y - sprite.height / 3 +1f,
+//        sprite.width,
+//        sprite.height / 2,
+//        sprite.u2,
+//        sprite.v2,
+//        sprite.u,
+//        sprite.v)
+
+
+    batch.draw(sprite, transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3, sprite.originX, sprite.originY, sprite.width, sprite.height, 1f, .5f, 15f)
+    batch.color = Color.WHITE
+
     sprite.draw(batch)
+
+//    sprite.rotate(15f)
+//    val scaleY = sprite.scaleY
+//    sprite.setScale(1f, .5f)
+//    sprite.color = Color.BLACK
+//    sprite.setSize(1f, scaleY)
+//    sprite.color = Color.WHITE
+//    sprite.rotate(-15f)
+//    sprite.draw(batch)
   }
 
   private fun renderRegularCharacter(transform: TransformComponent, spriteComponent: CharacterSpriteComponent) {
