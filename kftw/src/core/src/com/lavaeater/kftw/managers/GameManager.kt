@@ -21,8 +21,8 @@ class GameManager : Disposable {
   val actorManager = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
-  val gameStateManager = GameStateManager(::gameStateChanged)
   val hud = Ctx.context.inject<Hud>()
+  val gameStateManager = GameStateManager(::gameStateChanged)
 
 
   init {
