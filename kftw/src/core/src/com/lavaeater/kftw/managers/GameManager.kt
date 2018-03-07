@@ -52,6 +52,7 @@ class GameManager : Disposable {
     engine.addSystem(PhysicsDebugSystem())
 
     engine.addSystem(FollowCameraSystem(actorManager.addHeroEntity()))
+
     val inputSystem = KeyboardCharacterControlSystem()
     Gdx.input.inputProcessor = inputSystem
     engine.addSystem(inputSystem)

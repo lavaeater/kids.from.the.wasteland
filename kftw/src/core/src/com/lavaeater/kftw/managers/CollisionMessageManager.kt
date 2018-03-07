@@ -2,7 +2,7 @@ package com.lavaeater.kftw.managers
 
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
-import com.lavaeater.kftw.components.Npc
+import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.injection.Ctx
 
 class CollisionMessageManager() : ContactListener {

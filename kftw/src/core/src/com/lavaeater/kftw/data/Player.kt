@@ -1,5 +1,6 @@
 package com.lavaeater.kftw.data
 
+import com.badlogic.ashley.core.Entity
 import ktx.collections.gdxArrayOf
 import com.badlogic.gdx.utils.Array as GdxArray
 

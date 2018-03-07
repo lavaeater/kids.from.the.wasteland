@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.kftw.components.*
+import com.lavaeater.kftw.data.Npc
+import com.lavaeater.kftw.data.NpcType
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
@@ -79,6 +81,7 @@ class ActorFactory {
       add(TransformComponent())
       add(CharacterSpriteComponent("femalerogue", true))
       add(KeyboardControlComponent())
+      add(PlayerComponent(Ctx.context.inject()))
       add(Box2dBodyComponent(bodyManager.createBody(2f, 4f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
     }
     engine.addEntity(entity)
@@ -88,5 +91,9 @@ class ActorFactory {
   fun createNpcBody(position: Vector2, npc: Npc) : Body {
     return bodyManager.createBody(2f, 2.5f, 15f, position, BodyDef.BodyType.DynamicBody)
         .apply { userData = npc }
+  }
+
+  fun monsterManagement() {
+
   }
 }

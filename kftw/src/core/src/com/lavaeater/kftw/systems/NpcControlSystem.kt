@@ -7,6 +7,8 @@ import com.badlogic.gdx.ai.msg.Telegraph
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.*
+import com.lavaeater.kftw.data.Npc
+import com.lavaeater.kftw.data.NpcState
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.managers.Messages
 import com.lavaeater.kftw.map.TileKey
