@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -15,7 +14,7 @@ import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
 import com.kotcrab.vis.ui.widget.ListView
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
-import ktx.vis.*
+import ktx.vis.table
 
 
 class Hud : Disposable {
@@ -25,10 +24,11 @@ class Hud : Disposable {
   val batch = Ctx.context.inject<SpriteBatch>()
   val player = Ctx.context.inject<Player>()
   var inventoryListAdapter : SimpleListAdapter<String>
-  lateinit var inventory: Cell<*>
+  lateinit var inventoryTable : Table
+  lateinit var listView : ListView<String>
 
   init {
-    VisUI.load("tixel/tixel.json")
+    VisUI.load(VisUI.SkinScale.X2)
     inventoryListAdapter = SimpleListAdapter(player.inventory).apply {
       selectionMode = AbstractListAdapter.SelectionMode.SINGLE
     }
@@ -54,26 +54,25 @@ class Hud : Disposable {
   fun setup() {
     stage.clear()
 
-    val table = table {
+    inventoryTable = table {
       debug = true
-      height = Gdx.graphics.height.toFloat() / 6
-      width = Gdx.graphics.width.toFloat()
-      cell
-      listView(inventoryListAdapter) {
+      height = Gdx.graphics.height.toFloat() / 3
+      width = Gdx.graphics.width.toFloat() / 5
+      listView = listView(inventoryListAdapter) {
           header = label("Inventory")
         }
       left()
       top()
     }
-    stage.addActor(table)
+    stage.addActor(inventoryTable)
     hideInventory()
   }
 
   fun showInventory() {
-  //  inventoryTable.isVisible = true
+    inventoryTable.isVisible = true
   }
 
   fun hideInventory() {
-//    inventoryListView.isVisible = false
+    inventoryTable.isVisible = false
   }
 }
