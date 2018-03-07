@@ -17,13 +17,10 @@ import ktx.ashley.mapperFor
 class RenderCharactersSystem() :
     SortedIteratingSystem(allOf(CharacterSpriteComponent::class,
         TransformComponent::class).get(), EntityYOrderComparator()) {
-  val transformMapper = mapperFor<TransformComponent>()
-  val spriteMapper = mapperFor<CharacterSpriteComponent>()
+  private val transformMapper = mapperFor<TransformComponent>()
+  private val spriteMapper = mapperFor<CharacterSpriteComponent>()
 
-
-
-  val batch = Ctx.context.inject<SpriteBatch>()
-  val camera = Ctx.context.inject<OrthographicCamera>()
+  private val batch = Ctx.context.inject<SpriteBatch>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val transform = transformMapper[entity]
@@ -33,7 +30,7 @@ class RenderCharactersSystem() :
       false -> renderRegularCharacter(transform, spriteComponent)
     }
   }
-  val frameRate = 1f / 6f
+  private val frameRate = 1f / 6f
   private fun renderAnimatedCharacter(transform: TransformComponent,
                                       spriteComponent: CharacterSpriteComponent,
                                       deltaTime: Float) {
@@ -50,26 +47,11 @@ class RenderCharactersSystem() :
         spriteComponent.currentIndex = 0
     }
     val sprite = spriteSet[spriteComponent.currentIndex]
-//    sprite.setPosition(transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3)
-    //sprite.setOriginCenter()//sprite.width / 2, sprite.height / 2)
+
     sprite.setCenter(transform.position.x,
         transform.position.y + sprite.width / 4)
 
-    /*
-    Use the texture to draw a shadow?
-     */
-
     batch.color = Color.BLACK
-//    batch.draw(texture,
-//        transform.position.x - sprite.width / 2 +1f,
-//        transform.position.y - sprite.height / 3 +1f,
-//        sprite.width,
-//        sprite.height / 2,
-//        sprite.u2,
-//        sprite.v2,
-//        sprite.u,
-//        sprite.v)
-
 
     batch.draw(sprite,
         sprite.x,
@@ -84,15 +66,6 @@ class RenderCharactersSystem() :
     batch.color = Color.WHITE
 
     sprite.draw(batch)
-
-//    sprite.rotate(15f)
-//    val scaleY = sprite.scaleY
-//    sprite.setScale(1f, .5f)
-//    sprite.color = Color.BLACK
-//    sprite.setSize(1f, scaleY)
-//    sprite.color = Color.WHITE
-//    sprite.rotate(-15f)
-//    sprite.draw(batch)
   }
 
   private fun renderRegularCharacter(transform: TransformComponent, spriteComponent: CharacterSpriteComponent) {
