@@ -18,7 +18,7 @@ class GameManager : Disposable {
   val camera = Ctx.context.inject<OrthographicCamera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val engine = Ctx.context.inject<Engine>()
-  val actorManager = Ctx.context.inject<ActorManager>()
+  val actorManager = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val gameStateManager = GameStateManager(::gameStateChanged)
@@ -91,11 +91,24 @@ class GameManager : Disposable {
   }
 
   private fun showInventory() {
+    stopTheWorld()
+
     hud.showInventory()
 
   }
 
+  private fun stopTheWorld() {
+    for (system in engine.systems)
+      system.setProcessing(false)
+  }
+
   private fun resumeWorldMap() {
-    Gdx.app.log("StateMachine","Going back to the game!")
+    hud.hideInventory()
+    resumeTheWorld()
+  }
+
+  private fun resumeTheWorld() {
+    for (system in engine.systems)
+      system.setProcessing(true)
   }
 }

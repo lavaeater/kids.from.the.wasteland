@@ -15,10 +15,10 @@ import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.injection.Ctx
 import ktx.math.vec2
 
-class ActorManager {
+class ActorFactory {
   val engine = Ctx.context.inject<Engine>()
   val mapManager = Ctx.context.inject<IMapManager>()
-  val bodyManager = Ctx.context.inject<BodyManager>()
+  val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType(4, 8, 2, 1, "lunges"))

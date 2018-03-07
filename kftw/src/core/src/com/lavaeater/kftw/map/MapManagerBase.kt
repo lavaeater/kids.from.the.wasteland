@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.Assets
-import com.lavaeater.kftw.managers.BodyManager
+import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
@@ -13,7 +13,7 @@ import kotlin.math.roundToInt
 
 abstract class MapManagerBase() : IMapManager {
 
-  val bodyManager = Ctx.context.inject<BodyManager>()
+  val bodyManager = Ctx.context.inject<BodyFactory>()
 
   companion object {
     val weirdDirections = mapOf(

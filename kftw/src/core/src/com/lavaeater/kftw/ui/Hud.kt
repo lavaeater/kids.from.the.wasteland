@@ -4,28 +4,35 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
+import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
+import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
+import com.kotcrab.vis.ui.widget.ListView
+import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
-import ktx.vis.window
+import ktx.vis.*
 
 
 class Hud : Disposable {
 
   var stage: Stage
-  private val viewport: Viewport
+  private val hudViewPort: Viewport
   val batch = Ctx.context.inject<SpriteBatch>()
+  val player = Ctx.context.inject<Player>()
+  var inventoryListAdapter : SimpleListAdapter<String>
+  lateinit var inventoryTable: Table
 
   init {
-    //No skin needed?
-//    Vis
-//    Scene2DSkin.defaultSkin =  Skin(Gdx.files.internal("skins/uiskin.json"))
-    //setup the HUD viewport using a new camera seperate from gamecam
-    //define stage using that viewport and games spritebatch
-    viewport = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
-    stage = Stage(viewport, batch)
+    VisUI.load(VisUI.SkinScale.X2) //("tixel/tixel.json")
+    inventoryListAdapter = SimpleListAdapter(player.inventory).apply {
+      selectionMode = AbstractListAdapter.SelectionMode.SINGLE
+    }
+    hudViewPort = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
+    stage = Stage(hudViewPort, batch)
     setup()
   }
 
@@ -45,7 +52,6 @@ class Hud : Disposable {
 
   fun setup() {
     stage.clear()
-    VisUI.load(VisUI.SkinScale.X2) //("tixel/tixel.json")
 
     val window = window("") {
       isModal = false
@@ -53,21 +59,23 @@ class Hud : Disposable {
       isResizable = false
       height = Gdx.graphics.height.toFloat()
       width = Gdx.graphics.width.toFloat() / 4
-      table {
+      inventoryTable = table (true){
+        textArea { "This might be just a log or something" }
         setFillParent(true)
-        row()
+        listView(inventoryListAdapter) {
+          header = label("Inventory")
+        }
       }
     }
-//    val table = table {
-//      label("Just a teststring")
-//    }
-//    table.setFillParent(true)
-
-    //add table to the stage
     stage.addActor(window)
+    hideInventory()
   }
 
   fun showInventory() {
-    Gdx.app.log("StateMachine","Showing inventory")
+    inventoryTable.isVisible = true
+  }
+
+  fun hideInventory() {
+    inventoryTable.isVisible = false
   }
 }

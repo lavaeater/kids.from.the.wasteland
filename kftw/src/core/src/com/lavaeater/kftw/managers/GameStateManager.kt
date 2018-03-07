@@ -17,8 +17,7 @@ enum class GameEvent {
   DialogStarted,
   DialogEnded,
   LootFound,
-  InventoryOpened,
-  InventoryClosed,
+  InventoryToggled,
   GamePaused,
   CharacterScreenOpened,
   CharacterScreenClosed
@@ -32,10 +31,10 @@ fun handleEvent(event: GameEvent) {
   private val gameStateMachine : StateMachine<GameState, GameEvent> = StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
-      edge(GameEvent.InventoryOpened, GameState.Inventory) {}
+      edge(GameEvent.InventoryToggled, GameState.Inventory) {}
     }
     state(GameState.Inventory) {
-      edge(GameEvent.InventoryClosed, GameState.WorldMap) {}
+      edge(GameEvent.InventoryToggled, GameState.WorldMap) {}
     }
   }
 

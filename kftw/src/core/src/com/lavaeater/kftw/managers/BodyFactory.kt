@@ -7,7 +7,7 @@ import com.badlogic.gdx.physics.box2d.World
 import com.lavaeater.kftw.injection.Ctx
 import ktx.box2d.body
 
-class BodyManager {
+class BodyFactory {
   val world = Ctx.context.inject<World>()
 
   fun createBody(width: Float,

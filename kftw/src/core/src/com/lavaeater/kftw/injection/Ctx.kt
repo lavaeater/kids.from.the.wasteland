@@ -4,10 +4,10 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.lavaeater.kftw.managers.ActorManager
-import com.lavaeater.kftw.managers.BodyManager
+import com.lavaeater.kftw.data.Player
+import com.lavaeater.kftw.managers.ActorFactory
+import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.ui.Hud
@@ -20,13 +20,14 @@ class Ctx {
     val context = Context()
     fun buildContext() {
       context.register {
+        bindSingleton(Player("Thorborg"))
         bindSingleton(SpriteBatch())
         bindSingleton(OrthographicCamera())
         bindSingleton(createWorld())
-        bindSingleton(BodyManager())
+        bindSingleton(BodyFactory())
         bindSingleton(Engine())
         bindSingleton<IMapManager>(AreaMapManager())
-        bindSingleton(ActorManager())
+        bindSingleton(ActorFactory())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(Hud())
         bindSingleton(GameManager())

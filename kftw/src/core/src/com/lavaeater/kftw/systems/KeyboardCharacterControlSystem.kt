@@ -49,7 +49,7 @@ class KeyboardCharacterControlSystem(val speed: Float = 20f) :
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
-      Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryOpened)
+      Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryToggled)
     }
     return true
   }
