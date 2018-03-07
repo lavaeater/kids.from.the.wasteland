@@ -50,8 +50,10 @@ class RenderCharactersSystem() :
         spriteComponent.currentIndex = 0
     }
     val sprite = spriteSet[spriteComponent.currentIndex]
-    val texture = sprite.texture
-    sprite.setPosition(transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3)
+//    sprite.setPosition(transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3)
+    //sprite.setOriginCenter()//sprite.width / 2, sprite.height / 2)
+    sprite.setCenter(transform.position.x,
+        transform.position.y + sprite.width / 4)
 
     /*
     Use the texture to draw a shadow?
@@ -69,7 +71,16 @@ class RenderCharactersSystem() :
 //        sprite.v)
 
 
-    batch.draw(sprite, transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3, sprite.originX, sprite.originY, sprite.width, sprite.height, 1f, .5f, 15f)
+    batch.draw(sprite,
+        sprite.x,
+        sprite.y,
+        0f,
+        0f,
+        sprite.width,
+        sprite.height,
+        1f,
+        .5f,
+        30f)
     batch.color = Color.WHITE
 
     sprite.draw(batch)

@@ -83,28 +83,35 @@ object Assets : Disposable {
 
       spriteCollection[IDLE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(IDLE) }) {
-        spriteCollection[IDLE]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
+        createAndAddSprite(spriteCollection, atlas, region, width, height, IDLE)
       }
       spriteCollection[WALK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(WALK) }) {
-        spriteCollection[WALK]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
+        createAndAddSprite(spriteCollection, atlas, region, width, height, WALK)
       }
       spriteCollection[GESTURE] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(GESTURE) }) {
-        spriteCollection[GESTURE]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
+        createAndAddSprite(spriteCollection, atlas, region, width, height, GESTURE)
       }
 
       spriteCollection[ATTACK] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(ATTACK) }) {
-        spriteCollection[ATTACK]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
+        createAndAddSprite(spriteCollection, atlas, region, width, height, ATTACK)
       }
 
       spriteCollection[DEATH] = mutableListOf()
       for (region in atlas.regions.filter { it.name.contains(DEATH) }) {
-        spriteCollection[DEATH]!!.add(atlas.createSprite(region.name).apply { setSize(width, height) })
+        createAndAddSprite(spriteCollection, atlas, region, width, height, DEATH)
       }
     }
     animatedCharacterSprites.putAll(finalMap)
+  }
+
+  private fun createAndAddSprite(spriteCollection: HashMap<String, MutableList<Sprite>>, atlas: TextureAtlas, region: TextureAtlas.AtlasRegion, width: Float, height: Float, spriteKey: String) {
+    spriteCollection[spriteKey]!!.add(atlas.createSprite(region.name).apply {
+      setSize(width, height)
+      setOriginCenter()
+    })
   }
 
   private fun initializeCharacterSprites() {

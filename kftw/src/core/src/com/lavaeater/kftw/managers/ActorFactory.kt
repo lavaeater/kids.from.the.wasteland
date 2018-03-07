@@ -79,7 +79,7 @@ class ActorFactory {
       add(TransformComponent())
       add(CharacterSpriteComponent("femalerogue", true))
       add(KeyboardControlComponent())
-      add(Box2dBodyComponent(bodyManager.createBody(2f, 2.5f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
+      add(Box2dBodyComponent(bodyManager.createBody(2f, 4f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
     }
     engine.addEntity(entity)
     return entity

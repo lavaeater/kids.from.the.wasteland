@@ -49,7 +49,7 @@ class GameManager : Disposable {
 
     engine.addSystem(npcControlSystem)
     engine.addSystem(PhysicsSystem())
-    //engine.addSystem(PhysicsDebugSystem(world, camera))
+    engine.addSystem(PhysicsDebugSystem())
 
     engine.addSystem(FollowCameraSystem(actorManager.addHeroEntity()))
     val inputSystem = KeyboardCharacterControlSystem()
