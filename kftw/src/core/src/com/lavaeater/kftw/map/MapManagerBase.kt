@@ -87,7 +87,7 @@ abstract class MapManagerBase() : IMapManager {
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
-    return !centerTileKey.isInRange(currentKey, 3)
+    return !centerTileKey.isInRange(currentKey, 5)
   }
 
   fun checkHitBoxesForImpassibleTiles() {
@@ -112,7 +112,6 @@ abstract class MapManagerBase() : IMapManager {
 
   fun addEdgeSpritesForTile(ourKey: TileKey, shortCode: String, tileType: String, priority: Int) {
 
-    //CHECK THE SHORT CODE - THAT IS THE RELEVANT CODE! THIS WILL WORK!
     if (!noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
       val extraSprites = mutableListOf<Pair<String, String>>()
 
@@ -217,7 +216,7 @@ abstract class MapManagerBase() : IMapManager {
     if (doWeNeedNewVisibleTiles(position)) {
       currentKey = position.toTile(GameManager.TILE_SIZE)
       visibleTiles.clear()
-      val range = (widthInTiles * 0.75).roundToInt()
+      val range = (widthInTiles * 1.5).roundToInt()
       var vbt = getTilesInRange(currentKey, range)
       if (vbt.size < (range * 2 * range * 2) - range) {
         generateTilesFor(currentKey.x, currentKey.y)

@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
 import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
-import com.kotcrab.vis.ui.widget.ListView
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import ktx.vis.*
@@ -27,7 +26,7 @@ class Hud : Disposable {
   lateinit var inventoryTable: Table
 
   init {
-    VisUI.load(VisUI.SkinScale.X2) //("tixel/tixel.json")
+    VisUI.load("tixel/tixel.json")
     inventoryListAdapter = SimpleListAdapter(player.inventory).apply {
       selectionMode = AbstractListAdapter.SelectionMode.SINGLE
     }
@@ -57,13 +56,14 @@ class Hud : Disposable {
       isModal = false
       isMovable = false
       isResizable = false
-      height = Gdx.graphics.height.toFloat()
-      width = Gdx.graphics.width.toFloat() / 4
-      inventoryTable = table (true){
-        textArea { "This might be just a log or something" }
-        setFillParent(true)
-        listView(inventoryListAdapter) {
-          header = label("Inventory")
+      height = Gdx.graphics.height.toFloat() / 6
+      width = Gdx.graphics.width.toFloat()
+      horizontalFlowGroup {
+        inventoryTable = table (true){
+          setFillParent(true)
+          listView(inventoryListAdapter) {
+            header = label("Inventory")
+          }
         }
       }
     }

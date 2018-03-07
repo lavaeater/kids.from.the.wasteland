@@ -98,7 +98,7 @@ class GameManager : Disposable {
   }
 
   private fun stopTheWorld() {
-    for (system in engine.systems)
+    for (system in engine.systems.filter{ it !is RenderCharactersSystem && it !is RenderMapSystem })
       system.setProcessing(false)
   }
 
