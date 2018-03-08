@@ -23,13 +23,10 @@ class ActorFactory {
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
-
-  val monsterTypes = mapOf(
+      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"),
       "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")),
       "snake" to NpcType(2, 2, 5, 5, "bites with venom", setOf("desert")),
-      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass"))
-      )
+      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass")))
 
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
@@ -82,14 +79,14 @@ class ActorFactory {
   fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
     val npc = Npc(name, npcTypes[type]!!)
     val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
-    val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_HIGH)
+    val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
     val tree = parser.parse(reader, npc)
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
       add(AiComponent(tree))
       add(NpcComponent(npc))
-      add(CharacterSpriteComponent(type))
+      add(CharacterSpriteComponent("townsfolk"))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)

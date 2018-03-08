@@ -17,7 +17,7 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
-  val spawnProb = 95
+  val spawnProb = 50
 
   val spawningProbs = mapOf(
       "grass" to
@@ -58,6 +58,15 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
 
         val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
 
+        val actualTile = mapManager.getTileAt(randomlySelectedTile)
+
+        val dieRoll = MathUtils.random(100)
+        val npcType = spawningProbs[actualTile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
+        if(npcType != null) {
+          actorFactory.addNpcEntityAtTile(type = npcType, tileKey = randomlySelectedTile)
+        }
+
+
         //Just try adding a townsfolk dude at that position - or rather, use a different type of NPC
         // but use the same graphic for now
         //The towndude we start with doesn't need to care about the terrain or nothin!
@@ -71,7 +80,6 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
 
          */
 
-        actorFactory.addNpcEntityAtTile(tileKey = randomlySelectedTile)
       }}")
     }
 
