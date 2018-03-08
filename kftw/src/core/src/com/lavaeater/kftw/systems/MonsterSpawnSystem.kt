@@ -26,7 +26,7 @@ class MonsterSpawnSystem : IntervalIteratingSystem(allOf(PlayerComponent::class)
     autonomous beings that run around.
 
     There should be some kind of cap on the amount of monsters at the same time
-    
+
      */
   }
 }
