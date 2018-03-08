@@ -2,6 +2,7 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.PlayerComponent
 import com.lavaeater.kftw.components.TransformComponent
@@ -10,13 +11,14 @@ import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
+import kotlin.system.measureTimeMillis
 
 class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 10f) {
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val playerMpr = mapperFor<PlayerComponent>()
   val transformMpr = mapperFor<TransformComponent>()
-  val spawnProb = 75
+  val spawnProb = 95
 
   override fun processEntity(entity: Entity) {
     /*
@@ -35,17 +37,25 @@ class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::clas
 
      */
 
-    if(MathUtils.random(100) > spawnProb) {
-      //We need to spawn a fool!
-      val position = transformMpr[entity].position.toTile()
+    if (MathUtils.random(100) < spawnProb) {
 
-      // We get a ring of tiles instead of an area
+      Gdx.app.log("spawn random char", "time in milliseconds: ${measureTimeMillis {
+        //We need to spawn a fool!
+        val position = transformMpr[entity].position.toTile()
 
-      val someTilesInRange = mapManager.getRingOfTiles(position, 10)
+        // We get a ring of tiles instead of an area
 
-      //Just try adding a townsfolk dude at that position - or rather, use a different type of NPC
-      // but use the same graphic for now
+        val someTilesInRange = mapManager.getBandOfTiles(position, 3, 3).filter {
+          mapManager.getTileAt(it).tileType != "rock" && mapManager.getTileAt(it).tileType != "water"
+        }
 
+        val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+
+        //Just try adding a townsfolk dude at that position - or rather, use a different type of NPC
+        // but use the same graphic for now
+        //The towndude we start with doesn't need to care about the terrain or nothin!
+        actorFactory.addNpcEntityAtTile(tileKey = randomlySelectedTile)
+      }}")
     }
 
   }

@@ -35,6 +35,7 @@ class GameManager : Disposable {
     camera.position.x = 0f
     camera.position.y = 0f
 
+    //Skip this while implementing monster spawn!
     actorManager.addTownsFolk()
   }
 
@@ -56,6 +57,9 @@ class GameManager : Disposable {
     val inputSystem = KeyboardCharacterControlSystem()
     Gdx.input.inputProcessor = inputSystem
     engine.addSystem(inputSystem)
+
+    //MONSTER SPAWN!!
+    engine.addSystem(MonsterSpawnSystem())
   }
 
   fun update(delta: Float) {

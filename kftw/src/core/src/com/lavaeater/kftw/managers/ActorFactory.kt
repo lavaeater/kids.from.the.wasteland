@@ -55,10 +55,21 @@ class ActorFactory {
       addNpcEntity(npcNames[i]!!, "townsfolk", potentialStartTiles)
   }
 
-  fun addNpcEntity(name: String, type: String, startTiles : Array<Vector2>): Entity {
+  fun randomNpcName() : String {
+    return npcNames[MathUtils.random(npcNames.size - 1)]!!
+  }
+
+  fun randomNpcType(): String {
+    return npcTypes.keys.toTypedArray()[MathUtils.random(npcTypes.keys.size - 1)]
+  }
+
+  fun addNpcEntity(name: String = randomNpcName(), type: String = randomNpcType(), startTiles : Array<Vector2>): Entity {
 
     val startPosition = startTiles[MathUtils.random(0, startTiles.size - 1)]
+    return addNpcEntityAt(name, type, startPosition)
+  }
 
+  fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
     val npc = Npc(name, npcTypes[type]!!)
     val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_HIGH)
@@ -69,10 +80,16 @@ class ActorFactory {
       add(AiComponent(tree))
       add(NpcComponent(npc))
       add(CharacterSpriteComponent(type))
-      add(Box2dBodyComponent(createNpcBody(startPosition, npc)))
+      add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
     return entity
+
+  }
+
+  fun addNpcEntityAtTile(name: String = randomNpcName(), type: String = randomNpcType(), tileKey: TileKey): Entity {
+    val startPosition = tileKey.tileWorldCenter()
+    return addNpcEntityAt(name, type, startPosition)
   }
 
   fun addHeroEntity() : Entity {
