@@ -23,8 +23,14 @@ class ActorFactory {
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"),
-      "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")))
+      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
+
+  val monsterTypes = mapOf(
+      "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")),
+      "snake" to NpcType(2, 2, 5, 5, "bites with venom", setOf("desert")),
+      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass"))
+      )
+
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
       3 to "Rygar",
@@ -112,9 +118,5 @@ class ActorFactory {
   fun createNpcBody(position: Vector2, npc: Npc) : Body {
     return bodyManager.createBody(2f, 2.5f, 15f, position, BodyDef.BodyType.DynamicBody)
         .apply { userData = npc }
-  }
-
-  fun monsterManagement() {
-
   }
 }

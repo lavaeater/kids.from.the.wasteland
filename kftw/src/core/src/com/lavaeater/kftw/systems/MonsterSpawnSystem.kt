@@ -20,6 +20,7 @@ class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::clas
   val transformMpr = mapperFor<TransformComponent>()
   val spawnProb = 95
 
+
   override fun processEntity(entity: Entity) {
     /*
     For every type of tile within some radius from the player, for every 10 seconds, there is some chance of a creature being spawned.

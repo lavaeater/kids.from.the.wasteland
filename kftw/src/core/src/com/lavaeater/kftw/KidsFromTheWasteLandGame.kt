@@ -14,7 +14,7 @@ class KidsFromTheWasteLandGame : KtxGame<Screen>() {
   private lateinit var mainGameScreen: MainGameScreen
 
   override fun create() {
-    Gdx.app.logLevel = Application.LOG_INFO
+    Gdx.app.logLevel = Application.LOG_ERROR
 
     Assets.load()
     Ctx.buildContext()
