@@ -23,7 +23,8 @@ class ActorFactory {
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"))
+      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"),
+      "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")))
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
       3 to "Rygar",
@@ -46,8 +47,11 @@ class ActorFactory {
       20 to "Olga")
 
   fun addTownsFolk() {
+
+    val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
+
     val potentialStartTiles = mapManager.getTilesInRange(TileKey(0, 0), 25)
-        .filter { it.value.tileType == "grass" || it.value.tileType == "desert" }
+        .filter { tileTypes.contains(it.value.tileType) }
         .map { it.key.tileWorldCenter(GameManager.TILE_SIZE) }
         .toTypedArray()
 
