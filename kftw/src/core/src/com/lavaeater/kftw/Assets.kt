@@ -36,7 +36,8 @@ object Assets : Disposable {
   val ATTACK = "attack"
   val DEATH = "death"
 
-  val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")))
+  val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
+      "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
 
   val animatedCharacterSprites = mutableMapOf<String, Map<String, List<Sprite>>>()
 

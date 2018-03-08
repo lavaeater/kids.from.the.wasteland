@@ -99,6 +99,25 @@ class ActorFactory {
     return addNpcEntityAt(name, type, startPosition)
   }
 
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String, tileKey: TileKey) : Entity {
+
+    val position = tileKey.tileWorldCenter()
+    val npc = Npc(name, npcTypes[type]!!)
+    val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
+    val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
+    val tree = parser.parse(reader, npc)
+
+    val entity = engine.createEntity().apply {
+      add(TransformComponent())
+      add(AiComponent(tree))
+      add(NpcComponent(npc))
+      add(CharacterSpriteComponent("orc", true))
+      add(Box2dBodyComponent(createNpcBody(position, npc)))
+    }
+    engine.addEntity(entity)
+    return entity
+  }
+
   fun addHeroEntity() : Entity {
 
     val entity = engine.createEntity().apply {

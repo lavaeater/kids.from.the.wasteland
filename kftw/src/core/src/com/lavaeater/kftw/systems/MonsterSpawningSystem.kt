@@ -63,7 +63,10 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
         val dieRoll = MathUtils.random(100)
         val npcType = spawningProbs[actualTile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
         if(npcType != null) {
-          actorFactory.addNpcEntityAtTile(type = npcType, tileKey = randomlySelectedTile)
+          if(npcType == "orc")
+            actorFactory.addNpcAtTileWithAnimation(type=npcType, tileKey = randomlySelectedTile, spriteKey = "orc")
+          else
+            actorFactory.addNpcEntityAtTile(type = npcType, tileKey = randomlySelectedTile)
         }
 
 
