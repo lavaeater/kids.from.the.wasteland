@@ -41,7 +41,7 @@ class GameManager : Disposable {
 
   private fun setupSystems() {
 
-    engine.addSystem(RenderMapSystem())
+    engine.addSystem(RenderMapSystem(true))
     engine.addSystem(RenderCharactersSystem())
     engine.addSystem(AiSystem())
     val npcControlSystem = NpcControlSystem()
@@ -50,7 +50,7 @@ class GameManager : Disposable {
 
     engine.addSystem(npcControlSystem)
     engine.addSystem(PhysicsSystem())
-    engine.addSystem(PhysicsDebugSystem())
+   //engine.addSystem(PhysicsDebugSystem())
 
     engine.addSystem(FollowCameraSystem(actorManager.addHeroEntity()))
 

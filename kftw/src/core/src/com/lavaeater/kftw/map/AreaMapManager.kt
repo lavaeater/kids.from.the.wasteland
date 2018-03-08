@@ -1,7 +1,6 @@
 package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.MathUtils
-import kotlin.system.measureTimeMillis
 
 class AreaMapManager : MapManagerBase() {
 
@@ -47,8 +46,8 @@ class AreaMapManager : MapManagerBase() {
           val subType = "center${MathUtils.random.nextInt(3) + 1}"
           val possibleNewTile = Tile(priority, tileType, subType, code, code)
           val newHashCode = possibleNewTile.hashCode()
-          if (!crazyTileStructure.containsKey(newHashCode)) {
-            crazyTileStructure.put(newHashCode, possibleNewTile)
+          if (!tiles.containsKey(newHashCode)) {
+            tiles.put(newHashCode, possibleNewTile)
           }
           currentMap.put(key, newHashCode)
         }

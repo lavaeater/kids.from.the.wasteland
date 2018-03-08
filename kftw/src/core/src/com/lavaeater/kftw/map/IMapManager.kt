@@ -3,6 +3,7 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.Vector3
 
 interface IMapManager {
+  fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile>
   fun getVisibleTiles(position: Vector3): Map<TileKey, Tile>
   fun tileForWorldPosition(position: Vector3): Tile
   fun getTileAt(x: Int, y: Int): Tile

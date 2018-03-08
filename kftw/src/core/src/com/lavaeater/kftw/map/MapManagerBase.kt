@@ -8,10 +8,11 @@ import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
+import com.sun.org.apache.xpath.internal.operations.Bool
 import ktx.math.vec2
 import kotlin.math.roundToInt
 
-abstract class MapManagerBase: IMapManager {
+abstract class MapManagerBase : IMapManager {
 
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
@@ -78,8 +79,10 @@ abstract class MapManagerBase: IMapManager {
     val scale = 40.0f
     val numberOfTiles = 50
   }
+
   var currentMap = mutableMapOf<TileKey, Int>()
-  val crazyTileStructure = mutableMapOf<Int, Tile>()
+  val tiles = mutableMapOf<Int, Tile>()
+  val inverseFogOfWar = mutableSetOf<TileKey>()
   val hitBoxes = mutableMapOf<TileKey, Body>()
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
@@ -93,9 +96,11 @@ abstract class MapManagerBase: IMapManager {
   fun checkHitBoxesForImpassibleTiles() {
     val impassibleTiles = visibleTiles
         .filter {
-      (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain() }
+          (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain()
+        }
         .filter {
-      !hitBoxes.containsKey(it.key) }
+          !hitBoxes.containsKey(it.key)
+        }
 
     for (key in impassibleTiles.keys) {
       val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
@@ -159,9 +164,9 @@ abstract class MapManagerBase: IMapManager {
 
   fun generateCodeForTile(ourKey: TileKey) {
 
-    val tempTile = crazyTileStructure[currentMap[ourKey]]!!.copy()
+    val tempTile = tiles[currentMap[ourKey]]!!.copy()
     neiborMap.keys.map { (x, y) ->
-      crazyTileStructure[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
+      tiles[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
     }
         .forEach { tempTile.code += if (it != null) shortTerrains[it.priority]!! else "b" }
 
@@ -170,8 +175,8 @@ abstract class MapManagerBase: IMapManager {
     val newHashCode = tempTile.hashCode()
     if (currentMap[ourKey] != newHashCode) {
       //Add this new tile to the tile storage!
-      if (!crazyTileStructure.containsKey(newHashCode)) {
-        crazyTileStructure.put(newHashCode, tempTile)
+      if (!tiles.containsKey(newHashCode)) {
+        tiles.put(newHashCode, tempTile)
       }
       currentMap[ourKey] = newHashCode
     }
@@ -183,11 +188,11 @@ abstract class MapManagerBase: IMapManager {
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
-    return crazyTileStructure[currentMap[TileKey(x, y)]]!!
+    return tiles[currentMap[TileKey(x, y)]]!!
   }
 
   override fun getTileAt(key: TileKey): Tile {
-    return crazyTileStructure[currentMap[key]]!!
+    return tiles[currentMap[key]]!!
   }
 
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey? {
@@ -204,12 +209,33 @@ abstract class MapManagerBase: IMapManager {
     val some = simpleDirectionsInverse.values.map { currentMap.getTileKeyForDirection(inKey, it) }
 
     //The mapValues function MUST return values, otherwise
-    return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { crazyTileStructure[it.value]!! }
+    return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { tiles[it.value]!! }
   }
 
   override fun tileForWorldPosition(position: Vector3): Tile {
     val tileKey = position.toTile(GameManager.TILE_SIZE)
-    return crazyTileStructure[currentMap[tileKey]]!!
+    return tiles[currentMap[tileKey]]!!
+  }
+
+  override fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile> {
+    val tiles = getVisibleTiles(position)
+    val key = position.toTile()
+    return tiles.map { RenderableTile(it.key, it.value, getFogStatus(it.key, key)) }
+  }
+
+  private fun getFogStatus(key: TileKey, position: TileKey): TileFog {
+    //1.Everything within some radius of the player is currently seen
+    if (key.isInRange(position, 5)) {
+      if (!inverseFogOfWar.contains(key)) //Now it's seen!
+        inverseFogOfWar.add(key)
+      return TileFog.Seeing
+    }
+
+    //2. Everything that we have visited HAS been seen
+
+    //3. Everything else is unseen
+    return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
+
   }
 
   override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
@@ -237,8 +263,8 @@ abstract class MapManagerBase: IMapManager {
   }
 
   override fun getBandOfTiles(tileKey: TileKey, range: Int, width: Int): List<TileKey> {
-    if(range < 1 || width < 1) return listOf()
-    if(width == 1) return getRingOfTiles(tileKey, range)
+    if (range < 1 || width < 1) return listOf()
+    if (width == 1) return getRingOfTiles(tileKey, range)
 
     val tilesInMaxRange = getTilesInRange(tileKey, range + width)
     val tilesToExclude = getTilesInRange(tileKey, range - 1)
@@ -252,6 +278,6 @@ abstract class MapManagerBase: IMapManager {
     val maxY = posKey.y.coordAtDistanceFrom(range)
 
     return currentMap.filter { it.key.x in minX..maxX && it.key.y in minY..maxY }
-        .mapValues { crazyTileStructure[it.value]!! }
+        .mapValues { tiles[it.value]!! }
   }
 }
