@@ -13,12 +13,18 @@ import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import kotlin.system.measureTimeMillis
 
-class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 10f) {
+class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 10f) {
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
-  val playerMpr = mapperFor<PlayerComponent>()
   val transformMpr = mapperFor<TransformComponent>()
   val spawnProb = 95
+
+  val spawningProbs = mapOf(
+      "grass" to
+          mapOf(0..15 to "sneakypanther",
+          16..30 to "orc"),
+      "desert" to mapOf(0..15 to "snake",
+          16..25 to "orc"))
 
 
   override fun processEntity(entity: Entity) {
@@ -55,6 +61,16 @@ class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::clas
         //Just try adding a townsfolk dude at that position - or rather, use a different type of NPC
         // but use the same graphic for now
         //The towndude we start with doesn't need to care about the terrain or nothin!
+
+        /*
+        We need some kind of structure for the probability of a certain type of npc to be instantiated.
+
+        In the actor factory, obviously.
+
+        No, here. This is where we do that.
+
+         */
+
         actorFactory.addNpcEntityAtTile(tileKey = randomlySelectedTile)
       }}")
     }

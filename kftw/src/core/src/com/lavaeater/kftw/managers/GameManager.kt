@@ -59,7 +59,7 @@ class GameManager : Disposable {
     engine.addSystem(inputSystem)
 
     //MONSTER SPAWN!!
-    engine.addSystem(MonsterSpawnSystem())
+    engine.addSystem(MonsterSpawningSystem())
   }
 
   fun update(delta: Float) {
