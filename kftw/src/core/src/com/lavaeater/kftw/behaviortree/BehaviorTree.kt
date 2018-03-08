@@ -23,11 +23,12 @@ class Sequence<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(black
   var currentIndex = 0;
 
   override fun run(): NodeStatus {
-    while ()
+//    while ()
+    return NodeStatus.RUNNING
   }
 
-  fun executeNextChild() : NodeStatus {
-    
-  }
+//  fun executeNextChild() : NodeStatus {
+//
+//  }
 
 }
