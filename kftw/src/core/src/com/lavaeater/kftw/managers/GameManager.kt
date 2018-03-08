@@ -36,7 +36,7 @@ class GameManager : Disposable {
     camera.position.y = 0f
 
     //Skip this while implementing monster spawn!
-    actorManager.addTownsFolk()
+    //actorManager.addTownsFolk()
   }
 
   private fun setupSystems() {
