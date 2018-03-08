@@ -11,7 +11,7 @@ import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
 import kotlin.math.roundToInt
 
-abstract class MapManagerBase() : IMapManager {
+abstract class MapManagerBase: IMapManager {
 
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
@@ -234,6 +234,15 @@ abstract class MapManagerBase() : IMapManager {
     val tilesInRange = getTilesInRange(tileKey, range)
     val tilesToExclude = getTilesInRange(tileKey, range - 1)
     return tilesInRange.keys.minus(tilesToExclude.keys).toList()
+  }
+
+  override fun getBandOfTiles(tileKey: TileKey, range: Int, width: Int): List<TileKey> {
+    if(range < 1 || width < 1) return listOf()
+    if(width == 1) return getRingOfTiles(tileKey, range)
+
+    val tilesInMaxRange = getTilesInRange(tileKey, range + width)
+    val tilesToExclude = getTilesInRange(tileKey, range - 1)
+    return tilesInMaxRange.keys.minus(tilesToExclude.keys).toList()
   }
 
   override fun getTilesInRange(posKey: TileKey, range: Int): Map<TileKey, Tile> {

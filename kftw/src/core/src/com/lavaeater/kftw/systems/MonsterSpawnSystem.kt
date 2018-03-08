@@ -2,19 +2,25 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
+import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.PlayerComponent
+import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.map.IMapManager
 import ktx.ashley.allOf
+import ktx.ashley.mapperFor
 
-class MonsterSpawnSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 10f) {
+class MonsterSpawnSystem() : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 10f) {
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
+  val playerMpr = mapperFor<PlayerComponent>()
+  val transformMpr = mapperFor<TransformComponent>()
+  val spawnProb = 75
 
-  override fun processEntity(entity: Entity?) {
+  override fun processEntity(entity: Entity) {
     /*
-    For every type of tile, for every 10 seconds, there is some chance of a creature being spawned.
+    For every type of tile within some radius from the player, for every 10 seconds, there is some chance of a creature being spawned.
 
     The creature will have some sort of behavior tree and it will perhaps be dangerous.
 
@@ -28,5 +34,19 @@ class MonsterSpawnSystem : IntervalIteratingSystem(allOf(PlayerComponent::class)
     There should be some kind of cap on the amount of monsters at the same time
 
      */
+
+    if(MathUtils.random(100) > spawnProb) {
+      //We need to spawn a fool!
+      val position = transformMpr[entity].position.toTile()
+
+      // We get a ring of tiles instead of an area
+
+      val someTilesInRange = mapManager.getRingOfTiles(position, 10)
+
+      //Just try adding a townsfolk dude at that position - or rather, use a different type of NPC
+      // but use the same graphic for now
+
+    }
+
   }
 }

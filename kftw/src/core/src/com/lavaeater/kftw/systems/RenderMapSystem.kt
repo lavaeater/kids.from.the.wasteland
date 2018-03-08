@@ -9,6 +9,7 @@ import com.lavaeater.Assets
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.managers.GameManager
 import ktx.app.use
 import kotlin.math.roundToInt
 
@@ -49,7 +50,7 @@ fun Vector3.toTile(factor: Int): TileKey {
   return TileKey(this.tileX(factor), this.tileY(factor));
 }
 
-fun Vector2.toTile(factor: Int): TileKey {
+fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
   return TileKey(this.tileX(factor), this.tileY(factor))
 }
 
