@@ -22,9 +22,9 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
   val spawningProbs = mapOf(
       "grass" to
           mapOf(0..15 to "sneakypanther",
-          16..75 to "orc"),
+          16..85 to "orc"),
       "desert" to mapOf(0..15 to "snake",
-          16..75 to "orc"))
+          16..85 to "orc"))
 
 
   override fun processEntity(entity: Entity) {

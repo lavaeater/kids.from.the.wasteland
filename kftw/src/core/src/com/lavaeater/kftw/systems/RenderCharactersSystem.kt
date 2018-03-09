@@ -7,14 +7,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.lavaeater.Assets
 import com.lavaeater.kftw.components.CharacterSpriteComponent
 import com.lavaeater.kftw.components.TransformComponent
+import com.lavaeater.kftw.components.VisibleComponent
 import com.lavaeater.kftw.injection.Ctx
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
 class RenderCharactersSystem() :
-    SortedIteratingSystem(allOf(CharacterSpriteComponent::class,
-        TransformComponent::class).get(), EntityYOrderComparator()) {
+    SortedIteratingSystem(
+        allOf(CharacterSpriteComponent::class,
+            TransformComponent::class,
+            VisibleComponent::class).get(), EntityYOrderComparator()) {
   private val transformMapper = mapperFor<TransformComponent>()
   private val spriteMapper = mapperFor<CharacterSpriteComponent>()
 

@@ -8,7 +8,6 @@ import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
-import com.sun.org.apache.xpath.internal.operations.Bool
 import ktx.math.vec2
 import kotlin.math.roundToInt
 

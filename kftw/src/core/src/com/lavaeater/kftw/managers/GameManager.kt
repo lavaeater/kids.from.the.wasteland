@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.Hud
+import ktx.ashley.add
 
 class GameManager : Disposable {
 
@@ -52,7 +53,9 @@ class GameManager : Disposable {
     engine.addSystem(PhysicsSystem())
    //engine.addSystem(PhysicsDebugSystem())
 
-    engine.addSystem(FollowCameraSystem(actorManager.addHeroEntity()))
+    val playerEntity = actorManager.addHeroEntity()
+    engine.addSystem(FollowCameraSystem(playerEntity))
+    engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
     val inputSystem = KeyboardCharacterControlSystem()
     Gdx.input.inputProcessor = inputSystem
