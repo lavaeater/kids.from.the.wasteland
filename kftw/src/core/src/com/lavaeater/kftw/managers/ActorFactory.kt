@@ -63,7 +63,7 @@ class ActorFactory {
   }
 
   fun randomNpcName() : String {
-    return npcNames[MathUtils.random(npcNames.size - 1)]!!
+    return npcNames[MathUtils.random(npcNames.size - 2)]!!
   }
 
   fun randomNpcType(): String {

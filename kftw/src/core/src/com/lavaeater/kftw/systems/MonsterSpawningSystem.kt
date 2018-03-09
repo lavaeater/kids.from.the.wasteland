@@ -17,14 +17,14 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
-  val spawnProb = 50
-
+  val spawnProb = 95
+wwwwwwwwwwwwwww
   val spawningProbs = mapOf(
       "grass" to
           mapOf(0..15 to "sneakypanther",
-          16..30 to "orc"),
+          16..75 to "orc"),
       "desert" to mapOf(0..15 to "snake",
-          16..25 to "orc"))
+          16..75 to "orc"))
 
 
   override fun processEntity(entity: Entity) {
