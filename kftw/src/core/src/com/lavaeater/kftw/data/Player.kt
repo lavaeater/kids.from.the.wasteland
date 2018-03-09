@@ -11,3 +11,6 @@ class Player(var name:String,
   val skills: MutableMap<String, Int> = mutableMapOf("tracking" to 50)
   var sightRange: Int = 3
 }
+
+data class Skill(val name: String)
+data class 

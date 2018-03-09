@@ -23,17 +23,19 @@ Others must use their intelligence to gather food. Now, we don't need to make a 
 for food or energy, but getting food / loot can be done in different ways and different animals
 should be able to employ different strategies, somehow.
 
+The tasks should be generic, usable for any type of NPC.
+
+They might employ different strategies (see strategy pattern) for accomplishing...
+
  */
 
-class SearchForFood : LeafTask<Npc>() {
+/*
+This task can be used for an npc to periodically check if there is a target nearby -
+but what is a target? For now, the only interesting target is the PLAYER
+ */
+class CheckForPlayer : LeafTask<Npc>() {
   override fun execute(): Status {
     val npc = `object`
-
-    /*
-    So what do we do?
-
-    
-     */
 
     if(npc.scavenge()) {
       return Task.Status.SUCCEEDED
