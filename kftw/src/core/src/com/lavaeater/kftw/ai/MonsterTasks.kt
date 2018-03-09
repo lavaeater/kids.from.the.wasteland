@@ -2,7 +2,12 @@ package com.lavaeater.kftw.ai
 
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
+import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.data.Npc
+import com.lavaeater.kftw.data.Player
+import com.lavaeater.kftw.injection.Ctx
+import ktx.ashley.mapperFor
+import javax.xml.crypto.dsig.Transform
 
 /*
 This task shall contain it's own stuff, and just direct the npc somewhere, the
@@ -34,14 +39,18 @@ This task can be used for an npc to periodically check if there is a target near
 but what is a target? For now, the only interesting target is the PLAYER
  */
 class CheckForPlayer : LeafTask<Npc>() {
+  val player = Ctx.context.inject<Player>()
+  val transMpr = mapperFor<TransformComponent>()
   override fun execute(): Status {
     val npc = `object`
+
+
 
     if(npc.scavenge()) {
       return Task.Status.SUCCEEDED
     }
 
-    return Task.Status.RUNNING
+//    return Task.Status.RUNNING
   }
 
   override fun copyTo(task: Task<Npc>?): Task<Npc> {

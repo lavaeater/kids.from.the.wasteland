@@ -7,18 +7,21 @@ import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
 
-class Npc(val name:String ="Joshua",
+class Npc(override var name:String ="Joshua",
           val npcType: NpcType,
-          var strength: Int = npcType.strength,
-          var health: Int = npcType.health,
+          override var strength: Int = npcType.strength,
+          override var health: Int = npcType.health,
           var speed: Int = npcType.speed,
           var attack: Int = npcType.attack,
           var attackString: String = npcType.attackString,
-          val skills: MutableMap<String, Int> = npcType.skills.toMutableMap()) {
+          override val skills: MutableMap<String, Int> = npcType.skills.toMutableMap(),
+          override var intelligence: Int,
+          override val inventory: MutableList<String>,
+          override var sightRange: Int = 6,
+          override var currentTile: TileKey) : IAgent {
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"
-  var currentTile = TileKey(0, 0)
   var foundTile: TileKey? = null
   val tileFound get() = foundTile != null
   val range = 2

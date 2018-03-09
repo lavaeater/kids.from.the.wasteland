@@ -9,8 +9,10 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.kftw.components.*
+import com.lavaeater.kftw.data.Agent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcType
+import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.map.tileWorldCenter
@@ -26,7 +28,7 @@ class ActorFactory {
       "townsfolk" to NpcType(4, 8, 2, 1, "lunges"),
       "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")),
       "snake" to NpcType(2, 2, 5, 5, "bites with venom", setOf("desert")),
-      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass")))
+      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass"), mapOf("stealth" to 25, "tracking" to 85)))
 
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
@@ -87,6 +89,7 @@ class ActorFactory {
       add(TransformComponent())
       add(AiComponent(tree))
       add(NpcComponent(npc))
+      add(AgentComponent(npc))
       add(CharacterSpriteComponent("townsfolk"))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
@@ -112,6 +115,7 @@ class ActorFactory {
       add(TransformComponent())
       add(AiComponent(tree))
       add(NpcComponent(npc))
+      add(AgentComponent(npc))
       add(CharacterSpriteComponent("orc", true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
@@ -126,6 +130,7 @@ class ActorFactory {
       add(CharacterSpriteComponent("femalerogue", true))
       add(KeyboardControlComponent())
       add(PlayerComponent(Ctx.context.inject()))
+      add(AgentComponent(Ctx.context.inject<Player>()))
       add(VisibleComponent())
       add(Box2dBodyComponent(bodyManager.createBody(2f, 4f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
     }
