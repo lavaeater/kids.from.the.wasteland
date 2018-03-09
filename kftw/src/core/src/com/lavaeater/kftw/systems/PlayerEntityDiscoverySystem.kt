@@ -27,15 +27,17 @@ class PlayerEntityDiscoverySystem(val playerEntity: Entity) :
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val playerPos = transMpr[playerEntity].position.toTile()
     val npcPos = transMpr[entity].position.toTile()
-    if(npcPos.isInRange(playerPos, player.sightRange) && !entity.has(visibilityMapper)) {
-      val playerSkill = player.skills["tracking"]!!
-      val npc = npcMpr[entity].npc
-      val npcSkill = npc.skills["stealth"]!!
+    if(npcPos.isInRange(playerPos, player.sightRange)) {
+      if(!entity.has(visibilityMapper)) {
+        val playerSkill = player.skills["tracking"]!!
+        val npc = npcMpr[entity].npc
+        val npcSkill = npc.skills["stealth"]!!
 
-      //How do we do discovery roll? Player skill - enemy counter skill, if under => success
-      if(skillRoll(playerSkill, npcSkill)) {
-        //The player sees the npc, it should now be rendered!
-        entity.add(VisibleComponent())
+        //How do we do discovery roll? Player skill - enemy counter skill, if under => success
+        if (skillRoll(playerSkill, npcSkill)) {
+          //The player sees the npc, it should now be rendered!
+          entity.add(VisibleComponent())
+        }
       }
     } else {
       //Entities that aren't in visibility range are invisible to the player!
