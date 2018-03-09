@@ -1,6 +1,7 @@
 package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.NpcComponent
@@ -16,7 +17,7 @@ import ktx.ashley.mapperFor
 import ktx.ashley.remove
 
 class PlayerEntityDiscoverySystem(val playerEntity: Entity) :
-    IteratingSystem(allOf(TransformComponent::class, NpcComponent::class).get(),1) {
+    IntervalIteratingSystem(allOf(TransformComponent::class, NpcComponent::class).get(),0.25f,1) {
 
   val transMpr = mapperFor<TransformComponent>()
   val npcMpr = mapperFor<NpcComponent>()
@@ -24,7 +25,7 @@ class PlayerEntityDiscoverySystem(val playerEntity: Entity) :
 
   val player = mapperFor<PlayerComponent>()[playerEntity]!!.player
 
-  override fun processEntity(entity: Entity, deltaTime: Float) {
+  override fun processEntity(entity: Entity) {
     val playerPos = transMpr[playerEntity].position.toTile()
     val npcPos = transMpr[entity].position.toTile()
     if(npcPos.isInRange(playerPos, player.sightRange)) {
