@@ -7,7 +7,14 @@ import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
 
-class Npc(val name:String ="Joshua", val npcType: NpcType, var strength: Int = npcType.strength, var health: Int = npcType.health, var speed: Int = npcType.speed, var attack: Int = npcType.attack, var attackString: String = npcType.attackString) {
+class Npc(val name:String ="Joshua",
+          val npcType: NpcType,
+          var strength: Int = npcType.strength,
+          var health: Int = npcType.health,
+          var speed: Int = npcType.speed,
+          var attack: Int = npcType.attack,
+          var attackString: String = npcType.attackString,
+          val skills: MutableMap<String, Int> = npcType.skills.toMutableMap()) {
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"

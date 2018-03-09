@@ -125,6 +125,7 @@ class ActorFactory {
       add(CharacterSpriteComponent("femalerogue", true))
       add(KeyboardControlComponent())
       add(PlayerComponent(Ctx.context.inject()))
+      add(VisibleComponent())
       add(Box2dBodyComponent(bodyManager.createBody(2f, 4f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
     }
     engine.addEntity(entity)
