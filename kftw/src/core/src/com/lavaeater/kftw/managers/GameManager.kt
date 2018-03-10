@@ -42,6 +42,7 @@ class GameManager : Disposable {
 
   private fun setupSystems() {
 
+    //render the map and use fog of war
     engine.addSystem(RenderMapSystem(true))
     engine.addSystem(RenderCharactersSystem())
     engine.addSystem(AiSystem())
@@ -63,6 +64,10 @@ class GameManager : Disposable {
 
     //MONSTER SPAWN!!
     engine.addSystem(MonsterSpawningSystem())
+
+    //Current tile system. Continually updates the agent instances with
+    //what tile they're on, used by the AI
+    engine.addSystem(CurrentTileSystem())
   }
 
   fun update(delta: Float) {

@@ -9,7 +9,7 @@ class Player(override var name:String,
              override var health: Int = 10,
              override var intelligence: Int = 10,
              override var sightRange: Int = 3,
-             override var currentTile: TileKey) : IAgent {
+             override var currentTile: TileKey = TileKey(0,0)) : IAgent {
   override val inventory = mutableListOf("Mat", "Extra varm rock", "Litet, dåligt svärd")
   val gdxInventory = inventory.toGdxArray()
   override val skills: MutableMap<String, Int> =

@@ -15,10 +15,10 @@ class Npc(override var name:String ="Joshua",
           var attack: Int = npcType.attack,
           var attackString: String = npcType.attackString,
           override val skills: MutableMap<String, Int> = npcType.skills.toMutableMap(),
-          override var intelligence: Int,
-          override val inventory: MutableList<String>,
-          override var sightRange: Int = 6,
-          override var currentTile: TileKey) : IAgent {
+          override var intelligence: Int = npcType.intelligence,
+          override val inventory: MutableList<String> = npcType.inventory,
+          override var sightRange: Int = npcType.sightRange,
+          override var currentTile: TileKey = TileKey(0,0)) : IAgent {
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"

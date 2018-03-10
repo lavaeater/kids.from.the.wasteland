@@ -29,7 +29,7 @@ class Hud : Disposable {
 
   init {
     VisUI.load(VisUI.SkinScale.X2)
-    inventoryListAdapter = SimpleListAdapter(player.inventory).apply {
+    inventoryListAdapter = SimpleListAdapter(player.gdxInventory).apply {
       selectionMode = AbstractListAdapter.SelectionMode.SINGLE
     }
     hudViewPort = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())

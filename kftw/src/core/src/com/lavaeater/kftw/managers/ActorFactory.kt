@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.kftw.components.*
-import com.lavaeater.kftw.data.Agent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcType
 import com.lavaeater.kftw.data.Player
@@ -25,10 +24,10 @@ class ActorFactory {
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType(4, 8, 2, 1, "lunges"),
-      "sneakypanther" to NpcType(6, 10, 4, 3, "leaps and bites", setOf("grass")),
-      "snake" to NpcType(2, 2, 5, 5, "bites with venom", setOf("desert")),
-      "orc" to NpcType(4, 6, 2, 4, "swings a club", setOf("desert", "grass"), mapOf("stealth" to 25, "tracking" to 85)))
+      "townsfolk" to NpcType(4, 8, 2, 1,3, 3, "lunges"),
+      "sneakypanther" to NpcType(6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
+      "snake" to NpcType(2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
+      "orc" to NpcType(4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",
@@ -107,7 +106,7 @@ class ActorFactory {
 
     val position = tileKey.tileWorldCenter()
     val npc = Npc(name, npcTypes[type]!!)
-    val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
+    val reader = if(type == "orc") Gdx.files.internal("btrees/orc.tree").reader() else Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
     val tree = parser.parse(reader, npc)
 

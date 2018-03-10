@@ -5,9 +5,10 @@ import com.badlogic.gdx.ai.btree.Task
 import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
+import com.lavaeater.kftw.data.rollAgainstAgent
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.map.isInRange
 import ktx.ashley.mapperFor
-import javax.xml.crypto.dsig.Transform
 
 /*
 This task shall contain it's own stuff, and just direct the npc somewhere, the
@@ -44,13 +45,14 @@ class CheckForPlayer : LeafTask<Npc>() {
   override fun execute(): Status {
     val npc = `object`
 
-
-
-    if(npc.scavenge()) {
-      return Task.Status.SUCCEEDED
+    if(npc.currentTile.isInRange(player.currentTile, npc.sightRange)) {
+      //Try to find the player
+      if(npc.rollAgainstAgent(player, "tracking")) {
+        npc.foundTile = player.currentTile
+        return Task.Status.SUCCEEDED
+      }
     }
-
-//    return Task.Status.RUNNING
+    return Task.Status.FAILED
   }
 
   override fun copyTo(task: Task<Npc>?): Task<Npc> {

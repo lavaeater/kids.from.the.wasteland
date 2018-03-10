@@ -1,0 +1,25 @@
+#
+# Orc tree
+#
+
+# Alias definitions
+
+import scavenge:"com.lavaeater.kftw.ai.Scavenge"
+import lostinterest:"com.lavaeater.kftw.ai.LostInterest"
+import wander:"com.lavaeater.kftw.ai.Wander"
+import walkto:"com.lavaeater.kftw.ai.WalkTo"
+import findtile:"com.lavaeater.kftw.ai.FindTile"
+import findplayer:"com.lavaeater.kftw.ai.CheckForPlayer"
+
+# Tree definition (note that root is optional)
+root
+  selector
+    sequence
+      findplayer
+      walkto
+    sequence
+      wander
+    sequence
+      scavenge
+      lostinterest
+
