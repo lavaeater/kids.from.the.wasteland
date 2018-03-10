@@ -52,6 +52,7 @@ class CheckForPlayer : LeafTask<Npc>() {
         return Task.Status.SUCCEEDED
       }
     }
+    npc.foundTile = null
     return Task.Status.FAILED
   }
 
