@@ -13,7 +13,7 @@ import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import kotlin.system.measureTimeMillis
 
-class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 1f) {
+class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
