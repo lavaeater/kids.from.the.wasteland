@@ -1,0 +1,55 @@
+title: Start
+tags: 
+colorID: 0
+position: 0,0
+---
+Frank: Hey, it's me. Frank.
+Sammy: W-who?
+Frank: Frank! Ya know?
+Sammy: Umm. N-no, I don't... know?
+[[Why don't you know?|WhyNot]]
+[[Anyways, whatever.|Whatever]]
+[[Test New Options|TestNewOptions]]
+===
+title: WhyNot
+tags: 
+colorID: 0
+position: 462,530
+---
+Frank: Why not?
+Sammy: Because this is stupid.
+===
+title: Whatever
+tags: 
+colorID: 0
+position: 917,521
+---
+Frank: Whatever.
+Sammy: That's the spirit!
+===
+title: TestNewOptions
+tags: 
+colorID: 0
+position: 1140,277
+---
+Mae: Testing out a new options system.
+-> This is option 1
+    Mae: Then my response dialogue would go here. 
+    Mae: Pretty cool huh?
+    -> You can even nest options
+        Molly: Oh, rad.
+    -> This middle option should not appear. <<if $option_available is 1>>
+        Molly: It sure didn't.
+    -> You skipped an option because it didn't appear! Hopefully. This one should appear though. <<if $option_available is 0>>
+    -> I Think you can anyways?
+        Molly: Sweet well... you tried!
+-> This is option 2
+    Mae: Then my response for option two would go here.
+-> Oh, that's kinda neat! Super neat? Maybe it is...
+    Mae: Yeah it saves time having to make extra nodes etc.
+    Mae: Also it should still work with if statements...
+    <<if $didnt_work is 0>>
+        Mae: omg it does!
+    <<endif>>
+Mae: Then we can rejoin back here. No need to create and link a bunch of nodes!
+===
