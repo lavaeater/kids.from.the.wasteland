@@ -1,11 +1,10 @@
 apply plugin: "java"
-apply plugin: 'kotlin'
 
 sourceCompatibility = 1.6
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-project.ext.mainClassName = "com.lavaeater.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../android/assets");
+project.ext.mainClassName = "com.lavaeater.kftw.desktop.DesktopLauncher"
+project.ext.assetsDir = new File("../core/assets");
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
@@ -31,7 +30,7 @@ task dist(type: Jar) {
     from files(project.assetsDir);
  
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': "com.lavaeater.kftw.desktop.DesktopLauncher"
     }
 }
 
@@ -40,7 +39,7 @@ dist.dependsOn classes
 eclipse {
     project {
         name = appName + "-desktop"
-        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/android/assets'
+        linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/core/assets'
     }
 }
 
@@ -53,22 +52,4 @@ task afterEclipseImport(description: "Post processing after project generation",
     printer.setPreserveWhitespace(true)
     printer.print(classpath)
   }
-}
-buildscript {
-    ext.kotlin_version = '1.2.30-eap-16'
-    repositories {
-        mavenCentral()
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-repositories {
-    mavenCentral()
-    maven { url "http://dl.bintray.com/kotlin/kotlin-eap/" }
-}
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 }
