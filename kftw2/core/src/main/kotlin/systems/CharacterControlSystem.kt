@@ -15,7 +15,7 @@ import ktx.ashley.mapperFor
 import ktx.math.vec2
 import java.util.*
 
-class KeyboardCharacterControlSystem(val speed: Float = 20f) :
+class CharacterControlSystem(val speed: Float = 20f) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
