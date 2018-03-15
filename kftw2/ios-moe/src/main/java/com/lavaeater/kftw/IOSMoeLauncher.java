@@ -3,7 +3,6 @@ package com.lavaeater.kftw;
 import com.badlogic.gdx.backends.iosmoe.IOSApplication;
 import com.badlogic.gdx.backends.iosmoe.IOSApplicationConfiguration;
 import org.moe.natj.general.Pointer;
-import com.lavaeater.kftw.KidsFromTheWastelandGame;
 
 import apple.uikit.c.UIKit;
 

@@ -1,0 +1,25 @@
+#
+# Townsfolk tree
+#
+
+# Alias definitions
+
+import scavenge:"com.lavaeater.kftw.ai.Scavenge"
+import lostinterest:"com.lavaeater.kftw.ai.LostInterest"
+import wander:"com.lavaeater.kftw.ai.Wander"
+import walkto:"com.lavaeater.kftw.ai.WalkTo"
+import findtile:"com.lavaeater.kftw.ai.FindTile"
+
+
+# Tree definition (note that root is optional)
+root
+  selector
+    sequence
+      findtile
+      walkto
+    sequence
+      wander
+    sequence
+      scavenge
+      lostinterest
+
