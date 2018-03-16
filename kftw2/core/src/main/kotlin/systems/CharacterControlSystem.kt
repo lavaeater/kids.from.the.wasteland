@@ -54,6 +54,18 @@ class CharacterControlSystem(val speed: Float = 20f) :
     return true
   }
 
+  override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+    return super.touchDown(screenX, screenY, pointer, button)
+  }
+
+  override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+    return super.touchUp(screenX, screenY, pointer, button)
+  }
+
+  override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+    return super.touchDragged(screenX, screenY, pointer)
+  }
+
   override fun keyUp(keycode: Int): Boolean {
     when (keycode) {
       Input.Keys.A, Input.Keys.LEFT -> x = 0f
