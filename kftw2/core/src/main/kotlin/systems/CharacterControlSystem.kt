@@ -2,6 +2,7 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
@@ -55,15 +56,24 @@ class CharacterControlSystem(val speed: Float = 20f) :
   }
 
   override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-    return super.touchDown(screenX, screenY, pointer, button)
+
+    //Determine where the touch went!
+
+    x = if (Gdx.graphics.width / 2 > screenX) -1f else 1f
+    y = if (Gdx.graphics.height / 2 > screenY) -1f else 1f
+    return true
   }
 
   override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-    return super.touchUp(screenX, screenY, pointer, button)
+    x = 0f
+    y = 0f
+    return true
   }
 
   override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-    return super.touchDragged(screenX, screenY, pointer)
+    x = if (Gdx.graphics.width / 2 > screenX) -1f else 1f
+    y = if (Gdx.graphics.height / 2 > screenY) -1f else 1f
+    return true
   }
 
   override fun keyUp(keycode: Int): Boolean {
