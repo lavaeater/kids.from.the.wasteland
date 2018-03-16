@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.KeyboardControlComponent
@@ -55,12 +56,20 @@ class CharacterControlSystem(val speed: Float = 20f) :
     return true
   }
 
+  fun touchYtoScreenY(y: Int): Int {
+    return Gdx.graphics.height - 1 - y
+  }
+
+  fun touchToVector(touchX: Int, touchY: Int):Vector2 {
+    return vec2((Gdx.graphics.width / 2 - touchX).toFloat(), (Gdx.graphics.height / 2 - touchYtoScreenY(touchY)).toFloat()).nor()
+  }
+
   override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
 
-    //Determine where the touch went!
+    val dirV = touchToVector(screenX, screenY)
 
-    x = if (Gdx.graphics.width / 2 > screenX) -1f else 1f
-    y = if (Gdx.graphics.height / 2 > screenY) -1f else 1f
+    x = dirV.x
+    y = dirV.y
     return true
   }
 
@@ -71,8 +80,10 @@ class CharacterControlSystem(val speed: Float = 20f) :
   }
 
   override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
-    x = if (Gdx.graphics.width / 2 > screenX) -1f else 1f
-    y = if (Gdx.graphics.height / 2 > screenY) -1f else 1f
+    val dirV = touchToVector(screenX, screenY)
+
+    x = dirV.x
+    y = dirV.y
     return true
   }
 
