@@ -84,8 +84,8 @@ class GameManager : Disposable {
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 128f
-    val VIEWPORT_WIDTH = 96f
+    val VIEWPORT_HEIGHT = 64f
+    val VIEWPORT_WIDTH = 48f
     val TILE_SIZE = 8
   }
 
