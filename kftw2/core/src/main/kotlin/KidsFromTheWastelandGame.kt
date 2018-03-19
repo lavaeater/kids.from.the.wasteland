@@ -38,12 +38,13 @@ This also makes it easire to divvy up concepts such as detailmapviews, worldmapv
 they can inherit / implement or be instances of the normal maingamescreen but with
 additions / modifications.
 
+Instances of everything is managed in the Context class and injected through "inject"-calls
+or perhaps of we instantiate something here, we send it in the constructor.
 
  */
 
 class KidsFromTheWastelandGame : KtxGame<Screen>() {
 
-  private lateinit var mainGameScreen: MainGameScreen
   private lateinit var gameManager: GameManager
 
   override fun create() {
@@ -52,7 +53,7 @@ class KidsFromTheWastelandGame : KtxGame<Screen>() {
     Assets.load()
     Ctx.buildContext()
 
-    gameManager = GameManager(this::setScreen, this::addScreen)
+    gameManager = GameManager(this)
 
     gameManager.start()
   }

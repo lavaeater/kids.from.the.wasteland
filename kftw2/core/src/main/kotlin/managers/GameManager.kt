@@ -13,11 +13,9 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.screens.MainGameScreen
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.Hud
-import sun.font.ScriptRun
-import java.lang.reflect.Type
+import ktx.app.KtxGame
 
-class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
-                                       val addScreen: (screen: Screen)->Unit) : Disposable {
+class GameManager(val game: KtxGame<Screen>) : Disposable {
 
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
@@ -49,9 +47,7 @@ class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
     screens.add(MainGameScreen())
 
     for(screen in screens)
-      addScreen(screen)
-
-
+      game.addScreen(screen)
   }
 
   private fun setupSystems() {
@@ -130,6 +126,7 @@ class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
   }
 
   private fun resumeWorldMap() {
+    game.setScreen<MainGameScreen>() //Does this have any effect if the current screen isn't this one?
     hud.hideInventory()
     resumeTheWorld()
   }
@@ -140,6 +137,7 @@ class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
   }
 
   fun start() {
+    //Not needed?
     //Show first screen.
   }
 

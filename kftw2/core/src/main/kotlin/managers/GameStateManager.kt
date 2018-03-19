@@ -28,7 +28,8 @@ fun handleEvent(event: GameEvent) {
     gameStateMachine.acceptEvent(event)
   }
 
-  private val gameStateMachine : StateMachine<GameState, GameEvent> = StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
+  private val gameStateMachine : StateMachine<GameState, GameEvent> =
+      StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
       edge(GameEvent.InventoryToggled, GameState.Inventory) {}
