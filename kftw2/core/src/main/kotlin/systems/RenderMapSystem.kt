@@ -52,20 +52,20 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
         val sprite = Assets.sprites[renderableTile.tile.tileType]!![renderableTile.tile.subType]!!
 
         sprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
-//        when(renderableTile.fogStatus) {
-//          TileFog.NotSeen -> sprite.color = Color.BLACK
-//          TileFog.Seen -> sprite.color = Color.GRAY
-//          TileFog.Seeing -> sprite.color = Color.WHITE
-//        }
+        when(renderableTile.fogStatus) {
+          TileFog.NotSeen -> sprite.color = Color.BLACK
+          TileFog.Seen -> sprite.color = Color.GRAY
+          TileFog.Seeing -> sprite.color = Color.WHITE
+        }
         sprite.draw(batch)
         if (Assets.codeToExtraTiles.containsKey(renderableTile.tile.shortCode))
           for (extraSprite in Assets.codeToExtraTiles[renderableTile.tile.shortCode]!!) {
             extraSprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
-//            when(renderableTile.fogStatus) {
-//              TileFog.NotSeen -> extraSprite.color = Color.BLACK
-//              TileFog.Seen -> extraSprite.color = Color.GRAY
-//              TileFog.Seeing -> extraSprite.color = Color.WHITE
-//            }
+            when(renderableTile.fogStatus) {
+              TileFog.NotSeen -> extraSprite.color = Color.BLACK
+              TileFog.Seen -> extraSprite.color = Color.GRAY
+              TileFog.Seeing -> extraSprite.color = Color.WHITE
+            }
             extraSprite.draw(batch)
           }
       }

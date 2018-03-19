@@ -2,6 +2,7 @@ package com.lavaeater.kftw.managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -9,10 +10,14 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.screens.MainGameScreen
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.Hud
+import sun.font.ScriptRun
+import java.lang.reflect.Type
 
-class GameManager : Disposable {
+class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
+                                       val addScreen: (screen: Screen)->Unit) : Disposable {
 
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
@@ -23,12 +28,16 @@ class GameManager : Disposable {
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<Hud>()
   val gameStateManager = GameStateManager(::gameStateChanged)
-
+  val screens = mutableListOf<Screen>()
 
   init {
     Ctx.context.register {
       bindSingleton(gameStateManager)
     }
+
+    setupScreens()
+
+
 
     setupSystems()
 
@@ -37,6 +46,14 @@ class GameManager : Disposable {
 
     //Skip this while implementing monster spawn!
     //actorManager.addTownsFolk()
+  }
+
+  private fun setupScreens() {
+    screens.add(MainGameScreen())
+
+    for(screen in screens)
+      addScreen(screen)
+
   }
 
   private fun setupSystems() {
@@ -123,4 +140,13 @@ class GameManager : Disposable {
     for (system in engine.systems)
       system.setProcessing(true)
   }
+
+  fun start() {
+    //Show first screen.
+  }
+
+  fun stop() {
+    //Hide screens, save game, shit like that, I guess?
+  }
+
 }

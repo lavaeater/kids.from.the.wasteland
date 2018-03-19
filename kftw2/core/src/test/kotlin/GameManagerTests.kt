@@ -8,7 +8,7 @@ class GameManagerTests {
 
   @Test
   fun testSomething() {
-    
+
   }
 
 }

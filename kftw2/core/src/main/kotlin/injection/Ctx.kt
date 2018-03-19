@@ -30,7 +30,7 @@ class Ctx {
         bindSingleton(ActorFactory())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(Hud())
-        bindSingleton(GameManager())
+        bindSingleton(GameManager(this::setScreen))
       }
     }
   }
