@@ -36,9 +36,6 @@ class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
     }
 
     setupScreens()
-
-
-
     setupSystems()
 
     camera.position.x = 0f
@@ -53,6 +50,7 @@ class GameManager(val setScreen: (type: Class<com.badlogic.gdx.Screen>)->Unit,
 
     for(screen in screens)
       addScreen(screen)
+
 
   }
 
