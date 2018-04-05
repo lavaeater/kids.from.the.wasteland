@@ -104,6 +104,30 @@ class EyeFeature(parent: Feature,
   }
 }
 
+fun eyeAreaGroup(parent: Feature) {
+  val group = FeatureGroup(parent,0f, 1f, 0.3f, Color.valueOf("FFCEB4FF"),0.5f, 0.5f)
+}
+
+open class FeatureGroup(parent: Feature,
+                        margin: Float,
+                        width: Float,
+                        height: Float,
+                        color: Color = Color.CLEAR, //Default is that the group is transparent!
+                        offsetX: Float,
+                        offsetY: Float) : ChildFeature(parent, margin, width, height, color, offsetX, offsetY) {
+  private val children = Stack<ChildFeature>()
+
+  fun addChild(feature: ChildFeature) {
+    children.push(feature)
+  }
+
+  override fun draw(pixmap: Pixmap) {
+    super.draw(pixmap)
+    for(feature in children)
+      feature.draw(pixmap)
+  }
+}
+
 open class ChildFeature(parent: Feature,
                         margin: Float = 0.05f,
                         width: Float = 1f,
@@ -111,7 +135,6 @@ open class ChildFeature(parent: Feature,
                         color: Color = Color.valueOf("EAC086FF"),
                         offsetX: Float = 0.5f,
                         offsetY: Float = 0.5f) : Feature(parent.pixelWidth, parent.pixelHeight, margin, width, height, color, offsetX, offsetY)
-
 
 
 open class Feature(val parentWidth: Int = 64,
@@ -136,7 +159,7 @@ open class Feature(val parentWidth: Int = 64,
   }
 }
 
-fun Pixmap.drawEllipse(xc:Int, yc:Int, width: Int, height: Int) {
+fun Pixmap.drawEllipse(xc: Int, yc: Int, width: Int, height: Int) {
   val a2 = width * width
   val b2 = height * height
   val fa2 = 4 * a2
