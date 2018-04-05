@@ -51,7 +51,7 @@ class PortraitScreen : KtxScreen {
     Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
     batch.use {
-      batch.draw(texture,0f, 0f)
+      batch.draw(texture,0f - texture.width / 2, 0f - texture.height / 2)
     }
   }
 
@@ -80,7 +80,7 @@ open class FeatureBase(val pixmap: Pixmap,
                        val margin: Float = 0.05f,
                        val width: Float = 1f,
                        val height: Float = 1f,
-                       val color: Color = Color.PINK) : Feature {
+                       val color: Color = Color.valueOf("FEE1B9FF")) : Feature {
 
   val xMargin = (margin * pixmap.width).toInt()
   val yMargin = (margin * pixmap.height).toInt()
