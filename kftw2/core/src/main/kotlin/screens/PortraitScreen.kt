@@ -99,8 +99,8 @@ class EyeFeature(parent: Feature,
     pixmap.fillRectangle(xOrigin + firstEyeOriginX + pixelDist - pixelWidth / 2, yOrigin + pixelHeight / 2, pixelWidth, pixelHeight)
 
 
-//    pixmap.fillCircle(firstEyeOriginX, yOrigin, pixelHeight)
-//    pixmap.fillCircle(firstEyeOriginX + pixelDist, yOrigin, pixelHeight)
+    pixmap.fillCircle(firstEyeOriginX, yOrigin, pixelHeight)
+    pixmap.fillCircle(firstEyeOriginX + pixelDist, yOrigin, pixelHeight)
   }
 }
 
@@ -111,6 +111,8 @@ open class ChildFeature(parent: Feature,
                         color: Color = Color.valueOf("EAC086FF"),
                         offsetX: Float = 0.5f,
                         offsetY: Float = 0.5f) : Feature(parent.pixelWidth, parent.pixelHeight, margin, width, height, color, offsetX, offsetY)
+
+
 
 open class Feature(val parentWidth: Int = 64,
                    val parentHeight: Int = 64,
@@ -131,5 +133,49 @@ open class Feature(val parentWidth: Int = 64,
     //Draw a square, motherfucker
     pixmap.setColor(color)
     pixmap.fillRectangle(xOrigin, yOrigin, pixelWidth, pixelHeight)
+  }
+}
+
+fun Pixmap.drawEllipse(xc:Int, yc:Int, width: Int, height: Int) {
+  val a2 = width * width
+  val b2 = height * height
+  val fa2 = 4 * a2
+  val fb2 = 4 * b2
+  var x: Int
+  var y: Int
+  var sigma: Int
+
+  /* first half */
+  x = 0
+  y = height
+  sigma = 2 * b2 + a2 * (1 - 2 * height)
+  while (b2 * x <= a2 * y) {
+    this.drawPixel(xc + x, yc + y)
+    this.drawPixel(xc - x, yc + y)
+    this.drawPixel(xc + x, yc - y)
+    this.drawPixel(xc - x, yc - y)
+    if (sigma >= 0) {
+      sigma += fa2 * (1 - y)
+      y--
+    }
+    sigma += b2 * (4 * x + 6)
+    x++
+  }
+
+  /* second half */
+  x = width
+  y = 0
+  sigma = 2 * a2 + b2 * (1 - 2 * width)
+  while (a2 * y <= b2 * x) {
+    this.drawPixel(xc + x, yc + y)
+    this.drawPixel(xc - x, yc + y)
+    this.drawPixel(xc + x, yc - y)
+    this.drawPixel(xc - x, yc - y)
+    if (sigma >= 0) {
+      sigma += fb2 * (1 - x)
+      x--
+    }
+    sigma += a2 * (4 * y + 6)
+    y++
   }
 }
