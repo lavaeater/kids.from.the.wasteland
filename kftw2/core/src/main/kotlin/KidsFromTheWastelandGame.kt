@@ -7,19 +7,22 @@ import com.lavaeater.Assets
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.screens.MainGameScreen
 import ktx.app.KtxGame
+import screens.PortraitScreen
 
 
 class KidsFromTheWastelandGame : KtxGame<Screen>() {
 
   private lateinit var mainGameScreen: MainGameScreen
+  private lateinit var portraitScreen: PortraitScreen
 
   override fun create() {
     Gdx.app.logLevel = Application.LOG_ERROR
 
     Assets.load()
     Ctx.buildContext()
-    mainGameScreen = MainGameScreen()
-    addScreen(mainGameScreen)
-    setScreen<MainGameScreen>()
+//    mainGameScreen = MainGameScreen()
+    portraitScreen = PortraitScreen()
+    addScreen(portraitScreen)
+    setScreen<PortraitScreen>()
   }
 }
