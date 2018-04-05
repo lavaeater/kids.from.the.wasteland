@@ -19,7 +19,10 @@ class PortraitScreen : KtxScreen {
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val pixMap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
 
-  var texture : Texture
+  var texture: Texture
+
+  var textureWidth: Float
+  var textureHeight: Float
 
   val stack = Stack<Feature>()
 
@@ -27,31 +30,38 @@ class PortraitScreen : KtxScreen {
     //1. Draw a black rectangle on the pixmap!
 
     pixMap.setColor(Color.BLACK)
-    pixMap.fillRectangle(0,0, pixMap.width, pixMap.height)
+    pixMap.fillRectangle(0, 0, pixMap.width, pixMap.height)
     pixMap.blending = Pixmap.Blending.None
 
     //2. Add some features to the f-ing stack!
 
-    stack.push(FeatureBase(pixMap, width = 0.7f, height = 1f))
+    var feature = stack.push(Feature(parentWidth = pixMap.width, parentHeight = pixMap.height, width = 0.6f))
+    stack.push(ChildFeature(feature, height = 0.2f))
+    stack.push(ChildFeature(feature, height = 0.1f, color = Color.valueOf("B48A78FF")))
+    stack.push(EyeFeature(feature))
 
-    for(feature in stack) {
-      feature.draw()
+    for (feature in stack) {
+      feature.draw(pixMap)
     }
 
     texture = Texture(pixMap)
+    textureWidth = texture.width.toFloat()
+    textureHeight = texture.height.toFloat()
     pixMap.dispose()
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 64f
-    val VIEWPORT_WIDTH = 64f
+    val VIEWPORT_HEIGHT = 320f
+    val VIEWPORT_WIDTH = 240f
   }
 
   override fun render(delta: Float) {
     Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
     batch.use {
-      batch.draw(texture,0f - texture.width / 2, 0f - texture.height / 2)
+      batch.draw(texture,
+          camera.position.x - textureWidth / 2,
+          camera.position.y - textureHeight / 2)
     }
   }
 
@@ -72,42 +82,54 @@ class PortraitScreen : KtxScreen {
   }
 }
 
-interface Feature {
-  fun draw()
-}
+class EyeFeature(parent: Feature,
+                 width: Float = 0.1f,
+                 height: Float = 0.1f,
+                 distanceBetweenEyes: Float = 0.5f, //Also a ratio of pixelWidth
+                 color: Color = Color.BLUE) : ChildFeature(parent, 0f, width, height, color) {
 
-open class FeatureBase(val pixmap: Pixmap,
-                       val margin: Float = 0.05f,
-                       val width: Float = 1f,
-                       val height: Float = 1f,
-                       val color: Color = Color.valueOf("FEE1B9FF")) : Feature {
+  val pixelDist = (parent.pixelWidth * distanceBetweenEyes).toInt()
+  val firstEyeOriginX = ((parent.pixelWidth - pixelDist) / 2)
 
-  val xMargin = (margin * pixmap.width).toInt()
-  val yMargin = (margin * pixmap.height).toInt()
-  init {
-    //What what?
-    /*
-    Margin is offlimits, the rest is calculated!
-
-    How do we handle the origins and stuff? We'll deal with that later.
-
-    So the basic shape is a rectangle. It's size, in this case, will be pixmap
-    minus margin
-
-    Culling of values? Should width be able to be more than 1? No, absolutely not!
-     */
-
-    if (width > 1f || height > 1f)
-      throw Exception("Width and Height must be less than 1.0")
-  }
-
-  override fun draw() {
-    //Draw a square, motherfucker
-    val actualWidth = (pixmap.width - (xMargin* 2) * width).toInt()
-    val actualHeight = (pixmap.height - (yMargin * 2) * height).toInt()
-    //What is origin? Well, top left + margin, etc etc. For this particular square, that is.
+  override fun draw(pixmap: Pixmap) {
 
     pixmap.setColor(color)
-    pixmap.fillRectangle(xMargin,yMargin, actualWidth, actualHeight)
+
+    pixmap.fillRectangle(xOrigin + firstEyeOriginX - pixelWidth / 2, yOrigin + pixelHeight / 2, pixelWidth, pixelHeight)
+    pixmap.fillRectangle(xOrigin + firstEyeOriginX + pixelDist - pixelWidth / 2, yOrigin + pixelHeight / 2, pixelWidth, pixelHeight)
+
+
+//    pixmap.fillCircle(firstEyeOriginX, yOrigin, pixelHeight)
+//    pixmap.fillCircle(firstEyeOriginX + pixelDist, yOrigin, pixelHeight)
+  }
+}
+
+open class ChildFeature(parent: Feature,
+                        margin: Float = 0.05f,
+                        width: Float = 1f,
+                        height: Float = 1f,
+                        color: Color = Color.valueOf("EAC086FF"),
+                        offsetX: Float = 0.5f,
+                        offsetY: Float = 0.5f) : Feature(parent.pixelWidth, parent.pixelHeight, margin, width, height, color, offsetX, offsetY)
+
+open class Feature(val parentWidth: Int = 64,
+                   val parentHeight: Int = 64,
+                   margin: Float = 0.05f,
+                   val width: Float = 1f,
+                   val height: Float = 0.8f,
+                   val color: Color = Color.valueOf("FFC3AAFF"),
+                   offsetX: Float = 0f,
+                   offsetY: Float = 0f) {
+
+  val pixelMargin = (margin * parentHeight).toInt()
+  val pixelHeight = ((parentHeight - pixelMargin * 2) * height).toInt()
+  val pixelWidth = ((parentWidth - pixelMargin * 2) * width).toInt()
+  val xOrigin = ((parentWidth - pixelWidth) / 2 + offsetX * pixelWidth).toInt()
+  val yOrigin = ((parentHeight - pixelHeight) / 2 + offsetY * pixelHeight).toInt()
+
+  open fun draw(pixmap: Pixmap) {
+    //Draw a square, motherfucker
+    pixmap.setColor(color)
+    pixmap.fillRectangle(xOrigin, yOrigin, pixelWidth, pixelHeight)
   }
 }
