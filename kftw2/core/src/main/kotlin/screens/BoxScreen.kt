@@ -7,6 +7,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxScreen
 import ktx.app.use
+import com.badlogic.gdx.graphics.Pixmap
+
+
 
 /**
  * Created by TommieN on 4/5/2018.
@@ -28,9 +31,9 @@ class BoxScreen : KtxScreen {
   init {
     //1. Draw a black rectangle on the pixmap!
 
-  /*  pixMap.setColor(Color.BLACK)
-    pixMap.fillRectangle(0, 0, pixMap.width, pixMap.height)
-    pixMap.blending = Pixmap.Blending.None*/
+    /*  pixMap.setColor(Color.BLACK)
+      pixMap.fillRectangle(0, 0, pixMap.width, pixMap.height)
+      pixMap.blending = Pixmap.Blending.None*/
 
     //2. Add some features to the f-ing stack!
     /*val baseFeature = BoxFeature(width = 0.6f, height = 0.8f, color = Color.valueOf("FFC3AAFF"))
@@ -89,48 +92,54 @@ class BoxScreen : KtxScreen {
   }
 }
 
-data class Box(val x: Int = 4, val y: Int = 4, val width:Int = 56, val height: Int = 56) //df
+data class Box(val x: Int = 4, val y: Int = 4, val width: Int = 56, val height: Int = 56) //df
 
 class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
   val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
   val basePixelWidth = (pixmap.width * width).toInt()
   val basePixelHeight = (pixmap.height * height).toInt()
-  val offsetX = (pixmap.width - basePixelWidth)/2
-  val offsetY = (pixmap.height - basePixelHeight)/2
-  val drawFunctions = mutableListOf<(pixmap:Pixmap)->Unit>()
+  val offsetX = (pixmap.width - basePixelWidth) / 2
+  val offsetY = (pixmap.height - basePixelHeight) / 2
+  val drawFunctions = mutableListOf<(pixmap: Pixmap) -> Unit>()
 
   init {
     pixmap.setColor(Color.BLACK)
     pixmap.fillRectangle(0, 0, pixmap.width, pixmap.height)
     pixmap.blending = Pixmap.Blending.None
 
-    drawFunctions.add(::drawBase)
+    drawFunctions.add(::drawBaseWithRoundedCorners)
     drawFunctions.add(::drawEyeBox)
-    drawFunctions.add(::drawEyes)
+    drawFunctions.add(::drawEyebrows)
+    drawFunctions.add(::drawEyes2)
   }
 
   fun drawAll() {
-    for(drawFunction in drawFunctions)
+    for (drawFunction in drawFunctions)
       drawFunction(pixmap)
   }
 
-  fun drawBase(p:Pixmap) {
+  fun drawBase(p: Pixmap) {
     p.setColor(Color.valueOf("FFC3AAFF"))
     p.fillRectangle(offsetX, offsetY, basePixelWidth, basePixelHeight)
   }
 
-  fun drawEyeBox(p:Pixmap) {
+
+  fun drawBaseWithRoundedCorners(p: Pixmap) {
+    p.fillRoundedRectangle(offsetX, offsetY, basePixelWidth, basePixelHeight, 5, Color.valueOf("FFC3AAFF"))
+  }
+
+  fun drawEyeBox(p: Pixmap) {
     p.setColor(Color.valueOf("D2A18CFF"))
 
     val w = 0.8f
-    val h = 0.15f
+    val h = 0.25f
 
     val offsetYFactor = -0.2f
     val offsetXFactor = 0f
 
-    val pW = (w * basePixelWidth).toInt()
-    val pH = (h * basePixelHeight).toInt()
+    val pW = calcPixel(w, basePixelWidth)
+    val pH = calcPixel(h, basePixelHeight)
 
     val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).toInt()
     val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
@@ -138,7 +147,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     p.fillRectangle(oX, oY, pW, pH)
   }
 
-  fun drawEyes(p:Pixmap) {
+  fun drawEyes(p: Pixmap) {
     p.setColor(Color.BROWN)
 
     val w = 0.1f
@@ -150,8 +159,8 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val distanceFactor = 0.5f
     val pixelDistance = (basePixelWidth * distanceFactor).toInt()
 
-    val pW = (w * basePixelHeight).toInt()
-    val pH = (h * basePixelHeight).toInt()
+    val pW = calcPixel(w, basePixelHeight)
+    val pH = calcPixel(h, basePixelHeight)
 
     val firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX
     val secondEyeX = firstEyeX + pixelDistance
@@ -161,6 +170,87 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     p.fillRectangle(firstEyeX, oY, pW, pH)
     p.fillRectangle(secondEyeX, oY, pW, pH)
   }
+
+  fun drawEyebrows(p: Pixmap) {
+    p.setColor(Color.BROWN)
+
+    val w = 0.8f
+    val h = 0.1f
+
+    val offsetYFactor = -0.35f
+    val offsetXFactor = 0f
+
+    val pW = calcPixel(w, basePixelWidth)
+    val pH = calcPixel(h, basePixelHeight)
+
+    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).toInt()
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(oX, oY, pW, pH)
+  }
+
+  fun drawEyes2(p: Pixmap) {
+    p.setColor(Color.BROWN)
+
+    var w = 0.25f
+    var h = 0.05f
+
+    var offsetYFactor = 0f
+    val offsetXFactor = 0f
+
+    val distanceFactor = 0.5f
+    val pixelDistance = (basePixelWidth * distanceFactor).toInt()
+
+    var pW = calcPixel(w, basePixelWidth)
+    var pH = calcPixel(h, basePixelWidth)
+
+    var firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
+    var secondEyeX = firstEyeX + pixelDistance
+
+    var oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(firstEyeX, oY, pW, pH)
+    p.fillRectangle(secondEyeX, oY, pW, pH)
+
+    //Those were bags
+    p.setColor(Color.WHITE)
+
+    w = 0.2f
+    h = 0.15f
+
+    pW = calcPixel(w, basePixelWidth)
+    pH = calcPixel(h, basePixelWidth)
+    offsetYFactor = -0.2f
+
+    firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
+    secondEyeX = firstEyeX + pixelDistance
+
+    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(firstEyeX, oY, pW, pH)
+    p.fillRectangle(secondEyeX, oY, pW, pH)
+
+    //Those were whites
+
+    p.setColor(Color.BLUE)
+    w = 0.1f
+    h = 0.1f
+
+    pW = calcPixel(w, basePixelWidth)
+    pH = calcPixel(h, basePixelWidth)
+
+    firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
+    secondEyeX = firstEyeX + pixelDistance
+
+    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(firstEyeX, oY, pW, pH)
+    p.fillRectangle(secondEyeX, oY, pW, pH)
+
+
+  }
+
+  fun calcPixel(factor: Float, base: Int) = (factor * base).toInt()
 }
 
 open class BoxFeature(parentBox: Box = Box(),
@@ -176,7 +266,7 @@ open class BoxFeature(parentBox: Box = Box(),
   val pixelHeight = (parentBox.height * height).toInt()
   val pixelWidth = (parentBox.width * width).toInt()
   val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(basePixelWidth * offsetX / 2).toInt()
-  val pixelOffsetY = parentBox.y + ((parentBox.height- pixelHeight) / 2) + ((parentBox.height- pixelHeight) / 2 * offsetY).toInt()
+  val pixelOffsetY = parentBox.y + ((parentBox.height - pixelHeight) / 2) + ((parentBox.height - pixelHeight) / 2 * offsetY).toInt()
 
   val boundingBox = Box(pixelOffsetX, //move it in x-axis
       pixelOffsetY, //move it in y-axis
@@ -186,9 +276,33 @@ open class BoxFeature(parentBox: Box = Box(),
 
   fun draw(pixmap: Pixmap) {
     pixmap.setColor(color)
-    pixmap.fillRectangle(boundingBox.x, boundingBox.y,boundingBox.width, boundingBox.height)
-    for(child in children)
+    pixmap.fillRectangle(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height)
+    for (child in children)
       child.draw(pixmap)
   }
+}
+
+fun Pixmap.fillRoundedRectangle(x:Int, y:Int, width:Int, height:Int, radius:Int, color:Color) {
+  val pixmap = this
+  pixmap.setColor(color)
+
+  // Pink rectangle
+  pixmap.fillRectangle(x, y + radius, width, height - 2 * radius)
+
+// Green rectangle
+  pixmap.fillRectangle(x + radius, y, width -2 * radius, height)
+
+
+// Bottom-left circle
+  pixmap.fillCircle(x + radius, radius, radius)
+
+// Top-left circle
+  pixmap.fillCircle(x+ radius, height - radius, radius)
+
+// Bottom-right circle
+  pixmap.fillCircle(width - radius, radius, radius)
+
+// Top-right circle
+  pixmap.fillCircle(width - radius, height - radius, radius)
 }
 
