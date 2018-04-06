@@ -8,7 +8,7 @@ import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxScreen
 import ktx.app.use
 import com.badlogic.gdx.graphics.Pixmap
-
+import com.badlogic.gdx.math.MathUtils
 
 
 /**
@@ -126,7 +126,34 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
 
   fun drawBaseWithRoundedCorners(p: Pixmap) {
-    p.fillRoundedRectangle(offsetX, offsetY, basePixelWidth, basePixelHeight, 5, Color.valueOf("FFC3AAFF"))
+    p.setColor(Color.valueOf("FFC3AAFF"))
+
+    var rowHeight = 2
+    var topRows = (.25 *basePixelHeight).toInt()
+
+
+    var xLength = (.6 * basePixelWidth).toInt()
+    var leftOver = basePixelWidth - xLength
+    var localOffsetX = (leftOver / 2).toInt()
+
+    var restRows = basePixelHeight-topRows
+
+    var steps = (topRows / rowHeight).toInt()
+
+
+    for(y in 0..steps) { //Right or wrong?
+      p.fillRectangle(offsetX + leftOver / 2, y * 2 + offsetY, xLength, basePixelHeight - y * row)
+
+      xLength += (y + 1) * leftOver / 2
+      if(xLength > basePixelWidth) xLength = basePixelWidth
+
+      leftOver = basePixelWidth-xLength
+    }
+
+
+
+
+    p.fillRectangle(offsetX, offsetY+ topRows -1, basePixelWidth, restRows)
   }
 
   fun drawEyeBox(p: Pixmap) {
