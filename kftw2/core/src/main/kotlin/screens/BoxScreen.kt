@@ -88,7 +88,13 @@ class BoxScreen : KtxScreen {
 
 data class Box(val x: Int = 4, val y: Int = 4, val width:Int = 56, val height: Int = 56) //df
 
+class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
+  val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
+  fun draw() {
+
+  }
+}
 
 open class BoxFeature(parentBox: Box = Box(),
                       width: Float = 1f,
