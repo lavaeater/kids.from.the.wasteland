@@ -85,7 +85,7 @@ class PortraitScreen : KtxScreen {
 class EyeFeature(parent: Feature,
                  width: Float = 0.1f,
                  height: Float = 0.1f,
-                 distanceBetweenEyes: Float = 0.5f, //Also a ratio of pixelWidth
+                 distanceBetweenEyes: Float = 0.5f, //Also a ratio of basePixelWidth
                  color: Color = Color.BLUE) : ChildFeature(parent, 0f, width, height, color) {
 
   val pixelDist = (parent.pixelWidth * distanceBetweenEyes).toInt()

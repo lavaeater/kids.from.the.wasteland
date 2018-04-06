@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxScreen
 import ktx.app.use
-import java.util.*
 
 /**
  * Created by TommieN on 4/5/2018.
@@ -95,10 +94,10 @@ data class Box(val x: Int = 4, val y: Int = 4, val width:Int = 56, val height: I
 class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
   val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
-  val pixelWidth = (pixmap.width * width).toInt()
-  val pixelHeight = (pixmap.height * height).toInt()
-  val offsetX = (pixmap.width - pixelWidth)/2
-  val offsetY = (pixmap.height - pixelHeight)/2
+  val basePixelWidth = (pixmap.width * width).toInt()
+  val basePixelHeight = (pixmap.height * height).toInt()
+  val offsetX = (pixmap.width - basePixelWidth)/2
+  val offsetY = (pixmap.height - basePixelHeight)/2
   val drawFunctions = mutableListOf<(pixmap:Pixmap)->Unit>()
 
   init {
@@ -107,6 +106,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     pixmap.blending = Pixmap.Blending.None
 
     drawFunctions.add(::drawBase)
+    drawFunctions.add(::drawEyeBox)
     drawFunctions.add(::drawEyes)
   }
 
@@ -117,10 +117,10 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
   fun drawBase(p:Pixmap) {
     p.setColor(Color.valueOf("FFC3AAFF"))
-    p.fillRectangle(offsetX, offsetY, pixelWidth, pixelHeight)
+    p.fillRectangle(offsetX, offsetY, basePixelWidth, basePixelHeight)
   }
 
-  fun drawEyes(p:Pixmap) {
+  fun drawEyeBox(p:Pixmap) {
     p.setColor(Color.valueOf("D2A18CFF"))
 
     val w = 0.8f
@@ -129,13 +129,37 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val offsetYFactor = -0.2f
     val offsetXFactor = 0f
 
-    val pW = (w * pixelWidth).toInt()
-    val pH = (h * pixelHeight).toInt()
+    val pW = (w * basePixelWidth).toInt()
+    val pH = (h * basePixelHeight).toInt()
 
-    val oX = (offsetX + (pixelWidth - pW) / 2 + (pixelWidth - pW) / 2 * offsetXFactor).toInt()
-    val oY = (offsetY + (pixelHeight - pH) / 2 + (pixelHeight - pH) / 2 * offsetYFactor).toInt()
+    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).toInt()
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
 
     p.fillRectangle(oX, oY, pW, pH)
+  }
+
+  fun drawEyes(p:Pixmap) {
+    p.setColor(Color.BROWN)
+
+    val w = 0.1f
+    val h = 0.1f
+
+    val offsetYFactor = -0.2f
+    val offsetXFactor = 0f
+
+    val distanceFactor = 0.5f
+    val pixelDistance = (basePixelWidth * distanceFactor).toInt()
+
+    val pW = (w * basePixelHeight).toInt()
+    val pH = (h * basePixelHeight).toInt()
+
+    val firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX
+    val secondEyeX = firstEyeX + pixelDistance
+
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(firstEyeX, oY, pW, pH)
+    p.fillRectangle(secondEyeX, oY, pW, pH)
   }
 }
 
@@ -151,7 +175,7 @@ open class BoxFeature(parentBox: Box = Box(),
 
   val pixelHeight = (parentBox.height * height).toInt()
   val pixelWidth = (parentBox.width * width).toInt()
-  val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(pixelWidth * offsetX / 2).toInt()
+  val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(basePixelWidth * offsetX / 2).toInt()
   val pixelOffsetY = parentBox.y + ((parentBox.height- pixelHeight) / 2) + ((parentBox.height- pixelHeight) / 2 * offsetY).toInt()
 
   val boundingBox = Box(pixelOffsetX, //move it in x-axis
