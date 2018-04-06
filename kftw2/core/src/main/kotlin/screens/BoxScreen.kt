@@ -34,8 +34,16 @@ class BoxScreen : KtxScreen {
     pixMap.blending = Pixmap.Blending.None
 
     //2. Add some features to the f-ing stack!
-    val baseFeature = BoxFeature(width = 0.6f, color = Color.valueOf("FFC3AAFF"))
+    val baseFeature = BoxFeature(width = 0.6f, height = 0.8f, color = Color.valueOf("FFC3AAFF"))
     features.add(baseFeature)
+
+    val eyeBox = BoxFeature(baseFeature.boundingBox,
+        width = 0.8f,
+        height = 0.2f,
+        offsetY = -0.3f,
+        color=Color.valueOf("D2A18CFF"))
+
+    baseFeature.children.add(eyeBox)
 
     for(feature in features)
       feature.draw(pixMap)
@@ -78,7 +86,9 @@ class BoxScreen : KtxScreen {
   }
 }
 
-data class Box(val x: Int = 0, val y: Int = 0, val width:Int = 56, val height: Int = 56) //df
+data class Box(val x: Int = 4, val y: Int = 4, val width:Int = 56, val height: Int = 56) //df
+
+
 
 open class BoxFeature(parentBox: Box = Box(),
                       width: Float = 1f,
@@ -90,13 +100,13 @@ open class BoxFeature(parentBox: Box = Box(),
   Ignore margin, we'll just set a different boundingbox for everything..., right?
    */
 
-  val pixelWidth = (parentBox.width * width).toInt()
   val pixelHeight = (parentBox.height * height).toInt()
+  val pixelWidth = (parentBox.width * width).toInt()
   val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(pixelWidth * offsetX / 2).toInt()
-  val pixelOffsetY = parentBox.y + ((parentBox.height- pixelHeight) / 2)//(pixelHeight * offsetY / 2).toInt()
+  val pixelOffsetY = parentBox.y + ((parentBox.height- pixelHeight) / 2) + ((parentBox.height- pixelHeight) / 2 * offsetY).toInt()
 
-  val boundingBox = Box(parentBox.x + pixelOffsetX, //move it in x-axis
-      parentBox.y + pixelOffsetY, //move it in y-axis
+  val boundingBox = Box(pixelOffsetX, //move it in x-axis
+      pixelOffsetY, //move it in y-axis
       pixelWidth,
       pixelHeight)
   val children = mutableListOf<BoxFeature>()
