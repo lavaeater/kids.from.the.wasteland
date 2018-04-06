@@ -17,7 +17,7 @@ class BoxScreen : KtxScreen {
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
-  val pixMap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
+  /*val pixMap = Pixmap(64, 64, Pixmap.Format.RGBA4444)*/
 
   var texture: Texture
 
@@ -29,12 +29,12 @@ class BoxScreen : KtxScreen {
   init {
     //1. Draw a black rectangle on the pixmap!
 
-    pixMap.setColor(Color.BLACK)
+  /*  pixMap.setColor(Color.BLACK)
     pixMap.fillRectangle(0, 0, pixMap.width, pixMap.height)
-    pixMap.blending = Pixmap.Blending.None
+    pixMap.blending = Pixmap.Blending.None*/
 
     //2. Add some features to the f-ing stack!
-    val baseFeature = BoxFeature(width = 0.6f, height = 0.8f, color = Color.valueOf("FFC3AAFF"))
+    /*val baseFeature = BoxFeature(width = 0.6f, height = 0.8f, color = Color.valueOf("FFC3AAFF"))
     features.add(baseFeature)
 
     val eyeBox = BoxFeature(baseFeature.boundingBox,
@@ -46,12 +46,16 @@ class BoxScreen : KtxScreen {
     baseFeature.children.add(eyeBox)
 
     for(feature in features)
-      feature.draw(pixMap)
+      feature.draw(pixMap)*/
 
-    texture = Texture(pixMap)
+    val drawer = FaceDrawer(0.6f, 0.8f)
+    drawer.drawAll()
+
+
+    texture = Texture(drawer.pixmap)
     textureWidth = texture.width.toFloat()
     textureHeight = texture.height.toFloat()
-    pixMap.dispose()
+    drawer.pixmap.dispose()
   }
 
   companion object {
@@ -91,8 +95,47 @@ data class Box(val x: Int = 4, val y: Int = 4, val width:Int = 56, val height: I
 class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
   val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
-  fun draw() {
+  val pixelWidth = (pixmap.width * width).toInt()
+  val pixelHeight = (pixmap.height * height).toInt()
+  val offsetX = (pixmap.width - pixelWidth)/2
+  val offsetY = (pixmap.height - pixelHeight)/2
+  val drawFunctions = mutableListOf<(pixmap:Pixmap)->Unit>()
 
+  init {
+    pixmap.setColor(Color.BLACK)
+    pixmap.fillRectangle(0, 0, pixmap.width, pixmap.height)
+    pixmap.blending = Pixmap.Blending.None
+
+    drawFunctions.add(::drawBase)
+    drawFunctions.add(::drawEyes)
+  }
+
+  fun drawAll() {
+    for(drawFunction in drawFunctions)
+      drawFunction(pixmap)
+  }
+
+  fun drawBase(p:Pixmap) {
+    p.setColor(Color.valueOf("FFC3AAFF"))
+    p.fillRectangle(offsetX, offsetY, pixelWidth, pixelHeight)
+  }
+
+  fun drawEyes(p:Pixmap) {
+    p.setColor(Color.valueOf("D2A18CFF"))
+
+    val w = 0.8f
+    val h = 0.15f
+
+    val offsetYFactor = -0.2f
+    val offsetXFactor = 0f
+
+    val pW = (w * pixelWidth).toInt()
+    val pH = (h * pixelHeight).toInt()
+
+    val oX = (offsetX + (pixelWidth - pW) / 2 + (pixelWidth - pW) / 2 * offsetXFactor).toInt()
+    val oY = (offsetY + (pixelHeight - pH) / 2 + (pixelHeight - pH) / 2 * offsetYFactor).toInt()
+
+    p.fillRectangle(oX, oY, pW, pH)
   }
 }
 
