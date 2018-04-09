@@ -8,6 +8,8 @@ import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxScreen
 import ktx.app.use
 import com.badlogic.gdx.graphics.Pixmap
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 
 /**
@@ -49,7 +51,7 @@ class BoxScreen : KtxScreen {
     for(feature in features)
       feature.draw(pixMap)*/
 
-    val drawer = FaceDrawer(0.6f, 0.8f)
+    val drawer = FaceDrawer()
     drawer.drawAll()
 
 
@@ -93,11 +95,15 @@ class BoxScreen : KtxScreen {
 
 data class Box(val x: Int = 4, val y: Int = 4, val width: Int = 56, val height: Int = 56) //df
 
-class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
+class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
 
   val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
-  val basePixelWidth = (pixmap.width * width).toInt()
-  val basePixelHeight = (pixmap.height * height).toInt()
+
+
+  val basePixelWidth = (pixmap.width * width).roundToEven()
+  val basePixelHeight = (pixmap.height * height).roundToEven()
+
+
   val offsetX = (pixmap.width - basePixelWidth) / 2
   val offsetY = (pixmap.height - basePixelHeight) / 2
   val drawFunctions = mutableListOf<(pixmap: Pixmap) -> Unit>()
@@ -111,6 +117,22 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     drawFunctions.add(::drawEyeBox)
     drawFunctions.add(::drawEyebrows)
     drawFunctions.add(::drawEyes2)
+
+    /*
+    We should always work with powers of 2.
+
+    SO, our pixmap is 64x 64, the ratios in that should be
+    a) divisible by 2, never odd
+    b) powers of two? What is a third of 64?
+    21,3, that's what!
+
+    So... the face should be some even multiplier of two, at least
+    How do we round an integer to the nearest even number?
+
+    Rounding should be either up or down, so, 20.9 = 20, 21.3 = 22.
+
+
+     */
   }
 
   fun drawAll() {
@@ -127,20 +149,24 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
   fun drawBaseWithRoundedCorners(p: Pixmap) {
     p.setColor(Color.valueOf("FFC3AAFF"))
 
-    var topRows = (.25 *basePixelHeight).toInt()
+    var topRows = (.25 *basePixelHeight).roundToEven()
 
-    var xLength = (.6 * basePixelWidth).toInt()
+    var xLength = (.5 * basePixelWidth).roundToEven()
     var leftOver = basePixelWidth - xLength
-    var localOffsetX = (leftOver / 2).toInt()
+    var localOffsetX = (leftOver / 2)
 
     var restRows = basePixelHeight-topRows
 
-    for(y in 0..topRows) { //Right or wrong?
-      p.fillRectangle(offsetX + leftOver / 2, y + offsetY, xLength, basePixelHeight - y)
+    var y = 0
+    var currentHeight = 2
+    while(y < topRows) {
+      p.fillRectangle(offsetX + leftOver / 2, y + offsetY, xLength, currentHeight)
+      y += currentHeight
+      currentHeight += 1
 
-      xLength += y * y / 2
+      xLength += y * 2
+
       if(xLength > basePixelWidth) xLength = basePixelWidth
-
       leftOver = basePixelWidth-xLength
     }
 
@@ -159,8 +185,8 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val pW = calcPixel(w, basePixelWidth)
     val pH = calcPixel(h, basePixelHeight)
 
-    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).toInt()
-    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).roundToEven()
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(oX, oY, pW, pH)
   }
@@ -175,7 +201,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val offsetXFactor = 0f
 
     val distanceFactor = 0.5f
-    val pixelDistance = (basePixelWidth * distanceFactor).toInt()
+    val pixelDistance = (basePixelWidth * distanceFactor).roundToEven()
 
     val pW = calcPixel(w, basePixelHeight)
     val pH = calcPixel(h, basePixelHeight)
@@ -183,7 +209,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX
     val secondEyeX = firstEyeX + pixelDistance
 
-    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(firstEyeX, oY, pW, pH)
     p.fillRectangle(secondEyeX, oY, pW, pH)
@@ -201,8 +227,8 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val pW = calcPixel(w, basePixelWidth)
     val pH = calcPixel(h, basePixelHeight)
 
-    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).toInt()
-    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    val oX = (offsetX + (basePixelWidth - pW) / 2 + (basePixelWidth - pW) / 2 * offsetXFactor).roundToEven()
+    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(oX, oY, pW, pH)
   }
@@ -217,7 +243,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     val offsetXFactor = 0f
 
     val distanceFactor = 0.5f
-    val pixelDistance = (basePixelWidth * distanceFactor).toInt()
+    val pixelDistance = (basePixelWidth * distanceFactor).roundToEven()
 
     var pW = calcPixel(w, basePixelWidth)
     var pH = calcPixel(h, basePixelWidth)
@@ -225,7 +251,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     var firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
     var secondEyeX = firstEyeX + pixelDistance
 
-    var oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    var oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(firstEyeX, oY, pW, pH)
     p.fillRectangle(secondEyeX, oY, pW, pH)
@@ -243,7 +269,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
     secondEyeX = firstEyeX + pixelDistance
 
-    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(firstEyeX, oY, pW, pH)
     p.fillRectangle(secondEyeX, oY, pW, pH)
@@ -260,7 +286,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
     firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX - pW / 2
     secondEyeX = firstEyeX + pixelDistance
 
-    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).toInt()
+    oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
 
     p.fillRectangle(firstEyeX, oY, pW, pH)
     p.fillRectangle(secondEyeX, oY, pW, pH)
@@ -268,7 +294,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 1f) {
 
   }
 
-  fun calcPixel(factor: Float, base: Int) = (factor * base).toInt()
+  fun calcPixel(factor: Float, base: Int) = (factor * base).roundToEven()
 }
 
 open class BoxFeature(parentBox: Box = Box(),
@@ -281,10 +307,10 @@ open class BoxFeature(parentBox: Box = Box(),
   Ignore margin, we'll just set a different boundingbox for everything..., right?
    */
 
-  val pixelHeight = (parentBox.height * height).toInt()
-  val pixelWidth = (parentBox.width * width).toInt()
-  val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(basePixelWidth * offsetX / 2).toInt()
-  val pixelOffsetY = parentBox.y + ((parentBox.height - pixelHeight) / 2) + ((parentBox.height - pixelHeight) / 2 * offsetY).toInt()
+  val pixelHeight = (parentBox.height * height).roundToEven()
+  val pixelWidth = (parentBox.width * width).roundToEven()
+  val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(basePixelWidth * offsetX / 2).roundToEven()
+  val pixelOffsetY = parentBox.y + ((parentBox.height - pixelHeight) / 2) + ((parentBox.height - pixelHeight) / 2 * offsetY).roundToEven()
 
   val boundingBox = Box(pixelOffsetX, //move it in x-axis
       pixelOffsetY, //move it in y-axis
@@ -324,3 +350,10 @@ fun Pixmap.fillRoundedRectangle(x:Int, y:Int, width:Int, height:Int, radius:Int,
   pixmap.fillCircle(width - radius, height - radius, radius)
 }
 
+fun Float.roundToEven():Int {
+  return if(this.roundToInt() % 2 == 0) this.roundToInt() else this.roundToInt() + 1 //Good enough?
+}
+
+fun Double.roundToEven(): Int {
+  return if(this.roundToInt() % 2 == 0) this.roundToInt() else this.roundToInt() + 1 //Good enough?
+}
