@@ -147,8 +147,59 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
     any number of functions to draw parts of the face with variable widths and heights!
      */
 
-    val baseF = ::drawRectangularBase
+    val baseF = ::drawIrregularBase
     baseF(p)
+  }
+
+  fun drawIrregularBase(p:Pixmap) {
+
+    /*
+    A face is two parts, top and bottom
+
+    Top is forehead + eyes
+    Bottom is nose / eyes + chin / jaw
+     */
+
+    //TOP
+    // One third is forehead
+    val half = (basePixelHeight / 2)
+    val foreHead = (half / 3)
+    val eyeLeve = half - foreHead
+
+    var localOffsetY = offsetY
+    var localOffsetX  = offsetX
+
+    //slightly smaller forehead?
+    var w = basePixelWidth - 8
+    localOffsetX = (p.width - w) / 2
+
+    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, foreHead / 2)
+    w = basePixelWidth - 4
+    localOffsetY += foreHead / 2
+    localOffsetX = (p.width - w) / 2
+
+    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, foreHead / 2)
+
+    localOffsetY += foreHead / 2
+
+    drawRec(p,Color.valueOf("FFC3AAFF"), offsetX, localOffsetY, basePixelWidth, eyeLeve)
+    localOffsetY += eyeLeve
+
+    // Two thirds is eye-box, I guess
+
+    //BOTTOM
+    val nose = half / 2
+    val chin = half - nose
+
+    drawRec(p,Color.valueOf("FFC3AAFF"), offsetX, localOffsetY, basePixelWidth, nose)
+    localOffsetY += nose
+    w = basePixelWidth - 2
+    localOffsetX = (p.width - w) / 2
+    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, chin)
+
+
+
+
   }
 
   fun drawRectangularBase(p: Pixmap) {
