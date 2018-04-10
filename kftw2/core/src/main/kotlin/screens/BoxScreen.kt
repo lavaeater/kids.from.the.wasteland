@@ -20,14 +20,12 @@ class BoxScreen : KtxScreen {
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
-  /*val pixMap = Pixmap(64, 64, Pixmap.Format.RGBA4444)*/
 
   var texture: Texture
 
   var textureWidth: Float
   var textureHeight: Float
 
-  val features = mutableListOf<BoxFeature>()
 
   init {
     //1. Draw a black rectangle on the pixmap!
@@ -93,8 +91,6 @@ class BoxScreen : KtxScreen {
   }
 }
 
-data class Box(val x: Int = 4, val y: Int = 4, val width: Int = 56, val height: Int = 56) //df
-
 class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
 
   val pixmap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
@@ -113,10 +109,13 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
     pixmap.fillRectangle(0, 0, pixmap.width, pixmap.height)
     pixmap.blending = Pixmap.Blending.None
 
-    drawFunctions.add(::drawBaseWithRoundedCorners)
-    drawFunctions.add(::drawEyeBox)
-    drawFunctions.add(::drawEyebrows)
-    drawFunctions.add(::drawEyes2)
+    drawFunctions.add(::drawBase)
+    drawFunctions.add(::drawEyes)
+    drawFunctions.add(::drawNose)
+    drawFunctions.add(::drawMouth)
+    drawFunctions.add(::drawHair)
+    drawFunctions.add(::drawExtra)
+
 
     /*
     We should always work with powers of 2.
@@ -141,8 +140,24 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   }
 
   fun drawBase(p: Pixmap) {
-    p.setColor(Color.valueOf("FFC3AAFF"))
-    p.fillRectangle(offsetX, offsetY, basePixelWidth, basePixelHeight)
+
+    /*
+    This is amazing. We can just use
+
+    any number of functions to draw parts of the face with variable widths and heights!
+     */
+
+    val baseF = ::drawRectangularBase
+    baseF(p)
+  }
+
+  fun drawRectangularBase(p: Pixmap) {
+    drawRec(p,Color.valueOf("FFC3AAFF"), offsetX, offsetY, basePixelWidth, basePixelHeight)
+  }
+
+  fun drawRec(p: Pixmap, c:Color, x: Int, y: Int, w: Int, h: Int) {
+    p.setColor(c)
+    p.fillRectangle(x, y, w, h)
   }
 
 
@@ -192,27 +207,9 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   }
 
   fun drawEyes(p: Pixmap) {
-    p.setColor(Color.BROWN)
-
-    val w = 0.1f
-    val h = 0.1f
-
-    val offsetYFactor = -0.2f
-    val offsetXFactor = 0f
-
-    val distanceFactor = 0.5f
-    val pixelDistance = (basePixelWidth * distanceFactor).roundToEven()
-
-    val pW = calcPixel(w, basePixelHeight)
-    val pH = calcPixel(h, basePixelHeight)
-
-    val firstEyeX = (basePixelWidth - pixelDistance) / 2 + offsetX
-    val secondEyeX = firstEyeX + pixelDistance
-
-    val oY = (offsetY + (basePixelHeight - pH) / 2 + (basePixelHeight - pH) / 2 * offsetYFactor).roundToEven()
-
-    p.fillRectangle(firstEyeX, oY, pW, pH)
-    p.fillRectangle(secondEyeX, oY, pW, pH)
+    val drawers = listOf<(p:Pixmap)-> Unit>(::drawEyeBox, ::drawEyebrows, ::drawEyes2)
+    for(draw in drawers)
+      draw(p)
   }
 
   fun drawEyebrows(p: Pixmap) {
@@ -297,33 +294,16 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   fun calcPixel(factor: Float, base: Int) = (factor * base).roundToEven()
 }
 
-open class BoxFeature(parentBox: Box = Box(),
-                      width: Float = 1f,
-                      height: Float = 1f,
-                      offsetX: Float = 0f, //No offset from center
-                      offsetY: Float = 0f,
-                      val color: Color = Color.WHITE) { //No offset from center - offset is fraction of total height
-  /*
-  Ignore margin, we'll just set a different boundingbox for everything..., right?
-   */
+fun drawNose(p: Pixmap) {
+}
 
-  val pixelHeight = (parentBox.height * height).roundToEven()
-  val pixelWidth = (parentBox.width * width).roundToEven()
-  val pixelOffsetX = parentBox.x + ((parentBox.width - pixelWidth) / 2)//(basePixelWidth * offsetX / 2).roundToEven()
-  val pixelOffsetY = parentBox.y + ((parentBox.height - pixelHeight) / 2) + ((parentBox.height - pixelHeight) / 2 * offsetY).roundToEven()
+fun drawMouth(p: Pixmap) {
+}
 
-  val boundingBox = Box(pixelOffsetX, //move it in x-axis
-      pixelOffsetY, //move it in y-axis
-      pixelWidth,
-      pixelHeight)
-  val children = mutableListOf<BoxFeature>()
+fun drawHair(p: Pixmap) {
+}
 
-  fun draw(pixmap: Pixmap) {
-    pixmap.setColor(color)
-    pixmap.fillRectangle(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height)
-    for (child in children)
-      child.draw(pixmap)
-  }
+fun drawExtra(p: Pixmap) {
 }
 
 fun Pixmap.fillRoundedRectangle(x:Int, y:Int, width:Int, height:Int, radius:Int, color:Color) {

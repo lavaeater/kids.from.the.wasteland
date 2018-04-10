@@ -15,7 +15,7 @@ android {
       jniLibs.srcDirs = ['libs']
     }
 
-    instrumentTest.setRoot('tests')
+    //instrumentTest.setRoot('tests')
   }
   packagingOptions {
     // Preventing from license violations (more or less):
