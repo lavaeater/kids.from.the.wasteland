@@ -195,8 +195,12 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
     localOffsetY += nose
     w = basePixelWidth - 2
     localOffsetX = (p.width - w) / 2
-    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, chin)
 
+    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, chin -2)
+    localOffsetY += chin - 2
+    w = basePixelWidth - 6
+    localOffsetX = (p.width - w) / 2
+    drawRec(p,Color.valueOf("FFC3AAFF"), localOffsetX, localOffsetY, w, 2)
 
 
 
