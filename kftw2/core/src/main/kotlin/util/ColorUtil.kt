@@ -1,9 +1,11 @@
 package util
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Pixmap
+import kotlin.math.roundToInt
 
 
-fun Color.fromHSV(h: Float, s: Float, v: Float): Color {
+public fun fromHSV(h: Float, s: Float, v: Float): Color {
   var h = h
   var s = s
   var v = v
@@ -61,4 +63,37 @@ fun Color.fromHSV(h: Float, s: Float, v: Float): Color {
   }
 
   return Color(r / 255.0f, g / 255.0f, b / 255.0f, 1f)
+}
+
+
+fun Pixmap.fillRoundedRectangle(x:Int, y:Int, width:Int, height:Int, radius:Int, color:Color) {
+  val pixmap = this
+  pixmap.setColor(color)
+
+  // Pink rectangle
+  pixmap.fillRectangle(x, y + radius, width, height - 2 * radius)
+
+// Green rectangle
+  pixmap.fillRectangle(x + radius, y, width -2 * radius, height)
+
+
+// Bottom-left circle
+  pixmap.fillCircle(x + radius, radius, radius)
+
+// Top-left circle
+  pixmap.fillCircle(x+ radius, height - radius, radius)
+
+// Bottom-right circle
+  pixmap.fillCircle(width - radius, radius, radius)
+
+// Top-right circle
+  pixmap.fillCircle(width - radius, height - radius, radius)
+}
+
+fun Float.roundToEven():Int {
+  return if(this.roundToInt() % 2 == 0) this.roundToInt() else this.roundToInt() + 1 //Good enough?
+}
+
+fun Double.roundToEven(): Int {
+  return if(this.roundToInt() % 2 == 0) this.roundToInt() else this.roundToInt() + 1 //Good enough?
 }
