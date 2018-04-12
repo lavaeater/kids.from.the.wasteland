@@ -15,16 +15,15 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   val offsetY = (pixmap.height - basePixelHeight) / 2
   val drawFunctions = mutableListOf<(pixmap: Pixmap) -> Unit>()
 
-  val baseHue = 28f
-  val baseSaturation = 23f
+  val baseHue = 32f
+  val baseSaturation = 32f
   val baseValue = 100f
 
-  val baseColor = fromHSV(baseHue, baseSaturation, baseValue)
   val factor = 15f
 
-  val colors = mapOf("base" to baseColor,
-      "lighter" to fromHSV(baseHue + factor, baseSaturation + factor, baseValue - factor),
-      "lightest" to fromHSV(baseHue + factor, baseSaturation + factor, baseValue - factor),
+  val colors = mapOf("base" to fromHSV(baseHue, baseSaturation, baseValue),
+      "lighter" to fromHSV(baseHue - factor, baseSaturation - factor, baseValue + factor),
+      "lightest" to fromHSV(baseHue - 2 * factor, baseSaturation - 2 * factor, baseValue + 2 * factor),
       "darker" to fromHSV(baseHue + factor, baseSaturation + factor, baseValue - factor),
       "darkest" to fromHSV(baseHue + 2* factor, baseSaturation + 2* factor, baseValue - 2* factor))
 
@@ -73,16 +72,18 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
     var w = basePixelWidth - 8
     localOffsetX = (p.width - w) / 2
 
-    drawRec(p, baseColor, localOffsetX, localOffsetY, w, foreHead / 2)
+    val c = colors["base"]!!
+
+    drawRec(p, c, localOffsetX, localOffsetY, w, foreHead / 2)
     w = basePixelWidth - 4
     localOffsetY += foreHead / 2
     localOffsetX = (p.width - w) / 2
 
-    drawRec(p, baseColor, localOffsetX, localOffsetY, w, foreHead / 2)
+    drawRec(p, c, localOffsetX, localOffsetY, w, foreHead / 2)
 
     localOffsetY += foreHead / 2
 
-    drawRec(p, baseColor, offsetX, localOffsetY, basePixelWidth, eyeLeve)
+    drawRec(p, c, offsetX, localOffsetY, basePixelWidth, eyeLeve)
     localOffsetY += eyeLeve
 
     // Two thirds is eye-box, I guess
@@ -91,16 +92,16 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
     val nose = half / 2
     val chin = half - nose
 
-    drawRec(p, baseColor, offsetX, localOffsetY, basePixelWidth, nose)
+    drawRec(p, c, offsetX, localOffsetY, basePixelWidth, nose)
     localOffsetY += nose
     w = basePixelWidth - 2
     localOffsetX = (p.width - w) / 2
 
-    drawRec(p, baseColor, localOffsetX, localOffsetY, w, chin - 2)
+    drawRec(p, c, localOffsetX, localOffsetY, w, chin - 2)
     localOffsetY += chin - 2
     w = basePixelWidth - 6
     localOffsetX = (p.width - w) / 2
-    drawRec(p, baseColor, localOffsetX, localOffsetY, w, 2)
+    drawRec(p, c, localOffsetX, localOffsetY, w, 2)
 
   }
 
@@ -142,7 +143,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   }
 
   fun drawEyeBox(p: Pixmap) {
-    p.setColor(Color.valueOf("D2A18CFF"))
+    p.setColor(colors["darker"])
 
     val w = 0.8f
     val h = 0.25f
@@ -166,7 +167,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   }
 
   fun drawEyebrows(p: Pixmap) {
-    p.setColor(Color.BROWN)
+    p.setColor(colors["darkest"])
 
     val w = 0.8f
     val h = 0.1f
@@ -184,7 +185,7 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   }
 
   fun drawEyes2(p: Pixmap) {
-    p.setColor(Color.BROWN)
+    p.setColor(colors["darker"])
 
     var w = 0.25f
     var h = 0.05f
@@ -248,15 +249,19 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
 
 
   fun drawNose(p: Pixmap) {
-/*
-WHat is the simples possible pixel art nose?
+    p.setColor(colors["darkest"])
 
-Two triangles?
+    val noseOffsetY = offsetY  + basePixelHeight / 2
+    val noseWidth = 4
+    val firstX = offsetX + (basePixelWidth - noseWidth) / 2
+    val secondX = firstX + noseWidth
+    val thirdX = firstX + noseWidth / 2
+    val noseHeight = 4
+    val firstY = noseOffsetY
+    val secondY = noseOffsetY
+    val thirdY = noseOffsetY + noseHeight
 
- */
-    val c = fromHSV(baseHue, baseSaturation, baseValue)
-
-    p.fillTriangle()
+    p.fillTriangle(firstX, firstY, secondX, secondY, thirdX, thirdY)
 
 
   }
