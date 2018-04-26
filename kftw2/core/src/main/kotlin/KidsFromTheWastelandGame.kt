@@ -14,18 +14,18 @@ import screens.PortraitScreen
 class KidsFromTheWastelandGame : KtxGame<Screen>() {
 
   private lateinit var mainGameScreen: MainGameScreen
-  private lateinit var portraitScreen: PortraitScreen
-  private lateinit var boxScreen: BoxScreen
+//  private lateinit var portraitScreen: PortraitScreen
+//  private lateinit var boxScreen: BoxScreen
 
   override fun create() {
     Gdx.app.logLevel = Application.LOG_ERROR
 
     Assets.load()
     Ctx.buildContext()
-//    mainGameScreen = MainGameScreen()
+    mainGameScreen = MainGameScreen()
 //    portraitScreen = PortraitScreen()
-    boxScreen = BoxScreen()
-    addScreen(boxScreen)
-    setScreen<BoxScreen>()
+//    boxScreen = BoxScreen()
+    addScreen(mainGameScreen)
+    setScreen<MainGameScreen>()
   }
 }
