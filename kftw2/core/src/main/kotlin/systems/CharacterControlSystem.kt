@@ -52,6 +52,7 @@ class CharacterControlSystem(val speed: Float = 20f) :
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
       Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryToggled)
+      Input.Keys.M -> gameStateManager.handleEvent(GameEvent.DialogStarted)
     }
     return true
   }

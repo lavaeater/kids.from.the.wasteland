@@ -96,6 +96,7 @@ class GameManager : Disposable {
     when(newState){
       GameState.WorldMap -> resumeWorldMap()
       GameState.Inventory -> showInventory()
+      GameState.Dialog -> showDialog()
       else -> {
         //These aren't defined yet!
       }
@@ -104,9 +105,12 @@ class GameManager : Disposable {
 
   private fun showInventory() {
     stopTheWorld()
-
     hud.showInventory()
+  }
 
+  private fun showDialog() {
+    stopTheWorld()
+    hud.showDialog()
   }
 
   private fun stopTheWorld() {

@@ -28,7 +28,7 @@ class Hud : Disposable {
   lateinit var listView : ListView<String>
 
   init {
-    VisUI.load(VisUI.SkinScale.X2)
+    VisUI.load(VisUI.SkinScale.X1)
     inventoryListAdapter = SimpleListAdapter(player.gdxInventory).apply {
       selectionMode = AbstractListAdapter.SelectionMode.SINGLE
     }
@@ -74,5 +74,9 @@ class Hud : Disposable {
 
   fun hideInventory() {
     inventoryTable.isVisible = false
+  }
+
+  fun showDialog() {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 }

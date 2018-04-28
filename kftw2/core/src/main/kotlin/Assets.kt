@@ -63,7 +63,7 @@ object Assets : Disposable {
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
       color = Color.GRAY
-      size = 12
+      size = 6
     }
 
     standardFont =  fontGenerator.generateFont(fontParams)
