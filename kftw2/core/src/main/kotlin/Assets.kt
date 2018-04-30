@@ -3,7 +3,9 @@ package com.lavaeater
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
@@ -27,6 +29,9 @@ object Assets : Disposable {
       "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
       "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
   )
+
+  val speechBTexture = Texture(Gdx.files.internal("ui/graphics/speechbubble.png"))
+  val speechBubble = NinePatch(speechBTexture, 14, 8,12,12)
 
   lateinit var standardFont: BitmapFont
 

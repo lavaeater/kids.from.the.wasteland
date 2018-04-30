@@ -1,10 +1,13 @@
 package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -12,6 +15,7 @@ import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
 import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
 import com.kotcrab.vis.ui.widget.ListView
+import com.lavaeater.Assets
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import ktx.vis.table
@@ -51,6 +55,8 @@ class Hud : Disposable {
     stage.clear()
   }
 
+  private var dialogLabel: Any
+
   fun setup() {
     stage.clear()
 
@@ -66,6 +72,10 @@ class Hud : Disposable {
     }
     stage.addActor(inventoryTable)
     hideInventory()
+
+    dialogLabel = label {
+      
+    }
   }
 
   fun showInventory() {
@@ -76,7 +86,15 @@ class Hud : Disposable {
     inventoryTable.isVisible = false
   }
 
+  val npd = NinePatchDrawable(Assets.speechBubble)
+  val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
+  val label = Label("Hello, fool",style)
+
   fun showDialog() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
+    label.x = stage.camera.position.x
+    label.y = stage.camera.position.y
+
+    label.isVisible = true
   }
 }
