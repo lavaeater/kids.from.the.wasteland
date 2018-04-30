@@ -12,14 +12,15 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
+import com.kotcrab.vis.ui.layout.GridGroup
 import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
 import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
 import com.kotcrab.vis.ui.widget.ListView
 import com.lavaeater.Assets
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
+import ktx.vis.gridGroup
 import ktx.vis.table
-
 
 class Hud : Disposable {
 
@@ -29,7 +30,13 @@ class Hud : Disposable {
   val player = Ctx.context.inject<Player>()
   var inventoryListAdapter : SimpleListAdapter<String>
   lateinit var inventoryTable : Table
+//  lateinit var dialogGrid : GridGroup
+//  lateinit var dialogLabel : Label
   lateinit var listView : ListView<String>
+
+  val npd = NinePatchDrawable(Assets.speechBubble)
+  val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
+  val label = Label("Hello, fool",style)
 
   init {
     VisUI.load(VisUI.SkinScale.X1)
@@ -55,7 +62,6 @@ class Hud : Disposable {
     stage.clear()
   }
 
-  private var dialogLabel: Any
 
   fun setup() {
     stage.clear()
@@ -70,12 +76,11 @@ class Hud : Disposable {
       left()
       top()
     }
+
     stage.addActor(inventoryTable)
     hideInventory()
 
-    dialogLabel = label {
-      
-    }
+    stage.addActor(label)
   }
 
   fun showInventory() {
@@ -86,12 +91,8 @@ class Hud : Disposable {
     inventoryTable.isVisible = false
   }
 
-  val npd = NinePatchDrawable(Assets.speechBubble)
-  val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
-  val label = Label("Hello, fool",style)
 
   fun showDialog() {
-
     label.x = stage.camera.position.x
     label.y = stage.camera.position.y
 
