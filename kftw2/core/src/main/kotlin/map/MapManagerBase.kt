@@ -89,7 +89,7 @@ abstract class MapManagerBase : IMapManager {
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
-    return !centerTileKey.isInRange(currentKey, 5)
+    return !centerTileKey.isInRange(currentKey, 25)
   }
 
   fun checkHitBoxesForImpassibleTiles() {
@@ -241,7 +241,7 @@ abstract class MapManagerBase : IMapManager {
     if (doWeNeedNewVisibleTiles(position)) {
       currentKey = position.toTile(GameManager.TILE_SIZE)
       visibleTiles.clear()
-      val range = (widthInTiles * 1.5).roundToInt()
+      val range = (widthInTiles * 3)
       var vbt = getTilesInRange(currentKey, range)
       if (vbt.size < (range * 2 * range * 2) - range) {
         generateTilesFor(currentKey.x, currentKey.y)
