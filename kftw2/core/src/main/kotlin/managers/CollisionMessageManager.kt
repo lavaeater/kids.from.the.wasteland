@@ -26,6 +26,7 @@ class CollisionMessageManager() : ContactListener {
         contact.fixtureB.body.type == BodyDef.BodyType.StaticBody) return
 
     //If both are dynamic, we do something for that, later
+    //TODO:
     if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody &&
         contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) return
 
