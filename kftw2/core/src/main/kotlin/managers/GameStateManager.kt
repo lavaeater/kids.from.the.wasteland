@@ -14,7 +14,7 @@ enum class GameEvent {
   GameStarted,
   CombatStarted,
   CombatEnded,
-  DialogStarted,
+  DialogToggled,
   DialogEnded,
   LootFound,
   InventoryToggled,
@@ -32,13 +32,13 @@ fun handleEvent(event: GameEvent) {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
       edge(GameEvent.InventoryToggled, GameState.Inventory) {}
-        edge(GameEvent.DialogStarted, GameState.Dialog) {}
+        edge(GameEvent.DialogToggled, GameState.Dialog) {}
     }
     state(GameState.Inventory) {
       edge(GameEvent.InventoryToggled, GameState.WorldMap) {}
     }
       state(GameState.Dialog) {
-          edge(GameEvent.DialogEnded, GameState.WorldMap) {}
+          edge(GameEvent.DialogToggled, GameState.WorldMap) {}
       }
   }
 

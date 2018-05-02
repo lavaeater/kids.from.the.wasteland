@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
@@ -16,6 +18,7 @@ import com.kotcrab.vis.ui.layout.GridGroup
 import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
 import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
 import com.kotcrab.vis.ui.widget.ListView
+import com.kotcrab.vis.ui.widget.ListViewStyle
 import com.lavaeater.Assets
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
@@ -37,6 +40,10 @@ class Hud : Disposable {
   val npd = NinePatchDrawable(Assets.speechBubble)
   val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
   val label = Label("Hello, fool",style)
+
+  val possibleTexts = arrayOf("Hello, fool.", "Pleased to meet you, hope you guessed my name", "WHARARHARHAR")
+
+  val listStyle = List.ListStyle(Assets.standardFont, Color.BLACK, Color.GRAY, npd)
 
   init {
     VisUI.load(VisUI.SkinScale.X1)
@@ -95,7 +102,13 @@ class Hud : Disposable {
   fun showDialog() {
     label.x = stage.camera.position.x
     label.y = stage.camera.position.y
+    label.setText(possibleTexts[MathUtils.random(0,2)])
+    label.pack()
 
     label.isVisible = true
+  }
+
+  fun hideDialog() {
+    label.isVisible = false
   }
 }
