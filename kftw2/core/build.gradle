@@ -34,6 +34,9 @@ dependencies {
   compile "io.github.libktx:ktx-assets:$ktxAssetsVersion"
   compile "io.github.libktx:ktx-box2d:$ktxBox2dVersion"
   compile "com.squidpony:squidlib:$squidLibVersion"
-  testImplementation ""
+
+  testImplementation 'junit:junit:4.12'
+  testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
         

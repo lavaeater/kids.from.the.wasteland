@@ -9,10 +9,11 @@ import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
+import map.TileKeyStore
 import kotlin.math.roundToInt
 
 abstract class MapManagerBase : IMapManager {
-
+  val tks = Ctx.context.inject<TileKeyStore>()
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   companion object {
@@ -28,16 +29,16 @@ abstract class MapManagerBase : IMapManager {
     )
 
     val simpleDirections = mapOf(
-        TileKey(-1, 0) to "east",
-        TileKey(0, 1) to "south",
-        TileKey(1, 0) to "west",
-        TileKey(0, -1) to "north"
+            Ctx.context.inject<TileKeyStore>().tileKey(-1, 0) to "east",
+        Ctx.context.inject<TileKeyStore>().tileKey(0, 1) to "south",
+        Ctx.context.inject<TileKeyStore>().tileKey(1, 0) to "west",
+        Ctx.context.inject<TileKeyStore>().tileKey(0, -1) to "north"
     )
     val simpleDirectionsInverse = mapOf(
-        "north" to TileKey(0, -1),
-        "east" to TileKey(-1, 0),
-        "south" to TileKey(0, 1),
-        "west" to TileKey(1, 0))
+        "north" to Ctx.context.inject<TileKeyStore>().tileKey(0, -1),
+        "east" to Ctx.context.inject<TileKeyStore>().tileKey(-1, 0),
+        "south" to Ctx.context.inject<TileKeyStore>().tileKey(0, 1),
+        "west" to Ctx.context.inject<TileKeyStore>().tileKey(1, 0))
 
     val terrains = mapOf(
         0 to "water",
@@ -76,7 +77,7 @@ abstract class MapManagerBase : IMapManager {
     val noExtraSprites = hashSetOf<String>()
 
     val scale = 80.0f
-    val numberOfTiles = 50
+    val numberOfTiles = 5000
   }
 
   var currentMap = mutableMapOf<TileKey, Int>()
@@ -84,7 +85,7 @@ abstract class MapManagerBase : IMapManager {
   val inverseFogOfWar = mutableSetOf<TileKey>()
   val hitBoxes = mutableMapOf<TileKey, Body>()
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
-  var currentKey = TileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
+  var currentKey = tks.tileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
@@ -165,7 +166,7 @@ abstract class MapManagerBase : IMapManager {
 
     val tempTile = allTiles[currentMap[ourKey]]!!.copy()
     neiborMap.keys.map { (x, y) ->
-      allTiles[currentMap[TileKey(ourKey.x + x, ourKey.y + y)]]
+      allTiles[currentMap[tks.tileKey(ourKey.x + x, ourKey.y + y)]]
     }
         .forEach { tempTile.code += if (it != null) shortTerrains[it.priority]!! else "b" }
 
@@ -183,11 +184,11 @@ abstract class MapManagerBase : IMapManager {
   }
 
   fun getDirectionOfNeighbour(inputKey: TileKey, otherKey: TileKey): TileKey {
-    return TileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
+    return tks.tileKey(inputKey.x - otherKey.x, inputKey.y - otherKey.y)
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
-    return allTiles[currentMap[TileKey(x, y)]]!!
+    return allTiles[currentMap[tks.tileKey(x, y)]]!!
   }
 
   override fun getTileAt(key: TileKey): Tile {
@@ -195,7 +196,7 @@ abstract class MapManagerBase : IMapManager {
   }
 
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey? {
-    return findTileOfTypeInRange(TileKey(x, y), tileType, range)
+    return findTileOfTypeInRange(tks.tileKey(x, y), tileType, range)
   }
 
   override fun findTileOfTypeInRange(key: TileKey, tileType: String, range: Int): TileKey? {

@@ -13,6 +13,7 @@ import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.ui.Hud
 import ktx.box2d.createWorld
 import ktx.inject.Context
+import map.TileKeyStore
 
 class Ctx {
 
@@ -20,6 +21,7 @@ class Ctx {
     val context = Context()
     fun buildContext() {
       context.register {
+        bindSingleton(TileKeyStore(-500000, 500000))
         bindSingleton(Player("Thorborg"))
         bindSingleton(SpriteBatch())
         bindSingleton(OrthographicCamera())

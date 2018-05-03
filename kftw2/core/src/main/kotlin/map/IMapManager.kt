@@ -10,6 +10,7 @@ interface IMapManager {
   fun getTileAt(key: TileKey): Tile
   fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey?
   fun findTileOfTypeInRange(key: TileKey, tileType: String, range: Int): TileKey?
+  fun getTilesInRange(x: Int, y:Int, range:Int): Map<TileKey, Tile>
   fun getTilesInRange(posKey: TileKey, range: Int): Map<TileKey, Tile>
   fun getRingOfTiles(tileKey: TileKey, range: Int): List<TileKey>
   fun getBandOfTiles(tileKey:TileKey, range: Int, width: Int = 1): List<TileKey>

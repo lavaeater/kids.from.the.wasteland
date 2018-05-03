@@ -3,6 +3,9 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.MathUtils
 
 class AreaMapManager : MapManagerBase() {
+  override fun getTilesInRange(x: Int, y: Int, range: Int): Map<TileKey, Tile> {
+    return getTilesInRange(tks.tileKey(x,y), range)
+  }
 
   fun getTilePriorityFromNoise(x: Float, y: Float): Int {
 
@@ -35,7 +38,7 @@ class AreaMapManager : MapManagerBase() {
       for (y in -numberOfTiles..numberOfTiles) {
         val offsetX = x + xCenter
         val offsetY = y + yCenter
-        val key = TileKey(offsetX, offsetY)
+        val key = tks.tileKey(offsetX, offsetY)
         if (!currentMap.containsKey(key)) {
           newTiles.add(key)
           val nX = offsetX / scale

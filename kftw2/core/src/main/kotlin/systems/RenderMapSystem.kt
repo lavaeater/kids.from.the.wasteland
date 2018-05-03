@@ -13,6 +13,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.map.TileFog
 import ktx.app.use
+import map.TileKeyStore
 import kotlin.math.roundToInt
 
 class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
@@ -78,11 +79,12 @@ fun OrthographicCamera.toTile(factor: Int): TileKey {
 }
 
 fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
-  return TileKey(this.tileX(factor), this.tileY(factor));
+
+  return Ctx.context.inject<TileKeyStore>().tileKey(this.tileX(factor), this.tileY(factor));
 }
 
 fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
-  return TileKey(this.tileX(factor), this.tileY(factor))
+  return Ctx.context.inject<TileKeyStore>().tileKey(this.tileX(factor), this.tileY(factor))
 }
 
 fun Vector2.tileX(factor: Int): Int {

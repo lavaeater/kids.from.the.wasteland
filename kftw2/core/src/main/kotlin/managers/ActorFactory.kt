@@ -54,7 +54,7 @@ class ActorFactory {
 
     val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
 
-    val potentialStartTiles = mapManager.getTilesInRange(TileKey(0, 0), 25)
+    val potentialStartTiles = mapManager.getTilesInRange(0, 0, 25)
         .filter { tileTypes.contains(it.value.tileType) }
         .map { it.key.tileWorldCenter(GameManager.TILE_SIZE) }
         .toTypedArray()

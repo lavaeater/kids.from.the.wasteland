@@ -6,6 +6,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManagerBase
 import com.lavaeater.kftw.map.TileKey
+import map.TileKeyStore
 
 class Npc(override var name:String ="Joshua",
           val npcType: NpcType,
@@ -18,7 +19,7 @@ class Npc(override var name:String ="Joshua",
           override var intelligence: Int = npcType.intelligence,
           override val inventory: MutableList<String> = npcType.inventory,
           override var sightRange: Int = npcType.sightRange,
-          override var currentTile: TileKey = TileKey(0,0)) : IAgent {
+          override var currentTile: TileKey = Ctx.context.inject<TileKeyStore>().tileKey(0,0)) : IAgent {
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"
@@ -27,6 +28,7 @@ class Npc(override var name:String ="Joshua",
   val range = 2
 
   val mapManager = Ctx.context.inject<IMapManager>()
+  val tileKeyStore = Ctx.context.inject<TileKeyStore>()
 
   fun log(message: String) {
     brainLog += "$name: $message\n"
@@ -104,5 +106,5 @@ class Npc(override var name:String ="Joshua",
     return foundTile != null
   }
 
-  var wanderTarget: TileKey = TileKey(0, 0)
+  var wanderTarget: TileKey = tileKeyStore.tileKey(0,0)
 }
