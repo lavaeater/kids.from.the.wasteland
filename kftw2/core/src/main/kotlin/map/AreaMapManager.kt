@@ -46,8 +46,8 @@ class AreaMapManager : MapManagerBase() {
           val subType = "center${MathUtils.random.nextInt(3) + 1}"
           val possibleNewTile = Tile(priority, tileType, subType, code, code)
           val newHashCode = possibleNewTile.hashCode()
-          if (!tiles.containsKey(newHashCode)) {
-            tiles.put(newHashCode, possibleNewTile)
+          if (!allTiles.containsKey(newHashCode)) {
+            allTiles.put(newHashCode, possibleNewTile)
           }
           currentMap.put(key, newHashCode)
         }

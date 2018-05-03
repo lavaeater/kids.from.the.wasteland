@@ -34,5 +34,6 @@ dependencies {
   compile "io.github.libktx:ktx-assets:$ktxAssetsVersion"
   compile "io.github.libktx:ktx-box2d:$ktxBox2dVersion"
   compile "com.squidpony:squidlib:$squidLibVersion"
+  testImplementation ""
 }
         
