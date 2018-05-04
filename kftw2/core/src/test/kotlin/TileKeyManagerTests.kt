@@ -1,3 +1,4 @@
+import com.lavaeater.kftw.map.TileKey
 import map.TileKeyManager
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -7,10 +8,10 @@ class TileKeyManagerTests {
 
     @Test
     fun testZero() {
-        var x = 0
-        var y = 0
+        val x = 0
+        val y = 0
 
-        var key = tileKeyManager.getKeyFor(x,y)
+        val key = tileKeyManager.getKeyFor(x,y)
 
         assertEquals(0, key.lowerBoundX)
         assertEquals(tileKeyManager.upperBound, key.upperBoundX)
@@ -33,10 +34,10 @@ class TileKeyManagerTests {
 
     @Test
     fun testChunkSizeMinusOne() {
-        var x = tileKeyManager.chunkSize - 1
-        var y = tileKeyManager.chunkSize - 1
+        val x = tileKeyManager.chunkSize - 1
+        val y = tileKeyManager.chunkSize - 1
 
-        var key = tileKeyManager.getKeyFor(x, y)
+        val key = tileKeyManager.getKeyFor(x, y)
         assertEquals(0, key.lowerBoundX)
         assertEquals(tileKeyManager.upperBound, key.upperBoundX)
         assertEquals(0, key.lowerBoundY)
@@ -45,12 +46,11 @@ class TileKeyManagerTests {
 
     @Test
     fun testNegativeOne() {
-        var x = -1
-        var y = -1
+        val x = -1
+        val y = -1
 
-        var key = tileKeyManager.getKeyFor(x,y)
+        val key = tileKeyManager.getKeyFor(x,y)
 
-        key = tileKeyManager.getKeyFor(x, y)
         assertEquals(-tileKeyManager.chunkSize, key.lowerBoundX)
         assertEquals(-tileKeyManager.chunkSize + tileKeyManager.upperBound, key.upperBoundX)
         assertEquals(-tileKeyManager.chunkSize, key.lowerBoundY)
@@ -59,12 +59,11 @@ class TileKeyManagerTests {
 
     @Test
     fun testNegativeChunkSize() {
-        var x = -tileKeyManager.chunkSize
-        var y = -tileKeyManager.chunkSize
+        val x = -tileKeyManager.chunkSize
+        val y = -tileKeyManager.chunkSize
 
-        var key = tileKeyManager.getKeyFor(x,y)
+        val key = tileKeyManager.getKeyFor(x,y)
 
-        key = tileKeyManager.getKeyFor(x, y)
         assertEquals(-tileKeyManager.chunkSize, key.lowerBoundX)
         assertEquals(-tileKeyManager.chunkSize + tileKeyManager.upperBound, key.upperBoundX)
         assertEquals(-tileKeyManager.chunkSize, key.lowerBoundY)
@@ -73,12 +72,11 @@ class TileKeyManagerTests {
 
     @Test
     fun testNegativeChunkSizeMinusOne() {
-        var x = -tileKeyManager.chunkSize - 1
-        var y = -tileKeyManager.chunkSize - 1
+        val x = -tileKeyManager.chunkSize - 1
+        val y = -tileKeyManager.chunkSize - 1
 
-        var key = tileKeyManager.getKeyFor(x,y)
+        val key = tileKeyManager.getKeyFor(x,y)
 
-        key = tileKeyManager.getKeyFor(x, y)
         assertEquals(-tileKeyManager.chunkSize * 2, key.lowerBoundX)
         assertEquals(-tileKeyManager.chunkSize * 2 + tileKeyManager.upperBound, key.upperBoundX)
         assertEquals(-tileKeyManager.chunkSize * 2, key.lowerBoundY)
@@ -87,15 +85,47 @@ class TileKeyManagerTests {
 
     @Test
     fun testOneNegativeOnePositive() {
-        var x = tileKeyManager.chunkSize * 2
-        var y = -tileKeyManager.chunkSize - 1 * 2
+        val x = tileKeyManager.chunkSize * 2
+        val y = -tileKeyManager.chunkSize - 1 * 2
 
-        var key = tileKeyManager.getKeyFor(x,y)
+        val key = tileKeyManager.getKeyFor(x,y)
 
-        key = tileKeyManager.getKeyFor(x, y)
         assertEquals(tileKeyManager.chunkSize * 2, key.lowerBoundX)
         assertEquals(tileKeyManager.chunkSize * 2 + tileKeyManager.upperBound, key.upperBoundX)
         assertEquals(-tileKeyManager.chunkSize * 3, key.lowerBoundY)
         assertEquals(-tileKeyManager.chunkSize * 3 + tileKeyManager.upperBound, key.upperBoundY)
+    }
+
+    @Test
+    fun testGetTileForZero() {
+        val x = 0
+        val y = 0
+
+        val expectedKey = TileKey(0,0)
+        val actualKey = tileKeyManager.tileKey(x,y)
+
+        assertEquals(expectedKey, actualKey)
+    }
+
+    @Test
+    fun testGetTileForChunkSize() {
+        val x = tileKeyManager.chunkSize
+        val y = tileKeyManager.chunkSize
+
+        val expectedKey = TileKey(x,y)
+        val actualKey = tileKeyManager.tileKey(x,y)
+
+        assertEquals(expectedKey, actualKey)
+    }
+
+    @Test
+    fun testGetTileForNegativeChunkSize() {
+        val x = -tileKeyManager.chunkSize
+        val y = -tileKeyManager.chunkSize
+
+        val expectedKey = TileKey(x,y)
+        val actualKey = tileKeyManager.tileKey(x,y)
+
+        assertEquals(expectedKey, actualKey)
     }
 }

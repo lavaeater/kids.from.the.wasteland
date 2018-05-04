@@ -5,16 +5,45 @@ import kotlin.test.assertEquals
 
 class TileKeyStoreTests {
     @Test
-    fun testArrayIndex() {
-        var tileKeyStore = TileKeyStore(-5,10, -5, 10)
-        var index = tileKeyStore.getXIndex(0)
-        assertEquals(5, index)
-        index = tileKeyStore.getXIndex(-5)
-        assertEquals(0,index)
-        index = tileKeyStore.getYIndex(0)
-        assertEquals(5, index)
-        index = tileKeyStore.getYIndex(-5)
-        assertEquals(0,index)
+    fun testLowerBoundZeroWithZeroValue() {
+        val tileKeyStore = TileKeyStore(0,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(0)
+        assertEquals(0, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundZeroWithMaxXValue() {
+        val tileKeyStore = TileKeyStore(0,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(9)
+        assertEquals(9, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundTenWithTenValue() {
+        val tileKeyStore = TileKeyStore(10,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(10)
+        assertEquals(0, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundTenWithTwentyValue() {
+        val tileKeyStore = TileKeyStore(10,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(20)
+        assertEquals(10, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundNegativeTenWithNegativeOne() {
+        val tileKeyStore = TileKeyStore(-10,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(-1)
+        assertEquals(9, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundNegativeTenWithNegativeTen() {
+        val tileKeyStore = TileKeyStore(-10,10, 0, 10)
+        val xIndex = tileKeyStore.getXIndex(-10)
+        assertEquals(0, xIndex)
     }
 
     @Test
