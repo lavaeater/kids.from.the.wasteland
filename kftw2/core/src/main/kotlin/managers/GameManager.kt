@@ -42,7 +42,7 @@ class GameManager : Disposable {
   private fun setupSystems() {
 
     //render the map and use fog of war
-    engine.addSystem(RenderMapSystem(true))
+    engine.addSystem(RenderMapSystem(false))
     engine.addSystem(RenderCharactersSystem())
     engine.addSystem(AiSystem())
     val npcControlSystem = NpcControlSystem()
@@ -84,8 +84,8 @@ class GameManager : Disposable {
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 192f
-    val VIEWPORT_WIDTH = 144f
+    val VIEWPORT_HEIGHT = 96f
+    val VIEWPORT_WIDTH = 72f
     val TILE_SIZE = 8
   }
 

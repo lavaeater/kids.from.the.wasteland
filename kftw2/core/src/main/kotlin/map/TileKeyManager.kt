@@ -3,7 +3,7 @@ package map
 import com.lavaeater.kftw.map.TileKey
 import kotlin.math.absoluteValue
 
-class TileKeyManager() {
+class TileKeyManager(val chunkSize:Int = 10000) {
 
     /*
     This is starting to look like the keyStore could handle all
@@ -12,30 +12,62 @@ class TileKeyManager() {
     time goes by
      */
 
-    val chunkSize = 10000
     val upperBound = chunkSize - 1
     private val tileKeyStores = mutableMapOf<TileStoreKey, TileKeyStore>()
+    private val tileKeys = mutableSetOf<TileKeyStore>()
+
+    private val tileStoreKeys = mutableSetOf<TileStoreKey>()
+
+    fun getLowerBound(i: Int): Int {
+        if(i < 0) {
+            return ((i + 1) / chunkSize) * chunkSize - chunkSize
+        }
+
+        return (i / chunkSize) * chunkSize
+    }
 
     fun getKeyFor(x:Int, y:Int):TileStoreKey {
+        val lX = getLowerBound(x)
+        val lY = getLowerBound(y)
+        val uX = lX + upperBound
+        val uY = lY + upperBound
 
-        val xBase = chunkSize * (x.rem(upperBound))
-        val yBase = chunkSize * (y.rem(upperBound))
+        var key = tileStoreKeys.firstOrNull {
+            it.lowerBoundX == lX &&
+            it.upperBoundX == uX &&
+            it.lowerBoundY == lY &&
+            it.upperBoundY == uY}
 
-        return TileStoreKey(xBase, xBase + upperBound, yBase, yBase + upperBound)
+        if(key == null) {
+            key = TileStoreKey(lX,uX,lY,uY)
+            tileStoreKeys.add(key)
+        }
+        return key
     }
 
     fun tileKey(x:Int, y:Int) : TileKey {
-        val storeKey = getKeyFor(x,y)
 
-        if(!tileKeyStores.containsKey(storeKey))
-            tileKeyStores[storeKey] = TileKeyStore(storeKey.lowerBoundX, chunkSize, storeKey.lowerBoundY, chunkSize)
+        val lowerBoundX = getLowerBound(x)
+        val lowerBoundY = getLowerBound(y)
+        val upperBoundX = lowerBoundX + upperBound
+        val upperBoundY = lowerBoundY + upperBound
 
-        return tileKeyStores[storeKey]!!.tileKey(x,y)
+        var store = tileKeys.firstOrNull {
+                it.lowerBoundX == lowerBoundX &&
+                it.upperBoundX == upperBoundX &&
+                it.lowerBoundY == lowerBoundY &&
+                it.upperBoundY == upperBoundY }
+        if(store == null) {
+            store = TileKeyStore(lowerBoundX, chunkSize, lowerBoundY, chunkSize)
+            tileKeys.add(store)
+        }
+
+        return store.tileKey(x,y)
     }
 }
 
 data class TileStoreKey(val lowerBoundX: Int, val upperBoundX: Int, val lowerBoundY: Int, val upperBoundY: Int)
-class TileKeyStore(lowerBoundX: Int, val columns: Int, lowerBoundY: Int, val rows: Int) {
+class TileKeyStore(val lowerBoundX: Int, val columns: Int, val lowerBoundY: Int, val rows: Int) {
     val upperBoundX = lowerBoundX + columns - 1
     val upperBoundY = lowerBoundY + rows - 1
     val key = TileStoreKey(lowerBoundX, upperBoundX, lowerBoundY, upperBoundY)

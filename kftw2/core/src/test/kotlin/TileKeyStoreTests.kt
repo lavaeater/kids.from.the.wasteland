@@ -47,6 +47,24 @@ class TileKeyStoreTests {
     }
 
     @Test
+    fun testGetKeyNegativeBounds() {
+        val tileKeyStore = TileKeyStore(-10,10, -10, 10)
+        val x = tileKeyStore.lowerBoundX
+        val y = tileKeyStore.lowerBoundY
+
+        var expectedKey = TileKey(x, y)
+        var actualKey = tileKeyStore.tileKey(x, y)
+
+        assertEquals(expectedKey, actualKey)
+
+
+        expectedKey = TileKey(tileKeyStore.upperBoundX, tileKeyStore.upperBoundY)
+        actualKey = tileKeyStore.tileKey(tileKeyStore.upperBoundX, tileKeyStore.upperBoundY)
+
+        assertEquals(expectedKey, actualKey)
+    }
+
+    @Test
     fun testGetTileKeyGetsCorrectValue() {
         val tileKeyStore = TileKeyStore(-5,10, -5, 10)
         var expectedKey = TileKey(-5,-5)

@@ -86,7 +86,7 @@ abstract class MapManagerBase : IMapManager {
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = tks.tileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
-  val startNumberOfTiles = 1000
+  val startNumberOfTiles = 100
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
