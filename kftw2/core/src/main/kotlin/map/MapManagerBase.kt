@@ -9,11 +9,11 @@ import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
-import map.TileKeyStore
+import map.TileKeyManager
 import kotlin.math.roundToInt
 
 abstract class MapManagerBase : IMapManager {
-  val tks = Ctx.context.inject<TileKeyStore>()
+  val tks = Ctx.context.inject<TileKeyManager>()
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   companion object {
@@ -29,16 +29,16 @@ abstract class MapManagerBase : IMapManager {
     )
 
     val simpleDirections = mapOf(
-            Ctx.context.inject<TileKeyStore>().tileKey(-1, 0) to "east",
-        Ctx.context.inject<TileKeyStore>().tileKey(0, 1) to "south",
-        Ctx.context.inject<TileKeyStore>().tileKey(1, 0) to "west",
-        Ctx.context.inject<TileKeyStore>().tileKey(0, -1) to "north"
+            Ctx.context.inject<TileKeyManager>().tileKey(-1, 0) to "east",
+        Ctx.context.inject<TileKeyManager>().tileKey(0, 1) to "south",
+        Ctx.context.inject<TileKeyManager>().tileKey(1, 0) to "west",
+        Ctx.context.inject<TileKeyManager>().tileKey(0, -1) to "north"
     )
     val simpleDirectionsInverse = mapOf(
-        "north" to Ctx.context.inject<TileKeyStore>().tileKey(0, -1),
-        "east" to Ctx.context.inject<TileKeyStore>().tileKey(-1, 0),
-        "south" to Ctx.context.inject<TileKeyStore>().tileKey(0, 1),
-        "west" to Ctx.context.inject<TileKeyStore>().tileKey(1, 0))
+        "north" to Ctx.context.inject<TileKeyManager>().tileKey(0, -1),
+        "east" to Ctx.context.inject<TileKeyManager>().tileKey(-1, 0),
+        "south" to Ctx.context.inject<TileKeyManager>().tileKey(0, 1),
+        "west" to Ctx.context.inject<TileKeyManager>().tileKey(1, 0))
 
     val terrains = mapOf(
         0 to "water",
@@ -77,7 +77,6 @@ abstract class MapManagerBase : IMapManager {
     val noExtraSprites = hashSetOf<String>()
 
     val scale = 80.0f
-    val numberOfTiles = 5000
   }
 
   var currentMap = mutableMapOf<TileKey, Int>()
@@ -87,10 +86,11 @@ abstract class MapManagerBase : IMapManager {
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
   var currentKey = tks.tileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
   val visibleTiles = mutableMapOf<TileKey, Tile>()
+  val startNumberOfTiles = 1000
 
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
-    return !centerTileKey.isInRange(currentKey, 25)
+    return !centerTileKey.isInRange(currentKey, 15)
   }
 
   fun checkHitBoxesForImpassibleTiles() {

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
-import map.TileKeyStore
+import map.TileKeyManager
 import kotlin.math.absoluteValue
 
 fun String.toShortCode() : String {
@@ -58,5 +58,5 @@ fun TileKey.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
 }
 
 fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
-  return Ctx.context.inject<TileKeyStore>().tileKey(key.x + directionKey.x, key.y + directionKey.y)
+  return Ctx.context.inject<TileKeyManager>().tileKey(key.x + directionKey.x, key.y + directionKey.y)
 }

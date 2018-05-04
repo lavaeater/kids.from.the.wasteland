@@ -34,8 +34,8 @@ class AreaMapManager : MapManagerBase() {
   override fun generateTilesFor(xCenter: Int, yCenter: Int) {
     var tileType: String
     val newTiles = mutableListOf<TileKey>()
-    for (x in -numberOfTiles..numberOfTiles)
-      for (y in -numberOfTiles..numberOfTiles) {
+    for (x in -startNumberOfTiles..startNumberOfTiles)
+      for (y in -startNumberOfTiles..startNumberOfTiles) {
         val offsetX = x + xCenter
         val offsetY = y + yCenter
         val key = tks.tileKey(offsetX, offsetY)
