@@ -3,6 +3,10 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.MathUtils
 
 class AreaMapManager : MapManagerBase() {
+  override fun getVisibleRange(x: Int, y: Int): TileRange {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
   override fun getTilesInRange(x: Int, y: Int, range: Int): Map<TileKey, Tile> {
     return getTilesInRange(tks.tileKey(x,y), range)
   }
@@ -49,8 +53,8 @@ class AreaMapManager : MapManagerBase() {
           val subType = "center${MathUtils.random.nextInt(3) + 1}"
           val possibleNewTile = Tile(priority, tileType, subType, code, code)
           val newHashCode = possibleNewTile.hashCode()
-          if (!allTiles.containsKey(newHashCode)) {
-            allTiles.put(newHashCode, possibleNewTile)
+          if (!usedTiles.containsKey(newHashCode)) {
+            usedTiles.put(newHashCode, possibleNewTile)
           }
           currentMap.put(key, newHashCode)
         }

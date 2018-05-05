@@ -80,7 +80,8 @@ abstract class MapManagerBase : IMapManager {
   }
 
   var currentMap = mutableMapOf<TileKey, Int>()
-  val allTiles = mutableMapOf<Int, Tile>()
+  val usedTiles = mutableMapOf<Int, Tile>()
+
   val inverseFogOfWar = mutableSetOf<TileKey>()
   val hitBoxes = mutableMapOf<TileKey, Body>()
   val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
@@ -164,9 +165,9 @@ abstract class MapManagerBase : IMapManager {
 
   fun generateCodeForTile(ourKey: TileKey) {
 
-    val tempTile = allTiles[currentMap[ourKey]]!!.copy()
+    val tempTile = usedTiles[currentMap[ourKey]]!!.copy()
     neiborMap.keys.map { (x, y) ->
-      allTiles[currentMap[tks.tileKey(ourKey.x + x, ourKey.y + y)]]
+      usedTiles[currentMap[tks.tileKey(ourKey.x + x, ourKey.y + y)]]
     }
         .forEach { tempTile.code += if (it != null) shortTerrains[it.priority]!! else "b" }
 
@@ -175,8 +176,8 @@ abstract class MapManagerBase : IMapManager {
     val newHashCode = tempTile.hashCode()
     if (currentMap[ourKey] != newHashCode) {
       //Add this new tile to the tile storage!
-      if (!allTiles.containsKey(newHashCode)) {
-        allTiles.put(newHashCode, tempTile)
+      if (!usedTiles.containsKey(newHashCode)) {
+        usedTiles.put(newHashCode, tempTile)
       }
       currentMap[ourKey] = newHashCode
     }
@@ -188,11 +189,11 @@ abstract class MapManagerBase : IMapManager {
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
-    return allTiles[currentMap[tks.tileKey(x, y)]]!!
+    return usedTiles[currentMap[tks.tileKey(x, y)]]!!
   }
 
   override fun getTileAt(key: TileKey): Tile {
-    return allTiles[currentMap[key]]!!
+    return usedTiles[currentMap[key]]!!
   }
 
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey? {
@@ -209,12 +210,12 @@ abstract class MapManagerBase : IMapManager {
     val some = simpleDirectionsInverse.values.map { currentMap.getTileKeyForDirection(inKey, it) }
 
     //The mapValues function MUST return values, otherwise
-    return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { allTiles[it.value]!! }
+    return currentMap.filter { entry -> some.contains(entry.key) }.mapValues { usedTiles[it.value]!! }
   }
 
   override fun tileForWorldPosition(position: Vector3): Tile {
     val tileKey = position.toTile(GameManager.TILE_SIZE)
-    return allTiles[currentMap[tileKey]]!!
+    return usedTiles[currentMap[tileKey]]!!
   }
 
   override fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile> {
@@ -278,6 +279,6 @@ abstract class MapManagerBase : IMapManager {
     val maxY = posKey.y.coordAtDistanceFrom(range)
 
     return currentMap.filter { it.key.x in minX..maxX && it.key.y in minY..maxY }
-        .mapValues { allTiles[it.value]!! }
+        .mapValues { usedTiles[it.value]!! }
   }
 }

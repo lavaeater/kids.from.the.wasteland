@@ -78,9 +78,13 @@ fun OrthographicCamera.toTile(factor: Int): TileKey {
   return this.position.toTile(factor)
 }
 
+fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE, tileKeyManager:TileKeyManager = Ctx.context.inject<TileKeyManager>()) : TileKey {
+  return tileKeyManager.tileKey(this.tileX(factor), this.tileY(factor))
+}
+
 fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
 
-  return Ctx.context.inject<TileKeyManager>().tileKey(this.tileX(factor), this.tileY(factor));
+  return Ctx.context.inject<TileKeyManager>().tileKey(this.tileX(factor), this.tileY(factor))
 }
 
 fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
