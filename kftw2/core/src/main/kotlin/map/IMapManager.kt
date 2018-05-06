@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector3
 data class TileRange(val topX:Int, val topY:Int, val bottomX:Int, val bottomY:Int)
 
 interface IMapManager {
-  fun getVisibleRange(x: Int, y: Int) : TileRange
   fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile>
   fun getVisibleTiles(position: Vector3): Map<TileKey, Tile>
   fun tileForWorldPosition(position: Vector3): Tile

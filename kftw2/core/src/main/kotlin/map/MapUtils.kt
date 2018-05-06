@@ -32,6 +32,25 @@ fun Int.getMinMax(range:Int) : Pair<Int, Int> {
     return Pair(this - range, this + range)
 }
 
+fun getTilePriorityFromNoise(x: Float, y: Float): Int {
+
+    val noiseValue = (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)
+    var priority = 0
+
+    //Hmm, most likely this distribution is not from -1 .. 1 but more like -.75..0.75
+
+    if (noiseValue in -100..-65)
+        priority = 0
+    if (noiseValue in -64..25)
+        priority = 1
+    if (noiseValue in 26..55)
+        priority = 2
+    if (noiseValue in 56..99)
+        priority = 3
+
+    return priority
+}
+
 fun TileKey.tileWorldCenter(tileSize:Int = GameManager.TILE_SIZE) : Vector2 {
   val x = (this.x.toFloat() * tileSize - tileSize / 2)
   val y = (this.y.toFloat() * tileSize - tileSize / 2)

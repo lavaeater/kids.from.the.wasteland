@@ -10,6 +10,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.toTile
 import ktx.math.vec2
 import map.TileKeyManager
+import map.TileManager
 import kotlin.math.roundToInt
 
 abstract class MapManagerBase : IMapManager {
@@ -58,6 +59,13 @@ abstract class MapManagerBase : IMapManager {
         3 to "r"
     )
 
+    val shortTerrainPriority = mapOf(
+            'w' to 0,
+            'd' to 1,
+            'g' to 2,
+            'r' to 3
+    )
+
     val shortLongTerrains = mapOf(
         'w' to "water",
         'd' to "desert",
@@ -92,6 +100,15 @@ abstract class MapManagerBase : IMapManager {
   fun doWeNeedNewVisibleTiles(position: Vector3): Boolean {
     val centerTileKey = position.toTile(GameManager.TILE_SIZE)
     return !centerTileKey.isInRange(currentKey, 15)
+  }
+
+  var currentX = 0
+  var currentY = 0
+  val visibleRange = 15
+
+  fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
+
+    return !(currentX in (x - visibleRange)..(x + visibleRange) && currentY in (y - visibleRange)..(y + visibleRange))
   }
 
   fun checkHitBoxesForImpassibleTiles() {
@@ -237,6 +254,20 @@ abstract class MapManagerBase : IMapManager {
     //3. Everything else is unseen
     return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
 
+  }
+
+  val tileManager = TileManager()
+  val currentTileRange = widthInTiles * 3
+  var currentlyVisibleTiles: Array<Array<TileInstance>>? = null
+  fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
+    if(doWeNeedNewVisibleTiles(x,y)) {
+      currentX = x
+      currentY = y
+      currentlyVisibleTiles = tileManager.getTiles(
+              (currentX - currentTileRange)..(currentX + currentTileRange),
+              (currentY - currentTileRange)..(currentY+ currentTileRange))
+    }
+    return currentlyVisibleTiles!!
   }
 
   override fun getVisibleTiles(position: Vector3): Map<TileKey, Tile> {
