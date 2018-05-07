@@ -70,7 +70,6 @@ class TileManager(val chunkSize:Int = 100) {
     }
 
     fun generateTilesForRange(xBounds:IntRange, yBounds:IntRange) : Array<Array<TileInstance>> {
-        var tileType: String
         val tiles = Array(xBounds.count(), { x -> Array(yBounds.count(), { y -> generateTile(x,y)}) })
 
         /*
@@ -114,13 +113,20 @@ class TileManager(val chunkSize:Int = 100) {
 
                 if (!usedTiles.containsKey(keyCode)) {
                     //Add this new tile to the tile storage!
-                    usedTiles.put(keyCode, tempTile)
-                    tiles[x][y] = tempTile
+                    addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+                    usedTiles[keyCode] = tempTile
                 }
-                addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+                tiles[x][y] = usedTiles[keyCode]!!
             }
 
-        return Array(xBounds.count(), { column -> Array(yBounds.count(), { row -> tiles[column][row]!!.getInstance(xBounds.elementAt(column), yBounds.elementAt(row)) })})
+        return Array(xBounds.count(),
+                { column ->
+                    Array(yBounds.count(),
+                        { row ->
+                            tiles[column][row]!!
+                                .getInstance(
+                                        xBounds.elementAt(column),
+                                        yBounds.elementAt(row)) })})
     }
 
     fun getDirectionFromIndex(index:Int):String {
@@ -174,7 +180,7 @@ class TileManager(val chunkSize:Int = 100) {
             }
 
             if (extraSprites.any())
-                Assets.codeToExtraTiles.put(shortCode, extraSprites.map { Assets.sprites[it.first]!![it.second]!! })
+                Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.sprites[it.first]!![it.second]!! }
             else
                 MapManager.noExtraSprites.add(shortCode)
         }
@@ -188,7 +194,7 @@ class TileManager(val chunkSize:Int = 100) {
         val tileType = MapManager.terrains[priority]!!
         val code = MapManager.shortTerrains[priority]!!
         val subType = "center${MathUtils.random.nextInt(3) + 1}"
-        val tileCode = "$priority$tileType$subType$code$code" //Only temporary, actually
+        val tileCode = "$priority$tileType$subType$code$code${true}" //Only temporary, actually
         if(!usedTiles.containsKey(tileCode))
             usedTiles[tileCode] = Tile(priority, tileType, subType, code, code)
 
