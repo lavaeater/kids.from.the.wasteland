@@ -41,8 +41,6 @@ class MapManager : IMapManager {
   val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
-  val visibleRange = 15
-
   companion object {
     val weirdDirections = mapOf(
         "southwest" to "southwest",
@@ -112,8 +110,9 @@ class MapManager : IMapManager {
 
     val scale = 80.0f
 
-    val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt() + 5
-    val currentTileRange: Int = widthInTiles * 3
+    val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt()
+    val currentTileRange: Int = widthInTiles * 2
+    val visibleRange = widthInTiles / 2
   }
 
   fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
@@ -156,9 +155,9 @@ class MapManager : IMapManager {
     return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
 
-  val tileCounter = Ctx.context.inject<PerformanceCounters>().add("TileGetting")
+//  val tileCounter = Ctx.context.inject<PerformanceCounters>().add("TileGetting")
   override fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
-    tileCounter.start()
+//    tileCounter.start()
     if(currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x,y)) {
       currentX = x
       currentY = y
@@ -166,7 +165,7 @@ class MapManager : IMapManager {
               (currentX - Companion.currentTileRange)..(currentX + Companion.currentTileRange),
               (currentY - Companion.currentTileRange)..(currentY + Companion.currentTileRange))
     }
-    tileCounter.stop()
+//    tileCounter.stop()
     return currentlyVisibleTiles!!
   }
 
