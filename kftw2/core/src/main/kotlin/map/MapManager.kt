@@ -3,6 +3,8 @@ package com.lavaeater.kftw.map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.utils.PerformanceCounter
+import com.badlogic.gdx.utils.PerformanceCounters
 import com.lavaeater.Assets
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
@@ -178,14 +180,17 @@ class MapManager : IMapManager {
     return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
   }
 
+  val tileCounter = Ctx.context.inject<PerformanceCounters>().add("TileGetting")
   override fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
+    tileCounter.start()
     if(currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x,y)) {
       currentX = x
       currentY = y
       currentlyVisibleTiles = tileManager.getTiles(
               (currentX - Companion.currentTileRange)..(currentX + Companion.currentTileRange),
-              (currentY - Companion.currentTileRange)..(currentY+ Companion.currentTileRange))
+              (currentY - Companion.currentTileRange)..(currentY + Companion.currentTileRange))
     }
+    tileCounter.stop()
     return currentlyVisibleTiles!!
   }
 

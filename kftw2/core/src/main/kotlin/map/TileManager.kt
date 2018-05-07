@@ -28,7 +28,7 @@ class TileManager(val chunkSize:Int = 100) {
             lX in it.xBounds &&
                     lY in it.yBounds }
         if(store == null) {
-            store = TileStore(lX, chunkSize, lY, chunkSize, generateTilesForRange(lX..(lX + upperBound), lY..lY + upperBound))
+            store = TileStore(lX, chunkSize, lY, chunkSize, generateTilesForRange(lX..(lX + upperBound), lY..(lY + upperBound)))
             tileStores.add(store)
         }
         return store
@@ -53,9 +53,9 @@ class TileManager(val chunkSize:Int = 100) {
         //This is a for loop. This gets the renderable map
         //To optimize, we should have all stores ready, but that's unnecesarry
         //We just get the first store and get a new one if needed!
-
+        lateinit var currentTile : TileInstance
         var currentStore : TileStore = getTileStore(xBounds.start, yBounds.start)
-        val returnArray  = Array(xBounds.count(), { x -> Array(yBounds.count(), { y ->
+        return Array(xBounds.count(), { x -> Array(yBounds.count(), { y ->
 
             val actualX = xBounds.start + x
             val actualY = yBounds.start + y
@@ -64,13 +64,64 @@ class TileManager(val chunkSize:Int = 100) {
                 currentStore = getTileStore(actualX,actualY)
             }
 
-            return@Array currentStore.getTile(actualX,actualY)!!
+            currentTile = currentStore.getTile(actualX,actualY)!!
+
+            //check for neighbours!
+            if(currentTile.tile.needsNeighbours) {
+                currentTile = fixNeighbours(currentTile.tile,actualX,actualY).getInstance(actualX, actualY)
+                putTile(actualX, actualY, currentTile)
+            }
+
+            return@Array currentTile
         })})
-        return returnArray
+    }
+
+    fun getOrNull(x:Int, y:Int, tiles: Array<Array<Tile>>? = null) : Tile? {
+        if(tiles == null) { //Use the manager to get the tile to check!
+            return getTile(x,y).tile
+        }
+
+        val col = tiles.getOrNull(x)
+        if(col != null) {
+            val tile = col.getOrNull(y)
+            if (tile != null) {
+                return tile
+            }
+        }
+        return null
+    }
+
+    fun fixNeighbours(tile: Tile, x:Int, y:Int, tiles: Array<Array<Tile>>? = null) :Tile {
+        val tempTile = tile.copy()
+        var needsNeighbours = false
+
+
+        MapManager.neiborMap.keys.forEach { (offX, offY) ->
+            var code = "b"
+            val tile = getOrNull(x + offX, y+ offY, tiles)
+                if(tile != null) {
+                    code = MapManager.shortTerrains[tile.priority]!!
+                } else {
+                    needsNeighbours = true
+                }
+            tempTile.code+=code
+        }
+
+        tempTile.needsNeighbours = needsNeighbours
+        tempTile.shortCode = tempTile.code.toShortCode()
+
+        val keyCode = tempTile.getKeyCode()
+
+        if (!usedTiles.containsKey(keyCode)) {
+            //Add this new tile to the tile storage!
+            addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+            usedTiles[keyCode] = tempTile
+        }
+        return usedTiles[keyCode]!!
     }
 
     fun generateTilesForRange(xBounds:IntRange, yBounds:IntRange) : Array<Array<TileInstance>> {
-        val tiles = Array(xBounds.count(), { x -> Array(yBounds.count(), { y -> generateTile(x,y)}) })
+        val tiles = Array(xBounds.count(), { x -> Array(yBounds.count(), { y -> generateTile(xBounds.elementAt(x), yBounds.elementAt(y))}) })
 
         /*
         The extra sprite functionality must be adressed here, I guess? How do we manage
@@ -85,38 +136,9 @@ class TileManager(val chunkSize:Int = 100) {
         //This is like orto or something
         for((x, column) in tiles.withIndex())
             for((y, row) in column.withIndex()) {
-                val tempTile = tiles[x][y].copy()// usedTiles[currentMap[ourKey]]!!.copy()
-                var needsNeighbours = false
+                val tempTile = fixNeighbours(tiles[x][y],x,y,tiles)
 
-
-                MapManager.neiborMap.keys.forEach { (offX, offY) ->
-                    var code = "b"
-                    val col = tiles.getOrNull(x + offX)
-                    if(col != null)
-                    {
-                        val tile = col.getOrNull(y + offY)
-                        if(tile != null) {
-                            code = MapManager.shortTerrains[tile.priority]!!
-                        } else {
-                            needsNeighbours = true
-                        }
-                    } else {
-                        needsNeighbours = true
-                    }
-                    tempTile.code+=code
-                }
-
-                tempTile.needsNeighbours = needsNeighbours
-                tempTile.shortCode = tempTile.code.toShortCode()
-
-                val keyCode = tempTile.getKeyCode()
-
-                if (!usedTiles.containsKey(keyCode)) {
-                    //Add this new tile to the tile storage!
-                    addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
-                    usedTiles[keyCode] = tempTile
-                }
-                tiles[x][y] = usedTiles[keyCode]!!
+                tiles[x][y] = tempTile
             }
 
         return Array(xBounds.count(),

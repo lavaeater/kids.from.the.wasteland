@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.utils.PerformanceCounters
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
@@ -22,6 +23,7 @@ class Ctx {
     val context = Context()
     fun buildContext() {
       context.register {
+        bindSingleton(PerformanceCounters())
         bindSingleton(TileKeyManager())
         bindSingleton(TileManager())
         bindSingleton(Player("Thorborg"))
