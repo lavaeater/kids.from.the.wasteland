@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
-import map.TileKeyManager
 import kotlin.math.absoluteValue
 
 fun String.toShortCode() : String {
@@ -51,9 +50,9 @@ fun getTilePriorityFromNoise(x: Float, y: Float): Int {
     return priority
 }
 
-fun TileKey.tileWorldCenter(tileSize:Int = GameManager.TILE_SIZE) : Vector2 {
-  val x = (this.x.toFloat() * tileSize - tileSize / 2)
-  val y = (this.y.toFloat() * tileSize - tileSize / 2)
+fun Pair<Int,Int>.tileWorldCenter(tileSize:Int = GameManager.TILE_SIZE) : Vector2 {
+  val x = (first.toFloat() * tileSize - tileSize / 2)
+  val y = (second.toFloat() * tileSize - tileSize / 2)
   return Vector2(x,y)
 }
 
@@ -65,17 +64,21 @@ fun Int.coordAtDistanceFrom(range:Int) : Int {
     return this + range
 }
 
-fun TileKey.isInRange(key : TileKey, range: Int) : Boolean {
-    return this.isInRange(key.x.getMin(range),
-            key.x.coordAtDistanceFrom(range),
-            key.y.getMin(range),
-            key.y.coordAtDistanceFrom(range))
+fun Pair<Int,Int>.isInRange(x:Int, y:Int, range: Int) : Boolean {
+    return this.isInRange(x.getMin(range),
+            x.coordAtDistanceFrom(range),
+            y.getMin(range),
+            y.coordAtDistanceFrom(range))
 }
 
-fun TileKey.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
-    return (this.x in (minX)..(maxX) && this.y in (minY)..(maxY))
+fun Pair<Int,Int>.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
+    return (this.first in (minX)..(maxX) && this.second in (minY)..(maxY))
 }
 
-fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
-  return Ctx.context.inject<TileKeyManager>().tileKey(key.x + directionKey.x, key.y + directionKey.y)
+fun Pair<Int,Int>.isInRange(pos : Pair<Int,Int>, range : Int) : Boolean {
+  return this.isInRange(pos.first, pos.second, range)
 }
+
+//fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {
+//  return Ctx.context.inject<TileKeyManager>().tileKey(key.x + directionKey.x, key.y + directionKey.y)
+//}

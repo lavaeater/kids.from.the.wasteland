@@ -26,8 +26,10 @@ class PlayerEntityDiscoverySystem(val playerEntity: Entity) :
   val player = mapperFor<PlayerComponent>()[playerEntity]!!.player
 
   override fun processEntity(entity: Entity) {
+
     val playerPos = transMpr[playerEntity].position.toTile()
     val npcPos = transMpr[entity].position.toTile()
+
     if(npcPos.isInRange(playerPos, player.sightRange)) {
       if(!entity.has(visibilityMapper)) {
         val playerSkill = player.skills["tracking"]!!

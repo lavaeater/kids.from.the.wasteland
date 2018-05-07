@@ -12,6 +12,9 @@ class CurrentTileSystem : IntervalIteratingSystem(allOf(TransformComponent::clas
   val agentMpr = mapperFor<AgentComponent>()
 
   override fun processEntity(entity: Entity) {
-    agentMpr[entity].agent.currentTile = transMpr[entity].position.toTile()
+    agentMpr[entity].agent.apply {
+      currentX = transMpr[entity].position.tileX()
+      currentY = transMpr[entity].position.tileY()
+    }
   }
 }

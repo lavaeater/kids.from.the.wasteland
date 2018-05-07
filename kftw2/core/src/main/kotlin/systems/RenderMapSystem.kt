@@ -11,12 +11,10 @@ import com.badlogic.gdx.utils.PerformanceCounter
 import com.badlogic.gdx.utils.PerformanceCounters
 import com.lavaeater.Assets
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.map.TileFog
 import ktx.app.use
-import map.TileKeyManager
 import kotlin.math.roundToInt
 
 class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
@@ -31,91 +29,83 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
 
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
-    if(fogOfWar) renderMapWithFogOfWar() else {
-      val tileX = camera.position.tileX()
-      val tileY = camera.position.tileY()
+//    if(fogOfWar) renderMapWithFogOfWar() else {
+    val tileX = camera.position.tileX()
+    val tileY = camera.position.tileY()
 
-      batch.projectionMatrix = camera.combined
-      batch.use {
+    batch.projectionMatrix = camera.combined
+    batch.use {
 
-        getTilesCounter.start()
-        val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
-        getTilesCounter.stop()
+      getTilesCounter.start()
+      val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
+      getTilesCounter.stop()
 
-        renderCounter.start()
+      renderCounter.start()
 
-        for((x, rows) in tilesToRender.withIndex())
-          for((y, tileInstance) in rows.withIndex()) {
-            val xPos = tileInstance.x * 8f
-            val yPos = tileInstance.y * 8f
+      for ((x, rows) in tilesToRender.withIndex())
+        for ((y, tileInstance) in rows.withIndex()) {
+          val xPos = tileInstance.x * 8f
+          val yPos = tileInstance.y * 8f
 
-            tileInstance.baseSprite.setPosition(xPos, yPos)
-            tileInstance.baseSprite.draw(batch)
-            for(extraSprite in tileInstance.extraSprites) {
-              extraSprite.setPosition(xPos, yPos)
-              extraSprite.draw(batch)
-            }
+          tileInstance.baseSprite.setPosition(xPos, yPos)
+          tileInstance.baseSprite.draw(batch)
+          for (extraSprite in tileInstance.extraSprites) {
+            extraSprite.setPosition(xPos, yPos)
+            extraSprite.draw(batch)
+          }
         }
-        renderCounter.stop()
-      }
-      counters.tick()
+      renderCounter.stop()
     }
-    accruedDelta+=deltaTime
-    if(accruedDelta > 5) {
+    counters.tick()
+    accruedDelta += deltaTime
+    if (accruedDelta > 5) {
       counters.counters.map { Gdx.app.log(it.name, it.toString()) }
       accruedDelta = 0f
 
     }
   }
-
-  fun renderMapWithFogOfWar() {
-    batch.projectionMatrix = camera.combined
-    batch.use {
-
-      for(renderableTile in mapManager.getVisibleTilesWithFog(camera.position)) {
-        val sprite = Assets.sprites[renderableTile.tile.tileType]!![renderableTile.tile.subType]!!
-
-        sprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
-        when(renderableTile.fogStatus) {
-          TileFog.NotSeen -> sprite.color = Color.BLACK
-          TileFog.Seen -> sprite.color = Color.GRAY
-          TileFog.Seeing -> sprite.color = Color.WHITE
-        }
-        sprite.draw(batch)
-        if (Assets.codeToExtraTiles.containsKey(renderableTile.tile.shortCode))
-          for (extraSprite in Assets.codeToExtraTiles[renderableTile.tile.shortCode]!!) {
-            extraSprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
-            when(renderableTile.fogStatus) {
-              TileFog.NotSeen -> extraSprite.color = Color.BLACK
-              TileFog.Seen -> extraSprite.color = Color.GRAY
-              TileFog.Seeing -> extraSprite.color = Color.WHITE
-            }
-            extraSprite.draw(batch)
-          }
-      }
-    }
-  }
 }
+//  }
 
-fun OrthographicCamera.toTile(factor: Int): TileKey {
-  return this.position.toTile(factor)
-}
-
-fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE, tileKeyManager:TileKeyManager = Ctx.context.inject<TileKeyManager>()) : TileKey {
-  return tileKeyManager.tileKey(this.tileX(factor), this.tileY(factor))
-}
-
-fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
-
-  return Ctx.context.inject<TileKeyManager>().tileKey(this.tileX(factor), this.tileY(factor))
-}
-
-fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
-  return Ctx.context.inject<TileKeyManager>().tileKey(this.tileX(factor), this.tileY(factor))
-}
+//  fun renderMapWithFogOfWar() {
+//    batch.projectionMatrix = camera.combined
+//    batch.use {
+//
+//      for(renderableTile in mapManager.getVisibleTilesWithFog(camera.position)) {
+//        val sprite = Assets.sprites[renderableTile.tile.tileType]!![renderableTile.tile.subType]!!
+//
+//        sprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
+//        when(renderableTile.fogStatus) {
+//          TileFog.NotSeen -> sprite.color = Color.BLACK
+//          TileFog.Seen -> sprite.color = Color.GRAY
+//          TileFog.Seeing -> sprite.color = Color.WHITE
+//        }
+//        sprite.draw(batch)
+//        if (Assets.codeToExtraTiles.containsKey(renderableTile.tile.shortCode))
+//          for (extraSprite in Assets.codeToExtraTiles[renderableTile.tile.shortCode]!!) {
+//            extraSprite.setPosition(renderableTile.key.x * 8f, renderableTile.key.y * 8f)
+//            when(renderableTile.fogStatus) {
+//              TileFog.NotSeen -> extraSprite.color = Color.BLACK
+//              TileFog.Seen -> extraSprite.color = Color.GRAY
+//              TileFog.Seeing -> extraSprite.color = Color.WHITE
+//            }
+//            extraSprite.draw(batch)
+//          }
+//      }
+//    }
+//  }
+//}
 
 fun Vector2.tileX(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.x / factor).roundToInt()
+}
+
+fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE):Pair<Int,Int> {
+  return Pair(tileX(factor), tileY(factor))
+}
+
+fun Vector3.toTile(factor: Int = GameManager.TILE_SIZE):Pair<Int,Int> {
+  return Pair(tileX(factor), tileY(factor))
 }
 
 fun Vector2.tileY(factor: Int = GameManager.TILE_SIZE): Int {

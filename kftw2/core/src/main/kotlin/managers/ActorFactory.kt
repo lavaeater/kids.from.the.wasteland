@@ -13,9 +13,8 @@ import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcType
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.TileKey
-import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.map.tileWorldCenter
 import ktx.math.vec2
 
 class ActorFactory {
@@ -54,13 +53,13 @@ class ActorFactory {
 
     val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
 
-    val potentialStartTiles = mapManager.getTilesInRange(0, 0, 25)
-        .filter { tileTypes.contains(it.value.tileType) }
-        .map { it.key.tileWorldCenter(GameManager.TILE_SIZE) }
+    val startPositions = mapManager.getTilesInRange(0, 0, 25)
+        .filter { tileTypes.contains(it.tile.tileType) }
+        .map { Pair(it.x,it.y).tileWorldCenter() }
         .toTypedArray()
 
     for (i in 1..20)
-      addNpcEntity(npcNames[i]!!, "townsfolk", potentialStartTiles)
+      addNpcEntity(npcNames[i]!!, "townsfolk", startPositions)
   }
 
   fun randomNpcName() : String {
@@ -97,14 +96,14 @@ class ActorFactory {
 
   }
 
-  fun addNpcEntityAtTile(name: String = randomNpcName(), type: String = randomNpcType(), tileKey: TileKey): Entity {
-    val startPosition = tileKey.tileWorldCenter()
+  fun addNpcEntityAtTile(name: String = randomNpcName(), type: String = randomNpcType(), x:Int, y:Int): Entity {
+    val startPosition = Pair(x,y).tileWorldCenter()
     return addNpcEntityAt(name, type, startPosition)
   }
 
-  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String, tileKey: TileKey) : Entity {
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String, x:Int, y:Int) : Entity {
 
-    val position = tileKey.tileWorldCenter()
+    val position = Pair(x,y).tileWorldCenter()
     val npc = Npc(name, npcTypes[type]!!)
     val reader = if(type == "orc") Gdx.files.internal("btrees/orc.tree").reader() else Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)

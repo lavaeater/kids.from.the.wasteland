@@ -2,42 +2,46 @@ package com.lavaeater.kftw.map
 
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.utils.PerformanceCounter
 import com.badlogic.gdx.utils.PerformanceCounters
-import com.lavaeater.Assets
+import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.tileX
 import com.lavaeater.kftw.systems.tileY
-import com.lavaeater.kftw.systems.toTile
-import ktx.math.vec2
-import map.TileKeyManager
 import map.TileManager
 import kotlin.math.roundToInt
 
 class MapManager : IMapManager {
-  override fun getTilesInRange(posKey: TileKey, range: Int): Map<TileKey, Tile> {
-    return getTilesInRange(posKey.x, posKey.y, range)
+  override fun getBandOfTiles(tilePos: Pair<Int, Int>, range: Int, width: Int): List<TileInstance> {
+    return getBandOfTiles(tilePos.first, tilePos.second, range, width)
   }
 
-  val tks = Ctx.context.inject<TileKeyManager>()
+  override fun getBandOfTiles(x: Int, y: Int, range: Int, width: Int): List<TileInstance> {
+        if (range < 1 || width < 1) return listOf()
+    if (width == 1) return getRingOfTiles(x,y, range)
+
+    val tilesInMaxRange = getTilesInRange(x,y, range + width)
+    val tilesToExclude = getTilesInRange(x,y, range - 1)
+    return tilesInMaxRange.minus(tilesToExclude).toList()
+  }
+
+  override fun getRingOfTiles(x: Int, y: Int, range: Int): List<TileInstance> {
+    if (range < 1) return listOf()
+
+    val tilesInRange = getTilesInRange(x,y, range)
+    val tilesToExclude = getTilesInRange(x,y, range - 1)
+    return tilesInRange.minus(tilesToExclude).toList()
+  }
+
   val bodyManager = Ctx.context.inject<BodyFactory>()
   val tileManager = Ctx.context.inject<TileManager>()
   var currentlyVisibleTiles: Array<Array<TileInstance>>? = null
-  var currentMap = mutableMapOf<TileKey, Int>()
-  val usedTiles = mutableMapOf<Int, Tile>()
 
-  val inverseFogOfWar = mutableSetOf<TileKey>()
-  val hitBoxes = mutableMapOf<TileKey, Body>()
-  var currentKey = tks.tileKey(-100, -100) //Argh, we need to fix this, we assign and reassign all the time. Perhaps this should just be mutable? Nah - We should go for arrays
-  val visibleTiles = mutableMapOf<TileKey, Tile>()
-  val startNumberOfTiles = 10
+  //val inverseFogOfWar = mutableSetOf<TileKey>()
+  val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
   val visibleRange = 15
-
 
   companion object {
     val weirdDirections = mapOf(
@@ -52,16 +56,16 @@ class MapManager : IMapManager {
     )
 
     val simpleDirections = mapOf(
-            Ctx.context.inject<TileKeyManager>().tileKey(-1, 0) to "east",
-        Ctx.context.inject<TileKeyManager>().tileKey(0, 1) to "south",
-        Ctx.context.inject<TileKeyManager>().tileKey(1, 0) to "west",
-        Ctx.context.inject<TileKeyManager>().tileKey(0, -1) to "north"
+            Pair(-1, 0) to "east",
+        Pair(0, 1) to "south",
+        Pair(1, 0) to "west",
+        Pair(0, -1) to "north"
     )
     val simpleDirectionsInverse = mapOf(
-        "north" to Ctx.context.inject<TileKeyManager>().tileKey(0, -1),
-        "east" to Ctx.context.inject<TileKeyManager>().tileKey(-1, 0),
-        "south" to Ctx.context.inject<TileKeyManager>().tileKey(0, 1),
-        "west" to Ctx.context.inject<TileKeyManager>().tileKey(1, 0))
+        "north" to Pair(0, -1),
+        "east" to Pair(-1, 0),
+        "south" to Pair(0, 1),
+        "west" to Pair(1, 0))
 
     val terrains = mapOf(
         0 to "water",
@@ -117,67 +121,39 @@ class MapManager : IMapManager {
   }
 
   fun checkHitBoxesForImpassibleTiles() {
-    val impassibleTiles = visibleTiles
-        .filter {
-          (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain()
-        }
-        .filter {
-          !hitBoxes.containsKey(it.key)
-        }
-
-    for (key in impassibleTiles.keys) {
-      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
-          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-      val hitBox = bodyManager.createBody(
-          GameManager.TILE_SIZE.toFloat(),
-          GameManager.TILE_SIZE.toFloat(),
-          10f,
-          pos,
-          BodyDef.BodyType.StaticBody)
-      hitBoxes[key] = hitBox
-    }
+//    val impassibleTiles = visibleTiles
+//        .filter {
+//          (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain()
+//        }
+//        .filter {
+//          !hitBoxes.containsKey(it.key)
+//        }
+//
+//    for (key in impassibleTiles.keys) {
+//      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+//          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+//      val hitBox = bodyManager.createBody(
+//          GameManager.TILE_SIZE.toFloat(),
+//          GameManager.TILE_SIZE.toFloat(),
+//          10f,
+//          pos,
+//          BodyDef.BodyType.StaticBody)
+//      hitBoxes[key] = hitBox
+//    }
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
     return tileManager.getTile(x,y).tile
   }
 
-  override fun getTileAt(key: TileKey): Tile {
-    return tileManager.getTile(key.x, key.y).tile
+  override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileInstance? {
+    val tilesInRange = getTilesInRange(x, y, range)
+    return tilesInRange.filter { it.tile.tileType == tileType }.firstOrNull()
   }
 
-  override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileKey? {
-    val tilesInRange = getTilesInRange(x,y, range)
-    return tilesInRange.filter { it.value.tileType == tileType }.keys.firstOrNull()  }
-
-  override fun findTileOfTypeInRange(key: TileKey, tileType: String, range: Int): TileKey? {
-    return findTileOfTypeInRange(key.x, key.y, tileType, range)
-  }
 
   override fun tileForWorldPosition(position: Vector3): Tile {
     return tileManager.getTile(position.tileX(), position.tileY()).tile
-  }
-
-  //This needs work to... work.
-  override fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile> {
-    return listOf()
-//    val tiles = getVisibleTiles(position)
-//    val key = position.toTile()
-//    return tiles.map { RenderableTile(it.key, it.value, getFogStatus(it.key, key)) }
-  }
-
-  private fun getFogStatus(key: TileKey, position: TileKey): TileFog {
-    //1.Everything within some radius of the player is currently seen
-    if (key.isInRange(position, 5)) {
-      if (!inverseFogOfWar.contains(key)) //Now it's seen!
-        inverseFogOfWar.add(key)
-      return TileFog.Seeing
-    }
-
-    //2. Everything that we have visited HAS been seen
-
-    //3. Everything else is unseen
-    return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
   }
 
   val tileCounter = Ctx.context.inject<PerformanceCounters>().add("TileGetting")
@@ -198,39 +174,45 @@ class MapManager : IMapManager {
     return getVisibleTiles(position.tileX(), position.tileY())
   }
 
-  //This one stays, for now!
-  override fun getRingOfTiles(tileKey: TileKey, range: Int): List<TileKey> {
-    if (range < 1) return listOf()
-
-    val tilesInRange = getTilesInRange(tileKey, range)
-    val tilesToExclude = getTilesInRange(tileKey, range - 1)
-    return tilesInRange.keys.minus(tilesToExclude.keys).toList()
-  }
-
-  override fun getBandOfTiles(tileKey: TileKey, range: Int, width: Int): List<TileKey> {
-    if (range < 1 || width < 1) return listOf()
-    if (width == 1) return getRingOfTiles(tileKey, range)
-
-    val tilesInMaxRange = getTilesInRange(tileKey, range + width)
-    val tilesToExclude = getTilesInRange(tileKey, range - 1)
-    return tilesInMaxRange.keys.minus(tilesToExclude.keys).toList()
-  }
-
-  override fun getTilesInRange(x:Int, y:Int, range: Int): Map<TileKey, Tile> {
+  override fun getTilesInRange(x:Int, y:Int, range: Int): List<TileInstance> {
     val minX = x.coordAtDistanceFrom(-range)
     val maxX = x.coordAtDistanceFrom(range)
     val minY = y.coordAtDistanceFrom(-range)
     val maxY = y.coordAtDistanceFrom(range)
 
-    val tileInstances = tileManager.getTiles(minX..maxX, minY..maxY)
-
-    val returnMap = mutableMapOf<TileKey, Tile>()
-
-    for((xIndex, xPos) in (minX..maxX).withIndex())
-      for((yIndex, yPos) in (minY..maxY).withIndex()) {
-        returnMap.put(tks.tileKey(xPos, yPos), tileInstances[xIndex][yIndex].tile)
-      }
-
-    return returnMap
+    return tileManager.getTiles(minX..maxX, minY..maxY).flatten()
   }
 }
+
+
+//  //This one stays, for now!
+//  override fun getRingOfTiles(tileKey: TileKey, range: Int): List<TileKey> {
+
+//  }
+
+//  override fun getBandOfTiles(tileKey: TileKey, range: Int, width: Int): List<TileKey> {
+
+//  }
+
+
+//  //This needs work to... work.
+//  override fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile> {
+//    return listOf()
+//    val tiles = getVisibleTiles(position)
+//    val key = position.toTile()
+//    return tiles.map { RenderableTile(it.key, it.value, getFogStatus(it.key, key)) }
+//  }
+
+//  private fun getFogStatus(key: TileKey, position: TileKey): TileFog {
+//    //1.Everything within some radius of the player is currently seen
+//    if (key.isInRange(position, 5)) {
+//      if (!inverseFogOfWar.contains(key)) //Now it's seen!
+//        inverseFogOfWar.add(key)
+//      return TileFog.Seeing
+//    }
+//
+//    //2. Everything that we have visited HAS been seen
+//
+//    //3. Everything else is unseen
+//    return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
+//  }

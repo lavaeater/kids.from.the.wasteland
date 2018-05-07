@@ -53,20 +53,18 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
         // We get a ring of tiles instead of an area
 
         val someTilesInRange = mapManager.getBandOfTiles(position, 3, 3).filter {
-          mapManager.getTileAt(it).tileType != "rock" && mapManager.getTileAt(it).tileType != "water"
+          it.tile.tileType != "rock" && it.tile.tileType != "water"
         }
 
         val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
 
-        val actualTile = mapManager.getTileAt(randomlySelectedTile)
-
         val dieRoll = MathUtils.random(100)
-        val npcType = spawningProbs[actualTile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
+        val npcType = spawningProbs[randomlySelectedTile.tile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
         if(npcType != null) {
           if(npcType == "orc")
-            actorFactory.addNpcAtTileWithAnimation(type=npcType, tileKey = randomlySelectedTile, spriteKey = "orc")
+            actorFactory.addNpcAtTileWithAnimation(type=npcType, x =  randomlySelectedTile.x, y = randomlySelectedTile.y, spriteKey = "orc")
           else
-            actorFactory.addNpcEntityAtTile(type = npcType, tileKey = randomlySelectedTile)
+            actorFactory.addNpcEntityAtTile(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y)
         }
 
 

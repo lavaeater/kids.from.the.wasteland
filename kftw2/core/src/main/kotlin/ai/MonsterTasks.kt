@@ -45,14 +45,16 @@ class CheckForPlayer : LeafTask<Npc>() {
   override fun execute(): Status {
     val npc = `object`
 
-    if(npc.currentTile.isInRange(player.currentTile, npc.sightRange)) {
+    if(Pair(npc.currentX, npc.currentY).isInRange(player.currentX, player.currentY, npc.sightRange)) {
       //Try to find the player
       if(npc.rollAgainstAgent(player, "tracking")) {
-        npc.foundTile = player.currentTile
+        npc.tileFound = true
+        npc.foundX = player.currentX
+        npc.foundY   = player.currentY
         return Task.Status.SUCCEEDED
       }
     }
-    npc.foundTile = null
+    npc.tileFound = false
     return Task.Status.FAILED
   }
 

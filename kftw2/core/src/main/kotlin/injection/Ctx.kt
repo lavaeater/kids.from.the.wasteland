@@ -14,7 +14,6 @@ import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.ui.Hud
 import ktx.box2d.createWorld
 import ktx.inject.Context
-import map.TileKeyManager
 import map.TileManager
 
 class Ctx {
@@ -24,7 +23,6 @@ class Ctx {
     fun buildContext() {
       context.register {
         bindSingleton(PerformanceCounters())
-        bindSingleton(TileKeyManager())
         bindSingleton(TileManager())
         bindSingleton(Player("Thorborg"))
         bindSingleton(SpriteBatch())

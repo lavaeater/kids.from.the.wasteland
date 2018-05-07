@@ -44,10 +44,6 @@ class TileManager(val chunkSize:Int = 100) {
         store.putTile(x,y, tile)
     }
 
-    fun putTiles(tilesToPut: Map<TileKey, Tile>) {
-        tilesToPut.map { putTile(it.key.x, it.key.y, it.value.getInstance(it.key.x, it.key.y)) }
-    }
-
     fun getTiles(xBounds:IntRange, yBounds:IntRange) : Array<Array<TileInstance>> {
 
         //This is a for loop. This gets the renderable map
