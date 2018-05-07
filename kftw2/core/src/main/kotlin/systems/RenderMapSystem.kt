@@ -11,6 +11,7 @@ import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.TileKey
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.map.TileFog
 import ktx.app.use
 import map.TileKeyManager
@@ -25,19 +26,22 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
     if(fogOfWar) renderMapWithFogOfWar() else {
+
+      val tileX = camera.position.tileX()
+      val tileY = camera.position.tileY()
+
       batch.projectionMatrix = camera.combined
       batch.use {
-        for (tileAndKey in mapManager.getVisibleTiles(camera.position)) {
-          val tile = tileAndKey.value
-          val key = tileAndKey.key
 
-          val sprite = Assets.sprites[tile.tileType]!![tile.subType]!!
-          sprite.setPosition(key.x * 8f, key.y * 8f)
-          sprite.draw(batch)
+        for((x, rows) in mapManager.getVisibleTiles(tileX, tileY).withIndex())
+          for((y, tileInstance) in rows.withIndex()) {
+            val xPos = tileInstance.x * 8f
+            val yPos = tileInstance.y * 8f
 
-          if (Assets.codeToExtraTiles.containsKey(tile.shortCode))
-            for (extraSprite in Assets.codeToExtraTiles[tile.shortCode]!!) {
-              extraSprite.setPosition(key.x * 8f, key.y * 8f)
+            tileInstance.baseSprite.setPosition(xPos, yPos)
+            tileInstance.baseSprite.draw(batch)
+            for(extraSprite in tileInstance.extraSprites) {
+              extraSprite.setPosition(xPos, yPos)
               extraSprite.draw(batch)
             }
         }
@@ -91,18 +95,18 @@ fun Vector2.toTile(factor: Int = GameManager.TILE_SIZE): TileKey {
   return Ctx.context.inject<TileKeyManager>().tileKey(this.tileX(factor), this.tileY(factor))
 }
 
-fun Vector2.tileX(factor: Int): Int {
+fun Vector2.tileX(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.x / factor).roundToInt()
 }
 
-fun Vector2.tileY(factor: Int): Int {
+fun Vector2.tileY(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.y / factor).roundToInt()
 }
 
-fun Vector3.tileX(factor: Int): Int {
+fun Vector3.tileX(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.x / factor).roundToInt()
 }
 
-fun Vector3.tileY(factor: Int): Int {
+fun Vector3.tileY(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.y / factor).roundToInt()
 }

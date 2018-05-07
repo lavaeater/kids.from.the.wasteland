@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManagerBase
+import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.map.TileKey
 import map.TileKeyManager
 
@@ -37,7 +37,7 @@ class Npc(override var name:String ="Joshua",
 
   fun lostInterest() {
     state = NpcState.Searching
-    val terrainArr = MapManagerBase.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
+    val terrainArr = MapManager.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
     val randomIndex = MathUtils.random(0, terrainArr.size - 1)
     desiredTileType = terrainArr[randomIndex]
     foundTile = null

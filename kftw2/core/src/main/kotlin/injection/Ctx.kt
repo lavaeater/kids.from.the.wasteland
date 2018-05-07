@@ -8,12 +8,13 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.map.AreaMapManager
 import com.lavaeater.kftw.map.IMapManager
+import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.ui.Hud
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import map.TileKeyManager
+import map.TileManager
 
 class Ctx {
 
@@ -22,13 +23,14 @@ class Ctx {
     fun buildContext() {
       context.register {
         bindSingleton(TileKeyManager())
+        bindSingleton(TileManager())
         bindSingleton(Player("Thorborg"))
         bindSingleton(SpriteBatch())
         bindSingleton(OrthographicCamera())
         bindSingleton(createWorld())
         bindSingleton(BodyFactory())
         bindSingleton(Engine())
-        bindSingleton<IMapManager>(AreaMapManager())
+        bindSingleton<IMapManager>(MapManager())
         bindSingleton(ActorFactory())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(Hud())

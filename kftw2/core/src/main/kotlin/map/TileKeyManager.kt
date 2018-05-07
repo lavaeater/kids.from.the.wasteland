@@ -97,11 +97,11 @@ class TileKeyStore(val lowerBoundX: Int, val columns: Int, val lowerBoundY: Int,
 }
 
 fun Tile.getKeyCode() : String {
-    return "${this.priority}${this.tileType}${this.subType}${this.code}${this.shortCode}"
+    return this.priority.toString() + this.tileType + this.subType + this.code + this.shortCode
 }
 
-fun Tile.getInstance(): TileInstance {
-    return TileInstance(this.getSprite(), this.getExtraSprites(), this.isImpassible(), tile = this)
+fun Tile.getInstance(x:Int, y:Int): TileInstance {
+    return TileInstance(x, y, this.getSprite(), this.getExtraSprites(), this.isImpassible(), tile = this)
 }
 
 fun Tile.isImpassible() : Boolean {

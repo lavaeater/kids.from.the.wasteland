@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.Assets
 import com.lavaeater.kftw.map.*
 
-class TileManager(val chunkSize:Int = 10000) {
+class TileManager(val chunkSize:Int = 100) {
     val upperBound = chunkSize - 1
     private val tileStores = mutableSetOf<TileStore>()
     val usedTiles = mutableMapOf<String, Tile>()
@@ -28,7 +28,7 @@ class TileManager(val chunkSize:Int = 10000) {
             lX in it.xBounds &&
                     lY in it.yBounds }
         if(store == null) {
-            store = TileStore(lX, chunkSize, lY, chunkSize, generateTilesForRange(lX..(lX + chunkSize), lY..lY + chunkSize))
+            store = TileStore(lX, chunkSize, lY, chunkSize, generateTilesForRange(lX..(lX + upperBound), lY..lY + upperBound))
             tileStores.add(store)
         }
         return store
@@ -45,7 +45,7 @@ class TileManager(val chunkSize:Int = 10000) {
     }
 
     fun putTiles(tilesToPut: Map<TileKey, Tile>) {
-        tilesToPut.map { putTile(it.key.x, it.key.y, it.value.getInstance()) }
+        tilesToPut.map { putTile(it.key.x, it.key.y, it.value.getInstance(it.key.x, it.key.y)) }
     }
 
     fun getTiles(xBounds:IntRange, yBounds:IntRange) : Array<Array<TileInstance>> {
@@ -88,14 +88,25 @@ class TileManager(val chunkSize:Int = 10000) {
             for((y, row) in column.withIndex()) {
                 val tempTile = tiles[x][y].copy()// usedTiles[currentMap[ourKey]]!!.copy()
                 var needsNeighbours = false
-                MapManagerBase.neiborMap.keys.map { (offX, offY) ->
-                    tiles.getOrNull(x + offX)?.getOrNull( y + offY)
-                }
-                        .forEach {
-                            tempTile.code += if (it != null) MapManagerBase.shortTerrains[it.priority]!! else "b"
-                            if(it == null)
-                                needsNeighbours = true
+
+
+                MapManager.neiborMap.keys.forEach { (offX, offY) ->
+                    var code = "b"
+                    val col = tiles.getOrNull(x + offX)
+                    if(col != null)
+                    {
+                        val tile = col.getOrNull(y + offY)
+                        if(tile != null) {
+                            code = MapManager.shortTerrains[tile.priority]!!
+                        } else {
+                            needsNeighbours = true
                         }
+                    } else {
+                        needsNeighbours = true
+                    }
+                    tempTile.code+=code
+                }
+
                 tempTile.needsNeighbours = needsNeighbours
                 tempTile.shortCode = tempTile.code.toShortCode()
 
@@ -109,7 +120,7 @@ class TileManager(val chunkSize:Int = 10000) {
                 addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
             }
 
-        return Array(xBounds.count(), { column -> Array(yBounds.count(), { row -> tiles[column][row]!!.getInstance() })})
+        return Array(xBounds.count(), { column -> Array(yBounds.count(), { row -> tiles[column][row]!!.getInstance(xBounds.elementAt(column), yBounds.elementAt(row)) })})
     }
 
     fun getDirectionFromIndex(index:Int):String {
@@ -124,7 +135,7 @@ class TileManager(val chunkSize:Int = 10000) {
 
     fun addEdgeSpritesForTile(ourTile: Tile, shortCode: String, tileType: String, priority: Int) {
 
-        if (!MapManagerBase.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
+        if (!MapManager.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
 
             /*
             The code below is retarded. We should use the shortCode to resolve this, easy!
@@ -135,26 +146,26 @@ class TileManager(val chunkSize:Int = 10000) {
             val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
 
             for((index, code) in actualShortCode.withIndex()) {
-                if (tileC != code && MapManagerBase.shortTerrainPriority[code]!! > priority) {
-                    if (extraSprites.any { it.first == MapManagerBase.shortLongTerrains[code]!! }) {
+                if (code != 'b' && tileC != code && MapManager.shortTerrainPriority[code]!! > priority) {
+                    if (extraSprites.any { it.first == MapManager.shortLongTerrains[code]!! }) {
                         //Evaluate for diffs etc
-                        for (extraSprite in extraSprites.filter { it.first == MapManagerBase.shortLongTerrains[code]!! }) {
+                        for (extraSprite in extraSprites.filter { it.first == MapManager.shortLongTerrains[code]!! }) {
 
                             /*
                       This type of tile exists, it might actually be relevant to
                       remove the existing one in favor of this one!
                        */
-                            if (MapManagerBase.weirdDirections.containsKey("${getDirectionFromIndex(index)}${extraSprite.second}")) {
+                            if (MapManager.weirdDirections.containsKey("${getDirectionFromIndex(index)}${extraSprite.second}")) {
                                 //Modify existing one, making it weird!
                                 extraSpritesToRemove.add(extraSprite)
-                                extraSprites.add(Pair(extraSprite.first, MapManagerBase.weirdDirections["${getDirectionFromIndex(index)}${extraSprite.second}"]!!))
+                                extraSprites.add(Pair(extraSprite.first, MapManager.weirdDirections["${getDirectionFromIndex(index)}${extraSprite.second}"]!!))
                             } else {
-                                extraSprites.add(Pair(MapManagerBase.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
+                                extraSprites.add(Pair(MapManager.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
                             }
                         }
                     } else {
                         //just add
-                        extraSprites.add(Pair(MapManagerBase.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
+                        extraSprites.add(Pair(MapManager.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
                     }
                 }
             }
@@ -165,19 +176,19 @@ class TileManager(val chunkSize:Int = 10000) {
             if (extraSprites.any())
                 Assets.codeToExtraTiles.put(shortCode, extraSprites.map { Assets.sprites[it.first]!![it.second]!! })
             else
-                MapManagerBase.noExtraSprites.add(shortCode)
+                MapManager.noExtraSprites.add(shortCode)
         }
     }
 
     fun generateTile(x:Int, y:Int) : Tile {
-        val nX = x / MapManagerBase.scale
-        val nY = y / MapManagerBase.scale
+        val nX = x / MapManager.scale
+        val nY = y / MapManager.scale
 
         val priority = getTilePriorityFromNoise(nX, nY)
-        val tileType = MapManagerBase.terrains[priority]!!
-        val code = MapManagerBase.shortTerrains[priority]!!
+        val tileType = MapManager.terrains[priority]!!
+        val code = MapManager.shortTerrains[priority]!!
         val subType = "center${MathUtils.random.nextInt(3) + 1}"
-        val tileCode = "{priority}{tileType}{subType}{code}{code}" //Only temporary, actually
+        val tileCode = "$priority$tileType$subType$code$code" //Only temporary, actually
         if(!usedTiles.containsKey(tileCode))
             usedTiles[tileCode] = Tile(priority, tileType, subType, code, code)
 
