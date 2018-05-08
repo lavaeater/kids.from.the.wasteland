@@ -182,16 +182,9 @@ class MapManager : IMapManager {
     return tileManager.getTiles(minX..maxX, minY..maxY).flatten()
   }
 }
-
-
-//  //This one stays, for now!
-//  override fun getRingOfTiles(tileKey: TileKey, range: Int): List<TileKey> {
-
-//  }
-
-//  override fun getBandOfTiles(tileKey: TileKey, range: Int, width: Int): List<TileKey> {
-
-//  }
+/*
+The code below contains some fog of war-specific code. We're not there yet
+ */
 
 
 //  //This needs work to... work.

@@ -9,12 +9,15 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.ui.Hud
 import ktx.box2d.createWorld
 import ktx.inject.Context
+import managers.MessageManager
 import map.TileManager
+import story.DialogManager
 
 class Ctx {
 
@@ -32,8 +35,11 @@ class Ctx {
         bindSingleton(Engine())
         bindSingleton<IMapManager>(MapManager())
         bindSingleton(ActorFactory())
+        bindSingleton(GameStateManager())
+        bindSingleton(MessageManager())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(Hud())
+        bindSingleton(DialogManager())
         bindSingleton(GameManager())
       }
     }

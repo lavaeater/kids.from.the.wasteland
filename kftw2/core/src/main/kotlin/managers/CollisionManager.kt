@@ -3,9 +3,10 @@ package com.lavaeater.kftw.managers
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
 import com.lavaeater.kftw.data.Npc
+import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 
-class CollisionMessageManager() : ContactListener {
+class CollisionManager() : ContactListener {
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
 
   override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
@@ -28,7 +29,13 @@ class CollisionMessageManager() : ContactListener {
     //If both are dynamic, we do something for that, later
     //TODO:
     if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody &&
-        contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) return
+        contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) {
+      if(contact.fixtureA.userData is Player || contact.fixtureB.userData is Player) {
+        val npc = if(contact.fixtureA.userData is Npc) contact.fixtureA.userData as Npc else contact.fixtureB.userData as Npc
+        messageDispatcher.dispatchMessage(Messages.PlayerMetSomeone, npc)
+      }
+      return
+    }
 
     //one is dynamic, other is static, we are, for now, hitting impassible terrain
     val dynamicBody = if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody)
@@ -37,14 +44,7 @@ class CollisionMessageManager() : ContactListener {
     //Check the userData of the body, it's either an NPC; then it needs a message!
     val ud = dynamicBody.userData
     when(ud) {
-      is Npc -> sendMessageToNpc(ud)
+      is Npc -> messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, ud)
     }
-  }
-
-  private fun sendMessageToNpc(npc: Npc) {
-    messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, npc)
-  }
-
-  init {
   }
 }

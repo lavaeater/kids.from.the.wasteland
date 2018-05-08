@@ -130,10 +130,14 @@ class ActorFactory {
       add(PlayerComponent(Ctx.context.inject()))
       add(AgentComponent(Ctx.context.inject<Player>()))
       add(VisibleComponent())
-      add(Box2dBodyComponent(bodyManager.createBody(2f, 4f, 15f, vec2(0f, 0f), BodyDef.BodyType.DynamicBody)))
+      add(Box2dBodyComponent(createPlayerBody(vec2(0f,0f),Ctx.context.inject())))
     }
     engine.addEntity(entity)
     return entity
+  }
+
+  fun createPlayerBody(position: Vector2, player:Player) : Body {
+    return bodyManager.createBody(2f, 4f, 15f, position, BodyDef.BodyType.DynamicBody).apply { userData = player }
   }
 
   fun createNpcBody(position: Vector2, npc: Npc) : Body {

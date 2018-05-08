@@ -18,14 +18,7 @@ import ktx.math.*
 
 class NpcControlSystem : IteratingSystem(allOf(
     NpcComponent::class,
-    Box2dBodyComponent::class).get(),10), Telegraph {
-  override fun handleMessage(msg: Telegram): Boolean {
-    if(msg.message == Messages.CollidedWithImpassibleTerrain) {
-      val npc = msg.extraInfo as Npc
-      npc.lostInterest()
-    }
-    return true
-  }
+    Box2dBodyComponent::class).get(),10) {
 
   val npcMpr = mapperFor<NpcComponent>()
   val bodyMpr = mapperFor<Box2dBodyComponent>()

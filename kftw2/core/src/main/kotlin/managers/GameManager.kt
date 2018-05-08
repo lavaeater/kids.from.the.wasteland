@@ -11,9 +11,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.Hud
+import managers.MessageManager
 
 class GameManager : Disposable {
-
   val batch = Ctx.context.inject<SpriteBatch>()
   val camera = Ctx.context.inject<OrthographicCamera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
@@ -22,14 +22,10 @@ class GameManager : Disposable {
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<Hud>()
-  val gameStateManager = GameStateManager(::gameStateChanged)
 
 
   init {
-    Ctx.context.register {
-      bindSingleton(gameStateManager)
-    }
-
+    Ctx.context.inject<GameStateManager>().apply { addChangeListener { ::gameStateChanged } }
     setupSystems()
 
     camera.position.x = 0f
@@ -46,8 +42,10 @@ class GameManager : Disposable {
     engine.addSystem(RenderCharactersSystem())
     engine.addSystem(AiSystem())
     val npcControlSystem = NpcControlSystem()
-    messageDispatcher.addListener(npcControlSystem, Messages.CollidedWithImpassibleTerrain)
-    world.setContactListener(CollisionMessageManager())
+
+    setupMessageSystem()
+
+    world.setContactListener(CollisionManager())
 
     engine.addSystem(npcControlSystem)
     engine.addSystem(PhysicsSystem())
@@ -67,6 +65,12 @@ class GameManager : Disposable {
     //Current tile system. Continually updates the agent instances with
     //what tile they're on, used by the AI
     engine.addSystem(CurrentTileSystem())
+  }
+
+  private fun setupMessageSystem() {
+    val messageManager = Ctx.context.inject<MessageManager>()
+    messageDispatcher.addListener(messageManager, Messages.CollidedWithImpassibleTerrain)
+    messageDispatcher.addListener(messageManager, Messages.PlayerMetSomeone)
   }
 
   fun update(delta: Float) {

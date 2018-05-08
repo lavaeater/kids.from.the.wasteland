@@ -1,6 +1,7 @@
 package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -22,6 +23,7 @@ import com.kotcrab.vis.ui.widget.ListViewStyle
 import com.lavaeater.Assets
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
+import ktx.app.KtxInputAdapter
 import ktx.vis.gridGroup
 import ktx.vis.table
 
@@ -98,6 +100,41 @@ class Hud : Disposable {
     inventoryTable.isVisible = false
   }
 
+  fun startDialog(madeChoice:(Int) -> Unit) {
+    choiceHandler = madeChoice
+    //Temporarily add keyContactListener?
+    Gdx.input.inputProcessor = object: KtxInputAdapter{
+      override fun keyDown(keycode: Int): Boolean {
+        choiceHandler?.invoke(keycode)
+        return true
+      }
+    }
+  }
+
+  fun showDialog(lines:Iterable<String>, x:Float, y: Float) {
+    label.x = x
+    label.y = y
+    label.setText(lines.reduce { acc, s -> acc + s })
+    label.pack()
+    label.isVisible = true
+  }
+
+  var choiceCount = 0
+  var choiceHandler: ((Int)->Unit)? = null
+  fun showChoices(
+      choices: Iterable<String>,
+      x: Float,
+      y: Float
+  ) {
+    label.x = x
+    label.y = y
+
+    choiceCount = choices.count()
+    label.setText(choices.reduceIndexed { index, acc, s -> acc +"${acc}${index}: ${s}\n" } )
+    label.pack()
+
+    label.isVisible = true
+  }
 
   fun showDialog() {
     label.x = stage.camera.position.x

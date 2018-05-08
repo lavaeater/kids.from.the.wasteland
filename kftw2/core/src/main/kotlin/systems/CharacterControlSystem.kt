@@ -52,7 +52,7 @@ class CharacterControlSystem(val speed: Float = 20f) :
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
       Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryToggled)
-      Input.Keys.M -> gameStateManager.handleEvent(GameEvent.DialogToggled) //Will be something like "NPC met" and handled by some
+      Input.Keys.M -> gameStateManager.handleEvent(GameEvent.DialogStarted) //Will be something like "NPC met" and handled by some
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true
