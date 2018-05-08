@@ -27,7 +27,7 @@ class GameManager : Disposable {
 
 
   init {
-    Ctx.context.inject<GameStateManager>().apply { addChangeListener { ::gameStateChanged } }
+    Ctx.context.inject<GameStateManager>().apply { addChangeListener(::gameStateChanged) }
     setupSystems()
 
     camera.position.x = 0f

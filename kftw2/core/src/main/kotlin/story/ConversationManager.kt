@@ -10,8 +10,13 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
+import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.ui.Hud
 import ktx.scene2d.dialog
+import jdk.nashorn.internal.runtime.ScriptingFunctions.readLine
+import java.io.BufferedReader
+import java.io.InputStreamReader
+
 
 class ConversationManager {
   private val hud = Ctx.context.inject<Hud>()
@@ -21,13 +26,14 @@ class ConversationManager {
   private var currentAgent:IAgent? = null
   private val player = Ctx.context.inject<Player>()
   private var inputProcessor : InputProcessor? = null
+  private val storyReader = InkLoader()
 
   fun startWithNpc(npc:Npc) {
     if(!isDialogOnGoing) {
       currentAgent = npc
-      currentDialog = Story(Gdx.files.internal("ink/start.ink.json").readString())
+      currentDialog = Story(storyReader.readStoryJson("ink/dialog.ink.json"))
       inputProcessor =  Gdx.input.inputProcessor
-      hud.startDialog { ::makeChoice }
+      hud.startDialog(::makeChoice)
       continueStory()
     }
   }
@@ -62,11 +68,13 @@ class ConversationManager {
   }
 
   fun showStoryLines(lines: List<String>) {
-    hud.showDialog(lines, 100f, 100f)
+    dialogState = DialogState.ShowingDialog
+    hud.showDialog(lines)
   }
 
   fun showChoices(choices: List<Choice>) {
-    hud.showChoices(choices.map { it.text }, 100f, 100f)
+    dialogState = DialogState.ShowingChoices
+    hud.showChoices(choices.map { it.text })
   }
 
   fun makeChoice(index: Int) {
@@ -81,6 +89,31 @@ class ConversationManager {
   }
 
   val isDialogOnGoing get() = currentDialog != null
+}
+
+class InkLoader {
+  fun readStoryJson(path:String):String {
+
+    val br= Gdx.files.internal(path).reader(100, "UTF-8")
+
+    try {
+      val sb = StringBuilder()
+      var line = br.readLine()
+
+      // Replace the BOM mark
+      if (line != null)
+        line = line!!.replace('\uFEFF', ' ')
+
+      while (line != null) {
+        sb.append(line)
+        sb.append("\n")
+        line = br.readLine()
+      }
+      return sb.toString()
+    } finally {
+      br.close()
+    }
+  }
 }
 
 enum class DialogState {

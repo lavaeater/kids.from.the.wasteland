@@ -23,6 +23,7 @@ import com.kotcrab.vis.ui.widget.ListViewStyle
 import com.lavaeater.Assets
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
+import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import ktx.vis.gridGroup
 import ktx.vis.table
@@ -42,6 +43,11 @@ class Hud : Disposable {
   val npd = NinePatchDrawable(Assets.speechBubble)
   val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
   val label = Label("Hello, fool",style)
+  val conversationTable = Table().apply {
+    width = 280f
+    add(label)
+    isVisible = false
+  }
 
   val possibleTexts = arrayOf("Hello, fool.", "Pleased to meet you, hope you guessed my name", "WHARARHARHAR")
 
@@ -89,7 +95,7 @@ class Hud : Disposable {
     stage.addActor(inventoryTable)
     hideInventory()
 
-    stage.addActor(label)
+    stage.addActor(conversationTable)
   }
 
   fun showInventory() {
@@ -111,41 +117,36 @@ class Hud : Disposable {
     }
   }
 
-  fun showDialog(lines:Iterable<String>, x:Float, y: Float) {
+  fun showDialog(lines:Iterable<String>,
+                 x: Float = Gdx.app.graphics.width.toFloat() / 2,
+                 y: Float = Gdx.app.graphics.height.toFloat() / 2) {
     label.x = x
     label.y = y
-    label.setText(lines.reduce { acc, s -> acc + s })
+    label.txt = lines.reduce { acc, s -> acc + s }
     label.pack()
     label.isVisible = true
+    conversationTable.isVisible = true
   }
 
   var choiceCount = 0
   var choiceHandler: ((Int)->Unit)? = null
   fun showChoices(
       choices: Iterable<String>,
-      x: Float,
-      y: Float
+      x: Float = Gdx.app.graphics.width.toFloat() / 2,
+      y: Float = Gdx.app.graphics.height.toFloat() / 2
   ) {
     label.x = x
     label.y = y
 
     choiceCount = choices.count()
-    label.setText(choices.reduceIndexed { index, acc, s -> acc +"${acc}${index}: ${s}\n" } )
+    label.txt = choices.reduceIndexed { index, acc, s -> acc +"${acc}${index}: ${s}\n" }
     label.pack()
-
     label.isVisible = true
-  }
-
-  fun showDialog() {
-    label.x = stage.camera.position.x
-    label.y = stage.camera.position.y
-    label.setText(possibleTexts[MathUtils.random(0,2)])
-    label.pack()
-
-    label.isVisible = true
+    conversationTable.isVisible = true
   }
 
   fun hideDialog() {
     label.isVisible = false
+    conversationTable.isVisible = false
   }
 }

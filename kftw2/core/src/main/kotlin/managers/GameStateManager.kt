@@ -27,11 +27,11 @@ class GameStateManager() {
 
   val changeListeners = mutableSetOf<(GameState)->Unit>()
   fun addChangeListener(listener: (GameState) ->Unit) {
-    changeListeners.add { listener }
+    changeListeners.add(listener)
   }
 
   fun removeListener(listener: (GameState) -> Unit) {
-    changeListeners.remove { listener }
+    changeListeners.remove(listener)
   }
 
   fun handleEvent(event: GameEvent) {
