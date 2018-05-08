@@ -17,7 +17,7 @@ import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.MessageManager
 import map.TileManager
-import story.DialogManager
+import story.ConversationManager
 
 class Ctx {
 
@@ -36,10 +36,10 @@ class Ctx {
         bindSingleton<IMapManager>(MapManager())
         bindSingleton(ActorFactory())
         bindSingleton(GameStateManager())
-        bindSingleton(MessageManager())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton(Hud())
-        bindSingleton(DialogManager())
+        bindSingleton(ConversationManager())
+        bindSingleton(MessageManager())
         bindSingleton(GameManager())
       }
     }

@@ -30,8 +30,8 @@ class CollisionManager() : ContactListener {
     //TODO:
     if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody &&
         contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) {
-      if(contact.fixtureA.userData is Player || contact.fixtureB.userData is Player) {
-        val npc = if(contact.fixtureA.userData is Npc) contact.fixtureA.userData as Npc else contact.fixtureB.userData as Npc
+      if(contact.fixtureA.body.userData is Player || contact.fixtureB.body.userData is Player) {
+        val npc = if(contact.fixtureA.body.userData is Npc) contact.fixtureA.body.userData as Npc else contact.fixtureB.body.userData as Npc
         messageDispatcher.dispatchMessage(Messages.PlayerMetSomeone, npc)
       }
       return

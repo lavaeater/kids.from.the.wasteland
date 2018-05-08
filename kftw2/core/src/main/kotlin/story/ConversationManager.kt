@@ -13,7 +13,7 @@ import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.ui.Hud
 import ktx.scene2d.dialog
 
-class DialogManager {
+class ConversationManager {
   private val hud = Ctx.context.inject<Hud>()
   private val gameStateManager = Ctx.context.inject<GameStateManager>()
   private var currentDialog: Story? = null
@@ -21,10 +21,11 @@ class DialogManager {
   private var currentAgent:IAgent? = null
   private val player = Ctx.context.inject<Player>()
   private var inputProcessor : InputProcessor? = null
+
   fun startWithNpc(npc:Npc) {
     if(!isDialogOnGoing) {
       currentAgent = npc
-      currentDialog = Story(Gdx.files.internal("ink/dialog.ink.json").readString())
+      currentDialog = Story(Gdx.files.internal("ink/start.ink.json").readString())
       inputProcessor =  Gdx.input.inputProcessor
       hud.startDialog { ::makeChoice }
       continueStory()
@@ -54,7 +55,10 @@ class DialogManager {
       //Get current lines until we stop for choices.
       lines.add(story.Continue())
     }
-    showStoryLines(lines)
+    if(lines.any())
+      showStoryLines(lines)
+    else
+      endCurrentDialog()
   }
 
   fun showStoryLines(lines: List<String>) {

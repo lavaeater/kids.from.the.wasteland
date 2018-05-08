@@ -7,11 +7,11 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.managers.Messages
-import story.DialogManager
+import story.ConversationManager
 
 class MessageManager: Telegraph {
   val gameStateManager = Ctx.context.inject<GameStateManager>()
-  val dialogManager = Ctx.context.inject<DialogManager>()
+  val conversationManager = Ctx.context.inject<ConversationManager>()
   override fun handleMessage(msg: Telegram): Boolean {
     when(msg.message) {
       Messages.CollidedWithImpassibleTerrain -> return NpcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
@@ -27,6 +27,7 @@ class MessageManager: Telegraph {
      */
 
     gameStateManager.handleEvent(GameEvent.DialogStarted)
+    conversationManager.startWithNpc(npc)
     return true
   }
 

@@ -12,6 +12,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.Hud
 import managers.MessageManager
+import story.ConversationManager
 
 class GameManager : Disposable {
   val batch = Ctx.context.inject<SpriteBatch>()
@@ -22,6 +23,7 @@ class GameManager : Disposable {
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<Hud>()
+  val conversationManager = Ctx.context.inject<ConversationManager>()
 
 
   init {
@@ -88,8 +90,8 @@ class GameManager : Disposable {
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 48f
-    val VIEWPORT_WIDTH = 36f
+    val VIEWPORT_HEIGHT = 96f
+    val VIEWPORT_WIDTH = 72f
     val TILE_SIZE = 8
   }
 
@@ -114,7 +116,6 @@ class GameManager : Disposable {
 
   private fun showDialog() {
     stopTheWorld()
-    hud.showDialog()
   }
 
   private fun stopTheWorld() {
