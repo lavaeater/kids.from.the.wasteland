@@ -9,11 +9,23 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
-import com.lavaeater.kftw.ui.IHud
+import com.lavaeater.kftw.ui.IUserInterface
+
+interface IConversation {
+  val canContinue: Boolean
+  val protagonist: IAgent
+  val antagonist: IAgent
+
+  fun getNextLine():String
+  fun getChoices():Iterable<String>
+  fun makeChoice(index:Int) : Boolean
+}
+
+
 
 
 class ConversationManager {
-  private val hud = Ctx.context.inject<IHud>()
+  private val hud = Ctx.context.inject<IUserInterface>()
   private val gameStateManager = Ctx.context.inject<GameStateManager>()
   private var currentDialog: Story? = null
   private val story get() = currentDialog!!

@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
-import com.lavaeater.kftw.ui.IHud
+import com.lavaeater.kftw.ui.IUserInterface
 import managers.MessageManager
 
 class GameManager : Disposable {
@@ -21,7 +21,7 @@ class GameManager : Disposable {
   val actorManager = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
-  val hud = Ctx.context.inject<IHud>()
+  val hud = Ctx.context.inject<IUserInterface>()
 
 
   init {
