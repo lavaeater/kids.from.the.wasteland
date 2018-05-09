@@ -34,7 +34,7 @@ android {
   }
   defaultConfig {
     applicationId 'com.lavaeater.kftw'
-    minSdkVersion 8
+    minSdkVersion 19
     targetSdkVersion 23
   }
 }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
+import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
@@ -42,9 +43,12 @@ class Hud : Disposable {
 
   val npd = NinePatchDrawable(Assets.speechBubble)
   val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
-  val label = Label("Hello, fool",style)
+  val label = Label("Hello, fool",style).apply {
+    setFillParent(true)
+    setWrap(true)
+  }
   val conversationTable = Table().apply {
-    width = 280f
+    width = 400f
     add(label)
     isVisible = false
   }
@@ -118,29 +122,48 @@ class Hud : Disposable {
   }
 
   fun showDialog(lines:Iterable<String>,
-                 x: Float = Gdx.app.graphics.width.toFloat() / 2,
-                 y: Float = Gdx.app.graphics.height.toFloat() / 2) {
-    label.x = x
-    label.y = y
-    label.txt = lines.reduce { acc, s -> acc + s }
-    label.pack()
+                 x: Float = stage.camera.position.x,
+                 y: Float = stage.camera.position.y) {
+    conversationTable.x = x
+    conversationTable.y = y
+    label.txt = ""
+
     label.isVisible = true
     conversationTable.isVisible = true
+    Timer.instance().clear()
+
+    Timer.instance().scheduleTask(object: Timer.Task(){
+      var i = 0
+      override fun run() {
+        label.text.append(lines.elementAt(i)+"\n\n")
+        label.invalidate()
+        label.width = label.parent.width
+        label.parent.height = label.prefHeight
+        i++
+      }
+    },0f, 1f, lines.count()-1)
   }
 
   var choiceCount = 0
   var choiceHandler: ((Int)->Unit)? = null
   fun showChoices(
       choices: Iterable<String>,
-      x: Float = Gdx.app.graphics.width.toFloat() / 2,
-      y: Float = Gdx.app.graphics.height.toFloat() / 2
-  ) {
-    label.x = x
-    label.y = y
+      x: Float = stage.camera.position.x,
+      y: Float = stage.camera.position.y) {
+    conversationTable.x = x
+    conversationTable.y = y
+    Timer.instance().clear()
 
     choiceCount = choices.count()
-    label.txt = choices.reduceIndexed { index, acc, s -> acc +"${acc}${index}: ${s}\n" }
-    label.pack()
+    var choiceText = ""
+    for((i, line) in choices.withIndex()) {
+      choiceText += "$i: " + line + "\n\n"
+    }
+    label.txt = ""
+    label.txt = choiceText
+    label.invalidate()
+    label.width = label.parent.width
+    label.parent.height = label.prefHeight
     label.isVisible = true
     conversationTable.isVisible = true
   }

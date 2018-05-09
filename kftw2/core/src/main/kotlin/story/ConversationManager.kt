@@ -2,7 +2,6 @@ package story
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputProcessor
-import com.bladecoder.ink.runtime.Choice
 import com.bladecoder.ink.runtime.Story
 import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Npc
@@ -10,12 +9,7 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
-import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.ui.Hud
-import ktx.scene2d.dialog
-import jdk.nashorn.internal.runtime.ScriptingFunctions.readLine
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 
 class ConversationManager {
@@ -38,10 +32,11 @@ class ConversationManager {
     }
   }
 
-  fun endCurrentDialog() {
+  fun endConversation() {
     if(isDialogOnGoing) {
       currentDialog = null
       currentAgent = null
+      hud.hideDialog()
       Gdx.input.inputProcessor = inputProcessor
       dialogState = DialogState.NotStarted
       gameStateManager.handleEvent(GameEvent.DialogEnded)
@@ -64,7 +59,7 @@ class ConversationManager {
     if(lines.any())
       showStoryLines(lines)
     else
-      endCurrentDialog()
+      endConversation()
   }
 
   fun showStoryLines(lines: List<String>) {
@@ -72,15 +67,25 @@ class ConversationManager {
     hud.showDialog(lines)
   }
 
-  fun showChoices(choices: List<Choice>) {
+  fun showChoices() {
     dialogState = DialogState.ShowingChoices
-    hud.showChoices(choices.map { it.text })
+    if(story.currentChoices.any())
+      hud.showChoices(story.currentChoices.map { it.text })
+    else if(!story.canContinue())
+      endConversation()
+    else
+      continueStory()
+
   }
 
-  fun makeChoice(index: Int) {
+  fun makeChoice(keyCode: Int) {
     when(dialogState) {
-      DialogState.ShowingDialog -> showChoices(story.currentChoices)
+      DialogState.ShowingDialog -> showChoices()
       DialogState.ShowingChoices -> {
+        if(keyCode !in 7..16) return //Not a numeric key!
+
+        val index = keyCode - 7
+        if(index !in 0..story.currentChoices.count() - 1) return //Out of range for correct choices, just ignore
         story.chooseChoiceIndex(index)
         continueStory()
       }
