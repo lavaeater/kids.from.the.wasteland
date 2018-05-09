@@ -1,7 +1,6 @@
 package com.lavaeater.kftw.data
 
-import ktx.collections.toGdxArray
-import com.badlogic.gdx.utils.Array as GdxArray
+
 
 class Player(override var name:String,
              override var strength: Int = 10,
@@ -11,9 +10,9 @@ class Player(override var name:String,
              override var currentX:Int = 0,
              override var currentY:Int = 0) : IAgent {
   override val inventory = mutableListOf("Mat", "Extra varm rock", "Litet, dåligt svärd")
-  val gdxInventory = inventory.toGdxArray()
   override val skills: MutableMap<String, Int> =
       mutableMapOf(
           "tracking" to 50,
           "stealth" to 35)
 }
+

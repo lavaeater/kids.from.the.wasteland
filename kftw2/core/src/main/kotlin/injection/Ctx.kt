@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.PerformanceCounters
+import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
@@ -13,6 +14,7 @@ import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.map.IMapManager
 import com.lavaeater.kftw.map.MapManager
 import com.lavaeater.kftw.ui.Hud
+import com.lavaeater.kftw.ui.IHud
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.MessageManager
@@ -37,7 +39,7 @@ class Ctx {
         bindSingleton(ActorFactory())
         bindSingleton(GameStateManager())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
-        bindSingleton(Hud())
+        bindSingleton<IHud>(Hud())
         bindSingleton(ConversationManager())
         bindSingleton(MessageManager())
         bindSingleton(GameManager())

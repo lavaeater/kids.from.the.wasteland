@@ -1,14 +1,11 @@
 package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
@@ -16,30 +13,60 @@ import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.kotcrab.vis.ui.VisUI
-import com.kotcrab.vis.ui.layout.GridGroup
 import com.kotcrab.vis.ui.util.adapter.AbstractListAdapter
 import com.kotcrab.vis.ui.util.adapter.SimpleListAdapter
-import com.kotcrab.vis.ui.widget.ListView
-import com.kotcrab.vis.ui.widget.ListViewStyle
 import com.lavaeater.Assets
+import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
-import ktx.vis.gridGroup
+import ktx.collections.toGdxArray
 import ktx.vis.table
 
-class Hud : Disposable {
+interface IHud : Disposable {
+    val stage: Stage
+    val hudViewPort : Viewport
+    val player: IAgent
+    fun showInventory()
+    fun hideInventory()
+    fun startDialog(madeChoice: (Int) -> Unit)
+    fun showDialog(
+            lines: Iterable<String>,
+            x:Float = 0f,
+            y:Float = 0f)
 
-  var stage: Stage
-  private val hudViewPort: Viewport
-  val batch = Ctx.context.inject<SpriteBatch>()
-  val player = Ctx.context.inject<Player>()
-  var inventoryListAdapter : SimpleListAdapter<String>
-  lateinit var inventoryTable : Table
-//  lateinit var dialogGrid : GridGroup
-//  lateinit var dialogLabel : Label
-  lateinit var listView : ListView<String>
+    fun showChoices(
+            choices: Iterable<String>,
+            x: Float = 0f,
+            y: Float = 0f)
+
+    fun hideDialog()
+    fun update(delta: Float)
+    override fun dispose()
+    fun clear()
+}
+
+class Hud : IHud {
+    private val batch = Ctx.context.inject<Batch>()
+    override val hudViewPort = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
+    override val stage = Stage(hudViewPort, batch)
+
+  override val player = Ctx.context.inject<Player>()
+  private val inventoryListAdapter  = SimpleListAdapter(player.inventory.toGdxArray()).apply {
+      selectionMode = AbstractListAdapter.SelectionMode.SINGLE
+  }
+
+  val inventoryTable = table {
+      debug = true
+      height = Gdx.graphics.height.toFloat() / 3
+      width = Gdx.graphics.width.toFloat() / 5
+      listView(inventoryListAdapter) {
+          header = label("Inventory")
+      }
+      left()
+      top()
+  }
 
   val npd = NinePatchDrawable(Assets.speechBubble)
   val style = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
@@ -53,21 +80,12 @@ class Hud : Disposable {
     isVisible = false
   }
 
-  val possibleTexts = arrayOf("Hello, fool.", "Pleased to meet you, hope you guessed my name", "WHARARHARHAR")
-
-  val listStyle = List.ListStyle(Assets.standardFont, Color.BLACK, Color.GRAY, npd)
-
   init {
     VisUI.load(VisUI.SkinScale.X1)
-    inventoryListAdapter = SimpleListAdapter(player.gdxInventory).apply {
-      selectionMode = AbstractListAdapter.SelectionMode.SINGLE
-    }
-    hudViewPort = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
-    stage = Stage(hudViewPort, batch)
     setup()
   }
 
-  fun update(delta: Float) {
+  override fun update(delta: Float) {
     batch.projectionMatrix = stage.camera.combined
     stage.draw()
   }
@@ -77,24 +95,13 @@ class Hud : Disposable {
     stage.dispose()
   }
 
-  fun clear() {
+  override fun clear() {
     stage.clear()
   }
 
 
-  fun setup() {
+  private fun setup() {
     stage.clear()
-
-    inventoryTable = table {
-      debug = true
-      height = Gdx.graphics.height.toFloat() / 3
-      width = Gdx.graphics.width.toFloat() / 5
-      listView = listView(inventoryListAdapter) {
-          header = label("Inventory")
-        }
-      left()
-      top()
-    }
 
     stage.addActor(inventoryTable)
     hideInventory()
@@ -102,17 +109,16 @@ class Hud : Disposable {
     stage.addActor(conversationTable)
   }
 
-  fun showInventory() {
+  override fun showInventory() {
     inventoryTable.isVisible = true
   }
 
-  fun hideInventory() {
+  override fun hideInventory() {
     inventoryTable.isVisible = false
   }
 
-  fun startDialog(madeChoice:(Int) -> Unit) {
+  override fun startDialog(madeChoice:(Int) -> Unit) {
     choiceHandler = madeChoice
-    //Temporarily add keyContactListener?
     Gdx.input.inputProcessor = object: KtxInputAdapter{
       override fun keyDown(keycode: Int): Boolean {
         choiceHandler?.invoke(keycode)
@@ -121,9 +127,9 @@ class Hud : Disposable {
     }
   }
 
-  fun showDialog(lines:Iterable<String>,
-                 x: Float = stage.camera.position.x,
-                 y: Float = stage.camera.position.y) {
+  override fun showDialog(lines:Iterable<String>,
+                          x: Float,
+                          y: Float) {
     conversationTable.x = x
     conversationTable.y = y
     label.txt = ""
@@ -141,19 +147,21 @@ class Hud : Disposable {
         label.parent.height = label.prefHeight
         i++
       }
-    },0f, 1f, lines.count()-1)
+    },0f, 2f, lines.count()-1)
   }
 
   var choiceCount = 0
   var choiceHandler: ((Int)->Unit)? = null
-  fun showChoices(
+  override fun showChoices(
       choices: Iterable<String>,
-      x: Float = stage.camera.position.x,
-      y: Float = stage.camera.position.y) {
+      x: Float,
+      y: Float) {
     conversationTable.x = x
     conversationTable.y = y
     Timer.instance().clear()
-
+      /*
+      TODO: Fix so that the choices are separate labels with click detection!
+       */
     choiceCount = choices.count()
     var choiceText = ""
     for((i, line) in choices.withIndex()) {
@@ -168,7 +176,7 @@ class Hud : Disposable {
     conversationTable.isVisible = true
   }
 
-  fun hideDialog() {
+  override fun hideDialog() {
     label.isVisible = false
     conversationTable.isVisible = false
   }
