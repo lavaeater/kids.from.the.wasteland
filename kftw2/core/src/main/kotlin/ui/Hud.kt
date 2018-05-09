@@ -159,9 +159,7 @@ class Hud : IHud {
     conversationTable.x = x
     conversationTable.y = y
     Timer.instance().clear()
-      /*
-      TODO: Fix so that the choices are separate labels with click detection!
-       */
+
     choiceCount = choices.count()
     var choiceText = ""
     for((i, line) in choices.withIndex()) {
