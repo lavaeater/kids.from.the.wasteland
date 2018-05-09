@@ -2,7 +2,7 @@ package screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.*
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import ktx.app.KtxScreen
@@ -14,8 +14,8 @@ import java.util.*
  */
 
 class PortraitScreen : KtxScreen {
-  val batch = Ctx.context.inject<SpriteBatch>()
-  val camera = Ctx.context.inject<OrthographicCamera>()
+  val batch = Ctx.context.inject<Batch>()
+  val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val pixMap = Pixmap(64, 64, Pixmap.Format.RGBA4444)
 

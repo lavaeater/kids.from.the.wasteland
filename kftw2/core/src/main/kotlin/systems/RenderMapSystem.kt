@@ -2,9 +2,8 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.PerformanceCounters
@@ -16,12 +15,10 @@ import kotlin.math.roundToInt
 
 class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
 
-  val batch = Ctx.context.inject<SpriteBatch>()
-  val camera = Ctx.context.inject<OrthographicCamera>()
+  val batch = Ctx.context.inject<Batch>()
+  val camera = Ctx.context.inject<Camera>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val counters = Ctx.context.inject<PerformanceCounters>()
-//  val getTilesCounter = counters.add("GetTiles")
-//  val renderCounter = counters.add("Render")
   var accruedDelta = 0f
 
   override fun update(deltaTime: Float) {
@@ -33,11 +30,7 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
     batch.projectionMatrix = camera.combined
     batch.use {
 
-//      getTilesCounter.start()
       val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
-//      getTilesCounter.stop()
-
-//      renderCounter.start()
 
       for ((x, rows) in tilesToRender.withIndex())
         for ((y, tileInstance) in rows.withIndex()) {
@@ -51,7 +44,6 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
             extraSprite.draw(batch)
           }
         }
-//      renderCounter.stop()
     }
     counters.tick()
     accruedDelta += deltaTime

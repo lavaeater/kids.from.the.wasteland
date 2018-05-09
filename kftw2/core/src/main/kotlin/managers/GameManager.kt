@@ -3,27 +3,25 @@ package com.lavaeater.kftw.managers
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.msg.MessageDispatcher
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
-import com.lavaeater.kftw.ui.Hud
+import com.lavaeater.kftw.ui.IHud
 import managers.MessageManager
-import story.ConversationManager
 
 class GameManager : Disposable {
-  val batch = Ctx.context.inject<SpriteBatch>()
-  val camera = Ctx.context.inject<OrthographicCamera>()
+  val batch = Ctx.context.inject<Batch>()
+  val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
   val engine = Ctx.context.inject<Engine>()
   val actorManager = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
-  val hud = Ctx.context.inject<Hud>()
-  val conversationManager = Ctx.context.inject<ConversationManager>()
+  val hud = Ctx.context.inject<IHud>()
 
 
   init {

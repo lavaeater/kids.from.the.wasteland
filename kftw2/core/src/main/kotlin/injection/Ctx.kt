@@ -2,10 +2,11 @@ package com.lavaeater.kftw.injection
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.PerformanceCounters
-import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
@@ -30,8 +31,8 @@ class Ctx {
         bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
         bindSingleton(Player("Thorborg"))
-        bindSingleton(SpriteBatch())
-        bindSingleton(OrthographicCamera())
+        bindSingleton<Batch>(SpriteBatch())
+        bindSingleton<Camera>(OrthographicCamera())
         bindSingleton(createWorld())
         bindSingleton(BodyFactory())
         bindSingleton(Engine())

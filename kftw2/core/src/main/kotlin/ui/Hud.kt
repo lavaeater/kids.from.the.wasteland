@@ -53,6 +53,7 @@ class Hud : IHud {
     override val stage = Stage(hudViewPort, batch)
 
   override val player = Ctx.context.inject<Player>()
+
   private val inventoryListAdapter  = SimpleListAdapter(player.inventory.toGdxArray()).apply {
       selectionMode = AbstractListAdapter.SelectionMode.SINGLE
   }
@@ -81,7 +82,6 @@ class Hud : IHud {
   }
 
   init {
-    VisUI.load(VisUI.SkinScale.X1)
     setup()
   }
 
@@ -91,7 +91,6 @@ class Hud : IHud {
   }
 
   override fun dispose() {
-    VisUI.dispose()
     stage.dispose()
   }
 
