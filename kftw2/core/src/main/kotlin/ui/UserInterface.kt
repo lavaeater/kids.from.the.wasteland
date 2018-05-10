@@ -7,9 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.statemachine.StateMachine
-import ktx.app.KtxInputAdapter
-import story.ConversationState
 import story.IConversation
 
 class UserInterface : IUserInterface {
@@ -19,17 +16,17 @@ class UserInterface : IUserInterface {
   override val stage = Stage(hudViewPort, batch)
   override val player = Ctx.context.inject<Player>()
 
+  lateinit var conversationUi: IConversationPresenter
+
 
   override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {
     var currentInputProcessor = Gdx.input.inputProcessor
 
-
-    val conversationUi = ConversationPresenter(stage, conversation, conversationEnded)
-
-
-
-    conversationUi.dispose()
-    Gdx.input.inputProcessor = currentInputProcessor
+    conversationUi = ConversationPresenter(stage, conversation, {
+      Gdx.input.inputProcessor = currentInputProcessor
+      conversationUi.dispose()
+      conversationEnded()
+    })
   }
 
 

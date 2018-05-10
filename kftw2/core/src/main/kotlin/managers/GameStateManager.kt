@@ -47,14 +47,14 @@ class GameStateManager() {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
       edge(GameEvent.InventoryToggled, GameState.Inventory) {}
-        edge(GameEvent.DialogStarted, GameState.Dialog) {}
+      edge(GameEvent.DialogStarted, GameState.Dialog) {}
     }
     state(GameState.Inventory) {
       edge(GameEvent.InventoryToggled, GameState.WorldMap) {}
     }
-      state(GameState.Dialog) {
-          edge(GameEvent.DialogEnded, GameState.WorldMap) {}
-      }
+    state(GameState.Dialog) {
+      edge(GameEvent.DialogEnded, GameState.WorldMap) {}
+    }
   }
 
   init {

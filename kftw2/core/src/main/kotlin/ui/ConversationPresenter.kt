@@ -6,16 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
-import com.badlogic.gdx.utils.Disposable
 import com.lavaeater.Assets
 import com.lavaeater.kftw.statemachine.StateMachine
-import com.lavaeater.kftw.ui.UserInterface.*
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
-import ktx.scene2d.*
 import story.IConversation
+import ui.label
 
-class ConversationPresenter(val s: Stage, val conversation: IConversation, val conversationEnded: () -> Unit) : IConversationPresenter, Disposable {
+class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
 
   val stateMachine : StateMachine<ConversationState, ConversationEvent> =
       StateMachine.buildStateMachine(ConversationState.NotStarted, ::stateChanged) {
@@ -37,7 +35,7 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
     table.remove()
   }
 
-  override fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
+  fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
     var choiceText = ""
     for ((i, line) in protagonistChoices.withIndex()) {
       choiceText += "$i: " + line + "\n\n"
@@ -50,12 +48,15 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
     pLabel.isVisible = true
   }
 
-  override fun showNextAnttagonistLine(nextAntagonistLine: String) {
+  fun showNextAnttagonistLine(nextAntagonistLine: String) {
+    aLabel.txt = ""
     aLabel.text.append(nextAntagonistLine + "\n\n")
     aLabel.invalidate()
     aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
     aLabel.parent.height = aLabel.prefHeight
     aLabel.isVisible = true
+
+    Thread.sleep(2000)
   }
 
   private val npd = NinePatchDrawable(Assets.speechBubble)
@@ -70,18 +71,18 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
       override fun keyDown(keycode: Int): Boolean {
         if (keycode !in 7..16) return true//Not a numeric key!
         val index = keycode - 7
-        if (index !in 0..conversation.choiceCount - 1) return true//Out of range for correct choices, just ignore
-
         makeChoice(index)
-
         return true
       }
     }
 
-
     table = ktx.scene2d.table {
-      pLabel = label("", speechBubbleStyle)
-      aLabel = label("", speechBubbleStyle)
+      pLabel = label("", speechBubbleStyle) {
+        isVisible = false
+      }
+      aLabel = label("", speechBubbleStyle) {
+        isVisible = false
+      }
       width = 400f
       x = s.camera.position.x
       y = s.camera.position.y
@@ -89,18 +90,21 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
       setDebug(true)
     }
     s.addActor(table)
+    stateMachine.initialize()
   }
 
   private fun makeChoice(index: Int) {
-
     if(conversation.protagonistCanChoose) {
-      conversation.makeChoice(index)
-      stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
+      if(conversation.makeChoice(index))
+        stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
     }
 
   }
 
+  private lateinit var _state: ConversationState
+
   fun stateChanged(state:ConversationState) {
+    _state = state
     when (state) {
       ConversationState.NotStarted -> stateMachine.acceptEvent(ConversationEvent.ConversationStarted)
       ConversationState.Ended -> conversationEnded()
@@ -125,8 +129,8 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
   private fun letTheManSpeak() {
     while(conversation.antagonistCanSpeak) {
       showNextAnttagonistLine(conversation.getNextAntagonistLine())
-      Thread.sleep(2000)
     }
+    stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
   }
 
   enum class ConversationEvent {
@@ -146,8 +150,3 @@ class ConversationPresenter(val s: Stage, val conversation: IConversation, val c
     CanConversationContinue
   }
 }
-
-inline fun <S> KWidget<S>.label(
-    text: CharSequence,
-    style: Label.LabelStyle,
-    init: (@Scene2dDsl Label).(S) -> Unit = {}) = actor(Label(text, style), init)

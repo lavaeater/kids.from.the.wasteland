@@ -17,7 +17,7 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
-  val spawnProb = 15
+  val spawnProb = 85
 
   val spawningProbs = mapOf(
       "grass" to
