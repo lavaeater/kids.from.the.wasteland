@@ -1,17 +1,38 @@
 package com.lavaeater.kftw.ui
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
 import com.lavaeater.Assets
+import com.lavaeater.kftw.statemachine.StateMachine
+import com.lavaeater.kftw.ui.UserInterface.*
 import ktx.actors.txt
+import ktx.app.KtxInputAdapter
 import ktx.scene2d.*
+import story.IConversation
 
-class ConversationPresenter(val s: Stage) : IConversationPresenter, Disposable {
+class ConversationPresenter(val s: Stage, val conversation: IConversation, val conversationEnded: () -> Unit) : IConversationPresenter, Disposable {
+
+  val stateMachine : StateMachine<ConversationState, ConversationEvent> =
+      StateMachine.buildStateMachine(ConversationState.NotStarted, ::stateChanged) {
+        state(ConversationState.NotStarted) {
+          edge(ConversationEvent.ConversationStarted, ConversationState.AntagonistIsSpeaking) {}
+        }
+        state(ConversationState.AntagonistIsSpeaking) {
+          edge(ConversationEvent.AntagonistDoneTalking, ConversationState.ProtagonistChoosing) {}
+          edge(ConversationEvent.ConversationEnded, ConversationState.Ended) {}
+        }
+        state(ConversationState.ProtagonistChoosing) {
+          edge(ConversationEvent.ProtagonistMadeAChoice, ConversationState.AntagonistIsSpeaking) {}
+          edge(ConversationEvent.ProtagonistCouldNotChoose, ConversationState.CanConversationContinue) {}
+          edge(ConversationEvent.ConversationEnded, ConversationState.Ended) {}
+        }
+      }
+
   override fun dispose() {
     table.remove()
   }
@@ -45,6 +66,19 @@ class ConversationPresenter(val s: Stage) : IConversationPresenter, Disposable {
   private var table: Table
 
   init {
+    Gdx.input.inputProcessor = object : KtxInputAdapter {
+      override fun keyDown(keycode: Int): Boolean {
+        if (keycode !in 7..16) return true//Not a numeric key!
+        val index = keycode - 7
+        if (index !in 0..conversation.choiceCount - 1) return true//Out of range for correct choices, just ignore
+
+        makeChoice(index)
+
+        return true
+      }
+    }
+
+
     table = ktx.scene2d.table {
       pLabel = label("", speechBubbleStyle)
       aLabel = label("", speechBubbleStyle)
@@ -55,6 +89,61 @@ class ConversationPresenter(val s: Stage) : IConversationPresenter, Disposable {
       setDebug(true)
     }
     s.addActor(table)
+  }
+
+  private fun makeChoice(index: Int) {
+
+    if(conversation.protagonistCanChoose) {
+      conversation.makeChoice(index)
+      stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
+    }
+
+  }
+
+  fun stateChanged(state:ConversationState) {
+    when (state) {
+      ConversationState.NotStarted -> stateMachine.acceptEvent(ConversationEvent.ConversationStarted)
+      ConversationState.Ended -> conversationEnded()
+      ConversationState.AntagonistIsSpeaking -> letTheManSpeak()
+      ConversationState.ProtagonistChoosing -> makeTheManChoose()
+      ConversationState.CanConversationContinue -> checkIfWeAreDone()
+    }
+  }
+
+  private fun checkIfWeAreDone() {
+    stateMachine.acceptEvent(ConversationEvent.ConversationEnded)
+  }
+
+  private fun makeTheManChoose() {
+    if(conversation.protagonistCanChoose)
+      showProtagonistChoices(conversation.getProtagonistChoices())
+    else
+      stateMachine.acceptEvent(ConversationEvent.ProtagonistCouldNotChoose)
+  }
+
+
+  private fun letTheManSpeak() {
+    while(conversation.antagonistCanSpeak) {
+      showNextAnttagonistLine(conversation.getNextAntagonistLine())
+      Thread.sleep(2000)
+    }
+  }
+
+  enum class ConversationEvent {
+    ConversationStarted,
+    AntagonistDoneTalking,
+    ProtagonistMadeAChoice,
+    ConversationEnded,
+    ProtagonistCouldNotChoose
+  }
+
+  enum class ConversationState {
+    NotStarted,
+    Ended,
+    AntagonistIsSpeaking,
+    ProtagonistMustChoose,
+    ProtagonistChoosing,
+    CanConversationContinue
   }
 }
 

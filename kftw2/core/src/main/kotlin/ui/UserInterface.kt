@@ -22,59 +22,16 @@ class UserInterface : IUserInterface {
 
   override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {
     var currentInputProcessor = Gdx.input.inputProcessor
-    Gdx.input.inputProcessor = object : KtxInputAdapter {
-      override fun keyDown(keycode: Int): Boolean {
-        when(conversation.state) {
-          ConversationState.ProtagonistMustChoose -> {
-            if(keycode !in 7..16) return true//Not a numeric key!
-            val index = keycode - 7
-            if(index !in 0..conversation.choiceCount - 1) return true//Out of range for correct choices, just ignore
-
-            conversation.makeChoice(index)
-          }
-          else -> return true
-        }
-        return true
-      }
-    }
-
-    val conversationUi = ConversationPresenter(stage)
-
-    val stateMachine : StateMachine<ConversationState, ConversationEvent> = StateMachine.buildStateMachine()
 
 
-    while (conversation.state != ConversationState.Ended) {
-      while(conversation.state == ConversationState.AntagonistHasMoreToSay) {
-        conversationUi.showNextAnttagonistLine(conversation.getNextAntagonistLine())
-        Thread.sleep(2000) //Here or in presenter?
-      }
+    val conversationUi = ConversationPresenter(stage, conversation, conversationEnded)
 
-      if(conversation.state == ConversationState.ProtagonistMustChoose) {
-        conversationUi.showProtagonistChoices(conversation.getProtagonistChoices())
-      }
 
-      /*
-      After getting the choices, the conversation enters
-      ProtagonistMustChoose state, which means nothing more happens
-      until the user selects something
-       */
-
-      if(conversation.state == ConversationState.Ended)
-        break
-    }
 
     conversationUi.dispose()
     Gdx.input.inputProcessor = currentInputProcessor
-
-    conversationEnded() //The callback to i.e the conversationManager that will start the app again etc. Could be a message.
   }
 
-  enum class ConversationEvent {
-    ConversationStarted,
-    AntagonistDoneTalking,
-    ProtagonistMadeAChoice,
-    ConversationEnded
-  }
 
 
 //  private val inventoryListAdapter  = SimpleListAdapter(player.inventory.toGdxArray()).apply {

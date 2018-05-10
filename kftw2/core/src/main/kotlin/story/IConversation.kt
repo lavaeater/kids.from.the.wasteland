@@ -3,7 +3,8 @@ package story
 import com.lavaeater.kftw.data.IAgent
 
 interface IConversation {
-  val state: ConversationState
+  val antagonistCanSpeak:Boolean
+  val protagonistCanChoose:Boolean
   val protagonist: IAgent
   val antagonist: IAgent
   val choiceCount: Int
