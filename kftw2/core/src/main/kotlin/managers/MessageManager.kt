@@ -14,13 +14,13 @@ class MessageManager: Telegraph {
   val conversationManager = Ctx.context.inject<ConversationManager>()
   override fun handleMessage(msg: Telegram): Boolean {
     when(msg.message) {
-      Messages.CollidedWithImpassibleTerrain -> return NpcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
-      Messages.PlayerMetSomeone -> return PlayerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
+      Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
+      Messages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
     }
     return false
   }
 
-  private fun PlayerEncounteredNpc(npc: Npc): Boolean {
+  private fun playerEncounteredNpc(npc: Npc): Boolean {
 
     /*
     We need a... dialog manager!
@@ -31,7 +31,7 @@ class MessageManager: Telegraph {
     return true
   }
 
-  private fun NpcCollidedWithImpassibleTerrain(npc: Npc) : Boolean {
+  private fun npcCollidedWithImpassibleTerrain(npc: Npc) : Boolean {
     npc.lostInterest()
     return true
   }

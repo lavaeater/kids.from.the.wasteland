@@ -37,9 +37,7 @@ class UserInterface : IUserInterface {
       }
     }
 
-    val conversationUi = ConversationPresenter()
-
-    stage.addActor(conversationUi.table)
+    val conversationUi = ConversationPresenter(stage)
 
     while (conversation.state != ConversationState.Ended) {
       while(conversation.state == ConversationState.AntagonistHasMoreToSay) {
@@ -61,8 +59,7 @@ class UserInterface : IUserInterface {
         break
     }
 
-    stage.actors.removeValue(conversationUi.table,true)
-
+    conversationUi.dispose()
     Gdx.input.inputProcessor = currentInputProcessor
 
     conversationEnded() //The callback to i.e the conversationManager that will start the app again etc. Could be a message.

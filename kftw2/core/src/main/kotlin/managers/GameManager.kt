@@ -123,7 +123,6 @@ class GameManager : Disposable {
 
   private fun resumeWorldMap() {
     hud.hideInventory()
-    hud.hideDialog()
     resumeTheWorld()
   }
 
