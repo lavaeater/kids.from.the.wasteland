@@ -9,7 +9,7 @@ interface IConversation {
   val antagonist: IAgent
   val choiceCount: Int
 
-  fun getNextAntagonistLine():String
+  fun getAntagonistLines():Iterable<String>
   fun getProtagonistChoices():Iterable<String>
   fun makeChoice(index:Int) : Boolean
 }

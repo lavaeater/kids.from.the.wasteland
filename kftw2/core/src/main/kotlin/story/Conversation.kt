@@ -12,11 +12,14 @@ class Conversation(val story:Story, override val protagonist:IAgent, override va
   override val choiceCount: Int
     get() = story.currentChoices.size
 
-  override fun getNextAntagonistLine(): String {
+  override fun getAntagonistLines(): Iterable<String> {
+    val lines = mutableListOf<String>()
     if(story.canContinue()) {
-      return story.Continue()
+      while (story.canContinue()) {
+        lines.add(story.Continue())
+      }
     }
-    return ""
+    return lines
   }
 
   override fun getProtagonistChoices(): Iterable<String> {

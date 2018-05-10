@@ -6,12 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.utils.Timer
 import com.lavaeater.Assets
 import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import story.IConversation
 import ui.label
+import java.util.*
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
 
@@ -48,15 +50,26 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     pLabel.isVisible = true
   }
 
-  fun showNextAnttagonistLine(nextAntagonistLine: String) {
+  fun showAntagonistLines(lines: Iterable<String>) {
     aLabel.txt = ""
-    aLabel.text.append(nextAntagonistLine + "\n\n")
-    aLabel.invalidate()
-    aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
-    aLabel.parent.height = aLabel.prefHeight
     aLabel.isVisible = true
+    Timer.instance().clear()
+    var index = 0
 
-    Thread.sleep(2000)
+    Timer.instance().scheduleTask(object: Timer.Task() {
+      override fun run() {
+        if(index < lines.count()) {
+          aLabel.text.append(lines.elementAt(index) + "\n\n")
+          index++
+          aLabel.invalidate()
+          aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
+          aLabel.parent.height = aLabel.prefHeight
+        } else {
+          //Last time we're running, send done event!
+          stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
+        }
+      }
+    }, 0f, 2f, lines.count())
   }
 
   private val npd = NinePatchDrawable(Assets.speechBubble)
@@ -87,7 +100,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       x = s.camera.position.x
       y = s.camera.position.y
       isVisible = true
-      setDebug(true)
     }
     s.addActor(table)
     stateMachine.initialize()
@@ -96,6 +108,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   private fun makeChoice(index: Int) {
     if(conversation.protagonistCanChoose) {
       if(conversation.makeChoice(index))
+        pLabel.isVisible = false
         stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
     }
 
@@ -127,10 +140,11 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 
   private fun letTheManSpeak() {
-    while(conversation.antagonistCanSpeak) {
-      showNextAnttagonistLine(conversation.getNextAntagonistLine())
-    }
-    stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
+    pLabel.isVisible = false
+    if(conversation.antagonistCanSpeak)
+      showAntagonistLines(conversation.getAntagonistLines())
+    else
+      stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
   }
 
   enum class ConversationEvent {
