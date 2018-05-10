@@ -31,6 +31,10 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
           edge(ConversationEvent.ProtagonistCouldNotChoose, ConversationState.CanConversationContinue) {}
           edge(ConversationEvent.ConversationEnded, ConversationState.Ended) {}
         }
+        state(ConversationState.CanConversationContinue) {
+          edge(ConversationEvent.ConversationEnded, ConversationState.Ended) {}
+        }
+        state(ConversationState.Ended) {}
       }
 
   override fun dispose() {
