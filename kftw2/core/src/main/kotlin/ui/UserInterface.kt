@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.app.KtxInputAdapter
 import story.ConversationState
 import story.IConversation
@@ -39,6 +40,9 @@ class UserInterface : IUserInterface {
 
     val conversationUi = ConversationPresenter(stage)
 
+    val stateMachine : StateMachine<ConversationState, ConversationEvent> = StateMachine.buildStateMachine()
+
+
     while (conversation.state != ConversationState.Ended) {
       while(conversation.state == ConversationState.AntagonistHasMoreToSay) {
         conversationUi.showNextAnttagonistLine(conversation.getNextAntagonistLine())
@@ -63,6 +67,13 @@ class UserInterface : IUserInterface {
     Gdx.input.inputProcessor = currentInputProcessor
 
     conversationEnded() //The callback to i.e the conversationManager that will start the app again etc. Could be a message.
+  }
+
+  enum class ConversationEvent {
+    ConversationStarted,
+    AntagonistDoneTalking,
+    ProtagonistMadeAChoice,
+    ConversationEnded
   }
 
 
