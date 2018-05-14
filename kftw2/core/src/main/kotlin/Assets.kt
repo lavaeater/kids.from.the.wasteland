@@ -16,22 +16,26 @@ import com.badlogic.gdx.utils.Disposable
  */
 object Assets : Disposable {
   lateinit var am: AssetManager
-  val atlases = mapOf(
-      "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
-      "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
-      "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
-      "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
-      "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
-      "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
-      "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  private val atlases by lazy {
+    mapOf(
+        "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
+        "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
+        "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
+        "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
+        "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
+        "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
+        "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  }
 
-  val characters = mapOf(
-      "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
-      "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
-  )
+  private val characters by lazy {
+    mapOf(
+        "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
+        "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
+    )
+  }
 
-  val speechBTexture = Texture(Gdx.files.internal("ui/graphics/speechbubble.png"))
-  val speechBubble = NinePatch(speechBTexture, 14, 8,12,12)
+  val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
+  val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
 
   lateinit var standardFont: BitmapFont
 
@@ -41,17 +45,20 @@ object Assets : Disposable {
   val ATTACK = "attack"
   val DEATH = "death"
 
-  val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
-      "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
+  val animatedCharacters by lazy {
+    mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
+        "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
+  }
+  val portraits by lazy {
+    mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
+        "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+  }
 
-  val portraits = mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
-      "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+  val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }
 
-  val animatedCharacterSprites = mutableMapOf<String, Map<String, List<Sprite>>>()
+  val codeToExtraTiles by lazy { mutableMapOf<String, List<Sprite>>() }
 
-  val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
-
-  val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
+  val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
   fun load(): AssetManager {
     am = AssetManager()
