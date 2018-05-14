@@ -13,9 +13,15 @@ import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import story.IConversation
 import ui.label
-import java.util.*
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
+  private val npd = NinePatchDrawable(Assets.speechBubble)
+  private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
+
+  private lateinit var pLabel: Label
+  private lateinit var aLabel: Label
+  private var pTable: Table
+  private var aTable: Table
 
   val stateMachine : StateMachine<ConversationState, ConversationEvent> =
       StateMachine.buildStateMachine(ConversationState.NotStarted, ::stateChanged) {
@@ -37,8 +43,43 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         state(ConversationState.Ended) {}
       }
 
+  init {
+    Gdx.input.inputProcessor = object : KtxInputAdapter {
+      override fun keyDown(keycode: Int): Boolean {
+        if (keycode !in 7..16) return true//Not a numeric key!
+        val index = keycode - 7
+        makeChoice(index)
+        return true
+      }
+    }
+
+    pTable = ktx.scene2d.table {
+      pLabel = label("", speechBubbleStyle) {
+        isVisible = false
+      }
+      width = 400f
+      x = s.camera.position.x - 100f
+      y = s.camera.position.y
+      isVisible = true
+    }
+
+    aTable = ktx.scene2d.table {
+      aLabel = label("", speechBubbleStyle) {
+        isVisible = false
+      }
+      width = 300f
+      x = s.camera.position.x + 100f
+      y = s.camera.position.y
+      isVisible = true
+    }
+    s.addActor(pTable)
+    s.addActor(aTable)
+    stateMachine.initialize()
+  }
+
+
   override fun dispose() {
-    table.remove()
+    pTable.remove()
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
@@ -76,39 +117,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     }, 0f, 2f, lines.count())
   }
 
-  private val npd = NinePatchDrawable(Assets.speechBubble)
-  private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
-
-  private lateinit var pLabel: Label
-  private lateinit var aLabel: Label
-  private var table: Table
-
-  init {
-    Gdx.input.inputProcessor = object : KtxInputAdapter {
-      override fun keyDown(keycode: Int): Boolean {
-        if (keycode !in 7..16) return true//Not a numeric key!
-        val index = keycode - 7
-        makeChoice(index)
-        return true
-      }
-    }
-
-    table = ktx.scene2d.table {
-      pLabel = label("", speechBubbleStyle) {
-        isVisible = false
-      }
-      aLabel = label("", speechBubbleStyle) {
-        isVisible = false
-      }
-      width = 400f
-      x = s.camera.position.x
-      y = s.camera.position.y
-      isVisible = true
-    }
-    s.addActor(table)
-    stateMachine.initialize()
-  }
-
   private fun makeChoice(index: Int) {
     if(conversation.protagonistCanChoose) {
       if(conversation.makeChoice(index))
@@ -118,10 +126,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
   }
 
-  private lateinit var _state: ConversationState
-
   fun stateChanged(state:ConversationState) {
-    _state = state
     when (state) {
       ConversationState.NotStarted -> stateMachine.acceptEvent(ConversationEvent.ConversationStarted)
       ConversationState.Ended -> conversationEnded()
