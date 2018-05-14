@@ -39,7 +39,7 @@ object Assets : Disposable {
   val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
 
   val tableNinePatch by lazy { Texture(Gdx.files.internal("ui/graphics/convobackground.png"))}
-  val tableBackGround by lazy { NinePatch(tableNinePatch, 4, 4, 28, 28 ) }
+  val tableBackGround by lazy { NinePatch(tableNinePatch, 4, 4, 4, 4 ) }
 
   lateinit var standardFont: BitmapFont
 

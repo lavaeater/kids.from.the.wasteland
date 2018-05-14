@@ -16,19 +16,21 @@ import story.IConversation
 import ui.IConversationPresenter
 import ui.image
 import ui.label
+import javax.sql.rowset.RowSetWarning
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
+  private val tableBg by lazy { NinePatchDrawable(Assets.tableBackGround) }
 
   private val cWidth = s.width / 3
   private val cHeight = s.height / 3
 
   private val pX = s.width / 2 - cWidth
-  private val pY = s.height / 2 - cHeight
+  private val pY = s.height / 2 + cHeight
 
-  private val aX = s.width - cWidth
-  private val aY = s.height - cHeight
+  private val aX = pX + s.width / 2
+  private val aY = pY
 
   private lateinit var pLabel: Label
   private lateinit var aLabel: Label
@@ -80,27 +82,35 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         scaleBy(8f)
       }.cell(expand = true).inCell
       pCell = label("", speechBubbleStyle) {
-        setWrap(true)
       }.cell(expand = true).inCell
-      width = 300f
-      x = s.camera.position.x - 100f
-      y = s.camera.position.y
+          .apply {
+            background = tableBg
+          }
+      width = cWidth
+      height = cHeight
+      x = pX
+      y = pY
       isVisible = false
 	    debug = true
     }
 
     aTable = ktx.scene2d.table {
+      aCell = label("", speechBubbleStyle) {
+      }.cell(expand = true).inCell
+      row()
       image(Assets.portraits["orc"]!!) {
         scaleBy(8f)
       }.cell(expand = true).inCell
-      aCell = label("", speechBubbleStyle) {
-        setWrap(true)
-      }.cell(expand = true).inCell
-      width = 300f
-      x = s.camera.position.x + 100f
-      y = s.camera.position.y
+          .apply {
+            background = tableBg
+          }
+      width = cWidth
+      height = cHeight
+      x = aX
+      y = aY
       isVisible = false
 	    debug = true
+      pack()
     }
 
     aLabel = aCell.actor
@@ -154,7 +164,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   private fun makeChoice(index: Int) {
-    if(stateMachine.currentState == ConversationState.ProtagonistChoosing &&
+    if(stateMachine.currentState.state == ConversationState.ProtagonistChoosing &&
         conversation.protagonistCanChoose) {
       if(conversation.makeChoice(index)) {
         pLabel.isVisible = false
