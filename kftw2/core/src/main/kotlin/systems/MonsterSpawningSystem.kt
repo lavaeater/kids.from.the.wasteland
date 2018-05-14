@@ -13,7 +13,9 @@ import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import kotlin.system.measureTimeMillis
 
-class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+class MonsterSpawningSystem(val areWeTesting:Boolean) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+  var weHaveSpawned = false
+
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
@@ -22,7 +24,7 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
   val spawningProbs = mapOf(
       "grass" to
           mapOf(0..15 to "sneakypanther",
-          16..85 to "orc"),
+              16..85 to "orc"),
       "desert" to mapOf(0..15 to "snake",
           16..85 to "orc"))
 
@@ -44,9 +46,37 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
 
      */
 
-    if (MathUtils.random(100) < spawnProb) {
+    if (areWeTesting) {
 
-      Gdx.app.log("spawn random char", "time in milliseconds: ${measureTimeMillis {
+      if(!weHaveSpawned) {
+//We need to spawn a fool!
+        val position = transformMpr[entity].position.toTile()
+
+        // We get a ring of tiles instead of an area
+
+        val someTilesInRange = mapManager.getBandOfTiles(position, 3, 3).filter {
+          it.tile.tileType != "rock" && it.tile.tileType != "water"
+        }
+
+        val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+
+        val dieRoll = MathUtils.random(100)
+        val npcType = spawningProbs[randomlySelectedTile.tile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
+        if (npcType != null) {
+          if (npcType == "orc")
+            actorFactory.addNpcAtTileWithAnimation(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y, spriteKey = "orc")
+          else
+            actorFactory.addNpcEntityAtTile(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y)
+        }
+
+        weHaveSpawned = true
+      }
+
+    } else {
+
+      if (MathUtils.random(100) < spawnProb) {
+
+
         //We need to spawn a fool!
         val position = transformMpr[entity].position.toTile()
 
@@ -60,9 +90,9 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
 
         val dieRoll = MathUtils.random(100)
         val npcType = spawningProbs[randomlySelectedTile.tile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
-        if(npcType != null) {
-          if(npcType == "orc")
-            actorFactory.addNpcAtTileWithAnimation(type=npcType, x =  randomlySelectedTile.x, y = randomlySelectedTile.y, spriteKey = "orc")
+        if (npcType != null) {
+          if (npcType == "orc")
+            actorFactory.addNpcAtTileWithAnimation(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y, spriteKey = "orc")
           else
             actorFactory.addNpcEntityAtTile(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y)
         }
@@ -80,9 +110,7 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
         No, here. This is where we do that.
 
          */
-
-      }}")
+      }
     }
-
   }
 }
