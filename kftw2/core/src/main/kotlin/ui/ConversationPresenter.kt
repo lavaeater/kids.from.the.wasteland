@@ -47,6 +47,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   init {
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
+	      if(stateMachine.currentState == ConversationState.ProtagonistChoosing)
         if (keycode !in 7..16) return true//Not a numeric key!
         val index = keycode - 7
         makeChoice(index)
@@ -59,7 +60,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         isVisible = false
       }
       image(Assets.portraits["femalerogue"]!!) {
-	      width = 200f
+	      scaleBy(4f)
       }
       width = 300f
       x = s.camera.position.x - 100f
@@ -73,7 +74,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         isVisible = false
       }
       image(Assets.portraits["orc"]!!) {
-	      width = 200f
+	      scaleBy(4f)
       }
       width = 300f
       x = s.camera.position.x + 100f
