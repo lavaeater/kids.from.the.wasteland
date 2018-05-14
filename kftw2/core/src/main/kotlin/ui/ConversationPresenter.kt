@@ -3,6 +3,7 @@ package com.lavaeater.kftw.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
@@ -21,6 +22,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
   private lateinit var pLabel: Label
   private lateinit var aLabel: Label
+  private lateinit var pCell: Cell<Label>
+  private lateinit var aCell: Cell<Label>
   private var pTable: Table
   private var aTable: Table
 
@@ -47,7 +50,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   init {
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
-	      if(stateMachine.currentState == ConversationState.ProtagonistChoosing)
+
         if (keycode !in 7..16) return true//Not a numeric key!
         val index = keycode - 7
         makeChoice(index)
@@ -56,32 +59,36 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     }
 
     pTable = ktx.scene2d.table {
-      pLabel = label("", speechBubbleStyle) {
-        isVisible = false
-      }
       image(Assets.portraits["femalerogue"]!!) {
-	      scaleBy(4f)
-      }
+        scaleBy(8f)
+      }.cell(expand = true).inCell
+      pCell = label("", speechBubbleStyle) {
+        setWrap(true)
+      }.cell(expand = true).inCell
       width = 300f
       x = s.camera.position.x - 100f
       y = s.camera.position.y
-      isVisible = true
+      isVisible = false
 	    debug = true
     }
 
     aTable = ktx.scene2d.table {
-      aLabel = label("", speechBubbleStyle) {
-        isVisible = false
-      }
       image(Assets.portraits["orc"]!!) {
-	      scaleBy(4f)
-      }
+        scaleBy(8f)
+      }.cell(expand = true).inCell
+      aCell = label("", speechBubbleStyle) {
+        setWrap(true)
+      }.cell(expand = true).inCell
       width = 300f
       x = s.camera.position.x + 100f
       y = s.camera.position.y
-      isVisible = true
+      isVisible = false
 	    debug = true
     }
+
+    aLabel = aCell.actor
+    pLabel = pCell.actor
+
     s.addActor(pTable)
     s.addActor(aTable)
     stateMachine.initialize()
@@ -93,6 +100,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
+    pTable.isVisible = true
     var choiceText = ""
     for ((i, line) in protagonistChoices.withIndex()) {
       choiceText += "$i: " + line + "\n\n"
@@ -106,6 +114,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   fun showAntagonistLines(lines: Iterable<String>) {
+    aTable.isVisible = true
     aLabel.txt = ""
     aLabel.isVisible = true
     Timer.instance().clear()
@@ -128,10 +137,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   private fun makeChoice(index: Int) {
-    if(conversation.protagonistCanChoose) {
-      if(conversation.makeChoice(index))
+    if(stateMachine.currentState == ConversationState.ProtagonistChoosing &&
+        conversation.protagonistCanChoose) {
+      if(conversation.makeChoice(index)) {
         pLabel.isVisible = false
         stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
+      }
     }
 
   }
