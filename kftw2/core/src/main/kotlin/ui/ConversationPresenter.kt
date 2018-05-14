@@ -12,6 +12,7 @@ import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import story.IConversation
+import ui.image
 import ui.label
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
@@ -57,20 +58,28 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       pLabel = label("", speechBubbleStyle) {
         isVisible = false
       }
-      width = 400f
+      image(Assets.portraits["femalerogue"]!!) {
+	      width = 200f
+      }
+      width = 300f
       x = s.camera.position.x - 100f
       y = s.camera.position.y
       isVisible = true
+	    debug = true
     }
 
     aTable = ktx.scene2d.table {
       aLabel = label("", speechBubbleStyle) {
         isVisible = false
       }
+      image(Assets.portraits["orc"]!!) {
+	      width = 200f
+      }
       width = 300f
       x = s.camera.position.x + 100f
       y = s.camera.position.y
       isVisible = true
+	    debug = true
     }
     s.addActor(pTable)
     s.addActor(aTable)

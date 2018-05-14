@@ -44,6 +44,9 @@ object Assets : Disposable {
   val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
       "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
 
+  val portraits = mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
+      "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+
   val animatedCharacterSprites = mutableMapOf<String, Map<String, List<Sprite>>>()
 
   val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
