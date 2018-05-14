@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Disposable
 
 /**
@@ -36,6 +37,9 @@ object Assets : Disposable {
 
   val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
   val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
+
+  val tableNinePatch by lazy { Texture(Gdx.files.internal("ui/graphics/convobackground.png"))}
+  val tableBackGround by lazy { NinePatch(tableNinePatch, 4, 4, 28, 28 ) }
 
   lateinit var standardFont: BitmapFont
 

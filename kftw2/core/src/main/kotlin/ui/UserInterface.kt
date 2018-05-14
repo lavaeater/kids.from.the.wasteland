@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import story.IConversation
+import ui.IConversationPresenter
 
 class UserInterface : IUserInterface {
 

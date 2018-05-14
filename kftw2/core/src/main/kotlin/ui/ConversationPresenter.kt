@@ -13,12 +13,22 @@ import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import story.IConversation
+import ui.IConversationPresenter
 import ui.image
 import ui.label
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
-  private val npd = NinePatchDrawable(Assets.speechBubble)
-  private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = npd }
+  private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
+  private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
+
+  private val cWidth = s.width / 3
+  private val cHeight = s.height / 3
+
+  private val pX = s.width / 2 - cWidth
+  private val pY = s.height / 2 - cHeight
+
+  private val aX = s.width - cWidth
+  private val aY = s.height - cHeight
 
   private lateinit var pLabel: Label
   private lateinit var aLabel: Label
@@ -52,6 +62,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     Split screen in half.
 
     Make sure one is on one side, the other... on the other.
+
+    Create some areas!
      */
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
