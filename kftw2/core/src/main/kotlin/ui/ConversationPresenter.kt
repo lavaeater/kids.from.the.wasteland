@@ -94,10 +94,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       aCell = label("", speechBubbleStyle) {
       }.cell(expand = true).inCell
       row()
+	    row()
+	    row()
       image(Assets.portraits["orc"]!!) {
         scaleBy(8f)
       }.cell(expand = true).inCell
-      width = cWidth
+//      width = cWidth
       height = cHeight
       x = aX
       y = aY
@@ -113,13 +115,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     stateMachine.initialize()
   }
 
-
   override fun dispose() {
     pTable.remove()
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
-    pTable.isVisible = true
+    pTable.invalidate()
+	  pTable.isVisible = true
     var choiceText = ""
     for ((i, line) in protagonistChoices.withIndex()) {
       choiceText += "$i: " + line + "\n\n"
@@ -143,15 +145,15 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       override fun run() {
         if(index < lines.count()) {
           aLabel.text.append(lines.elementAt(index) + "\n\n")
-          index++
+	        index++
           aLabel.invalidate()
           aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
           aLabel.parent.height = aLabel.prefHeight
-          pTable.invalidate()
         } else {
           //Last time we're running, send done event!
           stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
         }
+	      aTable.invalidate()
       }
     }, 0f, 2f, lines.count())
   }
