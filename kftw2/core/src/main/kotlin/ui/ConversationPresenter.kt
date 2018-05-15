@@ -16,7 +16,6 @@ import story.IConversation
 import ui.IConversationPresenter
 import ui.image
 import ui.label
-import javax.sql.rowset.RowSetWarning
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
@@ -26,8 +25,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   private val cWidth = s.width / 3
   private val cHeight = s.height / 3
 
-  private val pX = s.width / 2 - cWidth
-  private val pY = s.height / 2 + cHeight
+  private val pX = cWidth / 2
+  private val pY = s.height / 3 + cHeight
 
   private val aX = pX + s.width / 2
   private val aY = pY
@@ -83,9 +82,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       }.cell(expand = true).inCell
       pCell = label("", speechBubbleStyle) {
       }.cell(expand = true).inCell
-          .apply {
-            background = tableBg
-          }
       width = cWidth
       height = cHeight
       x = pX
@@ -101,16 +97,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       image(Assets.portraits["orc"]!!) {
         scaleBy(8f)
       }.cell(expand = true).inCell
-          .apply {
-            background = tableBg
-          }
       width = cWidth
       height = cHeight
       x = aX
       y = aY
       isVisible = false
 	    debug = true
-      pack()
     }
 
     aLabel = aCell.actor
@@ -155,6 +147,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
           aLabel.invalidate()
           aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
           aLabel.parent.height = aLabel.prefHeight
+          pTable.invalidate()
         } else {
           //Last time we're running, send done event!
           stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
