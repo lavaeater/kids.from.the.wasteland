@@ -79,20 +79,22 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     }
 
     aTable = ktx.scene2d.table {
-	    image(Assets.portraits["orc"]!!) {
-		    setScaling(Scaling.fit)
-		    keepWithinParent()
-	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 4f)
+
 	    aLabel = label("I don't want anything to happen anymore.\nI Want to take control and make it happen. This is  a long line before a break\nIt must work with word wrap.", speechBubbleStyle) {
 		    setWrap(true)
 		    keepWithinParent()
-	    }.cell(expandY = true, width = 128f, align = Align.topRight, pad = 4f)
+	    }.cell(expandY = true, width = 128f, align = Align.topRight, padLeft = 16f, padBottom = 2f)
+	    row()
+	    image(Assets.portraits["orc"]!!) {
+		    setScaling(Scaling.fit)
+		    keepWithinParent()
+	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 2f, colspan = 2)
       x = antagonistStage.x + 20f
       y = antagonistStage.y + 60f
       isVisible = true
 	    debug = true
-	    width = prefWidth
-	    height = prefHeight
+//	    width = prefWidth
+//	    height = prefHeight
 	    pack()
     }
 
