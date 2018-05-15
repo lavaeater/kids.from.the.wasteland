@@ -144,6 +144,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  width = choiceGroup.width
 			  setWrap(true) }) }
 	  }
+	  choiceGroup.invalidate()
 	  protagonistRoot.pack()
 	  protagonistRoot.invalidate()
   }
