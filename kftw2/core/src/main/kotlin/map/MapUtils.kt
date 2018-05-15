@@ -1,9 +1,12 @@
 package com.lavaeater.kftw.map
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
+import ktx.math.vec3
 import kotlin.math.absoluteValue
 
 fun String.toShortCode() : String {
@@ -54,6 +57,11 @@ fun Pair<Int,Int>.tileWorldCenter(tileSize:Int = GameManager.TILE_SIZE) : Vector
   val x = (first.toFloat() * tileSize - tileSize / 2)
   val y = (second.toFloat() * tileSize - tileSize / 2)
   return Vector2(x,y)
+}
+
+fun getWorldScreenCoordinats(x:Int, y:Int, tileSize: Int = GameManager.TILE_SIZE): Vector3 {
+  return Ctx.context.inject<Camera>().project(vec3(x.toFloat() * tileSize - tileSize / 2 , y.toFloat() * tileSize - tileSize / 2,0f))
+
 }
 
 fun Int.getMin(range:Int) : Int {

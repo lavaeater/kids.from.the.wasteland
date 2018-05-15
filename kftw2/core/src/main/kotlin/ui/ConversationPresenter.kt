@@ -2,16 +2,25 @@ package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
+import com.badlogic.gdx.utils.Align
+import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.lavaeater.Assets
+import com.lavaeater.kftw.map.getWorldScreenCoordinats
+import com.lavaeater.kftw.map.tileWorldCenter
 import com.lavaeater.kftw.statemachine.StateMachine
+import ktx.actors.keepWithinParent
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
+import ktx.math.vec2
+import ktx.math.vec3
 import story.IConversation
 import ui.IConversationPresenter
 import ui.image
@@ -31,11 +40,11 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   private val aX = pX + s.width / 2
   private val aY = pY
 
-  private lateinit var pLabel: Label
+	private val antagonistScreen = getWorldScreenCoordinats(conversation.antagonist.currentX, conversation.antagonist.currentY)
+	private val antagonistStage = s.screenToStageCoordinates(antagonistScreen.toVec2())
+
   private lateinit var aLabel: Label
-  private lateinit var pCell: Cell<Label>
-  private lateinit var aCell: Cell<Label>
-  private var pTable: Table
+  //private lateinit var aCell: Cell<Label>
   private var aTable: Table
 
   val stateMachine : StateMachine<ConversationState, ConversationEvent> =
@@ -59,13 +68,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       }
 
   init {
-    /*
-    Split screen in half.
-
-    Make sure one is on one side, the other... on the other.
-
-    Create some areas!
-     */
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
 
@@ -76,93 +78,77 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       }
     }
 
-    pTable = ktx.scene2d.table {
-      image(Assets.portraits["femalerogue"]!!) {
-        scaleBy(8f)
-      }.cell(expand = true).inCell
-      pCell = label("", speechBubbleStyle) {
-      }.cell(expand = true).inCell
-      width = cWidth
-      height = cHeight
-      x = pX
-      y = pY
-      isVisible = false
-	    debug = true
-    }
-
     aTable = ktx.scene2d.table {
-      aCell = label("", speechBubbleStyle) {
-      }.cell(expand = true).inCell
-      row()
-	    row()
-	    row()
-      image(Assets.portraits["orc"]!!) {
-        scaleBy(8f)
-      }.cell(expand = true).inCell
-//      width = cWidth
-      height = cHeight
-      x = aX
-      y = aY
-      isVisible = false
+	    image(Assets.portraits["orc"]!!) {
+		    setScaling(Scaling.fit)
+		    keepWithinParent()
+	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 4f)
+	    aLabel = label("I don't want anything to happen anymore.\nI Want to take control and make it happen. This is  a long line before a break\nIt must work with word wrap.", speechBubbleStyle) {
+		    setWrap(true)
+		    keepWithinParent()
+	    }.cell(expandY = true, width = 128f, align = Align.topRight, pad = 4f)
+      x = antagonistStage.x + 20f
+      y = antagonistStage.y + 60f
+      isVisible = true
 	    debug = true
+	    width = prefWidth
+	    height = prefHeight
+	    pack()
     }
 
-    aLabel = aCell.actor
-    pLabel = pCell.actor
+    //aLabel = aCell.actor
 
-    s.addActor(pTable)
     s.addActor(aTable)
     stateMachine.initialize()
   }
 
   override fun dispose() {
-    pTable.remove()
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
-    pTable.invalidate()
-	  pTable.isVisible = true
-    var choiceText = ""
-    for ((i, line) in protagonistChoices.withIndex()) {
-      choiceText += "$i: " + line + "\n\n"
-    }
-    pLabel.txt = ""
-    pLabel.txt = choiceText
-    pLabel.invalidate()
-    pLabel.width = pLabel.parent.width
-    pLabel.parent.height = pLabel.prefHeight
-    pLabel.isVisible = true
+//    pTable.invalidate()
+//	  pTable.isVisible = true
+//    var choiceText = ""
+//    for ((i, line) in protagonistChoices.withIndex()) {
+//      choiceText += "$i: " + line + "\n\n"
+//    }
+//    pLabel.txt = ""
+//    pLabel.txt = choiceText
+//    pLabel.invalidate()
+//    pLabel.width = pLabel.parent.width
+//    pLabel.parent.height = pLabel.prefHeight
+//    pLabel.isVisible = true
   }
 
   fun showAntagonistLines(lines: Iterable<String>) {
-    aTable.isVisible = true
-    aLabel.txt = ""
-    aLabel.isVisible = true
-    Timer.instance().clear()
-    var index = 0
-
-    Timer.instance().scheduleTask(object: Timer.Task() {
-      override fun run() {
-        if(index < lines.count()) {
-          aLabel.text.append(lines.elementAt(index) + "\n\n")
-	        index++
-          aLabel.invalidate()
-          aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
-          aLabel.parent.height = aLabel.prefHeight
-        } else {
-          //Last time we're running, send done event!
-          stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
-        }
-	      aTable.invalidate()
-      }
-    }, 0f, 2f, lines.count())
+//    aTable.isVisible = true
+//    aLabel.txt = ""
+//    aLabel.isVisible = true
+//    Timer.instance().clear()
+//    var index = 0
+//
+//    Timer.instance().scheduleTask(object: Timer.Task() {
+//      override fun run() {
+//        if(index < lines.count()) {
+//          aLabel.text.append(lines.elementAt(index) + "\n\n")
+//	        index++
+//          aLabel.invalidate()
+//          aLabel.width = aLabel.parent.width //We might need TWO tables... don't know yet
+//          aLabel.parent.height = aLabel.prefHeight
+//        } else {
+//          //Last time we're running, send done event!
+//          stateMachine.acceptEvent(ConversationEvent.AntagonistDoneTalking)
+//        }
+//	      aTable.invalidate()
+//      }
+//    }, 0f, 2f, lines.count())
   }
 
   private fun makeChoice(index: Int) {
     if(stateMachine.currentState.state == ConversationState.ProtagonistChoosing &&
         conversation.protagonistCanChoose) {
       if(conversation.makeChoice(index)) {
-        pLabel.isVisible = false
+        //pLabel.isVisible = false
         stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
       }
     }
@@ -175,7 +161,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       ConversationState.Ended -> conversationEnded()
       ConversationState.AntagonistIsSpeaking -> letTheManSpeak()
       ConversationState.ProtagonistChoosing -> makeTheManChoose()
-      ConversationState.CanConversationContinue -> checkIfWeAreDone()
+      else -> checkIfWeAreDone()
     }
   }
 
@@ -192,7 +178,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 
   private fun letTheManSpeak() {
-    pLabel.isVisible = false
+    //pLabel.isVisible = false
     if(conversation.antagonistCanSpeak)
       showAntagonistLines(conversation.getAntagonistLines())
     else
@@ -215,4 +201,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     ProtagonistChoosing,
     CanConversationContinue
   }
+}
+
+private fun Vector3.toVec2(): Vector2 {
+	return vec2(this.x, this.y)
 }

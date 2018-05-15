@@ -4,16 +4,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import story.IConversation
 import ui.IConversationPresenter
 
-class UserInterface : IUserInterface {
-
+class UserInterface: IUserInterface {
   private val batch = Ctx.context.inject<Batch>()
-  override val hudViewPort = FitViewport(Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat(), OrthographicCamera())
+  override val hudViewPort = ExtendViewport(640f, 480f, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
   override val player = Ctx.context.inject<Player>()
 
