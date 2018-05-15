@@ -4,10 +4,11 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.List
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import ktx.scene2d.KWidget
-import ktx.scene2d.Scene2dDsl
-import ktx.scene2d.actor
+import com.badlogic.gdx.utils.Array
+import ktx.scene2d.*
 
 
 inline fun <S> KWidget<S>.label(
