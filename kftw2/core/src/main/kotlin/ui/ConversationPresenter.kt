@@ -91,39 +91,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       }
     }
 
-	  protagonistRoot = table {
-		  choiceTable = table {
-			  background = speechBubbleNinePatch
-			  keepWithinParent()
-			  left()
-			  bottom()
-		  }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
-		  row()
-		  image(Assets.portraits["femalerogue"]!!) {
-			  setScaling(Scaling.fit)
-			  keepWithinParent()
-		  }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft, pad = 2f, colspan = 2)
-		  isVisible = false
-		  pack()
-	  }
+		protagonistRoot = setupProtagonistRoot()
 
-    antagonistRoot = table {
-	    aLabel = label("I don't want anything to happen anymore.\nI Want to take control and make it happen. This is  a long line before a break\nIt must work with word wrap.", speechBubbleStyle) {
-		    setWrap(true)
-		    keepWithinParent()
-	    }.cell(expandY = true, width = 128f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
-	    row()
-	    image(Assets.portraits["orc"]!!) {
-		    setScaling(Scaling.fit)
-		    keepWithinParent()
-	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 2f, colspan = 2)
-      isVisible = true
-	    pack()
-    }
+		antagonistRoot = setupAntagonistRoot()
 
 		val rootTable = table {
 			setFillParent(true)
-			top()
+			center()
 			add(protagonistRoot).expandX().align(Align.center)
 			add(antagonistRoot).expandX().align(Align.center)
 		}
@@ -132,7 +106,41 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     stateMachine.initialize()
   }
 
-  override fun dispose() {
+	private fun setupAntagonistRoot() :KTableWidget {
+		return table {
+			aLabel = label("I don't want anything to happen anymore.\nI Want to take control and make it happen. This is  a long line before a break\nIt must work with word wrap.", speechBubbleStyle) {
+				setWrap(true)
+				keepWithinParent()
+			}.cell(expandY = true, width = 128f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+			row()
+			image(Assets.portraits["orc"]!!) {
+				setScaling(Scaling.fit)
+				keepWithinParent()
+			}.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft, pad = 2f, colspan = 2)
+			isVisible = true
+			pack()
+		}
+	}
+
+	private fun setupProtagonistRoot() :KTableWidget {
+		return table {
+			choiceTable = table {
+				background = speechBubbleNinePatch
+				keepWithinParent()
+				left()
+				bottom()
+			}.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+			row()
+			image(Assets.portraits["femalerogue"]!!) {
+				setScaling(Scaling.fit)
+				keepWithinParent()
+			}.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft, pad = 2f, colspan = 2)
+			isVisible = false
+			pack()
+		}
+	}
+
+	override fun dispose() {
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
