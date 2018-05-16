@@ -80,7 +80,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	private lateinit var choiceTable: KTableWidget
 
 	init {
-		s.isDebugAll = true
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
 
