@@ -144,9 +144,9 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  label.setWrap(true)
 			  add(label).align(Align.left).growY().pad(4f).row()
 			  label.keepWithinParent()
+			  label.invalidate()
 		  }
 	  }
-	  choiceTable.pack()
 	  protagonistRoot.invalidate()
   }
 
