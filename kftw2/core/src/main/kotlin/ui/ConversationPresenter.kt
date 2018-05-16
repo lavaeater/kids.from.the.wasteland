@@ -123,7 +123,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 		val rootTable = table {
 			setFillParent(true)
-			top()
+			center()
 			add(protagonistRoot).expandX().align(Align.center)
 			add(antagonistRoot).expandX().align(Align.center)
 		}
@@ -142,7 +142,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
 			  val label = label(it, standardLabelStyle)
 			  label.setWrap(true)
-			  add(label).align(Align.left).growY().pad(4f).row()
+			  add(label).align(Align.left).expandY().growX().pad(4f).row()
 			  label.keepWithinParent()
 		  }
 	  }
