@@ -137,21 +137,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  choiceTable.apply {
 		  protagonistChoices.withIndex().map { indexedValue ->
 			  val label = label("${indexedValue.index}: ${indexedValue.value}", standardLabelStyle).apply {
-				  align(Align.left)
-				  invalidate() }
+				  align(Align.left)}
 			  add(label).growY().row()
 			  label.keepWithinParent()
+			  label.labelAlign
 			  label.setWrap(true)
-			  label.width = choiceTable.width
-			  label.height = label.prefHeight
 		  }
-		  setFillParent(true)
 	  }
-//	  choiceTable.pack()
-	  choiceTable.height = choiceTable.prefHeight
-	  choiceTable.invalidate()
-//	  protagonistRoot.pack()
-//	  protagonistRoot.height = protagonistRoot.prefHeight
 	  protagonistRoot.invalidate()
   }
 
