@@ -103,10 +103,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  setScaling(Scaling.fit)
 			  keepWithinParent()
 		  }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft, pad = 2f, colspan = 2)
-		  x = protagonistStage.x - 60f
-		  y = protagonistStage.y + 60f
 		  isVisible = false
-		  debug = true
 		  pack()
 	  }
 
@@ -120,14 +117,18 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		    setScaling(Scaling.fit)
 		    keepWithinParent()
 	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 2f, colspan = 2)
-      x = antagonistStage.x + 60f
-      y = antagonistStage.y + 60f
       isVisible = true
 	    pack()
     }
 
-    s.addActor(antagonistRoot)
-    s.addActor(protagonistRoot)
+		val rootTable = table {
+			setFillParent(true)
+			top()
+			add(protagonistRoot).expandX().align(Align.center)
+			add(antagonistRoot).expandX().align(Align.center)
+		}
+
+    s.addActor(rootTable)
     stateMachine.initialize()
   }
 
@@ -141,10 +142,11 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
 			  val label = label(it, standardLabelStyle)
 			  label.setWrap(true)
-			  add(label).align(Align.left).growY().row()
+			  add(label).align(Align.left).growY().pad(4f).row()
 			  label.keepWithinParent()
 		  }
 	  }
+	  choiceTable.pack()
 	  protagonistRoot.invalidate()
   }
 
