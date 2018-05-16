@@ -80,6 +80,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	private lateinit var choiceTable: KTableWidget
 
 	init {
+		s.isDebugAll = true
     Gdx.input.inputProcessor = object : KtxInputAdapter {
       override fun keyDown(keycode: Int): Boolean {
 
@@ -94,6 +95,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  choiceTable = table {
 			  background = speechBubbleNinePatch
 			  keepWithinParent()
+			  left()
+			  bottom()
 		  }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 		  row()
 		  image(Assets.portraits["femalerogue"]!!) {
@@ -135,13 +138,11 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  choiceTable.clearChildren()
 	  protagonistRoot.isVisible = true
 	  choiceTable.apply {
-		  protagonistChoices.withIndex().map { indexedValue ->
-			  val label = label("${indexedValue.index}: ${indexedValue.value}", standardLabelStyle).apply {
-				  align(Align.left)}
-			  add(label).growY().row()
-			  label.keepWithinParent()
-			  label.labelAlign
+		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
+			  val label = label(it, standardLabelStyle)
 			  label.setWrap(true)
+			  add(label).align(Align.left).growY().row()
+			  label.keepWithinParent()
 		  }
 	  }
 	  protagonistRoot.invalidate()
