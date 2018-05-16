@@ -19,8 +19,8 @@ import ktx.actors.keepWithinParent
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import ktx.math.vec2
+import ktx.scene2d.KTableWidget
 import ktx.scene2d.KVerticalGroup
-import ktx.scene2d.label
 import ktx.scene2d.table
 import ktx.scene2d.verticalGroup
 import story.IConversation
@@ -77,7 +77,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         state(ConversationState.Ended) {}
       }
 
-	private lateinit var choiceGroup: KVerticalGroup
+	private lateinit var choiceTable: KTableWidget
 
 	init {
     Gdx.input.inputProcessor = object : KtxInputAdapter {
@@ -91,11 +91,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     }
 
 	  protagonistRoot = table {
-		  table {
-			  choiceGroup = verticalGroup {
-				  setFillParent(true)
-				  keepWithinParent()
-			  }.cell(expandY = true)
+		  choiceTable = table {
 			  background = speechBubbleNinePatch
 			  keepWithinParent()
 		  }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
@@ -136,16 +132,26 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
-	  choiceGroup.clearChildren()
+	  choiceTable.clearChildren()
 	  protagonistRoot.isVisible = true
-	  choiceGroup.apply {
-		  protagonistChoices.withIndex().map {indexedValue -> addActor(label("${indexedValue.index}: ${indexedValue.value}",standardLabelStyle).apply {
-			  keepWithinParent()
-			  width = choiceGroup.width
-			  setWrap(true) }) }
+	  choiceTable.apply {
+		  protagonistChoices.withIndex().map { indexedValue ->
+			  val label = label("${indexedValue.index}: ${indexedValue.value}", standardLabelStyle).apply {
+				  align(Align.left)
+				  invalidate() }
+			  add(label).growY().row()
+			  label.keepWithinParent()
+			  label.setWrap(true)
+			  label.width = choiceTable.width
+			  label.height = label.prefHeight
+		  }
+		  setFillParent(true)
 	  }
-	  choiceGroup.invalidate()
-	  protagonistRoot.pack()
+//	  choiceTable.pack()
+	  choiceTable.height = choiceTable.prefHeight
+	  choiceTable.invalidate()
+//	  protagonistRoot.pack()
+//	  protagonistRoot.height = protagonistRoot.prefHeight
 	  protagonistRoot.invalidate()
   }
 
