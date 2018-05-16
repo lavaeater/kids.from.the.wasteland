@@ -20,9 +20,7 @@ import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
-import ktx.scene2d.KVerticalGroup
 import ktx.scene2d.table
-import ktx.scene2d.verticalGroup
 import story.IConversation
 import ui.IConversationPresenter
 import ui.image
@@ -32,30 +30,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
 	private val standardLabelStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK)
-  private val tableBg by lazy { NinePatchDrawable(Assets.tableBackGround) }
 
-	private val listStyle = List.ListStyle().apply {
-		font = Assets.standardFont
-		fontColorSelected = Color.BLUE
-		fontColorUnselected = Color.BLACK
-		background = speechBubbleNinePatch
-	}
-
-  private val cWidth = s.width / 3
-  private val cHeight = s.height / 3
-
-  private val pX = cWidth / 2
-  private val pY = s.height / 3 + cHeight
-
-  private val aX = pX + s.width / 2
-  private val aY = pY
-
-	private val antagonistStage = s.screenToStageCoordinates(getWorldScreenCoordinats(conversation.antagonist.currentX, conversation.antagonist.currentY).toVec2())
-	private val protagonistStage = s.screenToStageCoordinates(getWorldScreenCoordinats(conversation.protagonist.currentX, conversation.protagonist.currentY).toVec2())
-
-  private lateinit var aLabel: Label
+  private lateinit var antagonistSpeechBubble: Label
   private var antagonistRoot: Table
 	private var protagonistRoot: Table
+	private lateinit var choiceTable: KTableWidget
+	private var rootTable: KTableWidget
 
   val stateMachine : StateMachine<ConversationState, ConversationEvent> =
       StateMachine.buildStateMachine(ConversationState.NotStarted, ::stateChanged) {
@@ -76,8 +56,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         }
         state(ConversationState.Ended) {}
       }
-
-	private lateinit var choiceTable: KTableWidget
 
 	init {
     Gdx.input.inputProcessor = object : KtxInputAdapter {
@@ -107,7 +85,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  }
 
     antagonistRoot = table {
-	    aLabel = label("I don't want anything to happen anymore.\nI Want to take control and make it happen. This is  a long line before a break\nIt must work with word wrap.", speechBubbleStyle) {
+	    antagonistSpeechBubble = label("", speechBubbleStyle) {
 		    setWrap(true)
 		    keepWithinParent()
 	    }.cell(expandY = true, width = 128f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
@@ -120,7 +98,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	    pack()
     }
 
-		val rootTable = table {
+		rootTable = table {
 			setFillParent(true)
 			center()
 			add(protagonistRoot).expandX().align(Align.center)
@@ -132,6 +110,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   }
 
   override fun dispose() {
+	  s.actors.removeValue(rootTable, true)
   }
 
   fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
@@ -151,15 +130,15 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
   private fun showAntagonistLines(lines: Iterable<String>) {
     antagonistRoot.isVisible = true
-    aLabel.txt = ""
+    antagonistSpeechBubble.txt = ""
     Timer.instance().clear()
     var index = 0
 
     Timer.instance().scheduleTask(object: Timer.Task() {
       override fun run() {
         if(index < lines.count()) {
-          aLabel.text.append(lines.elementAt(index) + "\n")
-	        aLabel.invalidate()
+          antagonistSpeechBubble.text.append(lines.elementAt(index) + "\n")
+	        antagonistSpeechBubble.invalidate()
 	        index++
         } else {
           //Last time we're running, send done event!
