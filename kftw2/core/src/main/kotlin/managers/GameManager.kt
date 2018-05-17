@@ -121,7 +121,7 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
     for (system in engine.systems.filter { it !is RenderCharactersSystem && it !is RenderMapSystem }) {
       system.setProcessing(false)
       if (system is CharacterControlSystem) {
-        system.isProcessing = false
+        system.processInput = false
       }
 
     }
@@ -137,7 +137,7 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
       system.setProcessing(true)
       if(system is CharacterControlSystem)
       {
-        system.isProcessing = true
+        system.processInput = true
       }
     }
   }

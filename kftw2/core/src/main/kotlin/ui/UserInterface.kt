@@ -2,6 +2,7 @@ package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -33,7 +34,7 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
 
   override fun update(delta: Float) {
     batch.projectionMatrix = stage.camera.combined
-    stage.act()
+    stage.act(delta)
     stage.draw()
   }
 
@@ -48,7 +49,7 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
 
   private fun setup() {
     stage.clear()
-    val inputManager = Ctx.context.inject<InputMultiplexer>()
+    val inputManager = Ctx.context.inject<InputProcessor>() as InputMultiplexer
     inputManager.addProcessor(stage)
   }
 

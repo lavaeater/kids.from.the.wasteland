@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.scenes.scene2d.EventListener
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.List
@@ -15,9 +17,7 @@ import com.badlogic.gdx.utils.Timer
 import com.lavaeater.Assets
 import com.lavaeater.kftw.map.getWorldScreenCoordinats
 import com.lavaeater.kftw.statemachine.StateMachine
-import ktx.actors.keepWithinParent
-import ktx.actors.onClick
-import ktx.actors.txt
+import ktx.actors.*
 import ktx.app.KtxInputAdapter
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
@@ -59,15 +59,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
       }
 
 	init {
-    Gdx.input.inputProcessor = object : KtxInputAdapter {
-      override fun keyDown(keycode: Int): Boolean {
 
-        if (keycode !in 7..16) return true//Not a numeric key!
-        val index = keycode - 7
-        makeChoice(index)
-        return true
-      }
-    }
+
 
 	  protagonistRoot = table {
 		  choiceTable = table {
@@ -107,6 +100,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		}
 
     s.addActor(rootTable)
+    s.keyboardFocus = rootTable
+
+    rootTable.onKey { key ->
+      if (key.isDigit() && key.toInt() !in 0..9) {
+        makeChoice(key.toInt())
+      }
+    }
     stateMachine.initialize()
   }
 
@@ -120,9 +120,21 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  choiceTable.clearChildren()
 	  protagonistRoot.isVisible = true
 	  choiceTable.apply {
-		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
-			  val button = textButton(it)
-			  button.onClick {  }
+		  protagonistChoices.withIndex().forEach { indexedValue ->
+        val text = "${indexedValue.index}: ${indexedValue.value}"
+			  val button = textButton(text)
+        button.onClick {
+          makeChoice(indexedValue.index)
+        }
+//        button.addListener (object: KtxInputListener() {
+//          override fun touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+//            makeChoice(indexedValue.index)
+//            return super.touchDown(event, x, y, pointer, button)
+//          }
+//        })
+//			  button.onChange {
+//          makeChoice(indexedValue.index)
+//        }
 			  button.label.setWrap(true)
 			  add(button).align(Align.left).expandY().growX().pad(4f).row()
 			  button.keepWithinParent()

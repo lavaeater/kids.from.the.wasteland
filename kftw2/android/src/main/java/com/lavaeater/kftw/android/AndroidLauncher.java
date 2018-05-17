@@ -13,6 +13,6 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
-        initialize(new KidsFromTheWastelandGame(new GameSettings(48f, 32f, 8)), configuration);
+        initialize(new KidsFromTheWastelandGame(new GameSettings(48f, 32f, 8, 12)), configuration);
     }
 }
