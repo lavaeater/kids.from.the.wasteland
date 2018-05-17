@@ -60,7 +60,7 @@ class GameManager : Disposable {
     engine.addSystem(inputSystem)
 
     //MONSTER SPAWN!!
-    engine.addSystem(MonsterSpawningSystem(true))
+    engine.addSystem(MonsterSpawningSystem(false))
 
     //Current tile system. Continually updates the agent instances with
     //what tile they're on, used by the AI
