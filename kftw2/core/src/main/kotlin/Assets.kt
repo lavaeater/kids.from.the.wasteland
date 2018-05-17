@@ -2,6 +2,7 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.SkinLoader
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -9,12 +10,18 @@ import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
+import com.lavaeater.kftw.GameSettings
+import ktx.scene2d.Scene2DSkin
+import ktx.style.skin
+import ktx.style.textButton
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
  */
 object Assets : Disposable {
+  lateinit var gameSettings: GameSettings
   lateinit var am: AssetManager
   private val atlases by lazy {
     mapOf(
@@ -63,7 +70,8 @@ object Assets : Disposable {
 
   val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
-  fun load(): AssetManager {
+  fun load(gameSettings: GameSettings): AssetManager {
+    this.gameSettings = gameSettings
     am = AssetManager()
 
     initializeMapTiles()
@@ -73,7 +81,23 @@ object Assets : Disposable {
 
     initializeFonts()
 
+    initializeScene2dDefaultSkin()
+
     return am
+  }
+
+  private fun initializeScene2dDefaultSkin() {
+    //val mySkin = Skin(Gdx.files.internal("skins/uiskin.json"))
+
+    val skin = skin {
+      textButton {
+        font = standardFont
+	      fontColor = Color.BLACK
+	      downFontColor = Color.GRAY
+      }
+    }
+
+    Scene2DSkin.defaultSkin = skin
   }
 
   private fun initializeFonts() {
@@ -81,7 +105,7 @@ object Assets : Disposable {
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
       color = Color.GRAY
-      size = 8
+      size = gameSettings.baseFontSize
     }
 
     standardFont =  fontGenerator.generateFont(fontParams)

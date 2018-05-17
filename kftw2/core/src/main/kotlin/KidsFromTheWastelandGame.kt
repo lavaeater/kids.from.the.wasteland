@@ -19,7 +19,7 @@ class KidsFromTheWastelandGame(val gameSettings: GameSettings = GameSettings()) 
   override fun create() {
     Gdx.app.logLevel = Application.LOG_ERROR
 
-    Assets.load()
+    Assets.load(gameSettings)
 
     VisUI.load(VisUI.SkinScale.X1)
     Ctx.buildContext(gameSettings)

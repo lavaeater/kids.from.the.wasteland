@@ -21,6 +21,7 @@ import ktx.app.KtxInputAdapter
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
+import ktx.scene2d.textButton
 import story.IConversation
 import ui.IConversationPresenter
 import ui.image
@@ -29,7 +30,6 @@ import ui.label
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
-	private val standardLabelStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK)
 
   private lateinit var antagonistSpeechBubble: Label
   private var antagonistRoot: Table
@@ -118,10 +118,10 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  protagonistRoot.isVisible = true
 	  choiceTable.apply {
 		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
-			  val label = label(it, standardLabelStyle)
-			  label.setWrap(true)
-			  add(label).align(Align.left).expandY().growX().pad(4f).row()
-			  label.keepWithinParent()
+			  val button = textButton(it)
+			  button.label.setWrap(true)
+			  add(button).align(Align.left).expandY().growX().pad(4f).row()
+			  button.keepWithinParent()
 		  }
 	  }
 	  choiceTable.pack()
