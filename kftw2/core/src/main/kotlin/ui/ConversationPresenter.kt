@@ -74,12 +74,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  keepWithinParent()
 			  left()
 			  bottom()
-		  }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+		  }.cell(expandY = true, width = 256f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 		  row()
 		  image(Assets.portraits["femalerogue"]!!) {
 			  setScaling(Scaling.fit)
 			  keepWithinParent()
-		  }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft, pad = 2f, colspan = 2)
+		  }.cell(fill = true, width = 48f, height = 48f, align = Align.bottomLeft, pad = 2f, colspan = 2)
 		  isVisible = false
 		  pack()
 	  }
@@ -88,12 +88,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	    antagonistSpeechBubble = label("", speechBubbleStyle) {
 		    setWrap(true)
 		    keepWithinParent()
-	    }.cell(expandY = true, width = 128f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+	    }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 	    row()
 	    image(Assets.portraits["orc"]!!) {
 		    setScaling(Scaling.fit)
 		    keepWithinParent()
-	    }.cell(fill = true, width = 32f, height = 32f, align = Align.bottomLeft,pad = 2f, colspan = 2)
+	    }.cell(fill = true, width = 48f, height = 48f, align = Align.bottomLeft,pad = 2f, colspan = 2)
       isVisible = true
 	    pack()
     }
