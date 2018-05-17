@@ -1,7 +1,6 @@
 package com.lavaeater.kftw.managers
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -59,9 +58,7 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
     engine.addSystem(FollowCameraSystem(playerEntity))
     engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
-    val inputSystem = CharacterControlSystem()
-    Gdx.input.inputProcessor = inputSystem
-    engine.addSystem(inputSystem)
+    engine.addSystem(CharacterControlSystem())
 
     //MONSTER SPAWN!!
     engine.addSystem(MonsterSpawningSystem(true))
@@ -121,8 +118,13 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
   }
 
   private fun stopTheWorld() {
-    for (system in engine.systems.filter{ it !is RenderCharactersSystem && it !is RenderMapSystem })
+    for (system in engine.systems.filter { it !is RenderCharactersSystem && it !is RenderMapSystem }) {
       system.setProcessing(false)
+      if (system is CharacterControlSystem) {
+        system.isProcessing = false
+      }
+
+    }
   }
 
   private fun resumeWorldMap() {
@@ -131,7 +133,12 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
   }
 
   private fun resumeTheWorld() {
-    for (system in engine.systems)
+    for (system in engine.systems) {
       system.setProcessing(true)
+      if(system is CharacterControlSystem)
+      {
+        system.isProcessing = true
+      }
+    }
   }
 }

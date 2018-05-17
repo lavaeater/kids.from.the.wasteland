@@ -16,6 +16,7 @@ import com.lavaeater.Assets
 import com.lavaeater.kftw.map.getWorldScreenCoordinats
 import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.actors.keepWithinParent
+import ktx.actors.onClick
 import ktx.actors.txt
 import ktx.app.KtxInputAdapter
 import ktx.math.vec2
@@ -109,6 +110,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     stateMachine.initialize()
   }
 
+
+
   override fun dispose() {
 	  s.actors.removeValue(rootTable, true)
   }
@@ -119,6 +122,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  choiceTable.apply {
 		  protagonistChoices.withIndex().map { indexedValue -> "${indexedValue.index}: ${indexedValue.value}"}.forEach {
 			  val button = textButton(it)
+			  button.onClick {  }
 			  button.label.setWrap(true)
 			  add(button).align(Align.left).expandY().growX().pad(4f).row()
 			  button.keepWithinParent()

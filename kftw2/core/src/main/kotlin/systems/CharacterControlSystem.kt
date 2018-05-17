@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
@@ -17,11 +18,16 @@ import ktx.ashley.mapperFor
 import ktx.math.vec2
 import java.util.*
 
-class CharacterControlSystem(val speed: Float = 20f) :
+class CharacterControlSystem(val speed: Float = 20f, var isProcessing: Boolean = true) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
   val gameStateManager = Ctx.context.inject<GameStateManager>()
+
+  init {
+  	val inputManager = Ctx.context.inject<InputMultiplexer>()
+    inputManager.addProcessor(this)
+  }
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val component = kbCtrlMpr[entity]!!

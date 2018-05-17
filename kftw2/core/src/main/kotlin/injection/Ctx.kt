@@ -1,6 +1,7 @@
 package com.lavaeater.kftw.injection
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -29,6 +30,7 @@ class Ctx {
     val context = Context()
     fun buildContext(gameSettings: GameSettings) {
       context.register {
+        bindSingleton(InputMultiplexer())
         bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
         bindSingleton(Player("Thorborg"))

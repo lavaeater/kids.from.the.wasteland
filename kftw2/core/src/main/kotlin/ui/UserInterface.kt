@@ -1,6 +1,7 @@
 package com.lavaeater.kftw.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -10,7 +11,7 @@ import com.lavaeater.kftw.injection.Ctx
 import story.IConversation
 import ui.IConversationPresenter
 
-class UserInterface: IUserInterface {
+class UserInterface(var processInput: Boolean = true): IUserInterface {
   private val batch = Ctx.context.inject<Batch>()
   override val hudViewPort = ExtendViewport(640f, 480f, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
@@ -20,33 +21,11 @@ class UserInterface: IUserInterface {
 
 
   override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {
-    var currentInputProcessor = Gdx.input.inputProcessor
-
     conversationUi = ConversationPresenter(stage, conversation, {
-      Gdx.input.inputProcessor = currentInputProcessor
       conversationUi.dispose()
       conversationEnded()
     })
   }
-
-
-
-//  private val inventoryListAdapter  = SimpleListAdapter(player.inventory.toGdxArray()).apply {
-//      selectionMode = AbstractListAdapter.SelectionMode.SINGLE
-//  }
-
-//  val inventoryTable = table {
-//      debug = true
-//      height = Gdx.graphics.height.toFloat() / 3
-//      width = Gdx.graphics.width.toFloat() / 5
-//      listView(inventoryListAdapter) {
-//          header = label("Inventory")
-//      }
-//      left()
-//      top()
-//  }
-
-
 
   init {
     setup()
@@ -54,6 +33,7 @@ class UserInterface: IUserInterface {
 
   override fun update(delta: Float) {
     batch.projectionMatrix = stage.camera.combined
+    stage.act()
     stage.draw()
   }
 
@@ -68,11 +48,8 @@ class UserInterface: IUserInterface {
 
   private fun setup() {
     stage.clear()
-
-//    stage.addActor(inventoryTable)
-//    hideInventory()
-//
-//    stage.addActor(conversationTable)
+    val inputManager = Ctx.context.inject<InputMultiplexer>()
+    inputManager.addProcessor(stage)
   }
 
   override fun showInventory() {
