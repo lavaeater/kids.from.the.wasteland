@@ -12,7 +12,7 @@ import screens.BoxScreen
 import screens.PortraitScreen
 
 
-class KidsFromTheWastelandGame : KtxGame<Screen>() {
+class KidsFromTheWastelandGame(val gameSettings: GameSettings = GameSettings()) : KtxGame<Screen>() {
 
   private lateinit var mainGameScreen: MainGameScreen
 
@@ -22,7 +22,7 @@ class KidsFromTheWastelandGame : KtxGame<Screen>() {
     Assets.load()
 
     VisUI.load(VisUI.SkinScale.X1)
-    Ctx.buildContext()
+    Ctx.buildContext(gameSettings)
     mainGameScreen = MainGameScreen()
     addScreen(mainGameScreen)
     setScreen<MainGameScreen>()

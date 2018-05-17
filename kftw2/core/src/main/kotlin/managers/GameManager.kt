@@ -8,15 +8,16 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.IUserInterface
 import managers.MessageManager
 
-class GameManager : Disposable {
+class GameManager(private val gameSettings: GameSettings) : Disposable {
   val batch = Ctx.context.inject<Batch>()
   val camera = Ctx.context.inject<Camera>()
-  val viewPort = ExtendViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera)
+  val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
   val engine = Ctx.context.inject<Engine>()
   val actorManager = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
@@ -27,6 +28,9 @@ class GameManager : Disposable {
   init {
     Ctx.context.inject<GameStateManager>().apply { addChangeListener(::gameStateChanged) }
     setupSystems()
+    VIEWPORT_WIDTH = gameSettings.width
+    VIEWPORT_HEIGHT = gameSettings.height
+    TILE_SIZE = gameSettings.tileSize
 
     camera.position.x = 0f
     camera.position.y = 0f
@@ -88,9 +92,9 @@ class GameManager : Disposable {
   }
 
   companion object {
-    val VIEWPORT_HEIGHT = 64f
-    val VIEWPORT_WIDTH = 48f
-    val TILE_SIZE = 8
+    var VIEWPORT_HEIGHT = 64f
+    var VIEWPORT_WIDTH = 48f
+    var TILE_SIZE = 8
   }
 
   fun pause() {

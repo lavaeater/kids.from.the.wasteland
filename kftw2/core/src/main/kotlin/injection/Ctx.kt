@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.PerformanceCounters
+import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
@@ -26,7 +27,7 @@ class Ctx {
 
   companion object {
     val context = Context()
-    fun buildContext() {
+    fun buildContext(gameSettings: GameSettings) {
       context.register {
         bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
@@ -43,7 +44,7 @@ class Ctx {
         bindSingleton<IUserInterface>(UserInterface())
         bindSingleton(ConversationManager())
         bindSingleton(MessageManager())
-        bindSingleton(GameManager())
+        bindSingleton(GameManager(gameSettings))
       }
     }
   }
