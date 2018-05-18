@@ -33,3 +33,10 @@ inline fun <S> KWidget<S>.textButton(
 		style: String = defaultStyle,
 		skin: Skin = Scene2DSkin.defaultSkin,
 		init: KTextButton.(S) -> Unit = {}) = actor(KTextButton(text, skin, style), init)
+
+fun Char.toNumber() : Int {
+	if (this !in '0'..'9') {
+		throw NumberFormatException()
+	}
+	return this.toInt() - '0'.toInt()
+}

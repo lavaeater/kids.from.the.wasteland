@@ -14,9 +14,14 @@ import ui.IConversationPresenter
 
 class UserInterface(var processInput: Boolean = true): IUserInterface {
   private val batch = Ctx.context.inject<Batch>()
-  override val hudViewPort = ExtendViewport(640f, 480f, OrthographicCamera())
+  override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
   override val player = Ctx.context.inject<Player>()
+  companion object {
+    val aspectRatio = 16/9
+    val uiWidth = 800f
+    val uiHeight = uiWidth * aspectRatio
+  }
 
   lateinit var conversationUi: IConversationPresenter
 

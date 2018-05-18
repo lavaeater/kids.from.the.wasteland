@@ -27,10 +27,14 @@ import story.IConversation
 import ui.IConversationPresenter
 import ui.image
 import ui.label
+import ui.toNumber
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
+
+  private val baseWidth = UserInterface.uiWidth / 3
+  private val baseHeight = UserInterface.uiHeight / 3
 
   private lateinit var antagonistSpeechBubble: Label
   private var antagonistRoot: Table
@@ -68,12 +72,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  keepWithinParent()
 			  left()
 			  bottom()
-		  }.cell(expandY = true, width = 256f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+		  }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 		  row()
 		  image(Assets.portraits["femalerogue"]!!) {
 			  setScaling(Scaling.fit)
 			  keepWithinParent()
-		  }.cell(fill = true, width = 48f, height = 48f, align = Align.bottomLeft, pad = 2f, colspan = 2)
+		  }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft, pad = 2f, colspan = 2)
 		  isVisible = false
 		  pack()
 	  }
@@ -82,12 +86,12 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	    antagonistSpeechBubble = label("", speechBubbleStyle) {
 		    setWrap(true)
 		    keepWithinParent()
-	    }.cell(expandY = true, width = 192f, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
+	    }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 	    row()
 	    image(Assets.portraits["orc"]!!) {
 		    setScaling(Scaling.fit)
 		    keepWithinParent()
-	    }.cell(fill = true, width = 48f, height = 48f, align = Align.bottomLeft,pad = 2f, colspan = 2)
+	    }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft,pad = 2f, colspan = 2)
       isVisible = true
 	    pack()
     }
@@ -103,8 +107,8 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     s.keyboardFocus = rootTable
 
     rootTable.onKey { key ->
-      if (key.isDigit() && key.toInt() !in 0..9) {
-        makeChoice(key.toInt())
+      if (key.isDigit() && key in '0'..'9') {
+        makeChoice(key.toNumber())
       }
     }
     stateMachine.initialize()
@@ -123,7 +127,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  protagonistChoices.withIndex().forEach { indexedValue ->
         val text = "${indexedValue.index}: ${indexedValue.value}"
 			  val button = textButton(text)
-        button.onClick {
+        button.onChange {
           makeChoice(indexedValue.index)
         }
 //        button.addListener (object: KtxInputListener() {
@@ -141,6 +145,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  }
 	  }
 	  choiceTable.pack()
+    choiceTable.isVisible = true
 	  protagonistRoot.invalidate()
   }
 
@@ -169,7 +174,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
     if(stateMachine.currentState.state == ConversationState.ProtagonistChoosing &&
         conversation.protagonistCanChoose) {
       if(conversation.makeChoice(index)) {
-        protagonistRoot.isVisible = false
+        choiceTable.isVisible = false
         stateMachine.acceptEvent(ConversationEvent.ProtagonistMadeAChoice)
       }
     }
@@ -199,7 +204,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 
   private fun letTheManSpeak() {
-    protagonistRoot.isVisible = false
+    choiceTable.isVisible = false
     if(conversation.antagonistCanSpeak)
       showAntagonistLines(conversation.getAntagonistLines())
     else
