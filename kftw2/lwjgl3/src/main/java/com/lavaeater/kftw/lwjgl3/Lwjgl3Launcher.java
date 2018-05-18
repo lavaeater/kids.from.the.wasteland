@@ -12,13 +12,14 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new KidsFromTheWastelandGame(), getDefaultConfiguration());
+        //return new Lwjgl3Application(new KidsFromTheWastelandGame(), getDefaultConfiguration());
+        return new Lwjgl3Application(new KidsFromTheWastelandGame(new GameSettings(48f, 32f, 8, 16)), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
         Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
         configuration.setTitle("KidsFromTheWasteland");
-        configuration.setWindowedMode(3200, 1800);
+        configuration.setWindowedMode(2560, 1440);
         configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
         return configuration;
     }
