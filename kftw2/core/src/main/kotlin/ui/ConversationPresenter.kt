@@ -33,7 +33,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
 
-  private val baseWidth = UserInterface.uiWidth / 3
+  private val baseWidth = UserInterface.uiWidth / 2
   private val baseHeight = UserInterface.uiHeight / 3
 
   private lateinit var antagonistSpeechBubble: Label
@@ -98,9 +98,9 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 		rootTable = table {
 			setFillParent(true)
-			center()
-			add(protagonistRoot).expandX().align(Align.center)
-			add(antagonistRoot).expandX().align(Align.center)
+			top()
+			add(protagonistRoot).expand().align(Align.left)
+			add(antagonistRoot).expand().align(Align.left)
 		}
 
     s.addActor(rootTable)
@@ -140,7 +140,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 //          makeChoice(indexedValue.index)
 //        }
 			  button.label.setWrap(true)
-			  add(button).align(Align.left).expandY().growX().pad(4f).row()
+			  add(button).align(Align.left).expandY().growX().pad(8f).space(4f).row()
 			  button.keepWithinParent()
 		  }
 	  }
