@@ -18,12 +18,24 @@ class ConversationManager {
   private val storyReader = InkLoader()
 
   fun startWithNpc(npc:Npc) {
-    currentAgent = npc
-    currentStory = Story(storyReader.readStoryJson("ink/dialog.ink.json"))
-    ui.runConversation(Conversation(currentStory!!, player, npc), ::endConversation)
+    if(npc.has(Fact.MetPlayer)) {
+      //Load some other story!
+    } else {
+      npc.state(Fact.MetPlayer)
+      currentAgent = npc
+      currentStory = getFirstConversation(currentAgent!!)
+      ui.runConversation(Conversation(currentStory!!, player, npc), ::endConversation)
+    }
+  }
+
+  fun getFirstConversation(npc: IAgent) : Story {
+    return Story(storyReader.readStoryJson("ink/dialog.ink.json"))
   }
 
   fun endConversation() {
+
+    currentAgent?.state(Fact.MetPlayer)
+
     currentAgent = null
     currentStory = null
     gameStateManager.handleEvent(GameEvent.DialogEnded)
