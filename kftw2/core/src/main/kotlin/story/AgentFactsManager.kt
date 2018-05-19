@@ -141,6 +141,14 @@ fun MutableSet<AgentFacts>.has(agent:IAgent, fact: Fact) : Boolean {
   return if(this.contains(agent)) this.safeAgentFacts(agent).facts.contains(fact) else false
 }
 
+fun IAgent.stateFact(fact:Fact) {
+  AgentFactsManager.stateFact(this, fact)
+}
+
+fun IAgent.has(fact:Fact) : Boolean {
+  return AgentFactsManager.has(this, fact)
+}
+
 enum class Fact {
   MetPlayer,
   UsedConversations,

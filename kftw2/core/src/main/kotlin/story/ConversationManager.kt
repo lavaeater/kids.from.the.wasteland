@@ -21,7 +21,7 @@ class ConversationManager {
     if(npc.has(Fact.MetPlayer)) {
       //Load some other story!
     } else {
-      npc.state(Fact.MetPlayer)
+      npc.stateFact(Fact.MetPlayer)
       currentAgent = npc
       currentStory = getFirstConversation(currentAgent!!)
       ui.runConversation(Conversation(currentStory!!, player, npc), ::endConversation)
@@ -34,7 +34,7 @@ class ConversationManager {
 
   fun endConversation() {
 
-    currentAgent?.state(Fact.MetPlayer)
+    currentAgent?.stateFact(Fact.MetPlayer)
 
     currentAgent = null
     currentStory = null
