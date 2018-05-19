@@ -1,24 +1,18 @@
 package com.lavaeater.kftw.ui
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.scenes.scene2d.EventListener
-import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.List
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.lavaeater.Assets
-import com.lavaeater.kftw.map.getWorldScreenCoordinats
 import com.lavaeater.kftw.statemachine.StateMachine
 import ktx.actors.*
-import ktx.app.KtxInputAdapter
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table

@@ -12,9 +12,9 @@ import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcType
 import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.map.IMapManager
+import map.IMapManager
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.map.tileWorldCenter
+import map.tileWorldCenter
 import ktx.math.vec2
 
 class ActorFactory {

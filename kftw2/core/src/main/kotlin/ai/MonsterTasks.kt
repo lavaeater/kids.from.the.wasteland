@@ -7,7 +7,7 @@ import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.data.rollAgainstAgent
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.map.isInRange
+import map.isInRange
 import ktx.ashley.mapperFor
 
 /*

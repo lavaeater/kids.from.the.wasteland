@@ -3,8 +3,8 @@ package com.lavaeater.kftw.data
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManager
+import map.IMapManager
+import map.MapManager
 import com.lavaeater.kftw.map.TileInstance
 
 class Npc(override var name:String ="Joshua",

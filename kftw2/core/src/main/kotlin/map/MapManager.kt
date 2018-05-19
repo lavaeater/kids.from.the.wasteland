@@ -1,14 +1,14 @@
-package com.lavaeater.kftw.map
+package map
 
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
-import com.badlogic.gdx.utils.PerformanceCounters
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.map.Tile
+import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.systems.tileX
 import com.lavaeater.kftw.systems.tileY
-import map.TileManager
 import kotlin.math.roundToInt
 
 class MapManager : IMapManager {
@@ -162,8 +162,8 @@ class MapManager : IMapManager {
       currentX = x
       currentY = y
       currentlyVisibleTiles = tileManager.getTiles(
-              (currentX - Companion.currentTileRange)..(currentX + Companion.currentTileRange),
-              (currentY - Companion.currentTileRange)..(currentY + Companion.currentTileRange))
+              (currentX - currentTileRange)..(currentX + currentTileRange),
+              (currentY - currentTileRange)..(currentY + currentTileRange))
     }
 //    tileCounter.stop()
     return currentlyVisibleTiles!!

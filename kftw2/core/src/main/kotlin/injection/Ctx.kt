@@ -15,8 +15,8 @@ import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
 import com.lavaeater.kftw.managers.GameManager
 import com.lavaeater.kftw.managers.GameStateManager
-import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManager
+import map.IMapManager
+import map.MapManager
 import com.lavaeater.kftw.ui.UserInterface
 import com.lavaeater.kftw.ui.IUserInterface
 import ktx.box2d.createWorld

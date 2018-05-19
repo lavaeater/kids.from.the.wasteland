@@ -2,16 +2,14 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.PlayerComponent
 import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.ActorFactory
-import com.lavaeater.kftw.map.IMapManager
+import map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
-import kotlin.system.measureTimeMillis
 
 class MonsterSpawningSystem(val areWeTesting:Boolean) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
   var weHaveSpawned = false

@@ -1,10 +1,14 @@
-package com.lavaeater.kftw.map
+package map
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.lavaeater.Assets
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameManager
+import com.lavaeater.kftw.map.Tile
+import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.util.SimplexNoise
 import ktx.math.vec3
 import kotlin.math.absoluteValue
@@ -85,6 +89,28 @@ fun Pair<Int,Int>.isInRange(minX:Int, maxX:Int, minY:Int, maxY:Int): Boolean{
 
 fun Pair<Int,Int>.isInRange(pos : Pair<Int,Int>, range : Int) : Boolean {
   return this.isInRange(pos.first, pos.second, range)
+}
+
+fun Tile.getKeyCode() : String {
+  return this.priority.toString() + this.tileType + this.subType + this.code + this.shortCode + this.needsNeighbours
+}
+
+fun Tile.getInstance(x:Int, y:Int): TileInstance {
+  return TileInstance(x, y, this.getSprite(), this.getExtraSprites(), this.isImpassible(), tile = this)
+}
+
+fun Tile.isImpassible() : Boolean {
+  return (this.priority == 0 || this.priority == 3) && !this.shortCode.isOneTerrain()
+}
+
+fun Tile.getSprite() : Sprite {
+  return Assets.sprites[this.tileType]!![this.subType]!!
+}
+
+fun Tile.getExtraSprites() : Array<Sprite> {
+  if (Assets.codeToExtraTiles.containsKey(this.shortCode))
+    return Assets.codeToExtraTiles[this.shortCode]!!.toTypedArray()
+  return emptyArray()
 }
 
 //fun MutableMap<TileKey, Int>.getTileKeyForDirection(key: TileKey, directionKey: TileKey): TileKey {

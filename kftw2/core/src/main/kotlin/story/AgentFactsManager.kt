@@ -8,7 +8,10 @@ import com.lavaeater.kftw.data.IAgent
  * Keeps track of the global story state. Yay! Or? I dunno
  */
 
-data class AgentFacts(val agent:IAgent, val facts: MutableSet<Fact> = mutableSetOf(), val stringValues: MutableMap<Fact, MutableSet<String>> = hashMapOf(), val intValues: MutableMap<Fact, Int> = hashMapOf())
+data class AgentFacts(val agent:IAgent,
+                      val facts: MutableSet<Fact> = mutableSetOf(),
+                      val stringValues: MutableMap<Fact, MutableSet<String>> = hashMapOf(),
+                      val intValues: MutableMap<Fact, Int> = hashMapOf())
 
 class AgentFactsManager {
   companion object {
