@@ -1,5 +1,6 @@
 import com.lavaeater.kftw.data.IAgent
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
 import story.AgentFactsManager
@@ -9,19 +10,32 @@ import kotlin.test.assertEquals
 
 class AgentFactManagerFilterTests {
 
-	private lateinit var agentA: IAgent
-	private lateinit var agentB: IAgent
-	private lateinit var agentC: IAgent
-	private lateinit var agentD: IAgent
-	private lateinit var agentNoFacts: IAgent
+	companion object {
+		lateinit var agentA: IAgent
+		lateinit var agentB: IAgent
+		lateinit var agentC: IAgent
+		lateinit var agentD: IAgent
+		lateinit var agentNoFacts: IAgent
+
+		@JvmStatic
+		@BeforeClass
+		fun beforeClass() {
+
+			/*
+			We only mock the agents one, but the statements below should be idempotent...
+			 */
+			agentA = Mockito.mock(IAgent::class.java)
+			agentB = Mockito.mock(IAgent::class.java)
+			agentC = Mockito.mock(IAgent::class.java)
+			agentD = Mockito.mock(IAgent::class.java)
+			agentNoFacts = Mockito.mock(IAgent::class.java)
+
+			AgentFactsManager.addAgent(agentNoFacts) //All agents are added in the system, we add this one specifically
+		}
+	}
 
 	@Before
-	fun explorativeFilterTest() {
-		agentA = Mockito.mock(IAgent::class.java)
-		agentB = Mockito.mock(IAgent::class.java)
-		agentC = Mockito.mock(IAgent::class.java)
-		agentD = Mockito.mock(IAgent::class.java)
-		agentNoFacts = Mockito.mock(IAgent::class.java)
+	fun before() {
 		agentA.stateFactWithValue(Fact.PlayerHate, 12)
 		agentB.stateFactWithValue(Fact.PlayerHate, 100)
 		agentC.stateFactWithValue(Fact.PlayerHate, 1)
@@ -60,4 +74,23 @@ class AgentFactManagerFilterTests {
 		//assert
 		assertEquals(1, agentsHavingMetPlayer.count())
 	}
+
+	@Test
+	fun filterOnPlayerHateInRange() {
+		//act
+		val hatingPlayerALot = AgentFactsManager.filterAgentsOnIntValueInRange(Fact.PlayerHate, 40..100)
+
+		//assert
+		assertEquals(2, hatingPlayerALot.count())
+	}
+
+	@Test
+	fun filterOnPlayerHateNotInRange() {
+		//act
+		val hateingPlayerLess = AgentFactsManager.filterAgentsOnIntValueNotInRange(Fact.PlayerHate, 40..100)
+
+		//assert
+		assertEquals(3, hateingPlayerLess.count())
+	}
+
 }

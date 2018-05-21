@@ -16,7 +16,7 @@ data class AgentFacts(val agent: IAgent,
 
 class AgentFactsManager {
   companion object {
-    val agents = mutableSetOf<AgentFacts>()
+    private val agents = mutableSetOf<AgentFacts>()
 
     private fun filterAgentsOnFactsThatDoNotHaveString(predicate: Map<Fact, String>): Sequence<AgentFacts> {
       return predicate.map { filterAgentsOnFactNotHavingString(it.key, it.value) }
@@ -117,6 +117,10 @@ class AgentFactsManager {
 			  agents.stateFactWithIntValue(agent,fact,newVal)
 			  return newVal
 		  }
+	  }
+
+	  fun addAgent(agent: IAgent) {
+		  agents.safeAgentFacts(agent)
 	  }
   }
 }
