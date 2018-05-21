@@ -8,7 +8,7 @@ import com.lavaeater.kftw.data.IAgent
  * Keeps track of the global story state. Yay! Or? I dunno
  */
 
-data class AgentFacts(val agent:IAgent,
+data class AgentFacts(val agent: IAgent,
                       val facts: MutableSet<Fact> = mutableSetOf(),
                       val stringValues: MutableMap<Fact, MutableSet<String>> = hashMapOf(),
                       val intValues: MutableMap<Fact, Int> = hashMapOf())
@@ -24,7 +24,7 @@ class AgentFactsManager {
           .asSequence()
     }
 
-    private fun filterAgentsOnFactNotHavingString(fact: Fact, s:String): Sequence<AgentFacts> {
+    private fun filterAgentsOnFactNotHavingString(fact: Fact, s: String): Sequence<AgentFacts> {
       return agents.asSequence().filter { !it.stringValues.containsKey(fact) || it.stringValues[fact]?.contains(s) == false }
     }
 
@@ -35,28 +35,28 @@ class AgentFactsManager {
           .asSequence()
     }
 
-    fun filterAgentsOnFactHavingString(fact: Fact, s:String): Sequence<AgentFacts> {
+    fun filterAgentsOnFactHavingString(fact: Fact, s: String): Sequence<AgentFacts> {
       return agents.asSequence().filter { it.stringValues[fact]?.contains(s) == true }
     }
 
-    fun filterAgentsOnIntValuesNotInRange(predicate: Map<Fact, IntRange>) : Sequence<AgentFacts> {
+    fun filterAgentsOnIntValuesNotInRange(predicate: Map<Fact, IntRange>): Sequence<AgentFacts> {
       return predicate.map { filterAgentsOnIntValueNotInRange(it.key, it.value) }.flatMap { it.asIterable() }.asSequence()
     }
 
-    fun filterAgentsOnIntValueNotInRange(fact: Fact, range:IntRange): Sequence<AgentFacts> {
+    fun filterAgentsOnIntValueNotInRange(fact: Fact, range: IntRange): Sequence<AgentFacts> {
       return agents.asSequence().filter { !it.facts.contains(fact) || it.intValues[fact] !in range }
     }
 
-    fun filterAgentsOnIntValues(predicate: Map<Fact, IntRange>) : Sequence<AgentFacts> {
+    fun filterAgentsOnIntValues(predicate: Map<Fact, IntRange>): Sequence<AgentFacts> {
       return predicate.map { filterAgentsOnIntValueInRange(it.key, it.value) }.flatMap { it.asIterable() }.asSequence()
     }
 
-    fun filterAgentsOnIntValueInRange(fact: Fact, range:IntRange): Sequence<AgentFacts> {
+    fun filterAgentsOnIntValueInRange(fact: Fact, range: IntRange): Sequence<AgentFacts> {
       return agents.asSequence().filter { it.facts.contains(fact) && it.intValues[fact] in range }
     }
 
     fun getFactsFor(agent: IAgent): Set<Fact> {
-      return if(agents.contains(agent)) agents.safeAgentFacts(agent).facts else emptySet()
+      return if (agents.contains(agent)) agents.safeAgentFacts(agent).facts else emptySet()
     }
 
     fun hasFacts(agent: IAgent): Boolean {
@@ -67,93 +67,137 @@ class AgentFactsManager {
       return agents.has(agent, fact)
     }
 
-    fun stateFact(agent:IAgent, fact:Fact) : AgentFacts {
+    fun stateFact(agent: IAgent, fact: Fact): AgentFacts {
       return agents.stateFact(agent, fact)
     }
 
-    fun addStringListFactValue(agent: IAgent, fact: Fact, value: String) : AgentFacts {
+    fun addStringListFactValue(agent: IAgent, fact: Fact, value: String): AgentFacts {
       return agents.stateFactWithStringValue(agent, fact, value)
     }
 
-    fun listStringValuesFor(agent: IAgent, fact: Fact) : Sequence<String> {
+    fun listStringValuesFor(agent: IAgent, fact: Fact): Sequence<String> {
       return agents.listStringValues(agent, fact)
     }
 
-    fun setStringValueFor(agent: IAgent, fact: Fact, v:String) {
+    fun setStringValueFor(agent: IAgent, fact: Fact, v: String) {
       agents.stateFactWithStringValue(agent, fact, v)
     }
 
-    fun getIntValueFor(agent:IAgent,fact: Fact): Int {
+    fun setSingleValueFor(agent: IAgent, fact: Fact, v: String) {
+      agents.stateFactWithSingleStringValue(agent, fact, v)
+    }
+
+    fun getIntValueFor(agent: IAgent, fact: Fact): Int? {
       return agents.getIntValue(agent, fact)
     }
 
-    fun setIntValueFor(agent: IAgent, fact: Fact, v:Int) {
+    fun setIntValueFor(agent: IAgent, fact: Fact, v: Int) {
       agents.stateFactWithIntValue(agent, fact, v)
     }
   }
 }
 
-fun MutableSet<AgentFacts>.stateFactWithIntValue(agent: IAgent, fact: Fact, value:Int) {
+fun MutableSet<AgentFacts>.stateFactWithSingleStringValue(agent: IAgent, fact: Fact, v: String) {
+  val stringVals = this.safeAgentFacts(agent).stringValues
+
+  if (!stringVals.containsKey(fact))
+    stringVals[fact] = mutableSetOf()
+
+  stringVals[fact]!!.clear()
+  stringVals[fact]!!.add(v)
+}
+
+fun MutableSet<AgentFacts>.stateFactWithIntValue(agent: IAgent, fact: Fact, value: Int) {
   this.stateFact(agent, fact).intValues.set(fact, value)
 }
 
-fun <T> MutableMap<Fact, MutableSet<T>>.listValues(fact: Fact) :Sequence<T> {
-  return if(this.containsKey(fact)) this[fact]!!.asSequence() else emptySequence()
+fun <T> MutableMap<Fact, MutableSet<T>>.listValues(fact: Fact): Sequence<T> {
+  return if (this.containsKey(fact)) this[fact]!!.asSequence() else emptySequence()
 }
 
-fun <T> MutableMap<Fact, MutableSet<T>>.addValue(fact: Fact, value: T) {
-  if(!this.containsKey(fact))
+fun <T> MutableMap<Fact, MutableSet<T>>.addValue(fact: Fact, value: T): MutableSet<T> {
+  if (!this.containsKey(fact))
     this[fact] = mutableSetOf()
   this[fact]!!.add(value)
+  return this[fact]!!
 }
 
 fun MutableSet<AgentFacts>.listStringValues(agent: IAgent, fact: Fact): Sequence<String> {
-  return if(this.contains(agent)) this.safeAgentFacts(agent).stringValues.listValues(fact) else emptySequence()
+  return if (this.contains(agent)) this.safeAgentFacts(agent).stringValues.listValues(fact) else emptySequence()
 }
 
-fun MutableSet<AgentFacts>.getIntValue(agent: IAgent, fact: Fact): Int {
-  return if(this.contains(agent)) this.safeAgentFacts(agent).intValues[fact]!! else -666
+fun MutableSet<AgentFacts>.getIntValue(agent: IAgent, fact: Fact): Int? {
+  return if (this.contains(agent)) this.safeAgentFacts(agent).intValues[fact]!! else null
 }
 
 fun MutableSet<AgentFacts>.allFacts(agent: IAgent): Set<Fact> {
-  return if(this.contains(agent)) this.safeAgentFacts(agent).facts else emptySet()
+  return if (this.contains(agent)) this.safeAgentFacts(agent).facts else emptySet()
 }
 
-fun MutableSet<AgentFacts>.safeAgentFacts(agent:IAgent) : AgentFacts {
-  if(!this.any { it.agent == agent })
+fun MutableSet<AgentFacts>.safeAgentFacts(agent: IAgent): AgentFacts {
+  if (!this.any { it.agent == agent })
     this.add(story.AgentFacts(agent))
 
-  return this.first { it.agent == agent}
+  return this.first { it.agent == agent }
 }
 
-fun MutableSet<AgentFacts>.stateFactWithStringValue(agent:IAgent, fact:Fact, value:String) : AgentFacts {
-  this.stateFact(agent,fact).stringValues.addValue(fact, value)
+fun MutableSet<AgentFacts>.stateFactWithStringValue(agent: IAgent, fact: Fact, value: String): AgentFacts {
+  this.stateFact(agent, fact).stringValues.addValue(fact, value)
   return this.safeAgentFacts(agent)
 }
 
-fun MutableSet<AgentFacts>.stateFact(agent:IAgent, fact:Fact) : AgentFacts {
+fun MutableSet<AgentFacts>.stateFact(agent: IAgent, fact: Fact): AgentFacts {
   this.safeAgentFacts(agent).facts.add(fact)
   return safeAgentFacts(agent)
 }
 
-fun MutableSet<AgentFacts>.contains(agent:IAgent) : Boolean {
+fun MutableSet<AgentFacts>.contains(agent: IAgent): Boolean {
   return this.any { it.agent == agent }
 }
 
-fun MutableSet<AgentFacts>.has(agent:IAgent, fact: Fact) : Boolean {
-  return if(this.contains(agent)) this.safeAgentFacts(agent).facts.contains(fact) else false
+fun MutableSet<AgentFacts>.has(agent: IAgent, fact: Fact): Boolean {
+  return if (this.contains(agent)) this.safeAgentFacts(agent).facts.contains(fact) else false
 }
 
-fun IAgent.stateFact(fact:Fact) {
+fun IAgent.stateFact(fact: Fact) {
   AgentFactsManager.stateFact(this, fact)
 }
 
-fun IAgent.has(fact:Fact) : Boolean {
+fun IAgent.stateFactWithValue(fact:Fact, value:String) {
+  AgentFactsManager.addStringListFactValue(this, fact, value)
+}
+
+fun IAgent.stateFactWithValue(fact:Fact, value: Int) {
+  AgentFactsManager.setIntValueFor(this, fact, value)
+}
+
+fun IAgent.stateFactWithSingle(fact:Fact, value:String) {
+  AgentFactsManager.setSingleValueFor(this, fact, value)
+}
+
+fun IAgent.has(fact: Fact): Boolean {
   return AgentFactsManager.has(this, fact)
+}
+
+fun IAgent.stringsFor(fact: Fact): Set<String> {
+  return AgentFactsManager.listStringValuesFor(this, fact).toSet()
+}
+
+fun IAgent.stringFor(fact: Fact): String {
+  if(this.has(fact)) {
+    val list = AgentFactsManager.listStringValuesFor(this, fact)
+    return if(list.any()) list.first() else ""
+  }
+  return ""
+}
+
+fun IAgent.intFor(fact: Fact): Int? {
+  return AgentFactsManager.getIntValueFor(this, fact)
 }
 
 enum class Fact {
   MetPlayer,
   UsedConversations,
-  PlayerReputation
+  PlayerReputation,
+  Name
 }
