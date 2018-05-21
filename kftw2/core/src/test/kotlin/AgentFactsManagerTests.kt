@@ -2,10 +2,7 @@ import com.lavaeater.kftw.data.IAgent
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock
-import story.Fact
-import story.stringFor
-import story.has
-import story.stateFact
+import story.*
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -31,9 +28,9 @@ class AgentFactsManagerTests {
     //arrange
     val agent = mock(IAgent::class.java)
     //act
-    agent.stateFact(Fact.Name)
+    agent.stateFact(Fact.UsedConversations)
     //assert
-    assertEquals("", agent.stringFor(Fact.Name))
+    assertEquals("", agent.stringFor(Fact.UsedConversations))
   }
 
   @Test
@@ -41,9 +38,16 @@ class AgentFactsManagerTests {
     //arrange
     val agent = mock(IAgent::class.java)
     //act
-    agent.stateFact(Fact.UsedConversations)
-    agent.stateFact()
+    agent.stateFactWithSingle(Fact.Name, "My First name")
     //assert
-    assertEquals("", agent.stringFor(Fact.Name))
+    assertEquals("My First name", agent.stringFor(Fact.Name))
+
+    //act
+    agent.stateFactWithSingle(Fact.Name, "My Second name")
+    //assert
+    assertEquals("My Second name", agent.stringFor(Fact.Name))
+    assertEquals(1, agent.stringsFor(Fact.Name).count())
   }
+
+
 }

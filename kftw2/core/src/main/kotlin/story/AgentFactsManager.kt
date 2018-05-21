@@ -98,6 +98,7 @@ class AgentFactsManager {
 }
 
 fun MutableSet<AgentFacts>.stateFactWithSingleStringValue(agent: IAgent, fact: Fact, v: String) {
+  this.stateFact(agent, fact) //make sure fact is added to facts set
   val stringVals = this.safeAgentFacts(agent).stringValues
 
   if (!stringVals.containsKey(fact))
