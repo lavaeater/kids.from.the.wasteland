@@ -51,4 +51,33 @@ class ConceptTests {
 		assertTrue { criterion.isMatch(fact) }
   }
 
+	@Test
+	fun testComplicated() {
+		/*
+		We can have a global state of the game where
+		the player has visited three major sites,
+		traversed more than x tiles uniquely,
+		talked to n number of NPCs, killed r number
+		of ravagers, found four pieces of a map and
+		if all of this is true - a consequence emerges!
+
+		and what is a consequence?
+
+		Well, a goddamned lambda, that's what!
+
+		Tie-in to message system, conversation system, everything.
+
+		Sometimes I feel smart.
+
+		We could make a Fact-builder, sort of like a bootstrapper that ensures
+		a bunch of standard values that we just define. It would be great
+		to support some crazy import / export architecture...
+
+		But nah, not right now.
+
+		Anyways, this gives us, soonish, the possibility for "dull" conversations,
+		meaning that if the player has actually met 
+		 */
+	}
+
 }
