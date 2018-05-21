@@ -87,10 +87,22 @@ class AgentFactManagerFilterTests {
 	@Test
 	fun filterOnPlayerHateNotInRange() {
 		//act
-		val hateingPlayerLess = AgentFactsManager.filterAgentsOnIntValueNotInRange(Fact.PlayerHate, 40..100)
+		val hatingPlayerLess = AgentFactsManager.filterAgentsOnIntValueNotInRange(Fact.PlayerHate, 40..100)
 
 		//assert
-		assertEquals(3, hateingPlayerLess.count())
+		assertEquals(3, hatingPlayerLess.count())
+	}
+
+	@Test
+	fun fuzzyTester() {
+		/*
+		We need to set a bunch of ranges and stuff and check if an agent
+		satisfies the matcher
+
+		AND THIS IS WHERE WE DO A DSL!
+		 */
+
+
 	}
 
 }

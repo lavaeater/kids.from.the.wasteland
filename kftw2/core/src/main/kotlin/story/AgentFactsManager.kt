@@ -250,6 +250,7 @@ fun IAgent.subtractFromIntFact(fact: Fact, value:Int):Int {
 
 enum class Fact {
   MetPlayer,
+	MetPlayerParents,
   UsedConversations,
   PlayerHate,
   Name
