@@ -18,10 +18,10 @@ class ConversationManager {
   private val storyReader = InkLoader()
 
   fun startWithNpc(npc:Npc) {
-    if(npc.has(Fact.MetPlayer)) {
+    if(npc.has(Fat.MetPlayer)) {
       //Load some other story!
     } else {
-      npc.stateFact(Fact.MetPlayer)
+      npc.stateFact(Fat.MetPlayer)
       currentAgent = npc
       currentStory = getFirstConversation(currentAgent!!)
       ui.runConversation(Conversation(currentStory!!, player, npc), ::endConversation)
@@ -34,7 +34,7 @@ class ConversationManager {
 
   fun endConversation() {
 
-    currentAgent?.stateFact(Fact.MetPlayer)
+    currentAgent?.stateFact(Fat.MetPlayer)
 
     currentAgent = null
     currentStory = null

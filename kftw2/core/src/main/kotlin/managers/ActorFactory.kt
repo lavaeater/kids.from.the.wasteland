@@ -16,7 +16,7 @@ import map.IMapManager
 import com.lavaeater.kftw.injection.Ctx
 import map.tileWorldCenter
 import ktx.math.vec2
-import story.FactsManager
+import story.FatsManager
 
 class ActorFactory {
   val engine = Ctx.context.inject<Engine>()
@@ -93,7 +93,7 @@ class ActorFactory {
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    FactsManager.addAgent(npc)
+    FatsManager.addAgent(npc)
     return entity
 
   }
@@ -120,7 +120,7 @@ class ActorFactory {
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    FactsManager.addAgent(npc)
+    FatsManager.addAgent(npc)
     return entity
   }
 
