@@ -1,7 +1,6 @@
 package story
 
 import com.lavaeater.kftw.data.IAgent
-import sun.management.Agent
 
 /**
  * Created by tommie on 2018-03-18.
@@ -14,7 +13,7 @@ data class AgentFacts(val agent: IAgent,
                       val stringValues: MutableMap<Fact, MutableSet<String>> = hashMapOf(),
                       val intValues: MutableMap<Fact, Int> = hashMapOf())
 
-class AgentFactsManager {
+class FactsManager {
   companion object {
     private val agents = mutableSetOf<AgentFacts>()
 
@@ -205,47 +204,47 @@ fun MutableSet<AgentFacts>.agentsThatDoNotHave(fact:Fact) : Sequence<AgentFacts>
 }
 
 fun IAgent.stateFact(fact: Fact) {
-  AgentFactsManager.stateFact(this, fact)
+  FactsManager.stateFact(this, fact)
 }
 
 fun IAgent.stateFactWithValue(fact:Fact, value:String) {
-  AgentFactsManager.addStringListFactValue(this, fact, value)
+  FactsManager.addStringListFactValue(this, fact, value)
 }
 
 fun IAgent.stateFactWithValue(fact:Fact, value: Int) {
-  AgentFactsManager.setIntValueFor(this, fact, value)
+  FactsManager.setIntValueFor(this, fact, value)
 }
 
 fun IAgent.stateFactWithSingle(fact:Fact, value:String) {
-  AgentFactsManager.setSingleValueFor(this, fact, value)
+  FactsManager.setSingleValueFor(this, fact, value)
 }
 
 fun IAgent.has(fact: Fact): Boolean {
-  return AgentFactsManager.has(this, fact)
+  return FactsManager.has(this, fact)
 }
 
 fun IAgent.stringsFor(fact: Fact): Set<String> {
-  return AgentFactsManager.listStringValuesFor(this, fact).toSet()
+  return FactsManager.listStringValuesFor(this, fact).toSet()
 }
 
 fun IAgent.stringFor(fact: Fact): String {
   if(this.has(fact)) {
-    val list = AgentFactsManager.listStringValuesFor(this, fact)
+    val list = FactsManager.listStringValuesFor(this, fact)
     return if(list.any()) list.first() else ""
   }
   return ""
 }
 
 fun IAgent.intFor(fact: Fact): Int? {
-  return AgentFactsManager.getIntValueFor(this, fact)
+  return FactsManager.getIntValueFor(this, fact)
 }
 
 fun IAgent.addToIntFact(fact: Fact, value: Int) : Int {
-	return AgentFactsManager.addToIntFact(this, fact, value)
+	return FactsManager.addToIntFact(this, fact, value)
 }
 
 fun IAgent.subtractFromIntFact(fact: Fact, value:Int):Int {
-	return AgentFactsManager.addToIntFact(this, fact, -value)
+	return FactsManager.addToIntFact(this, fact, -value)
 }
 
 enum class Fact {

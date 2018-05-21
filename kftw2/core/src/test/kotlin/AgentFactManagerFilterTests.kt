@@ -3,7 +3,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
-import story.AgentFactsManager
+import story.FactsManager
 import story.Fact
 import story.stateFactWithValue
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ class AgentFactManagerFilterTests {
 			agentD = Mockito.mock(IAgent::class.java)
 			agentNoFacts = Mockito.mock(IAgent::class.java)
 
-			AgentFactsManager.addAgent(agentNoFacts) //All agents are added in the system, we add this one specifically
+			FactsManager.addAgent(agentNoFacts) //All agents are added in the system, we add this one specifically
 		}
 	}
 
@@ -60,7 +60,7 @@ class AgentFactManagerFilterTests {
 	@Test
 	fun filterOnHavingFact() {
 		//act
-		val agentsHavingMetPlayer = AgentFactsManager.filterAgentsOnHavingFact(Fact.MetPlayer)
+		val agentsHavingMetPlayer = FactsManager.filterAgentsOnHavingFact(Fact.MetPlayer)
 
 		//assert
 		assertEquals(4, agentsHavingMetPlayer.count())
@@ -69,7 +69,7 @@ class AgentFactManagerFilterTests {
 	@Test
 	fun filterOnNotHavingFact() {
 		//act
-		val agentsHavingMetPlayer = AgentFactsManager.filterAgentsOnNotHavingFact(Fact.MetPlayer)
+		val agentsHavingMetPlayer = FactsManager.filterAgentsOnNotHavingFact(Fact.MetPlayer)
 
 		//assert
 		assertEquals(1, agentsHavingMetPlayer.count())
@@ -78,7 +78,7 @@ class AgentFactManagerFilterTests {
 	@Test
 	fun filterOnPlayerHateInRange() {
 		//act
-		val hatingPlayerALot = AgentFactsManager.filterAgentsOnIntValueInRange(Fact.PlayerHate, 40..100)
+		val hatingPlayerALot = FactsManager.filterAgentsOnIntValueInRange(Fact.PlayerHate, 40..100)
 
 		//assert
 		assertEquals(2, hatingPlayerALot.count())
@@ -87,7 +87,7 @@ class AgentFactManagerFilterTests {
 	@Test
 	fun filterOnPlayerHateNotInRange() {
 		//act
-		val hatingPlayerLess = AgentFactsManager.filterAgentsOnIntValueNotInRange(Fact.PlayerHate, 40..100)
+		val hatingPlayerLess = FactsManager.filterAgentsOnIntValueNotInRange(Fact.PlayerHate, 40..100)
 
 		//assert
 		assertEquals(3, hatingPlayerLess.count())
