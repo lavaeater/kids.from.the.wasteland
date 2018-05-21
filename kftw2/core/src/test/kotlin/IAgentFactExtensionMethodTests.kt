@@ -6,7 +6,7 @@ import story.*
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AgentFactsManagerTests {
+class IAgentFactExtensionMethodTests {
   @Test
   fun agentWithNoFactsHasNoFacts() {
     val agent : IAgent = mock(IAgent::class.java)
@@ -49,5 +49,30 @@ class AgentFactsManagerTests {
     assertEquals(1, agent.stringsFor(Fact.Name).count())
   }
 
+  @Test
+  fun statingStringFacts_ReturnsCorrectNumberOfStrings() {
+    //arrange
+    val agent = mock(IAgent::class.java)
+    //act
+    agent.stateFactWithValue(Fact.UsedConversations, "A")
+    agent.stateFactWithValue(Fact.UsedConversations, "B")
+    agent.stateFactWithValue(Fact.UsedConversations, "C")
+    agent.stateFactWithValue(Fact.UsedConversations, "A") // facts are unique so this one won't be added
+    //assert
+    assertTrue(agent.stringsFor(Fact.UsedConversations).containsAll(listOf("A", "B", "C")))
+    assertEquals(3, agent.stringsFor(Fact.UsedConversations).count())
+  }
 
+	@Test
+	fun addToIntFact_FactHasCorrectValue() {
+		//arrange
+		val agent = mock(IAgent::class.java)
+		agent.stateFactWithValue(Fact.PlayerHate, 2)
+
+		//act
+		agent.addToIntFact(Fact.PlayerHate, 10)
+
+		//assert
+		assertEquals(12, agent.intFor(Fact.PlayerHate))
+	}
 }

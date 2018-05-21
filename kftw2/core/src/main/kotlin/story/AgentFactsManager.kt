@@ -1,6 +1,7 @@
 package story
 
 import com.lavaeater.kftw.data.IAgent
+import sun.management.Agent
 
 /**
  * Created by tommie on 2018-03-18.
@@ -24,7 +25,7 @@ class AgentFactsManager {
           .asSequence()
     }
 
-    private fun filterAgentsOnFactNotHavingString(fact: Fact, s: String): Sequence<AgentFacts> {
+    fun filterAgentsOnFactNotHavingString(fact: Fact, s: String): Sequence<AgentFacts> {
       return agents.asSequence().filter { !it.stringValues.containsKey(fact) || it.stringValues[fact]?.contains(s) == false }
     }
 
@@ -34,6 +35,18 @@ class AgentFactsManager {
           .distinct()
           .asSequence()
     }
+
+	  fun filterAgentsOnHavingFact(fact:Fact):Sequence<AgentFacts> {
+		  return agents.agentsThatHave(fact)
+	  }
+
+	  fun filterAgentsOnHavingAllFacts(facts:Collection<Fact>) : Sequence<AgentFacts> {
+		  return agents.agentsThatHave(facts)
+	  }
+
+	  fun filterAgentsOnNotHavingFact(fact: Fact):Sequence<AgentFacts> {
+		  return agents.agentsThatDoNotHave(fact)
+	  }
 
     fun filterAgentsOnFactHavingString(fact: Fact, s: String): Sequence<AgentFacts> {
       return agents.asSequence().filter { it.stringValues[fact]?.contains(s) == true }
@@ -94,6 +107,17 @@ class AgentFactsManager {
     fun setIntValueFor(agent: IAgent, fact: Fact, v: Int) {
       agents.stateFactWithIntValue(agent, fact, v)
     }
+
+	  fun addToIntFact(agent: IAgent, fact: Fact, value: Int): Int {
+		  if(agents.getIntValue(agent, fact) == null) {
+			  agents.stateFactWithIntValue(agent, fact, value)
+			  return value
+		  } else {
+			  val newVal = agents.getIntValue(agent, fact)!! + value
+			  agents.stateFactWithIntValue(agent,fact,newVal)
+			  return newVal
+		  }
+	  }
   }
 }
 
@@ -160,6 +184,22 @@ fun MutableSet<AgentFacts>.has(agent: IAgent, fact: Fact): Boolean {
   return if (this.contains(agent)) this.safeAgentFacts(agent).facts.contains(fact) else false
 }
 
+fun MutableSet<AgentFacts>.agentsThatHave(fact:Fact) : Sequence<AgentFacts> {
+	return this.asSequence().filter { it.facts.contains(fact) }
+}
+
+fun MutableSet<AgentFacts>.agentsThatHave(facts:Collection<Fact>) : Sequence<AgentFacts> {
+	return this.asSequence().filter { it.facts.containsAll(facts) }
+}
+
+//fun MutableSet<AgentFacts>.agentsThatHaveNone(facts:Collection<Fact>) : Sequence<AgentFacts> {
+//	return this.asSequence().filter { it.facts.containsAll(facts) }
+//}
+
+fun MutableSet<AgentFacts>.agentsThatDoNotHave(fact:Fact) : Sequence<AgentFacts> {
+	return this.asSequence().filter { !it.facts.contains(fact) }
+}
+
 fun IAgent.stateFact(fact: Fact) {
   AgentFactsManager.stateFact(this, fact)
 }
@@ -196,9 +236,17 @@ fun IAgent.intFor(fact: Fact): Int? {
   return AgentFactsManager.getIntValueFor(this, fact)
 }
 
+fun IAgent.addToIntFact(fact: Fact, value: Int) : Int {
+	return AgentFactsManager.addToIntFact(this, fact, value)
+}
+
+fun IAgent.subtractFromIntFact(fact: Fact, value:Int):Int {
+	return AgentFactsManager.addToIntFact(this, fact, -value)
+}
+
 enum class Fact {
   MetPlayer,
   UsedConversations,
-  PlayerReputation,
+  PlayerHate,
   Name
 }
