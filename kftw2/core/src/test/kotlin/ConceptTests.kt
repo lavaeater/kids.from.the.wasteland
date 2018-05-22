@@ -5,6 +5,7 @@ import org.junit.Test
 import story.ConceptManager
 import story.Criterion
 import story.Fact
+import story.Rule
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -23,7 +24,13 @@ class ConceptTests {
 		@JvmStatic
 		@BeforeClass
 		fun beforeClass() {
-
+			ConceptManager.addStringToList("VisitedPlaces", "Berlin")
+			ConceptManager.addStringToList("VisitedPlaces", "Yokohama")
+			ConceptManager.addStringToList("VisitedPlaces", "London")
+			ConceptManager.addStringToList("VisitedPlaces", "Paris")
+			ConceptManager.stateBoolFact("FoundKey", true)
+			ConceptManager.stateIntFact("MetOrcs", 12)
+			ConceptManager.stateIntFact("NumberOfVisitedPlaces", 4)
 		}
 	}
 
@@ -33,17 +40,18 @@ class ConceptTests {
 	}
 
 	@Test
-	fun exploreAndThenNightyNighty() {
+	fun addStringToList_ListContainsString() {
 		//arrange
 		//act
 		ConceptManager.addStringToList(factKey, "Berlin")
 
 		//assert
 		assertEquals(1, ConceptManager.getFactList<String>(factKey).count())
+		assertTrue(ConceptManager.getFactList<String>(factKey).contains("Berlin"))
 	}
 
   @Test
-  fun testACriterion() {
+  fun stringCriterion_MatchesExistingString() {
     val fact = Fact.createFact(factKey, "Berlin")
 
 		val criterion = Criterion.equalsCriterion(factKey, "Berlin")
@@ -52,7 +60,7 @@ class ConceptTests {
   }
 
 	@Test
-	fun testComplicated() {
+	fun rulesThatPass_OnlyOneRulePasses() {
 		/*
 		We can have a global state of the game where
 		the player has visited three major sites,
@@ -78,6 +86,49 @@ class ConceptTests {
 		Anyways, this gives us, soonish, the possibility for "dull" conversations,
 		meaning that if the player has actually met 
 		 */
+
+		/*
+		We need a method to get a set of facts.
+		 */
+
+		val passRule = Rule("UserFoundKey_VisitedBerlin_MetSomeOrcs", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", true),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 8..12)))
+		val failRule = Rule("UserHasntFoundKey_BeenToBerlin_MetFewOrcs", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", false),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 3..6)))
+
+		val result = ConceptManager.rulesThatPass(setOf(passRule, failRule))
+
+		assertEquals(1, result.count())
+		assertEquals("UserFoundKey_VisitedBerlin_MetSomeOrcs", result.first().name)
+	}
+
+	@Test
+	fun rulesThatPass_WithContext() {
+		val passRule = Rule("Pass", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", true),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 8..12),
+				Criterion.context("MetNpc")))
+		val failRule = Rule("Fail", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", false),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 3..6),
+				Criterion.context("MetNpc")))
+
+		val noContextRule = Rule("No_Context", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", true),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 8..12)))
+
+		val result = ConceptManager.rulesThatPass(setOf(passRule, failRule, noContextRule), "MetNpc")
+
+		assertEquals(2, result.count())
+		assertTrue(result.map { it.name }.containsAll(setOf("Pass", "No_Context")))
+		assertEquals("Pass", result.first().name)
 	}
 
 }

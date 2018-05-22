@@ -31,11 +31,11 @@ class ConceptManager {
      */
     val factsOfTheWorld: MutableMap<String, Fact<*>> = mutableMapOf()
 
-//    fun filterOnStringVal(s:String) {
-//      factsOfTheWorld.asSequence().filter {
-//        it is StringFact && it.value == s ||
-//            it is StringListFact && it.value.contains(s) }
-//    }
+    fun factsForKeys(keys: Set<String>) : Sequence<Fact<*>> {
+      //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
+
+      return factsOfTheWorld.filterKeys { keys.contains(it) }.map { it.value }.asSequence()
+    }
 
     fun <T> factValueOrNull(factKey: String, subKey: String = ""):T? {
       return factsOfTheWorld.valueOrNull(factKey, subKey)
@@ -43,6 +43,15 @@ class ConceptManager {
 
     fun <T> getFactList(factKey: String, subKey: String=""): Set<T> {
       return factsOfTheWorld.valuesOrEmpty(factKey, subKey)
+    }
+
+    fun checkRule(rule: Rule, context:String = "") : Boolean {
+      val factsToCheck = factsForKeys(rule.keys).toSet().union(setOf(Fact<String>("Context", context)))
+      return rule.pass(factsToCheck.toSet())
+    }
+
+    fun rulesThatPass(rules:Set<Rule>, context: String = ""): List<Rule> {
+      return rules.filter { checkRule(it, context) }.sortedByDescending { it.criteriaCount }
     }
 
     fun stateBoolFact(factKey: String, value: Boolean, subKey: String = "") {
@@ -150,28 +159,52 @@ class Fact<T>(factKey: String, var value: T, subKey: String = "") {
 //class IntFact(factKey: String,subKey: String, override var value: Int = 0): Fact<Int>(factKey, subKey, value)
 //class StringListFact(factKey: String, subKey: String) : ListFact<String>(factKey = factKey, subKey = subKey)
 
-class Criterion<E>(factKey: String, private val matcher: (Fact<E>) -> Boolean, subKey: String = "") {
+class Criterion(factKey: String, private val matcher: (Fact<*>) -> Boolean, subKey: String = "") {
   val key = "$factKey.$subKey"
-  fun isMatch(fact: Fact<E>):Boolean {
+  fun isMatch(fact: Fact<*>):Boolean {
     return fact.key == key && matcher(fact)
   }
 
   companion object {
-    fun booleanCriterion(factKey: String, checkFor: Boolean, subKey: String = "") : Criterion<Boolean> {
+    fun booleanCriterion(factKey: String, checkFor: Boolean, subKey: String = "") : Criterion{
       return Criterion(factKey, { it.value == checkFor }, subKey)
     }
 
-    fun <T> equalsCriterion(factKey: String, value: T, subKey: String = ""): Criterion<T> {
+    fun <T> equalsCriterion(factKey: String, value: T, subKey: String = ""): Criterion {
       return Criterion(factKey, { it.value == value}, subKey)
     }
 
-    fun rangeCriterion(factKey: String, range: IntRange, subKey: String = ""): Criterion<Int> {
+    fun rangeCriterion(factKey: String, range: IntRange, subKey: String = ""): Criterion {
       return Criterion(factKey, { it.value in range}, subKey)
     }
 
-    fun containsCriterion(factKey: String, value: String, subKey: String = ""):Criterion<MutableCollection<String>> {
-      return Criterion(factKey, { it.value.contains(value)}, subKey)
+    fun containsCriterion(factKey: String, value: String, subKey: String = ""):Criterion {
+      return Criterion(factKey, { (it.value as Collection<*>).contains(value)}, subKey)
     }
+
+    fun context(context: String) :Criterion {
+      return Criterion("Context", {fact -> fact.value == context })
+    }
+  }
+}
+
+class Rule(val name:String, private val criteria: MutableCollection<Criterion> = mutableListOf(), private val consequence: (Rule, Set<Fact<*>>) -> Unit = {_,_ -> }) {
+  val keys : Set<String> get() = criteria.map { it.key }.distinct().toSet()
+  val criteriaCount = criteria.count()
+
+  var matchedFacts: Set<Fact<*>> = mutableSetOf()
+
+  fun pass(facts: Set<Fact<*>>) : Boolean {
+
+    if(facts.all { f -> criteria.filter { c -> c.key == f.key }.all { c -> c.isMatch(f) } }) {
+      matchedFacts = facts
+      return true
+    }
+    return false
+  }
+
+  fun applyConsequence() {
+    consequence(this, matchedFacts)
   }
 }
 
