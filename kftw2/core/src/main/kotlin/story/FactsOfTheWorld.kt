@@ -84,6 +84,28 @@ class FactsOfTheWorld {
       ensureStringListFact(factKey, subKey).value.add(value)
     }
 
+    //With this we can add whatever we want to the facts
+    fun stateAnyFact(fact: Fact<*>) {
+      factsOfTheWorld[fact.key] = fact
+    }
+
+    fun <T> addValueToFactList(factKey: String, value: T, subKey: String ="") {
+      val key = key(factKey, subKey)
+      ensureFactList<T>(factKey, subKey).value.add(value)
+    }
+
+    fun <T> ensureFactList(factKey: String, subKey: String = "") : Fact<MutableCollection<T>> {
+      val key = key(factKey, subKey)
+      if(!factsOfTheWorld.containsKey(key)) {
+        factsOfTheWorld[key(factKey,subKey)] = Fact.createListFact<T>(factKey, subKey)
+      }
+      return (factsOfTheWorld[key]!! as Fact<MutableCollection<T>>)
+    }
+
+    fun <T> removeValueFromFactList(factKey: String, value: T, subKey: String) {
+      ensureFactList<T>(factKey, subKey).value.remove(value)
+    }
+
     fun removeString(factKey: String, value: String, subKey: String = "") {
       ensureStringListFact(factKey, subKey).value.remove(value)
     }
@@ -136,6 +158,10 @@ fun <T> MutableMap<String, Fact<*>>.valuesOrEmpty(factKey: String, subKey: Strin
 
 fun MutableMap<String, Fact<*>>.containsKey(factKey: String, subKey: String = "") :Boolean {
   return this.containsKey(key(factKey, subKey))
+}
+
+fun MutableMap<String, Fact<*>>.factForKey(factKey: String, subKey: String = ""):Fact<*>? {
+  return this[key(factKey, subKey)]
 }
 
 fun key(factKey: String, subKey: String = ""):String {
