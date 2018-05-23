@@ -45,13 +45,22 @@ class ConceptManager {
       return factsOfTheWorld.valuesOrEmpty(factKey, subKey)
     }
 
-    fun checkRule(rule: Rule, context:String = "") : Boolean {
-      val factsToCheck = factsForKeys(rule.keys).toSet().union(setOf(Fact<String>("Context", context)))
-      return rule.pass(factsToCheck.toSet())
+    ///Checks the rule, with supplied context. Any keys in context
+    ///that exists in world facts are filtered out
+    ///so a fact only exists once. Yay
+    fun checkRule(rule: Rule, context: Set<Fact<*>>) :Boolean {
+      val factsToCheck = factsForKeys(rule.keys)
+          .filter { rule.keys.contains(it.key) }.toSet()
+          .union(context.filter { rule.keys.contains(it.key) })
+      return rule.pass(factsToCheck)
     }
 
-    fun rulesThatPass(rules:Set<Rule>, context: String = ""): List<Rule> {
-      return rules.filter { checkRule(it, context) }.sortedByDescending { it.criteriaCount }
+    fun rulesThatPass(rules:Set<Rule>, context: String): List<Rule> {
+      return rulesThatPass(rules, setOf(Fact("Context", context)))
+    }
+
+    fun rulesThatPass(rules:Set<Rule>, context: Set<Fact<*>> = emptySet()) : List<Rule> {
+      return rules.filter { checkRule(it, context)}.sortedByDescending { it.criteriaCount }
     }
 
     fun stateBoolFact(factKey: String, value: Boolean, subKey: String = "") {

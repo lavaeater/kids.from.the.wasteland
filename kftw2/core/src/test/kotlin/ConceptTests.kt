@@ -131,4 +131,27 @@ class ConceptTests {
 		assertEquals("Pass", result.first().name)
 	}
 
+
+
+	@Test
+	fun rules_With_Consequence() {
+		var consequenceHappened = ""
+		val passRule = Rule("Pass", mutableListOf(
+				Criterion.booleanCriterion("FoundKey", true),
+				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
+				Criterion.rangeCriterion("MetOrcs", 8..12),
+				Criterion.context("MetNpc")), {rule, facts -> consequenceHappened = "Pass"})
+
+		val result = ConceptManager.rulesThatPass(setOf(passRule), "MetNpc")
+		result.first().applyConsequence()
+
+		assertEquals("Pass", consequenceHappened)
+
+	}
+
+	@Test
+	fun dynamicContexts() {
+
+	}
+
 }
