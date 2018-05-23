@@ -2,7 +2,7 @@ package com.lavaeater.kftw.screens
 
 import com.badlogic.gdx.Gdx
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameManager
+import managers.GameManager
 import com.lavaeater.kftw.ui.IUserInterface
 import ktx.app.KtxScreen
 

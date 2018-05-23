@@ -1,6 +1,5 @@
 package com.lavaeater.kftw.ui
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -9,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
-import story.IConversation
+import world.IConversation
 import ui.IConversationPresenter
 
 class UserInterface(var processInput: Boolean = true): IUserInterface {

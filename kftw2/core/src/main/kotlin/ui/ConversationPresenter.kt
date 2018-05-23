@@ -17,7 +17,7 @@ import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import ktx.scene2d.textButton
-import story.IConversation
+import world.IConversation
 import ui.IConversationPresenter
 import ui.image
 import ui.label

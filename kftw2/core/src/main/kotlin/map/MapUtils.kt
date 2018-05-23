@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameManager
+import managers.GameManager
 import com.lavaeater.kftw.map.Tile
 import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.util.SimplexNoise

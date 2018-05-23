@@ -13,7 +13,7 @@ import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
-import com.lavaeater.kftw.managers.GameManager
+import managers.GameManager
 import com.lavaeater.kftw.managers.GameStateManager
 import map.IMapManager
 import map.MapManager
@@ -23,7 +23,7 @@ import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.MessageManager
 import map.TileManager
-import story.ConversationManager
+import world.ConversationManager
 
 class Ctx {
 

@@ -7,7 +7,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.managers.Messages
-import story.ConversationManager
+import world.ConversationManager
 
 class MessageManager: Telegraph {
   val gameStateManager = Ctx.context.inject<GameStateManager>()
@@ -21,10 +21,6 @@ class MessageManager: Telegraph {
   }
 
   private fun playerEncounteredNpc(npc: Npc): Boolean {
-
-    /*
-    We need a... dialog manager!
-     */
 
     gameStateManager.handleEvent(GameEvent.DialogStarted)
     conversationManager.startWithNpc(npc)

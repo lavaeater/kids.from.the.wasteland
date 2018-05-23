@@ -1,4 +1,4 @@
-package story
+package world
 
 class FactsOfTheWorld {
 
@@ -31,7 +31,9 @@ class FactsOfTheWorld {
     fun factsForKeys(keys: Set<String>) : Sequence<Fact<*>> {
       //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
 
-      return factsOfTheWorld.filterKeys { keys.contains(it) }.map { it.value }.asSequence()
+      val facts = factsOfTheWorld.filterKeys { keys.any { k -> wildCardMatcher(k, it) } }.map { it.value }.asSequence()
+
+      return facts
     }
 
     fun <T> factValueOrNull(factKey: String, subKey: String = ""):T? {
@@ -47,8 +49,12 @@ class FactsOfTheWorld {
     ///so a fact only exists once. Yay
     fun checkRule(rule: Rule, context: Set<Fact<*>>) :Boolean {
       val factsToCheck = factsForKeys(rule.keys)
-          .filter { rule.keys.contains(it.key) }.toSet()
-          .union(context.filter { rule.keys.contains(it.key) })
+//          .filter { rule.keys.contains(it.key) }
+          .toSet()
+          .union(context.filter {
+            rule.keys.any { k -> wildCardMatcher(k, it.key) }
+          })
+
       return rule.pass(factsToCheck)
     }
 
@@ -57,7 +63,8 @@ class FactsOfTheWorld {
     }
 
     fun rulesThatPass(rules:Set<Rule>, context: Set<Fact<*>> = emptySet()) : List<Rule> {
-      return rules.filter { checkRule(it, context)}.sortedByDescending { it.criteriaCount }
+      return rules.filter { checkRule(it, context)}
+		      .sortedByDescending { it.criteriaCount }
     }
 
     fun stateBoolFact(factKey: String, value: Boolean, subKey: String = "") {

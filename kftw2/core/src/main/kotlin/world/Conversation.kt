@@ -1,4 +1,4 @@
-package story
+package world
 
 import com.bladecoder.ink.runtime.Story
 import com.lavaeater.kftw.data.IAgent

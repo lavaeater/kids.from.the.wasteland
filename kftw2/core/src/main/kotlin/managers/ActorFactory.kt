@@ -16,7 +16,7 @@ import map.IMapManager
 import com.lavaeater.kftw.injection.Ctx
 import map.tileWorldCenter
 import ktx.math.vec2
-import story.FatsManager
+import world.FatsManager
 
 class ActorFactory {
   val engine = Ctx.context.inject<Engine>()
@@ -24,10 +24,10 @@ class ActorFactory {
   val bodyManager = Ctx.context.inject<BodyFactory>()
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType(4, 8, 2, 1,3, 3, "lunges"),
-      "sneakypanther" to NpcType(6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
-      "snake" to NpcType(2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
-      "orc" to NpcType(4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
+      "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
+      "sneakypanther" to NpcType("sneakypanther",6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
+      "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
+      "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
   val npcNames = mapOf(1 to "Brage",
       2 to "Bork",

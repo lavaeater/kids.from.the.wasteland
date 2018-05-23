@@ -3,9 +3,9 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
-import story.FatsManager
-import story.Fat
-import story.stateFactWithValue
+import world.FatsManager
+import world.Fat
+import world.stateFactWithValue
 import kotlin.test.assertEquals
 
 class AgentFatManagerFilterTests {

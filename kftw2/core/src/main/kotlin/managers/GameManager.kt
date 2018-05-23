@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.managers
+package managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
@@ -8,12 +8,15 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.GameSettings
+import com.lavaeater.kftw.data.IAgent
+import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.injection.Ctx
+import com.lavaeater.kftw.managers.*
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.IUserInterface
-import managers.MessageManager
+import world.*
 
-class GameManager(private val gameSettings: GameSettings) : Disposable {
+class GameManager(gameSettings: GameSettings) : Disposable {
   val batch = Ctx.context.inject<Batch>()
   val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
@@ -27,6 +30,9 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
   init {
     Ctx.context.inject<GameStateManager>().apply { addChangeListener(::gameStateChanged) }
     setupSystems()
+
+    setupRules()
+    setupFacts()
     VIEWPORT_WIDTH = gameSettings.width
     VIEWPORT_HEIGHT = gameSettings.height
     TILE_SIZE = gameSettings.tileSize
@@ -36,6 +42,45 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
 
     //Skip this while implementing monster spawn!
     //actorManager.addTownsFolk()
+  }
+
+  private fun setupFacts() {
+    FactsOfTheWorld.stateIntFact("MetNumberOfNpcs", 0)
+  }
+
+  private fun setupRules() {
+    /*
+    These rules are dumb: we shall also track WHOM we
+    are meeting, in the form of a contextual fact
+    for that agent.
+
+    So all agents need a key. Yay!
+
+    Later for that though
+     */
+
+    RulesOfTheWorld.addRule(Rule("FirstMeetingWithNPC", mutableListOf(
+        Criterion.context("MetNpc"),
+        Criterion.equalsCriterion("MetNumberOfNpcs", 0)),
+        ConversationConsequence("conversations/dialog.ink.json", ConsequenceType.ConversationLoader)))
+
+    RulesOfTheWorld.addRule(Rule("SecondToFifthNpc", mutableListOf(
+        Criterion.context("MetNpc"),
+        Criterion.rangeCriterion("MetNumberOfNpcs", 1..2)),
+        ConversationConsequence("conversations/meetagain.ink.json", ConsequenceType.ConversationLoader)))
+
+    RulesOfTheWorld.addRule(Rule("ActualAgentMatcher", mutableListOf(
+        Criterion.context("MetNpc"),
+        Criterion.rangeCriterion("MetNumberOfNpcs", 1..2),
+        Criterion("NpcsPlayerHasMet", {
+          FactsOfTheWorld.getFactList<Npc>("NpcsPlayerHasMet").contains(it.value)
+        })),
+        ConversationConsequence("conversations/meetagain.ink.json", ConsequenceType.ConversationLoader)))
+
+    RulesOfTheWorld.addRule(Rule("TooManyMeetingsWithNpcs", mutableListOf(
+        Criterion.context("MetNpc"),
+        Criterion.rangeCriterion("MetNumberOfNpcs", 6..45)),
+        ConversationConsequence("conversations/enough.ink.json", ConsequenceType.ConversationLoader)))
   }
 
   private fun setupSystems() {
@@ -65,7 +110,7 @@ class GameManager(private val gameSettings: GameSettings) : Disposable {
 
     //Current tile system. Continually updates the agent instances with
     //what tile they're on, used by the AI
-    engine.addSystem(CurrentTileSystem())
+    engine.addSystem(WorldFactsSystem())
   }
 
   private fun setupMessageSystem() {

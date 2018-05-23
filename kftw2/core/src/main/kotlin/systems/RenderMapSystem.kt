@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.PerformanceCounters
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameManager
+import managers.GameManager
 import map.IMapManager
 import ktx.app.use
 import kotlin.math.roundToInt

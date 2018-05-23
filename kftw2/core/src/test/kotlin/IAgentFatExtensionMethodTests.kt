@@ -2,7 +2,7 @@ import com.lavaeater.kftw.data.IAgent
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock
-import story.*
+import world.*
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

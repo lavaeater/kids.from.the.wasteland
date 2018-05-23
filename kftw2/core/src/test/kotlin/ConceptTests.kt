@@ -2,10 +2,10 @@ import com.lavaeater.kftw.data.IAgent
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import story.FactsOfTheWorld
-import story.Criterion
-import story.Fact
-import story.Rule
+import world.FactsOfTheWorld
+import world.Criterion
+import world.Fact
+import world.Rule
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -94,11 +94,11 @@ class ConceptTests {
 		val passRule = Rule("UserFoundKey_VisitedBerlin_MetSomeOrcs", mutableListOf(
 				Criterion.booleanCriterion("FoundKey", true),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
-				Criterion.rangeCriterion("MetOrcs", 8..12)))
+				Criterion.rangeCriterion("MetOrcs", 8..12)), consequenceType =)
 		val failRule = Rule("UserHasntFoundKey_BeenToBerlin_MetFewOrcs", mutableListOf(
 				Criterion.booleanCriterion("FoundKey", false),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
-				Criterion.rangeCriterion("MetOrcs", 3..6)))
+				Criterion.rangeCriterion("MetOrcs", 3..6)), consequenceType =)
 
 		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule, failRule))
 
@@ -112,17 +112,17 @@ class ConceptTests {
 				Criterion.booleanCriterion("FoundKey", true),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 8..12),
-				Criterion.context("MetNpc")))
+				Criterion.context("MetNpc")), consequenceType =)
 		val failRule = Rule("Fail", mutableListOf(
 				Criterion.booleanCriterion("FoundKey", false),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 3..6),
-				Criterion.context("MetNpc")))
+				Criterion.context("MetNpc")), consequenceType =)
 
 		val noContextRule = Rule("No_Context", mutableListOf(
 				Criterion.booleanCriterion("FoundKey", true),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
-				Criterion.rangeCriterion("MetOrcs", 8..12)))
+				Criterion.rangeCriterion("MetOrcs", 8..12)), consequenceType =)
 
 		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule, failRule, noContextRule), "MetNpc")
 
@@ -140,17 +140,11 @@ class ConceptTests {
 				Criterion.booleanCriterion("FoundKey", true),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 8..12),
-				Criterion.context("MetNpc")), {rule, facts -> consequenceHappened = "${rule.name }"})
+				Criterion.context("MetNpc")), { rule, facts -> consequenceHappened = "${rule.name }"}, )
 
 		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule), "MetNpc")
 		result.first().applyConsequence()
 
 		assertEquals("Pass", consequenceHappened)
 	}
-
-	@Test
-	fun dynamicContexts() {
-
-	}
-
 }

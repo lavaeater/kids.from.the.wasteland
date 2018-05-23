@@ -1,4 +1,4 @@
-package story
+package world
 
 import com.lavaeater.kftw.data.IAgent
 
@@ -174,7 +174,7 @@ fun MutableSet<AccentFats>.allFacts(agent: IAgent): Set<Fat> {
 
 fun MutableSet<AccentFats>.safeAgentFacts(agent: IAgent): AccentFats {
   if (!this.any { it.agent == agent })
-    this.add(story.AccentFats(agent))
+    this.add(world.AccentFats(agent))
 
   return this.first { it.agent == agent }
 }

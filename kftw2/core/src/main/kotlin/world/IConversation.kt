@@ -1,4 +1,4 @@
-package story
+package world
 
 import com.lavaeater.kftw.data.IAgent
 

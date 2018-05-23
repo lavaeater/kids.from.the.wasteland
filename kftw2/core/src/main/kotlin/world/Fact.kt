@@ -1,4 +1,4 @@
-package story
+package world
 
 class Fact<T>(factKey: String, var value: T, subKey: String = "") {
   val key = "$factKey.$subKey"
