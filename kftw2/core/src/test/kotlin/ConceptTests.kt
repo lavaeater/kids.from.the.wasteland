@@ -2,7 +2,7 @@ import com.lavaeater.kftw.data.IAgent
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import story.ConceptManager
+import story.FactsOfTheWorld
 import story.Criterion
 import story.Fact
 import story.Rule
@@ -24,13 +24,13 @@ class ConceptTests {
 		@JvmStatic
 		@BeforeClass
 		fun beforeClass() {
-			ConceptManager.addStringToList("VisitedPlaces", "Berlin")
-			ConceptManager.addStringToList("VisitedPlaces", "Yokohama")
-			ConceptManager.addStringToList("VisitedPlaces", "London")
-			ConceptManager.addStringToList("VisitedPlaces", "Paris")
-			ConceptManager.stateBoolFact("FoundKey", true)
-			ConceptManager.stateIntFact("MetOrcs", 12)
-			ConceptManager.stateIntFact("NumberOfVisitedPlaces", 4)
+			FactsOfTheWorld.addStringToList("VisitedPlaces", "Berlin")
+			FactsOfTheWorld.addStringToList("VisitedPlaces", "Yokohama")
+			FactsOfTheWorld.addStringToList("VisitedPlaces", "London")
+			FactsOfTheWorld.addStringToList("VisitedPlaces", "Paris")
+			FactsOfTheWorld.stateBoolFact("FoundKey", true)
+			FactsOfTheWorld.stateIntFact("MetOrcs", 12)
+			FactsOfTheWorld.stateIntFact("NumberOfVisitedPlaces", 4)
 		}
 	}
 
@@ -43,11 +43,11 @@ class ConceptTests {
 	fun addStringToList_ListContainsString() {
 		//arrange
 		//act
-		ConceptManager.addStringToList(factKey, "Berlin")
+		FactsOfTheWorld.addStringToList(factKey, "Berlin")
 
 		//assert
-		assertEquals(1, ConceptManager.getFactList<String>(factKey).count())
-		assertTrue(ConceptManager.getFactList<String>(factKey).contains("Berlin"))
+		assertEquals(1, FactsOfTheWorld.getFactList<String>(factKey).count())
+		assertTrue(FactsOfTheWorld.getFactList<String>(factKey).contains("Berlin"))
 	}
 
   @Test
@@ -100,7 +100,7 @@ class ConceptTests {
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 3..6)))
 
-		val result = ConceptManager.rulesThatPass(setOf(passRule, failRule))
+		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule, failRule))
 
 		assertEquals(1, result.count())
 		assertEquals("UserFoundKey_VisitedBerlin_MetSomeOrcs", result.first().name)
@@ -124,7 +124,7 @@ class ConceptTests {
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 8..12)))
 
-		val result = ConceptManager.rulesThatPass(setOf(passRule, failRule, noContextRule), "MetNpc")
+		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule, failRule, noContextRule), "MetNpc")
 
 		assertEquals(2, result.count())
 		assertTrue(result.map { it.name }.containsAll(setOf("Pass", "No_Context")))
@@ -140,13 +140,12 @@ class ConceptTests {
 				Criterion.booleanCriterion("FoundKey", true),
 				Criterion.containsCriterion("VisitedPlaces", "Berlin"),
 				Criterion.rangeCriterion("MetOrcs", 8..12),
-				Criterion.context("MetNpc")), {rule, facts -> consequenceHappened = "Pass"})
+				Criterion.context("MetNpc")), {rule, facts -> consequenceHappened = "${rule.name }"})
 
-		val result = ConceptManager.rulesThatPass(setOf(passRule), "MetNpc")
+		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule), "MetNpc")
 		result.first().applyConsequence()
 
 		assertEquals("Pass", consequenceHappened)
-
 	}
 
 	@Test

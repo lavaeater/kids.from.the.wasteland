@@ -1,13 +1,10 @@
 package story
 
-class ConceptManager {
+class FactsOfTheWorld {
 
   /*
-  This is for conversations, but can they be
-  for anything?
-
-
-   */
+ They are for everything
+    */
   companion object {
     /*
     Statically accessible from the entire game.
@@ -29,7 +26,7 @@ class ConceptManager {
     *
     * We  might need a sweet sweet dsl to build rules, but that should be easy:
      */
-    val factsOfTheWorld: MutableMap<String, Fact<*>> = mutableMapOf()
+    private val factsOfTheWorld: MutableMap<String, Fact<*>> = mutableMapOf()
 
     fun factsForKeys(keys: Set<String>) : Sequence<Fact<*>> {
       //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
@@ -145,82 +142,3 @@ fun key(factKey: String, subKey: String = ""):String {
   return "$factKey.$subKey"
 }
 
-//abstract class FactBase(factKey: String, subKey:String = "") {
-//  val key = "$factKey.$subKey"
-//}
-//First, the data for some global fact - or local for an agent... how?
-class Fact<T>(factKey: String, var value: T, subKey: String = "") {
-  val key = "$factKey.$subKey"
-  companion object {
-    fun <T> createFact(factKey: String, value: T, subKey: String = "") : Fact<T> {
-      return Fact(factKey, value, subKey)
-    }
-
-    fun <T> createListFact(factKey: String, subKey: String = ""):Fact<MutableCollection<T>> {
-      return Fact(factKey, mutableSetOf(), subKey)
-    }
-  }
-}
-//abstract class ListFact<T>(factKey: String, subKey:String = "", override var value: MutableCollection<T> = mutableSetOf()): Fact<MutableCollection<T>>(factKey, subKey, value)
-
-//class StringFact(factKey: String, subKey: String, override var value: String = ""): Fact<String>(factKey, value, subKey)
-//class BooleanFact(factKey: String, subKey: String, override var value: Boolean = false): Fact<Boolean>(factKey, subKey, value)
-//class IntFact(factKey: String,subKey: String, override var value: Int = 0): Fact<Int>(factKey, subKey, value)
-//class StringListFact(factKey: String, subKey: String) : ListFact<String>(factKey = factKey, subKey = subKey)
-
-class Criterion(factKey: String, private val matcher: (Fact<*>) -> Boolean, subKey: String = "") {
-  val key = "$factKey.$subKey"
-  fun isMatch(fact: Fact<*>):Boolean {
-    return fact.key == key && matcher(fact)
-  }
-
-  companion object {
-    fun booleanCriterion(factKey: String, checkFor: Boolean, subKey: String = "") : Criterion{
-      return Criterion(factKey, { it.value == checkFor }, subKey)
-    }
-
-    fun <T> equalsCriterion(factKey: String, value: T, subKey: String = ""): Criterion {
-      return Criterion(factKey, { it.value == value}, subKey)
-    }
-
-    fun rangeCriterion(factKey: String, range: IntRange, subKey: String = ""): Criterion {
-      return Criterion(factKey, { it.value in range}, subKey)
-    }
-
-    fun containsCriterion(factKey: String, value: String, subKey: String = ""):Criterion {
-      return Criterion(factKey, { (it.value as Collection<*>).contains(value)}, subKey)
-    }
-
-    fun context(context: String) :Criterion {
-      return Criterion("Context", {fact -> fact.value == context })
-    }
-  }
-}
-
-class Rule(val name:String, private val criteria: MutableCollection<Criterion> = mutableListOf(), private val consequence: (Rule, Set<Fact<*>>) -> Unit = {_,_ -> }) {
-  val keys : Set<String> get() = criteria.map { it.key }.distinct().toSet()
-  val criteriaCount = criteria.count()
-
-  var matchedFacts: Set<Fact<*>> = mutableSetOf()
-
-  fun pass(facts: Set<Fact<*>>) : Boolean {
-
-    if(facts.all { f -> criteria.filter { c -> c.key == f.key }.all { c -> c.isMatch(f) } }) {
-      matchedFacts = facts
-      return true
-    }
-    return false
-  }
-
-  fun applyConsequence() {
-    consequence(this, matchedFacts)
-  }
-}
-
-//class BooleanCriterion(factKey: String, subKey: String, isIt:Boolean): Criterion<Boolean, Fact<Boolean>>(factKey, subKey, matcher = { it.value == isIt })
-//
-//class StringCriterion(factKey: String, subKey: String, matcher: (Fact<String>) -> Boolean): Criterion<String>(factKey, subKey, matcher)
-//
-//class IntCriterion(factKey: String, subKey: String, matcher: (Fact<Int>) -> Boolean): Criterion<Int>(factKey, subKey, matcher)
-//
-//class ListCriterion(factKey: String, subKey: String, matcher: (StringListFact) -> Boolean): Criterion<StringListFact>(factKey, subKey, matcher)
