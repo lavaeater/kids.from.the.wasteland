@@ -75,7 +75,7 @@ class ConversationManager {
       //retrieve the story, yay!
       currentAgent = npc
       currentStory = (rules.first().consequence as ConversationConsequence).retrieve()
-      ui.runConversation(Conversation(currentStory!!, player, npc), {endConversation(npc)})
+      ui.runConversation(InkConversation(currentStory!!, player, npc), {endConversation(npc)})
     } else {
       endConversation(npc)
     }
