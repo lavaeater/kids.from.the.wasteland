@@ -8,8 +8,6 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.data.IAgent
-import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.*
 import com.lavaeater.kftw.systems.*
@@ -60,24 +58,24 @@ class GameManager(gameSettings: GameSettings) : Disposable {
      */
 
     RulesOfTheWorld.addRule(Rule("FirstMeetingWithNPC", mutableListOf(
-        Criterion.context(Contexts.metNpc),
-        Criterion.equalsCriterion(Facts.metNumberOfNpcs, 0)),
+        Criterion.context(Contexts.MetNpc),
+        Criterion.equalsCriterion(Facts.MetNumberOfNpcs, 0)),
         ConversationConsequence("conversations/dialog.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("SecondToFifthNpc", mutableListOf(
-        Criterion.context(Contexts.metNpc),
-        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 1..2)),
+        Criterion.context(Contexts.MetNpc),
+        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..2)),
         ConversationConsequence("conversations/meetagain.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("ActualAgentMatcher", mutableListOf(
-        Criterion.context(Contexts.metNpc),
-        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 1..2),
-        Criterion.factContainsFactValue<String>(Facts.npcsPlayerHasMet,Facts.currentNpc)),
+        Criterion.context(Contexts.MetNpc),
+        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..2),
+        Criterion.factContainsFactValue<String>(Facts.NpcsPlayerHasMet,Facts.CurrentNpc)),
         ConversationConsequence("conversations/meetagain.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("TooManyMeetingsWithNpcs", mutableListOf(
-        Criterion.context(Contexts.metNpc),
-        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 6..45)),
+        Criterion.context(Contexts.MetNpc),
+        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 6..45)),
         ConversationConsequence("conversations/enough.ink.json")))
   }
 

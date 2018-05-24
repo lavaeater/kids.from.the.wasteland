@@ -43,7 +43,7 @@ class Criterion(factKey: String, private val matcher: (Fact<*>) -> Boolean, subK
     }
 
     fun context(context: String) : Criterion {
-      return Criterion(Facts.context, {
+      return Criterion(Facts.Context, {
         fact -> fact.value == context
       })
     }

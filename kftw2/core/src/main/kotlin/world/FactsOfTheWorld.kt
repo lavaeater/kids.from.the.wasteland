@@ -45,7 +45,7 @@ class FactsOfTheWorld {
       return factsOfTheWorld.valuesOrEmpty(factKey, subKey)
     }
 
-    ///Checks the rule, with supplied context. Any keys in context
+    ///Checks the rule, with supplied Context. Any keys in Context
     ///that exists in world facts are filtered out
     ///so a fact only exists once. Yay
     fun checkRule(rule: Rule) :Boolean {

@@ -12,16 +12,20 @@ import com.lavaeater.kftw.ui.IUserInterface
 
 class Facts {
   companion object {
-    const val context ="context"
-    const val npcsPlayerHasMet = "npcsPlayerHasMet"
-    const val currentNpc = "currentNpc"
-    const val metNumberOfNpcs ="MetNumberOfNpcs"
+    const val Context ="Context"
+    const val NpcsPlayerHasMet = "NpcsPlayerHasMet"
+    const val CurrentNpc = "CurrentNpc"
+    const val MetNumberOfNpcs ="MetNumberOfNpcs"
+    val VisitedPlaces = "VisitedPlaces"
+    val FoundKey = "FoundKey"
+    val MetOrcs = "FoundKey"
+    val NumberOfVisitedPlaces = "NumberOfVisitedPlaces"
   }
 }
 
 class Contexts {
   companion object {
-    const val metNpc = "metNpc"
+    const val MetNpc = "MetNpc"
   }
 }
 
@@ -39,24 +43,24 @@ class ConversationManager {
 
     Everything must be set in the facts of the world.
 
-    So we start with setting the current context.
+    So we start with setting the current Context.
 
     THEN we find the rules. Fantastic. Glorious
      */
 
     //Add to list of agents player has met
-    FactsOfTheWorld.addStringToList(Facts.npcsPlayerHasMet, npc.id)
-    FactsOfTheWorld.stateStringFact(Facts.context, Contexts.metNpc)
-    FactsOfTheWorld.stateStringFact(Facts.currentNpc, npc.id)
+    FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)
+    FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
+    FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
 
     /**
      * Aaah, the remnants!
      *
-     * Find some rules that match the current context, which is "MetNpc" etc etc
+     * Find some rules that match the current Context, which is "MetNpc" etc etc
      */
 
-    //This is the simple context, just a string for like an event or something
-    //The context will probably be a bunch of stuff, like who the npc is and stuff.
+    //This is the simple Context, just a string for like an event or something
+    //The Context will probably be a bunch of stuff, like who the npc is and stuff.
     val rules = FactsOfTheWorld.rulesThatPass(RulesOfTheWorld.rules)
         .filter {
           it.consequence.consequenceType == ConsequenceType.ConversationLoader
@@ -81,10 +85,10 @@ class ConversationManager {
   private fun endConversation(npc:Npc) {
 
     //Add to list of agents player has met
-    FactsOfTheWorld.addStringToList(Facts.npcsPlayerHasMet, npc.id)
+    FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)
     //Add to counter of this particular type
-    FactsOfTheWorld.addToIntFact(Facts.metNumberOfNpcs, 1)
-    FactsOfTheWorld.clearStringFact(Facts.currentNpc)
+    FactsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
+    FactsOfTheWorld.clearStringFact(Facts.CurrentNpc)
 
     currentAgent = null
     currentStory = null
