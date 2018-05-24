@@ -3,6 +3,7 @@ package com.lavaeater.kftw.data
 import com.badlogic.gdx.math.MathUtils
 
 interface IAgent {
+  val id: String
   var name: String
   var strength: Int
   var health: Int

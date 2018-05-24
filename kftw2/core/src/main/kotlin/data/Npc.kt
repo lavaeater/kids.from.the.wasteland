@@ -7,7 +7,7 @@ import map.IMapManager
 import map.MapManager
 import com.lavaeater.kftw.map.TileInstance
 
-class Npc(override var name:String ="Joshua",
+class Npc(override val id: String, override var name: String = "Joshua",
           val npcType: NpcType,
           override var strength: Int = npcType.strength,
           override var health: Int = npcType.health,

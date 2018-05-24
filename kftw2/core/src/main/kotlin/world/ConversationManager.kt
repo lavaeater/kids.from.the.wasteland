@@ -9,6 +9,22 @@ import com.lavaeater.kftw.managers.GameEvent
 import com.lavaeater.kftw.managers.GameStateManager
 import com.lavaeater.kftw.ui.IUserInterface
 
+
+class Facts {
+  companion object {
+    const val context ="context"
+    const val npcsPlayerHasMet = "npcsPlayerHasMet"
+    const val currentNpc = "currentNpc"
+    const val metNumberOfNpcs ="MetNumberOfNpcs"
+  }
+}
+
+class Contexts {
+  companion object {
+    const val metNpc = "metNpc"
+  }
+}
+
 class ConversationManager {
   private val ui = Ctx.context.inject<IUserInterface>()
   private val gameStateManager = Ctx.context.inject<GameStateManager>()
@@ -17,6 +33,22 @@ class ConversationManager {
   private val player = Ctx.context.inject<Player>()
 
   fun startWithNpc(npc:Npc) {
+    /*
+
+    Glory.
+
+    Everything must be set in the facts of the world.
+
+    So we start with setting the current context.
+
+    THEN we find the rules. Fantastic. Glorious
+     */
+
+    //Add to list of agents player has met
+    FactsOfTheWorld.addStringToList(Facts.npcsPlayerHasMet, npc.id)
+    FactsOfTheWorld.stateStringFact(Facts.context, Contexts.metNpc)
+    FactsOfTheWorld.stateStringFact(Facts.currentNpc, npc.id)
+
     /**
      * Aaah, the remnants!
      *
@@ -25,12 +57,10 @@ class ConversationManager {
 
     //This is the simple context, just a string for like an event or something
     //The context will probably be a bunch of stuff, like who the npc is and stuff.
-    val rules = FactsOfTheWorld.rulesThatPass(RulesOfTheWorld.rules, "MetNpc")
+    val rules = FactsOfTheWorld.rulesThatPass(RulesOfTheWorld.rules)
         .filter {
           it.consequence.consequenceType == ConsequenceType.ConversationLoader
         }
-        .union(FactsOfTheWorld.rulesThatPass(RulesOfTheWorld.rules, setOf(Fact.createFact("Context", "MetNpC"),
-            Fact.createFact("NpcsPlayerHasMet", npc))))
 
     //We should probably let rules have lists of consequences, maybe?
     if(rules.any()) {
@@ -51,12 +81,10 @@ class ConversationManager {
   private fun endConversation(npc:Npc) {
 
     //Add to list of agents player has met
-    FactsOfTheWorld.addValueToFactList("NpcsPlayerHasMet", npc)
+    FactsOfTheWorld.addStringToList(Facts.npcsPlayerHasMet, npc.id)
     //Add to counter of this particular type
-    FactsOfTheWorld.addToIntFact("MetNumberOfNpcs", 1)
-
-
-    currentAgent?.stateFact(Fat.MetPlayer)
+    FactsOfTheWorld.addToIntFact(Facts.metNumberOfNpcs, 1)
+    FactsOfTheWorld.clearStringFact(Facts.currentNpc)
 
     currentAgent = null
     currentStory = null
@@ -65,5 +93,7 @@ class ConversationManager {
 }
 
 enum class ConsequenceType {
-  ConversationLoader
+  ConversationLoader,
+  ApplyFactsConsequence,
+  ApplyLambdaConsequence
 }

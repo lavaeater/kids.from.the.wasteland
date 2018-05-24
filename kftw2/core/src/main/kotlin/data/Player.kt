@@ -2,7 +2,8 @@ package com.lavaeater.kftw.data
 
 
 
-class Player(override var name:String,
+class Player(override val id:String = "Player",
+             override var name:String,
              override var strength: Int = 10,
              override var health: Int = 10,
              override var intelligence: Int = 10,

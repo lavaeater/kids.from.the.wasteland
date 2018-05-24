@@ -1,5 +1,6 @@
 package world
 
+
 class FactsOfTheWorld {
 
   /*
@@ -47,23 +48,14 @@ class FactsOfTheWorld {
     ///Checks the rule, with supplied context. Any keys in context
     ///that exists in world facts are filtered out
     ///so a fact only exists once. Yay
-    fun checkRule(rule: Rule, context: Set<Fact<*>>) :Boolean {
+    fun checkRule(rule: Rule) :Boolean {
       val factsToCheck = factsForKeys(rule.keys)
-//          .filter { rule.keys.contains(it.key) }
           .toSet()
-          .union(context.filter {
-            rule.keys.any { k -> wildCardMatcher(k, it.key) }
-          })
-
       return rule.pass(factsToCheck)
     }
 
-    fun rulesThatPass(rules:Set<Rule>, context: String): List<Rule> {
-      return rulesThatPass(rules, setOf(Fact("Context", context)))
-    }
-
-    fun rulesThatPass(rules:Set<Rule>, context: Set<Fact<*>> = emptySet()) : List<Rule> {
-      return rules.filter { checkRule(it, context)}
+    fun rulesThatPass(rules:Set<Rule>) : List<Rule> {
+      return rules.filter { checkRule(it)}
 		      .sortedByDescending { it.criteriaCount }
     }
 
@@ -73,6 +65,10 @@ class FactsOfTheWorld {
 
     fun stateStringFact(factKey: String, value: String, subKey: String = "") {
       ensureStringFact(factKey, subKey).value = value
+    }
+
+    fun clearStringFact(factKey: String, subKey: String = "") {
+      ensureStringFact(factKey, subKey).value = ""
     }
 
     fun stateIntFact(factKey: String, value: Int, subKey: String = "") {
@@ -151,6 +147,10 @@ class FactsOfTheWorld {
         factsOfTheWorld[key] = f
       }
       return factsOfTheWorld[key] as Fact<MutableCollection<String>>
+    }
+
+    fun contains(factKey: String, subKey: String): Boolean {
+      return factsOfTheWorld.containsKey(factKey, subKey)
     }
   }
 }

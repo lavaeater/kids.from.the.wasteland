@@ -60,27 +60,25 @@ class GameManager(gameSettings: GameSettings) : Disposable {
      */
 
     RulesOfTheWorld.addRule(Rule("FirstMeetingWithNPC", mutableListOf(
-        Criterion.context("MetNpc"),
-        Criterion.equalsCriterion("MetNumberOfNpcs", 0)),
-        ConversationConsequence("conversations/dialog.ink.json", ConsequenceType.ConversationLoader)))
+        Criterion.context(Contexts.metNpc),
+        Criterion.equalsCriterion(Facts.metNumberOfNpcs, 0)),
+        ConversationConsequence("conversations/dialog.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("SecondToFifthNpc", mutableListOf(
-        Criterion.context("MetNpc"),
-        Criterion.rangeCriterion("MetNumberOfNpcs", 1..2)),
-        ConversationConsequence("conversations/meetagain.ink.json", ConsequenceType.ConversationLoader)))
+        Criterion.context(Contexts.metNpc),
+        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 1..2)),
+        ConversationConsequence("conversations/meetagain.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("ActualAgentMatcher", mutableListOf(
-        Criterion.context("MetNpc"),
-        Criterion.rangeCriterion("MetNumberOfNpcs", 1..2),
-        Criterion("NpcsPlayerHasMet", {
-          FactsOfTheWorld.getFactList<Npc>("NpcsPlayerHasMet").contains(it.value)
-        })),
-        ConversationConsequence("conversations/meetagain.ink.json", ConsequenceType.ConversationLoader)))
+        Criterion.context(Contexts.metNpc),
+        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 1..2),
+        Criterion.factContainsFactValue<String>(Facts.npcsPlayerHasMet,Facts.currentNpc)),
+        ConversationConsequence("conversations/meetagain.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("TooManyMeetingsWithNpcs", mutableListOf(
-        Criterion.context("MetNpc"),
-        Criterion.rangeCriterion("MetNumberOfNpcs", 6..45)),
-        ConversationConsequence("conversations/enough.ink.json", ConsequenceType.ConversationLoader)))
+        Criterion.context(Contexts.metNpc),
+        Criterion.rangeCriterion(Facts.metNumberOfNpcs, 6..45)),
+        ConversationConsequence("conversations/enough.ink.json")))
   }
 
   private fun setupSystems() {

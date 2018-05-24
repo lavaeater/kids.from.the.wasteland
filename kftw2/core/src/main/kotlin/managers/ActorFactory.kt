@@ -79,7 +79,7 @@ class ActorFactory {
   }
 
   fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
-    val npc = Npc(name, npcTypes[type]!!)
+    val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
     val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
     val tree = parser.parse(reader, npc)
@@ -106,7 +106,7 @@ class ActorFactory {
   fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String, x:Int, y:Int) : Entity {
 
     val position = Pair(x,y).tileWorldCenter()
-    val npc = Npc(name, npcTypes[type]!!)
+    val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
     val reader = if(type == "orc") Gdx.files.internal("btrees/orc.tree").reader() else Gdx.files.internal("btrees/townfolk.tree").reader()
     val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
     val tree = parser.parse(reader, npc)
@@ -146,5 +146,16 @@ class ActorFactory {
   fun createNpcBody(position: Vector2, npc: Npc) : Body {
     return bodyManager.createBody(2f, 2.5f, 15f, position, BodyDef.BodyType.DynamicBody)
         .apply { userData = npc }
+  }
+
+  companion object {
+    var npcIds: Int = 0
+    fun getNextNpcId():Int {
+      return npcIds++
+    }
+
+    fun getNpcId(name:String):String {
+      return "${name}_${getNextNpcId()}"
+    }
   }
 }

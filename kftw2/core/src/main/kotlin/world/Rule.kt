@@ -12,6 +12,30 @@ interface ApplyConsequence : Consequence {
   fun applyConsequence()
 }
 
+class ApplyLambdaConsequence(private val applier:(Rule, Set<Fact<*>>)->Unit):ApplyConsequence {
+  override lateinit var rule: Rule
+  override lateinit var facts: Set<Fact<*>>
+  override val consequenceType = ConsequenceType.ApplyLambdaConsequence
+  override fun applyConsequence() {
+    applier(rule, facts)
+  }
+
+}
+
+class ApplyFactsConsequence(val factsMap: Map<String, (Fact<*>)->Unit>) : ApplyConsequence {
+  override lateinit var rule: Rule
+  override lateinit var facts: Set<Fact<*>>
+  override val consequenceType = ConsequenceType.ApplyFactsConsequence
+
+  override fun applyConsequence() {
+    //We could use injection to inject the global facts everyehwere...
+    val facts = FactsOfTheWorld.factsForKeys(factsMap.keys)
+    for (fact in facts) {
+      factsMap[fact.key]?.invoke(fact)
+    }
+  }
+}
+
 interface ProcessInputConsequence : Consequence {
   fun <T> processInput(value: T)
 }
@@ -20,10 +44,10 @@ interface RetrieveConsequence<T>:Consequence {
   fun retrieve() : T
 }
 
-class ConversationConsequence(val storyPath:String = "ink/dialog.ink.json",
-                              override val consequenceType: ConsequenceType):RetrieveConsequence<Story> {
+class ConversationConsequence(val storyPath:String = "ink/dialog.ink.json"):RetrieveConsequence<Story> {
   override lateinit var rule: Rule
   override lateinit var facts: Set<Fact<*>>
+  override val consequenceType = ConsequenceType.ConversationLoader
   private val storyReader = InkLoader()
   override fun retrieve(): Story {
     return Story(storyReader.readStoryJson(storyPath))

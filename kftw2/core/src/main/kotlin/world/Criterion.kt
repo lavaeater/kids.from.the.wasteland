@@ -23,12 +23,27 @@ class Criterion(factKey: String, private val matcher: (Fact<*>) -> Boolean, subK
       }, subKey)
     }
 
-    fun containsCriterion(factKey: String, value: String, subKey: String = ""): Criterion {
-      return Criterion(factKey, { (it.value as Collection<*>).contains(value) }, subKey)
+    fun <T> containsCriterion(factKey: String, value: T, subKey: String ="") :Criterion {
+      return Criterion(factKey, {
+        FactsOfTheWorld.getFactList<T>(factKey, subKey).contains(value)
+      }, subKey)
+    }
+
+    fun <T> factContainsFactValue(factKey:String, contextKey:String, subKey: String =""): Criterion {
+      return Criterion(factKey, {
+        var match = false
+        val contextValue = FactsOfTheWorld.factValueOrNull<T>(contextKey)
+        if (contextValue != null) {
+          if(FactsOfTheWorld.getFactList<T>(factKey, subKey).contains(contextValue)) {
+            match = true }
+
+        }
+         match
+      }, subKey)
     }
 
     fun context(context: String) : Criterion {
-      return Criterion("Context", {
+      return Criterion(Facts.context, {
         fact -> fact.value == context
       })
     }
