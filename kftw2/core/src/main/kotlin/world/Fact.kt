@@ -1,14 +1,13 @@
 package world
 
-class Fact<T>(factKey: String, var value: T, subKey: String = "") {
-  val key = "$factKey.$subKey"
+class Fact<T>(val key: String, var value: T) {
   companion object {
-    fun <T> createFact(factKey: String, value: T, subKey: String = "") : Fact<T> {
-      return Fact(factKey, value, subKey)
+    fun <T> createFact(key: String, value: T) : Fact<T> {
+      return Fact(key, value)
     }
 
-    fun <T> createListFact(factKey: String, subKey: String = ""): Fact<MutableCollection<T>> {
-      return Fact(factKey, mutableSetOf(), subKey)
+    fun <T> createListFact(key: String): Fact<MutableCollection<T>> {
+      return Fact(key, mutableSetOf())
     }
   }
 }

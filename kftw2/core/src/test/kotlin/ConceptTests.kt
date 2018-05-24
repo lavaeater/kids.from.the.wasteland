@@ -1,4 +1,5 @@
 import com.lavaeater.kftw.data.IAgent
+import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -9,39 +10,38 @@ import kotlin.test.assertTrue
 class ConceptTests {
 
 	companion object {
-		lateinit var agentA: IAgent
-		lateinit var agentB: IAgent
-		lateinit var agentC: IAgent
-		lateinit var agentD: IAgent
-		lateinit var agentNoFacts: IAgent
-
 		@JvmStatic
 		@BeforeClass
 		fun beforeClass() {
-			FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Berlin")
-			FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Yokohama")
-			FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "London")
-			FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Paris")
-			FactsOfTheWorld.stateBoolFact(Facts.FoundKey, true)
-			FactsOfTheWorld.stateIntFact(Facts.MetOrcs, 12)
-			FactsOfTheWorld.stateIntFact(Facts.NumberOfVisitedPlaces, 4)
-			FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
 		}
 	}
 
 	@Before
 	fun before() {
+		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Yokohama")
+		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Berlin")
+		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "London")
+		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Paris")
+		FactsOfTheWorld.stateBoolFact(Facts.FoundKey, true)
+		FactsOfTheWorld.stateIntFact(Facts.MetOrcs, 12)
+		FactsOfTheWorld.stateIntFact(Facts.NumberOfVisitedPlaces, 4)
+		FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
+	}
 
+	@After
+	fun after() {
+		FactsOfTheWorld.clearAllFacts()
 	}
 
 	@Test
 	fun addStringToList_ListContainsString() {
 		//arrange
 		//act
-		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Berlin")
+		assertEquals(4, FactsOfTheWorld.getFactList<String>(Facts.VisitedPlaces).count())
+		FactsOfTheWorld.addStringToList(Facts.VisitedPlaces, "Bratislava")
 
 		//assert
-		assertEquals(1, FactsOfTheWorld.getFactList<String>(Facts.VisitedPlaces).count())
+		assertEquals(5, FactsOfTheWorld.getFactList<String>(Facts.VisitedPlaces).count())
 		assertTrue(FactsOfTheWorld.getFactList<String>(Facts.VisitedPlaces).contains("Berlin"))
 	}
 
@@ -90,6 +90,7 @@ class ConceptTests {
 				Criterion.booleanCriterion(Facts.FoundKey, true),
 				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
 				Criterion.rangeCriterion(Facts.MetOrcs, 8..12)), ApplyFactsConsequence(emptyMap()))
+
 		val failRule = Rule("UserHasntFoundKey_BeenToBerlin_MetFewOrcs", mutableListOf(
 				Criterion.booleanCriterion(Facts.FoundKey, false),
 				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
@@ -108,6 +109,7 @@ class ConceptTests {
 				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
 				Criterion.rangeCriterion(Facts.MetOrcs, 8..12),
 				Criterion.context(Contexts.MetNpc)), ApplyFactsConsequence(emptyMap()))
+
 		val failRule = Rule("Fail", mutableListOf(
 				Criterion.booleanCriterion(Facts.FoundKey, false),
 				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
@@ -126,6 +128,17 @@ class ConceptTests {
 		assertEquals("Pass", result.first().name)
 	}
 
+	@Test
+	fun ruleWithContextualCriteria_Passes() {
+		FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, "SteveTheOrc")
+		FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, "LeifTheBard")
+		FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, "GunnarTheHunnar")
+		FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, "SteveTheOrc")
+
+		val contextRule = Rule("Contextual", mutableListOf(
+				Criterion.factContainsFactValue<String>(Facts.NpcsPlayerHasMet, Facts.CurrentNpc)
+		), ApplyFactsConsequence(emptyMap()))
+	}
 
 
 	@Test
@@ -138,7 +151,7 @@ class ConceptTests {
 				Criterion.context(Contexts.MetNpc)), ApplyLambdaConsequence{r, f ->  consequenceHappened = "${r.name }"})
 
 		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule))
-    (result.first() as ApplyConsequence).applyConsequence()
+    (result.first().consequence as ApplyConsequence).applyConsequence()
 
 		assertEquals("Pass", consequenceHappened)
 	}

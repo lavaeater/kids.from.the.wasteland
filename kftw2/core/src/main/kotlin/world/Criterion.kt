@@ -1,45 +1,45 @@
 package world
 
-class Criterion(factKey: String, private val matcher: (Fact<*>) -> Boolean, subKey: String = "") {
-  val key = "$factKey.$subKey"
+class Criterion(val key: String, private val matcher: (Fact<*>) -> Boolean) {
   fun isMatch(fact: Fact<*>):Boolean {
     return matcher(fact)
   }
 
   companion object {
-    fun booleanCriterion(factKey: String, checkFor: Boolean, subKey: String = "") : Criterion {
-      return Criterion(factKey, { it.value == checkFor }, subKey)
+    fun booleanCriterion(key: String, checkFor: Boolean) : Criterion {
+      return Criterion(key, { it.value == checkFor })
     }
 
-    fun <T> equalsCriterion(factKey: String, value: T, subKey: String = ""): Criterion {
-      return Criterion(factKey, {
+    fun <T> equalsCriterion(key: String, value: T): Criterion {
+      return Criterion(key, {
         it.value == value
-      }, subKey)
+      })
     }
 
-    fun rangeCriterion(factKey: String, range: IntRange, subKey: String = ""): Criterion {
-      return Criterion(factKey, {
+    fun rangeCriterion(key: String, range: IntRange): Criterion {
+      return Criterion(key, {
         it.value in range
-      }, subKey)
+      })
     }
 
-    fun <T> containsCriterion(factKey: String, value: T, subKey: String ="") :Criterion {
-      return Criterion(factKey, {
-        FactsOfTheWorld.getFactList<T>(factKey, subKey).contains(value)
-      }, subKey)
+    fun <T> containsCriterion(key: String, value: T) :Criterion {
+      return Criterion(key, {
+        val factList = FactsOfTheWorld.getFactList<T>(key)
+        factList.contains(value)
+      })
     }
 
-    fun <T> factContainsFactValue(factKey:String, contextKey:String, subKey: String =""): Criterion {
-      return Criterion(factKey, {
+    fun <T> factContainsFactValue(key:String, contextKey:String): Criterion {
+      return Criterion(key, {
         var match = false
         val contextValue = FactsOfTheWorld.factValueOrNull<T>(contextKey)
         if (contextValue != null) {
-          if(FactsOfTheWorld.getFactList<T>(factKey, subKey).contains(contextValue)) {
+          if(FactsOfTheWorld.getFactList<T>(key).contains(contextValue)) {
             match = true }
 
         }
          match
-      }, subKey)
+      })
     }
 
     fun context(context: String) : Criterion {

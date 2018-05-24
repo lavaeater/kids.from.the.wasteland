@@ -62,9 +62,9 @@ class GameManager(gameSettings: GameSettings) : Disposable {
         Criterion.equalsCriterion(Facts.MetNumberOfNpcs, 0)),
         ConversationConsequence("conversations/dialog.ink.json")))
 
-    RulesOfTheWorld.addRule(Rule("SecondToFifthNpc", mutableListOf(
+    RulesOfTheWorld.addRule(Rule("ThirdToFifthNpc", mutableListOf(
         Criterion.context(Contexts.MetNpc),
-        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..2)),
+        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..5)),
         ConversationConsequence("conversations/meetagain.ink.json")))
 
     RulesOfTheWorld.addRule(Rule("ActualAgentMatcher", mutableListOf(

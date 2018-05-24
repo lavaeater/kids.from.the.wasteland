@@ -18,7 +18,7 @@ class Facts {
     const val MetNumberOfNpcs ="MetNumberOfNpcs"
     val VisitedPlaces = "VisitedPlaces"
     val FoundKey = "FoundKey"
-    val MetOrcs = "FoundKey"
+    val MetOrcs = "MetOrcs"
     val NumberOfVisitedPlaces = "NumberOfVisitedPlaces"
   }
 }
@@ -49,7 +49,6 @@ class ConversationManager {
      */
 
     //Add to list of agents player has met
-    FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)
     FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
     FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
 

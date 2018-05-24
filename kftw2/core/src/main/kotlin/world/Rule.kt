@@ -44,7 +44,7 @@ interface RetrieveConsequence<T>:Consequence {
   fun retrieve() : T
 }
 
-class ConversationConsequence(val storyPath:String = "ink/dialog.ink.json"):RetrieveConsequence<Story> {
+class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.json"):RetrieveConsequence<Story> {
   override lateinit var rule: Rule
   override lateinit var facts: Set<Fact<*>>
   override val consequenceType = ConsequenceType.ConversationLoader
@@ -67,10 +67,11 @@ class Rule(val name: String,
 
     if(facts.count() >= criteriaCount) {
       val res = facts.all {
-        f -> criteria.first {
-        c -> wildCardMatcher(c.key,f.key) }.isMatch(f) }
+        f -> criteria.first { it.key == f.key }.isMatch(f) }
       if (res) {
         matchedFacts = facts
+        consequence.facts = matchedFacts
+        consequence.rule = this
         return true
       }
     }
@@ -78,14 +79,14 @@ class Rule(val name: String,
   }
 }
 
-fun wildCardMatcher(one:String, two:String) : Boolean {
-  if(!one.contains('*') && !two.contains('*')) return one == two
-
-  val os = one.substringBefore(".")
-  val ts = two.substringBefore(".")
-
-  return os == ts
-}
+//fun wildCardMatcher(one:String, two:String) : Boolean {
+//  if(!one.contains('*') && !two.contains('*')) return one == two
+//
+//  val os = one.substringBefore(".")
+//  val ts = two.substringBefore(".")
+//
+//  return os == ts
+//}
 
 class RulesOfTheWorld {
   companion object {

@@ -32,17 +32,17 @@ class FactsOfTheWorld {
     fun factsForKeys(keys: Set<String>) : Sequence<Fact<*>> {
       //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
 
-      val facts = factsOfTheWorld.filterKeys { keys.any { k -> wildCardMatcher(k, it) } }.map { it.value }.asSequence()
+      val facts = factsOfTheWorld.filterKeys { keys.contains(it) }.map { it.value }.asSequence()
 
       return facts
     }
 
-    fun <T> factValueOrNull(factKey: String, subKey: String = ""):T? {
-      return factsOfTheWorld.valueOrNull(factKey, subKey)
+    fun <T> factValueOrNull(key: String):T? {
+      return factsOfTheWorld.valueOrNull(key)
     }
 
-    fun <T> getFactList(factKey: String, subKey: String=""): Set<T> {
-      return factsOfTheWorld.valuesOrEmpty(factKey, subKey)
+    fun <T> getFactList(key:String): Set<T> {
+      return factsOfTheWorld.valuesOrEmpty(key)
     }
 
     ///Checks the rule, with supplied Context. Any keys in Context
@@ -59,32 +59,32 @@ class FactsOfTheWorld {
 		      .sortedByDescending { it.criteriaCount }
     }
 
-    fun stateBoolFact(factKey: String, value: Boolean, subKey: String = "") {
-      ensureBooleanFact(factKey, subKey).value = value
+    fun stateBoolFact(key:String, value: Boolean) {
+      ensureBooleanFact(key).value = value
     }
 
-    fun stateStringFact(factKey: String, value: String, subKey: String = "") {
-      ensureStringFact(factKey, subKey).value = value
+    fun stateStringFact(key: String, value: String) {
+      ensureStringFact(key).value = value
     }
 
-    fun clearStringFact(factKey: String, subKey: String = "") {
-      ensureStringFact(factKey, subKey).value = ""
+    fun clearStringFact(key: String) {
+      ensureStringFact(key).value = ""
     }
 
-    fun stateIntFact(factKey: String, value: Int, subKey: String = "") {
-      ensureIntFact(factKey, subKey).value = value
+    fun stateIntFact(key: String, value: Int) {
+      ensureIntFact(key).value = value
     }
 
-    fun addToIntFact(factKey: String, value: Int, subKey: String = "") {
-      ensureIntFact(factKey, subKey).value+=value
+    fun addToIntFact(key: String, value: Int) {
+      ensureIntFact(key).value+=value
     }
 
-    fun subtractFromIntFact(factKey: String, value: Int, subKey: String = "") {
-      ensureIntFact(factKey, subKey).value-=value
+    fun subtractFromIntFact(key: String, value: Int) {
+      ensureIntFact(key).value-=value
     }
 
-    fun addStringToList(factKey: String, value: String, subKey: String = "") {
-      ensureStringListFact(factKey, subKey).value.add(value)
+    fun addStringToList(key: String, value: String) {
+      ensureStringListFact(key).value.add(value)
     }
 
     //With this we can add whatever we want to the facts
@@ -92,86 +92,76 @@ class FactsOfTheWorld {
       factsOfTheWorld[fact.key] = fact
     }
 
-    fun <T> addValueToFactList(factKey: String, value: T, subKey: String ="") {
-      val key = key(factKey, subKey)
-      ensureFactList<T>(factKey, subKey).value.add(value)
+    fun <T> addValueToFactList(key: String, value: T) {
+      ensureFactList<T>(key).value.add(value)
     }
 
-    fun <T> ensureFactList(factKey: String, subKey: String = "") : Fact<MutableCollection<T>> {
-      val key = key(factKey, subKey)
+    fun <T> ensureFactList(key: String) : Fact<MutableCollection<T>> {
       if(!factsOfTheWorld.containsKey(key)) {
-        factsOfTheWorld[key(factKey,subKey)] = Fact.createListFact<T>(factKey, subKey)
+        factsOfTheWorld[key] = Fact.createListFact<T>(key)
       }
       return (factsOfTheWorld[key]!! as Fact<MutableCollection<T>>)
     }
 
-    fun <T> removeValueFromFactList(factKey: String, value: T, subKey: String) {
-      ensureFactList<T>(factKey, subKey).value.remove(value)
+    fun <T> removeValueFromFactList(key: String, value: T) {
+      ensureFactList<T>(key).value.remove(value)
     }
 
-    fun removeString(factKey: String, value: String, subKey: String = "") {
-      ensureStringListFact(factKey, subKey).value.remove(value)
+    fun removeString(key: String, value: String) {
+      ensureStringListFact(key).value.remove(value)
     }
 
-    private fun ensureBooleanFact(factKey: String, subKey: String = ""): Fact<Boolean> {
-      val key = key(factKey, subKey)
+    private fun ensureBooleanFact(key: String): Fact<Boolean> {
       if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(factKey, false, subKey)
+        val f = Fact.createFact(key, false)
         factsOfTheWorld[key] = f
       }
       return factsOfTheWorld[key] as Fact<Boolean>
     }
 
-    private fun ensureStringFact(factKey: String, subKey: String = ""): Fact<String> {
-      val key = key(factKey, subKey)
+    private fun ensureStringFact(key: String): Fact<String> {
       if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(factKey, "", subKey)
+        val f = Fact.createFact(key, "")
         factsOfTheWorld[key] = f
       }
       return factsOfTheWorld[key] as Fact<String>
     }
 
-    private fun ensureIntFact(factKey: String, subKey: String =""): Fact<Int> {
-      val key = key(factKey, subKey)
+    private fun ensureIntFact(key: String): Fact<Int> {
       if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(factKey, 0, subKey)
+        val f = Fact.createFact(key, 0)
         factsOfTheWorld[key] = f
       }
       return factsOfTheWorld[key] as Fact<Int>
     }
 
-    private fun ensureStringListFact(factKey: String, subKey: String = ""): Fact<MutableCollection<String>> {
-      val key = key(factKey, subKey)
+    private fun ensureStringListFact(key: String): Fact<MutableCollection<String>> {
       if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createListFact<String>(factKey, subKey)
+        val f = Fact.createListFact<String>(key)
         factsOfTheWorld[key] = f
       }
       return factsOfTheWorld[key] as Fact<MutableCollection<String>>
     }
 
-    fun contains(factKey: String, subKey: String): Boolean {
-      return factsOfTheWorld.containsKey(factKey, subKey)
+    fun contains(key: String): Boolean {
+      return factsOfTheWorld.containsKey(key)
+    }
+
+    fun clearAllFacts() {
+      factsOfTheWorld.clear()
     }
   }
 }
 
-fun <T> MutableMap<String, Fact<*>>.valueOrNull(factKey: String, subKey: String = ""): T? {
-  return if(this.containsKey(factKey, subKey)) (this[key(factKey, subKey)] as Fact<T>).value else null
+fun <T> MutableMap<String, Fact<*>>.valueOrNull(key: String): T? {
+  return if(this.containsKey(key)) (this[key] as Fact<T>).value else null
 }
 
-fun <T> MutableMap<String, Fact<*>>.valuesOrEmpty(factKey: String, subKey: String = ""): Set<T> {
-  return if(this.containsKey(factKey, subKey)) (this[key(factKey, subKey)] as Fact<MutableCollection<T>>).value.toSet() else emptySet()
+fun <T> MutableMap<String, Fact<*>>.valuesOrEmpty(key:String): Set<T> {
+  return if(this.containsKey(key)) (this[key] as Fact<MutableCollection<T>>).value.toSet() else emptySet()
 }
 
-fun MutableMap<String, Fact<*>>.containsKey(factKey: String, subKey: String = "") :Boolean {
-  return this.containsKey(key(factKey, subKey))
-}
-
-fun MutableMap<String, Fact<*>>.factForKey(factKey: String, subKey: String = ""):Fact<*>? {
-  return this[key(factKey, subKey)]
-}
-
-fun key(factKey: String, subKey: String = ""):String {
-  return "$factKey.$subKey"
+fun MutableMap<String, Fact<*>>.factForKey(key: String):Fact<*>? {
+  return this[key]
 }
 
