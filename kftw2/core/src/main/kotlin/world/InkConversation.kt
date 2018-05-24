@@ -35,24 +35,3 @@ class InkConversation(val story:Story, override val protagonist:IAgent, override
   }
 }
 
-class FactConversation(override val protagonist: IAgent, override val antagonist: IAgent) : IConversation {
-  override val antagonistCanSpeak: Boolean
-    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-  override val protagonistCanChoose: Boolean
-    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-  override val choiceCount: Int
-    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-  override fun getAntagonistLines(): Iterable<String> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
-  override fun getProtagonistChoices(): Iterable<String> {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
-  override fun makeChoice(index: Int): Boolean {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
-}

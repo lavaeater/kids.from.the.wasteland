@@ -98,5 +98,7 @@ class ConversationManager {
 enum class ConsequenceType {
   ConversationLoader,
   ApplyFactsConsequence,
-  ApplyLambdaConsequence
+  ApplyLambdaConsequence,
+
+  Empty
 }

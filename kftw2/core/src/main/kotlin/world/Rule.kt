@@ -8,6 +8,13 @@ interface Consequence {
   val consequenceType: ConsequenceType
 }
 
+class EmptyConsequence :Consequence {
+  override lateinit var rule: Rule
+
+  override lateinit var facts: Set<Fact<*>>
+  override val consequenceType = ConsequenceType.Empty
+}
+
 interface ApplyConsequence : Consequence {
   fun applyConsequence()
 }
@@ -56,7 +63,7 @@ class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.jso
 
 class Rule(val name: String,
            private val criteria: MutableCollection<Criterion> = mutableListOf(),
-           val consequence: Consequence) {
+           var consequence: Consequence = EmptyConsequence()) {
 
   val keys : Set<String> get() = criteria.map { it.key }.distinct().toSet()
   val criteriaCount = criteria.count()
@@ -107,3 +114,5 @@ class RulesOfTheWorld {
     val rules : Set<Rule> get() { return rulesOfTheWorld.values.toSet() }
   }
 }
+
+criterion
