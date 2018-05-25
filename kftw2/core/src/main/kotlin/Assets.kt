@@ -56,7 +56,12 @@ object Assets : Disposable {
   val animatedCharacters by lazy {
     mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
         "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")),
-            "saleswomanblonde" to TextureAtlas(Gdx.files.internal("chars/saleswomanblonde/saleswomanblonde.txp")))
+        "ulricawikren" to TextureAtlas(Gdx.files.internal("chars/saleswomanblonde/saleswomanblonde.txp")),
+        "williamhamparsomian" to TextureAtlas(Gdx.files.internal("chars/williamhamparsomian/williamhamparsomian.txp")),
+        "andreaslindblad" to TextureAtlas(Gdx.files.internal("chars/andreaslindblad/andreaslindblad.txp")),
+        "babakvarfan" to TextureAtlas(Gdx.files.internal("chars/babakvarfan/babakvarfan.txp")),
+        "kimdinhthi" to TextureAtlas(Gdx.files.internal("chars/kimdinhthi/kimdinhthi.txp"))
+    )
   }
   val portraits by lazy {
     mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
@@ -64,8 +69,12 @@ object Assets : Disposable {
   }
 
   val beamonHeadshots by lazy {
-    mapOf("WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")),
-        "UlricaWikren" to Texture(Gdx.files.internal("chars/beamon/UlricaWikren.png"))       )
+    mapOf(
+        "WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")),
+        "AndreasLindblad" to Texture(Gdx.files.internal("chars/beamon/AndreasLindblad.png")),
+        "KimDinhThi" to Texture(Gdx.files.internal("chars/beamon/KimDinhThi.png")),
+        "BabakVarfan" to Texture(Gdx.files.internal("chars/beamon/BabakVarfan.png")),
+        "UlricaWikren" to Texture(Gdx.files.internal("chars/beamon/UlricaWikren.png")))
   }
 
   val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }

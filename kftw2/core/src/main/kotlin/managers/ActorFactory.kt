@@ -16,6 +16,7 @@ import map.IMapManager
 import com.lavaeater.kftw.injection.Ctx
 import map.tileWorldCenter
 import ktx.math.vec2
+import world.FactsOfTheWorld.Companion.npcNames
 import world.FatsManager
 
 class ActorFactory {
@@ -29,8 +30,7 @@ class ActorFactory {
       "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
       "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
-  val npcNames = mapOf(1 to "Ulrica Wikren",
-      2 to "William Hamparsomian")
+
 
   fun addTownsFolk() {
 
@@ -85,7 +85,7 @@ class ActorFactory {
     return addNpcEntityAt(name, type, startPosition)
   }
 
-  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String, x:Int, y:Int) : Entity {
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String ="", x:Int, y:Int) : Entity {
 
     val position = Pair(x,y).tileWorldCenter()
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
@@ -98,7 +98,7 @@ class ActorFactory {
       add(AiComponent(tree))
       add(NpcComponent(npc))
       add(AgentComponent(npc))
-      add(CharacterSpriteComponent("saleswomanblonde", true))
+      add(CharacterSpriteComponent(npc.name.replace(" ", "").toLowerCase(), true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
@@ -109,7 +109,7 @@ class ActorFactory {
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(CharacterSpriteComponent("femalerogue", true))
+      add(CharacterSpriteComponent("williamhamparsomian", true))
       add(KeyboardControlComponent())
       add(PlayerComponent(Ctx.context.inject()))
       add(AgentComponent(Ctx.context.inject<Player>()))

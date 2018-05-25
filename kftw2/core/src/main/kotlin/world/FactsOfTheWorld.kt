@@ -7,6 +7,13 @@ class FactsOfTheWorld {
  They are for everything
     */
   companion object {
+
+    val npcNames = mapOf(
+        1 to "Ulrica Wikren",
+        2 to "Kim Dinh Thi",
+        3 to "Andreas Lindblad",
+        4 to "Babak Varfan"
+    )
     /*
     Statically accessible from the entire game.
     Contains Map of Facts?

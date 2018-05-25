@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
@@ -12,6 +13,7 @@ import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.*
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.IUserInterface
+import map.IMapManager
 import world.*
 
 class GameManager(gameSettings: GameSettings) : Disposable {
@@ -19,10 +21,11 @@ class GameManager(gameSettings: GameSettings) : Disposable {
   val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
   val engine = Ctx.context.inject<Engine>()
-  val actorManager = Ctx.context.inject<ActorFactory>()
+  val actorFactory = Ctx.context.inject<ActorFactory>()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<IUserInterface>()
+  val mapManager = Ctx.context.inject<IMapManager>()
 
 
   init {
@@ -39,7 +42,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
     camera.position.y = 0f
 
     //Skip this while implementing monster spawn!
-    //actorManager.addTownsFolk()
+    //actorFactory.addTownsFolk()
   }
 
   private fun setupFacts() {
@@ -78,18 +81,30 @@ class GameManager(gameSettings: GameSettings) : Disposable {
     engine.addSystem(PhysicsSystem())
    //engine.addSystem(PhysicsDebugSystem())
 
-    val playerEntity = actorManager.addHeroEntity()
+    val playerEntity = actorFactory.addHeroEntity()
     engine.addSystem(FollowCameraSystem(playerEntity))
     engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
     engine.addSystem(CharacterControlSystem())
 
+    addBeamonPeople()
     //MONSTER SPAWN!!
-    engine.addSystem(MonsterSpawningSystem(true))
+    //engine.addSystem(MonsterSpawningSystem(false))
 
     //Current tile system. Continually updates the agent instances with
     //what tile they're on, used by the AI
     engine.addSystem(WorldFactsSystem())
+  }
+
+  private fun addBeamonPeople() {
+    for (name in FactsOfTheWorld.npcNames.values) {
+      val someTilesInRange = mapManager.getBandOfTiles(0,0, 10, 5).filter {
+        it.tile.tileType != "water"
+      }
+
+      val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", x = randomlySelectedTile.x, y = randomlySelectedTile.y)
+    }
   }
 
   private fun setupMessageSystem() {
