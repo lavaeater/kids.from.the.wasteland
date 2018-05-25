@@ -98,8 +98,8 @@ class GameManager(gameSettings: GameSettings) : Disposable {
 
   private fun addBeamonPeople() {
     for (name in FactsOfTheWorld.npcNames.values) {
-      val someTilesInRange = mapManager.getBandOfTiles(0,0, 10, 5).filter {
-        it.tile.tileType != "water"
+      val someTilesInRange = mapManager.getBandOfTiles(0,0, 2, 3).filter {
+        it.tile.tileType != "rock" && it.tile.tileType != "water"
       }
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
