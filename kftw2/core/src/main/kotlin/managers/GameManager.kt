@@ -85,7 +85,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
 
     val playerEntity = actorFactory.addHeroEntity()
     engine.addSystem(FollowCameraSystem(playerEntity))
-    engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
+    //engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
     engine.addSystem(CharacterControlSystem())
 

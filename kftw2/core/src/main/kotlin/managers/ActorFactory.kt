@@ -98,6 +98,7 @@ class ActorFactory {
       add(AiComponent(tree))
       add(NpcComponent(npc))
       add(AgentComponent(npc))
+      add(VisibleComponent())
       add(CharacterSpriteComponent(npc.name.replace(" ", "").toLowerCase(), true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
