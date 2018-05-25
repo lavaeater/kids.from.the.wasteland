@@ -82,7 +82,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		    keepWithinParent()
 	    }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 	    row()
-	    image(Assets.portraits["orc"]!!) {
+	    image(Assets.beamonHeadshots["WilliamHamparsomian"]!!) {
 		    setScaling(Scaling.fit)
 		    keepWithinParent()
 	    }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft,pad = 2f, colspan = 2)

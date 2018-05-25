@@ -62,13 +62,8 @@ object Assets : Disposable {
         "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
   }
 
-  fun loadBeamonPortraits() : Map<String, Texture> {
-    val files = Gdx.files.local("mylocaldir/").list()
-    return files.associateBy({it.name().substringBefore(".")}, { Texture(it) })
-  }
-
   val beamonHeadshots by lazy {
-    loadBeamonPortraits()
+    mapOf("WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")))
   }
 
   val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }
