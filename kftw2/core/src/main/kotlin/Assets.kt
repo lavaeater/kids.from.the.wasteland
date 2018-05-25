@@ -2,6 +2,7 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -66,6 +67,12 @@ object Assets : Disposable {
   val portraits by lazy {
     mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
         "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+  }
+
+  val music by lazy {
+    Gdx.audio.newMusic(Gdx.files.internal("music/ambient.mp3")).apply {
+      isLooping = true
+    }
   }
 
   val beamonHeadshots by lazy {

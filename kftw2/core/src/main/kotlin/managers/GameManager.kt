@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.lavaeater.Assets
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.*
@@ -43,6 +44,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
 
     //Skip this while implementing monster spawn!
     //actorFactory.addTownsFolk()
+    Assets.music.play()
   }
 
   private fun setupFacts() {
