@@ -41,10 +41,29 @@ class Criterion(val key: String, private val matcher: (Fact<*>) -> Boolean) {
          match
       })
     }
+    fun <T> factDoesNotContainsFactValue(key:String, contextKey:String): Criterion {
+      return Criterion(key, {
+        var match = false
+        val contextValue = FactsOfTheWorld.factValueOrNull<T>(contextKey)
+        if (contextValue != null) {
+          if(!FactsOfTheWorld.getFactList<T>(key).contains(contextValue)) {
+            match = true }
+
+        }
+        match
+      })
+    }
 
     fun context(context: String) : Criterion {
       return Criterion(Facts.Context, {
         fact -> fact.value == context
+      })
+    }
+
+    fun <T> notContainsCriterion(key: String, value: T): Criterion {
+      return Criterion(key, {
+        val factList = FactsOfTheWorld.getFactList<T>(key)
+        !factList.contains(value)
       })
     }
   }

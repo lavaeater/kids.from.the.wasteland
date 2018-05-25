@@ -58,25 +58,8 @@ class GameManager(gameSettings: GameSettings) : Disposable {
      */
 
     RulesOfTheWorld.addRule(Rule("FirstMeetingWithNPC", mutableListOf(
-        Criterion.context(Contexts.MetNpc),
-        Criterion.equalsCriterion(Facts.MetNumberOfNpcs, 0)),
-        ConversationConsequence("conversations/dialog.ink.json")))
-
-    RulesOfTheWorld.addRule(Rule("ThirdToFifthNpc", mutableListOf(
-        Criterion.context(Contexts.MetNpc),
-        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..5)),
-        ConversationConsequence("conversations/meetagain.ink.json")))
-
-    RulesOfTheWorld.addRule(Rule("ActualAgentMatcher", mutableListOf(
-        Criterion.context(Contexts.MetNpc),
-        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 1..2),
-        Criterion.factContainsFactValue<String>(Facts.NpcsPlayerHasMet,Facts.CurrentNpc)),
-        ConversationConsequence("conversations/meetagain.ink.json")))
-
-    RulesOfTheWorld.addRule(Rule("TooManyMeetingsWithNpcs", mutableListOf(
-        Criterion.context(Contexts.MetNpc),
-        Criterion.rangeCriterion(Facts.MetNumberOfNpcs, 6..45)),
-        ConversationConsequence("conversations/enough.ink.json")))
+        Criterion.context(Contexts.MetNpc)),
+        ConversationConsequence("conversations/beamon_memory.ink.json")))
   }
 
   private fun setupSystems() {
