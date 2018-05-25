@@ -127,6 +127,10 @@ class FactsOfTheWorld {
       return factsOfTheWorld[key] as Fact<String>
     }
 
+    fun getIntValue(key: String) : Int {
+      return factsOfTheWorld.valueOrNull<Int>(key) ?: 0
+    }
+
     private fun ensureIntFact(key: String): Fact<Int> {
       if(!factsOfTheWorld.containsKey(key)) {
         val f = Fact.createFact(key, 0)
