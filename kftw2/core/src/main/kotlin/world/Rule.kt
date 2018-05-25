@@ -61,6 +61,16 @@ class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.jso
   }
 }
 
+class RuleBasedConversationConsequence(val convo:RuleBasedConversation) :RetrieveConsequence<RuleBasedConversation> {
+  override lateinit var rule: Rule
+  override lateinit var facts: Set<Fact<*>>
+  override val consequenceType = ConsequenceType.ConversationLoader
+  private val storyReader = InkLoader()
+  override fun retrieve(): RuleBasedConversation {
+    return convo
+  }
+}
+
 class Rule(val name: String,
            private val criteria: MutableCollection<Criterion> = mutableListOf(),
            var consequence: Consequence = EmptyConsequence()) {
@@ -86,15 +96,6 @@ class Rule(val name: String,
   }
 }
 
-//fun wildCardMatcher(one:String, two:String) : Boolean {
-//  if(!one.contains('*') && !two.contains('*')) return one == two
-//
-//  val os = one.substringBefore(".")
-//  val ts = two.substringBefore(".")
-//
-//  return os == ts
-//}
-
 class RulesOfTheWorld {
   companion object {
     private val rulesOfTheWorld = mutableMapOf<String, Rule>()
@@ -114,5 +115,3 @@ class RulesOfTheWorld {
     val rules : Set<Rule> get() { return rulesOfTheWorld.values.toSet() }
   }
 }
-
-criterion

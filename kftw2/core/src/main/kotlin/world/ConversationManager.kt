@@ -93,12 +93,15 @@ class ConversationManager {
     currentStory = null
     gameStateManager.handleEvent(GameEvent.DialogEnded)
   }
+
+  init {
+    val rule = Rule("FirstTimeMeetingAColleague", mutableSetOf(), ConversationConsequence())
+  }
 }
 
 enum class ConsequenceType {
   ConversationLoader,
   ApplyFactsConsequence,
   ApplyLambdaConsequence,
-
   Empty
 }

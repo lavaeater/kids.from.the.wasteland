@@ -37,7 +37,3 @@ fun conversation(init: RuleBasedConversation.()-> Unit) : RuleBasedConversation 
   conversation.init()
   return conversation
 }
-
-inline fun RuleBasedConversation.rule(name: String, init: Rule.() -> Unit): Rule {
-  val rule = Rule(name,)
-}
