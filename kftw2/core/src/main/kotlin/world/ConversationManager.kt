@@ -94,11 +94,11 @@ class ConversationManager {
     FactsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
     FactsOfTheWorld.clearStringFact(Facts.CurrentNpc)
 
-    if (!FactsOfTheWorld.getFactList<String>(Facts.KnownNames).contains(npc.name) && currentStory!!.variablesState["guessed_right"] as Boolean) {
+    if (!FactsOfTheWorld.getFactList<String>(Facts.KnownNames).contains(npc.name) && currentStory!!.variablesState["guessed_right"] as Int == 1) {
       FactsOfTheWorld.addToIntFact(Facts.Score, 1)
       FactsOfTheWorld.addStringToList(Facts.KnownNames, npc.name)
     }
-    
+
     currentAgent = null
     currentStory = null
     gameStateManager.handleEvent(GameEvent.DialogEnded)
