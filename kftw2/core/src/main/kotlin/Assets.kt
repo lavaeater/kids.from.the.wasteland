@@ -40,6 +40,10 @@ object Assets : Disposable {
     )
   }
 
+  val splashScreen by lazy {
+    Texture(Gdx.files.internal("ui/graphics/splashscreen.gif"))
+  }
+
   val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
   val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
 

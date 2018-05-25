@@ -1,7 +1,9 @@
 package map
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.lavaeater.Assets
@@ -38,23 +40,32 @@ fun Int.getMinMax(range:Int) : Pair<Int, Int> {
     return Pair(this - range, this + range)
 }
 
-fun getTilePriorityFromNoise(x: Float, y: Float): Int {
+fun getTilePriorityFromNoise(x: Float, y: Float, tileX:Int, tileY:Int): Int {
 
-    val noiseValue = (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)
-    var priority = 0
+  val distanceFactor = Math.min((tileX.absoluteValue + tileY.absoluteValue) / (25.0), 1.0)
 
-    //Hmm, most likely this distribution is not from -1 .. 1 but more like -.75..0.75
+  val part1 = distanceFactor * -100
+  val part2 = (1 - distanceFactor) * (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)
 
-    if (noiseValue in -100..-65)
-        priority = 0
-    if (noiseValue in -64..25)
-        priority = 1
-    if (noiseValue in 26..55)
-        priority = 2
-    if (noiseValue in 56..99)
-        priority = 3
+  val noiseValue = part1 + part2
+  Gdx.app.log("testTag","$x, $y, ${noiseValue} $distanceFactor")
 
-    return priority
+  //val factor = (x.absoluteValue + y.absoluteValue) * 0.5
+  //val noiseValue = (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100).toFloat() - factor
+  var priority = 0
+
+  //Hmm, most likely this distribution is not from -1 .. 1 but more like -.75..0.75
+
+  if (noiseValue in -100..-65)
+    priority = 0
+  if (noiseValue in -64..25)
+    priority = 1
+  if (noiseValue in 26..55)
+    priority = 2
+  if (noiseValue in 56..99)
+    priority = 3
+
+  return priority
 }
 
 fun Pair<Int,Int>.tileWorldCenter(tileSize:Int = GameManager.TILE_SIZE) : Vector2 {
