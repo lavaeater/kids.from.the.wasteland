@@ -76,13 +76,15 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		  pack()
 	  }
 
+    val antagonistKey = conversation.antagonist.name.replace(" ", "")
+
     antagonistRoot = table {
 	    antagonistSpeechBubble = label("", speechBubbleStyle) {
 		    setWrap(true)
 		    keepWithinParent()
 	    }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
 	    row()
-	    image(Assets.beamonHeadshots["WilliamHamparsomian"]!!) {
+	    image(Assets.beamonHeadshots[antagonistKey]!!) {
 		    setScaling(Scaling.fit)
 		    keepWithinParent()
 	    }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft,pad = 2f, colspan = 2)

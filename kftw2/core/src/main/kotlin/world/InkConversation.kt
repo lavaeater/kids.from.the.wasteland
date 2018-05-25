@@ -1,9 +1,14 @@
 package world
 
+import com.bladecoder.ink.runtime.RTObject
 import com.bladecoder.ink.runtime.Story
+import com.bladecoder.ink.runtime.VariableAssignment
 import com.lavaeater.kftw.data.IAgent
 
 class InkConversation(val story:Story, override val protagonist:IAgent, override val antagonist:IAgent) : IConversation {
+  init {
+    story.variablesState["CurrentNpcName"] = antagonist.name
+  }
   override val antagonistCanSpeak: Boolean
     get() = story.canContinue()
   override val protagonistCanChoose: Boolean

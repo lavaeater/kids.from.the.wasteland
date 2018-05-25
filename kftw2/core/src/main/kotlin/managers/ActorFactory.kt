@@ -29,26 +29,8 @@ class ActorFactory {
       "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
       "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
-  val npcNames = mapOf(1 to "Brage",
-      2 to "Bork",
-      3 to "Rygar",
-      4 to "Bror",
-      5 to "Fjalar",
-      6 to "Yngve",
-      7 to "Huggvold",
-      8 to "Drago",
-      9 to "Marjasin",
-      10 to "Kingdok",
-      11 to "Ronja",
-      12 to "Signe",
-      13 to "Ylwa",
-      14 to "Skölda",
-      15 to "Tagg",
-      16 to "Farmor Ben",
-      17 to "Hypatia",
-      18 to "Wanja",
-      19 to "Erika",
-      20 to "Olga")
+  val npcNames = mapOf(1 to "Ulrica Wikren",
+      2 to "William Hamparsomian")
 
   fun addTownsFolk() {
 
@@ -116,11 +98,10 @@ class ActorFactory {
       add(AiComponent(tree))
       add(NpcComponent(npc))
       add(AgentComponent(npc))
-      add(CharacterSpriteComponent("orc", true))
+      add(CharacterSpriteComponent("saleswomanblonde", true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    FatsManager.addAgent(npc)
     return entity
   }
 

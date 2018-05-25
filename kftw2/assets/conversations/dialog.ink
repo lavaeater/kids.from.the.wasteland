@@ -1,7 +1,9 @@
+VAR CurrentNpcName = "Kalle"
+
 -> start
 
 === start ===
-Hallå där, främling
+Hallå där, främling, jag heter {CurrentNpcName}
 
 *   [Hallå där, själv] -> nice_continue
 *   [Jag pratar helst inte med drivare] -> rude_continue

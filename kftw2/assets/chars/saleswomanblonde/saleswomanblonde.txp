@@ -1,0 +1,19 @@
+saleswomanblonde.png
+size: 64, 128
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+idle1
+  rotate: False
+  xy: 0, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+idle2
+  rotate: False
+  xy: 0, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
