@@ -95,22 +95,18 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
         scoreLabel = label("Score: $score", labelStyle) {
         setWrap(true)
         keepWithinParent()
-      }.cell(expandY = true, align = Align.bottomLeft, padLeft = 16f, padBottom = 2f)
-//      row()
-//      image(Assets.beamonHeadshots[antagonistKey]!!) {
-//        setScaling(Scaling.fit)
-//        keepWithinParent()
-//      }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft,pad = 2f, colspan = 2)
+      }.cell(fill = true, align = Align.bottomLeft, padLeft = 16f, padBottom = 2f)
       isVisible = true
       pack()
-      background = NinePatchDrawable(Assets.tableBackGround)
+      width = 300f
+
     }
 
     rootTable = table {
       setFillParent(true)
  bottom()
       left()
-      add(scoreBoard).align(Align.bottomLeft)
+      add(scoreBoard).expand().align(Align.bottomLeft)
     }
 
     stage.addActor(rootTable)

@@ -108,7 +108,7 @@ object Assets : Disposable {
     val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-      color = Color.GRAY
+      color = Color.WHITE
       size = gameSettings.baseFontSize
     }
 
