@@ -1,15 +1,17 @@
 package com.lavaeater.kftw.screens
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.Gdx
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.ui.Hud
+import managers.GameManager
+import com.lavaeater.kftw.ui.IUserInterface
 import ktx.app.KtxScreen
 
 class MainGameScreen : KtxScreen {
-  private val batch = Ctx.context.inject<SpriteBatch>()
   private val gameManager = Ctx.context.inject<GameManager>()
-  private val hud = Ctx.context.inject<Hud>()
+  private val hud = Ctx.context.inject<IUserInterface>()
+  init {
+  	Gdx.input.inputProcessor = Ctx.context.inject()
+  }
 
   private fun update(delta:Float) {
     gameManager.update(delta)

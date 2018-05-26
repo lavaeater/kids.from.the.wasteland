@@ -1,0 +1,96 @@
+import map.TileStore
+import org.junit.Test
+import kotlin.test.assertEquals
+
+class TileKeyStoreTests {
+    @Test
+    fun testLowerBoundZeroWithZeroValue() {
+        val tileKeyStore = TileStore(0,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(0)
+        assertEquals(0, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundZeroWithMaxXValue() {
+        val tileKeyStore = TileStore(0,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(9)
+        assertEquals(9, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundTenWithTenValue() {
+        val tileKeyStore = TileStore(10,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(10)
+        assertEquals(0, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundTenWithTwentyValue() {
+        val tileKeyStore = TileStore(10,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(20)
+        assertEquals(10, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundNegativeTenWithNegativeOne() {
+        val tileKeyStore = TileStore(-10,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(-1)
+        assertEquals(9, xIndex)
+    }
+
+    @Test
+    fun testLowerBoundNegativeTenWithNegativeTen() {
+        val tileKeyStore = TileStore(-10,10, 0, 10, emptyArray())
+        val xIndex = tileKeyStore.getXIndex(-10)
+        assertEquals(0, xIndex)
+    }
+
+    @Test
+    fun testGetKeyNegativeBounds() {
+//        val tileKeyStore = TileStore(-10,10, -10, 10)
+//        val x = tileKeyStore.lowerBoundX
+//        val y = tileKeyStore.lowerBoundY
+//
+//        var expectedKey = TileKey(x, y)
+//        var actualKey = tileKeyStore.get
+//
+//        assertEquals(expectedKey, actualKey)
+//
+//
+//        expectedKey = TileKey(tileKeyStore.upperBoundX, tileKeyStore.upperBoundY)
+//        actualKey = tileKeyStore.tileKey(tileKeyStore.upperBoundX, tileKeyStore.upperBoundY)
+//
+//        assertEquals(expectedKey, actualKey)
+    }
+
+    @Test
+    fun testGetTileKeyGetsCorrectValue() {
+//        val tileKeyStore = TileKeyStore(-5,10, -5, 10)
+//        var expectedKey = TileKey(-5,-5)
+//        var key = tileKeyStore.tileKey(-5,-5)
+//        assertEquals(expectedKey, key)
+//
+//        expectedKey = TileKey(4,4)
+//        key = tileKeyStore.tileKey(4,4)
+//        assertEquals(expectedKey, key)
+//
+//        expectedKey = TileKey(0,0)
+//        key = tileKeyStore.tileKey(0,0)
+//        assertEquals(expectedKey, key)
+    }
+
+    @Test
+    fun testCountOfKeysIsCorrect() {
+        val tileKeyStore = TileStore(-5,10, -5, 10, emptyArray())
+        assertEquals(10, tileKeyStore.columns)
+        assertEquals(10, tileKeyStore.rows)
+    }
+
+    @Test
+    fun testUpperBoundIsCorrect() {
+        val tileKeyStore = TileStore(-5,10, -5, 10, emptyArray())
+        assertEquals(4, tileKeyStore.upperBoundX)
+        assertEquals(4, tileKeyStore.upperBoundY)
+    }
+}
+

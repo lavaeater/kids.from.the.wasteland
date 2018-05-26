@@ -2,31 +2,53 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.utils.Disposable
+import com.lavaeater.kftw.GameSettings
+import ktx.scene2d.Scene2DSkin
+import ktx.style.skin
+import ktx.style.textButton
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
  */
 object Assets : Disposable {
+  lateinit var gameSettings: GameSettings
   lateinit var am: AssetManager
-  val atlases = mapOf(
-      "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
-      "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
-      "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
-      "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
-      "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
-      "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
-      "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  private val atlases by lazy {
+    mapOf(
+        "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
+        "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
+        "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
+        "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
+        "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
+        "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
+        "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  }
 
-  val characters = mapOf(
-      "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
-      "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
-  )
+  private val characters by lazy {
+    mapOf(
+        "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
+        "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
+    )
+  }
+
+  val splashScreen by lazy {
+    Texture(Gdx.files.internal("ui/graphics/splashscreen.gif"))
+  }
+
+  val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
+  val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
+
+  val tableNinePatch by lazy { Texture(Gdx.files.internal("ui/graphics/convobackground.png"))}
+  val tableBackGround by lazy { NinePatch(tableNinePatch, 4, 4, 4, 4 ) }
 
   lateinit var standardFont: BitmapFont
 
@@ -36,16 +58,44 @@ object Assets : Disposable {
   val ATTACK = "attack"
   val DEATH = "death"
 
-  val animatedCharacters = mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
-      "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
+  val animatedCharacters by lazy {
+    mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
+        "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")),
+        "ulricawikren" to TextureAtlas(Gdx.files.internal("chars/saleswomanblonde/saleswomanblonde.txp")),
+        "williamhamparsomian" to TextureAtlas(Gdx.files.internal("chars/williamhamparsomian/williamhamparsomian.txp")),
+        "andreaslindblad" to TextureAtlas(Gdx.files.internal("chars/andreaslindblad/andreaslindblad.txp")),
+        "babakvarfan" to TextureAtlas(Gdx.files.internal("chars/babakvarfan/babakvarfan.txp")),
+        "kimdinhthi" to TextureAtlas(Gdx.files.internal("chars/kimdinhthi/kimdinhthi.txp"))
+    )
+  }
+  val portraits by lazy {
+    mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
+        "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+  }
 
-  val animatedCharacterSprites = mutableMapOf<String, Map<String, List<Sprite>>>()
+  val music by lazy {
+    Gdx.audio.newMusic(Gdx.files.internal("music/ambient.mp3")).apply {
+      isLooping = true
+    }
+  }
 
-  val codeToExtraTiles = mutableMapOf<String, List<Sprite>>()
+  val beamonHeadshots by lazy {
+    mapOf(
+        "WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")),
+        "AndreasLindblad" to Texture(Gdx.files.internal("chars/beamon/AndreasLindblad.png")),
+        "KimDinhThi" to Texture(Gdx.files.internal("chars/beamon/KimDinhThi.png")),
+        "BabakVarfan" to Texture(Gdx.files.internal("chars/beamon/BabakVarfan.png")),
+        "UlricaWikren" to Texture(Gdx.files.internal("chars/beamon/UlricaWikren.png")))
+  }
 
-  val sprites = mutableMapOf<String, HashMap<String, Sprite>>()
+  val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }
 
-  fun load(): AssetManager {
+  val codeToExtraTiles by lazy { mutableMapOf<String, List<Sprite>>() }
+
+  val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
+
+  fun load(gameSettings: GameSettings): AssetManager {
+    this.gameSettings = gameSettings
     am = AssetManager()
 
     initializeMapTiles()
@@ -55,15 +105,31 @@ object Assets : Disposable {
 
     initializeFonts()
 
+    initializeScene2dDefaultSkin()
+
     return am
+  }
+
+  private fun initializeScene2dDefaultSkin() {
+    //val mySkin = Skin(Gdx.files.internal("skins/uiskin.json"))
+
+    val skin = skin {
+      textButton {
+        font = standardFont
+	      fontColor = Color.BLACK
+	      downFontColor = Color.GRAY
+      }
+    }
+
+    Scene2DSkin.defaultSkin = skin
   }
 
   private fun initializeFonts() {
     val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-      color = Color.GRAY
-      size = 12
+      color = Color.WHITE
+      size = gameSettings.baseFontSize
     }
 
     standardFont =  fontGenerator.generateFont(fontParams)

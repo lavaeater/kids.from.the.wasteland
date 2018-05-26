@@ -3,11 +3,11 @@ package com.lavaeater.kftw.data
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.map.IMapManager
-import com.lavaeater.kftw.map.MapManagerBase
-import com.lavaeater.kftw.map.TileKey
+import map.IMapManager
+import map.MapManager
+import com.lavaeater.kftw.map.TileInstance
 
-class Npc(override var name:String ="Joshua",
+class Npc(override val id: String, override var name: String = "Joshua",
           val npcType: NpcType,
           override var strength: Int = npcType.strength,
           override var health: Int = npcType.health,
@@ -18,12 +18,14 @@ class Npc(override var name:String ="Joshua",
           override var intelligence: Int = npcType.intelligence,
           override val inventory: MutableList<String> = npcType.inventory,
           override var sightRange: Int = npcType.sightRange,
-          override var currentTile: TileKey = TileKey(0,0)) : IAgent {
+          override var currentX: Int = 0,
+          override var currentY: Int = 0) : IAgent {
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"
-  var foundTile: TileKey? = null
-  val tileFound get() = foundTile != null
+  var tileFound = false
+  var foundX:Int = 0
+  var foundY:Int = 0
   val range = 2
 
   val mapManager = Ctx.context.inject<IMapManager>()
@@ -35,10 +37,10 @@ class Npc(override var name:String ="Joshua",
 
   fun lostInterest() {
     state = NpcState.Searching
-    val terrainArr = MapManagerBase.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
+    val terrainArr = MapManager.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
     val randomIndex = MathUtils.random(0, terrainArr.size - 1)
     desiredTileType = terrainArr[randomIndex]
-    foundTile = null
+    tileFound = false
     log("Att leta mat är tråkigt, nu vill jag hitta ${translate(desiredTileType)}")
   }
 
@@ -54,16 +56,18 @@ class Npc(override var name:String ="Joshua",
     //A little goeey, but what's the best way?
     if (state == NpcState.Scavenging) return true // already scavening, early exit
 
-    if (mapManager.getTileAt(currentTile).tileType == desiredTileType) {
+    if (mapManager.getTileAt(currentX,currentY).tileType == desiredTileType) {
       state = NpcState.Scavenging
-      log("Jag letar mat vid $currentTile nu.")
+      log("Jag letar mat vid ${currentX}:${currentY} nu.")
       return true
     }
     return false
   }
 
+  var targetTile: TileInstance? = null
+
   fun wander(): Boolean {
-    if (state == NpcState.Wandering && wanderTarget == currentTile) {
+    if (state == NpcState.Wandering && currentX == foundX && currentY == foundY) {
       state = NpcState.Idle
       return false
     }
@@ -72,10 +76,15 @@ class Npc(override var name:String ="Joshua",
       return false //I am NOT doing this right, I realize. I have to read more
 
     if (state != NpcState.Wandering) {
-      val possibleTargets = mapManager.getRingOfTiles(currentTile, 5).toTypedArray()
+      val possibleTargets = mapManager.getRingOfTiles(currentX, currentY, 5).toTypedArray()
       if(!possibleTargets.any()) return false
-      wanderTarget = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
-      log("Jag hittar inte ${translate(desiredTileType)}, jag går till $wanderTarget och letar.")
+      targetTile = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
+      targetTile?.let {
+        foundX = it.x
+        foundY = it.y
+      }
+
+      log("Jag hittar inte ${translate(desiredTileType)}, jag går till $targetTile och letar.")
       state = NpcState.Wandering
     }
 
@@ -86,9 +95,9 @@ class Npc(override var name:String ="Joshua",
     if (state != NpcState.WalkingTo)
       state = NpcState.WalkingTo
 
-    if (currentTile == foundTile) {
-      log("Jag är framme vid $currentTile nu.")
-      foundTile = null
+    if (currentX == foundX && currentY == foundY) {
+      log("Jag är framme vid ${foundX}${foundY} nu.")
+      tileFound = false
       state = NpcState.Idle //Need more states?
       return false //This returning false means we are at our destination!
     }
@@ -100,9 +109,9 @@ class Npc(override var name:String ="Joshua",
 
     log("Jag försöker hitta $desiredTileType nu!")
     state = NpcState.Searching
-    foundTile =  mapManager.findTileOfTypeInRange(currentTile, desiredTileType, range)
-    return foundTile != null
-  }
+    targetTile =  mapManager.findTileOfTypeInRange(currentX, currentY, desiredTileType, range)
+    tileFound = targetTile != null
 
-  var wanderTarget: TileKey = TileKey(0, 0)
+    return targetTile != null
+  }
 }

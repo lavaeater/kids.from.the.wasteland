@@ -2,14 +2,14 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntitySystem
-import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.injection.Ctx
 import ktx.ashley.mapperFor
 
 class FollowCameraSystem( trackedEntity : Entity) : EntitySystem(300){
-    val camera = Ctx.context.inject<OrthographicCamera>()
+    val camera = Ctx.context.inject<Camera>()
     val transformComponet = mapperFor<TransformComponent>()[trackedEntity]
     val speed = 0.2f
     var y = 0f

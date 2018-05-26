@@ -27,4 +27,25 @@ class BodyFactory {
     }
     return body
   }
+
+  companion object {
+      val world = Ctx.context.inject<World>()
+      fun createBody(width: Float,
+                     height: Float,
+                     densityIn: Float,
+                     position: Vector2,
+                     bodyType: BodyDef.BodyType): Body {
+
+        val body = world.body {
+          this.position.set(position)
+          angle = 0f
+          fixedRotation = true
+          type = bodyType
+          box(width, height) {
+            density = densityIn
+          }
+        }
+        return body
+      }
+  }
 }

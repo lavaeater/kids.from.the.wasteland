@@ -1,9 +1,9 @@
 package com.lavaeater.kftw.data
 
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.map.TileKey
 
 interface IAgent {
+  val id: String
   var name: String
   var strength: Int
   var health: Int
@@ -11,7 +11,8 @@ interface IAgent {
   var sightRange: Int
   val inventory: MutableList<String>
   val skills: MutableMap<String, Int>
-  var currentTile: TileKey
+  var currentX: Int
+  var currentY: Int
 }
 
 fun IAgent.rollAgainstAgent(antagonist: IAgent, skill:String) : Boolean {

@@ -2,31 +2,19 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.ai.msg.Telegram
-import com.badlogic.gdx.ai.msg.Telegraph
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.*
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcState
-import com.lavaeater.kftw.managers.GameManager
-import com.lavaeater.kftw.managers.Messages
-import com.lavaeater.kftw.map.TileKey
-import com.lavaeater.kftw.map.tileWorldCenter
+import map.tileWorldCenter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.*
 
 class NpcControlSystem : IteratingSystem(allOf(
     NpcComponent::class,
-    Box2dBodyComponent::class).get(),10), Telegraph {
-  override fun handleMessage(msg: Telegram): Boolean {
-    if(msg.message == Messages.CollidedWithImpassibleTerrain) {
-      val npc = msg.extraInfo as Npc
-      npc.lostInterest()
-    }
-    return true
-  }
+    Box2dBodyComponent::class).get(),10) {
 
   val npcMpr = mapperFor<NpcComponent>()
   val bodyMpr = mapperFor<Box2dBodyComponent>()
@@ -37,22 +25,24 @@ class NpcControlSystem : IteratingSystem(allOf(
     when(npc.state) {
       NpcState.Idle -> return
       NpcState.Wandering -> comeWalkWithMe(npc, body)
-      NpcState.WalkingTo -> if(npc.tileFound) walkToTile(npc.foundTile!!, body)
+      NpcState.WalkingTo -> if(npc.tileFound) walkToTile(npc.foundX, npc.foundY, body)
       NpcState.Scavenging -> return //Replace with some animation or some other stuff
       NpcState.Searching -> return //This code doesn't need to do anything for this state, maybe anim later?
     }
 
-    val currentPos = body.position.toTile(GameManager.TILE_SIZE)
-    npc.currentTile = currentPos
+    npc.apply {
+      currentX = body.position.tileX()
+      currentY = body.position.tileY()
+    }
   }
 
-  private fun walkToTile(foundTile: TileKey, body: Body) {
-      moveFromTo(foundTile.tileWorldCenter(GameManager.TILE_SIZE),body)
+  private fun walkToTile(x:Int, y:Int, body: Body) {
+      moveFromTo(Pair(x,y).tileWorldCenter(),body)
   }
 
   private fun comeWalkWithMe(npc: Npc, body: Body) {
     //The Npc manages its own state, preferrably?
-    moveFromTo(npc.wanderTarget.tileWorldCenter(GameManager.TILE_SIZE), body)
+    moveFromTo(Pair(npc.foundX, npc.foundY).tileWorldCenter(), body)
   }
 
   private fun moveFromTo(desiredPos: Vector2, body: Body) {

@@ -2,27 +2,27 @@ package com.lavaeater.kftw.systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.PlayerComponent
 import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.ActorFactory
-import com.lavaeater.kftw.map.IMapManager
+import map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
-import kotlin.system.measureTimeMillis
 
-class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+class MonsterSpawningSystem(val areWeTesting:Boolean) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+  var weHaveSpawned = false
+
   val actorFactory = Ctx.context.inject<ActorFactory>()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
-  val spawnProb = 15
+  val spawnProb = 85
 
   val spawningProbs = mapOf(
       "grass" to
           mapOf(0..15 to "sneakypanther",
-          16..85 to "orc"),
+              16..85 to "orc"),
       "desert" to mapOf(0..15 to "snake",
           16..85 to "orc"))
 
@@ -44,29 +44,42 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
 
      */
 
-    if (MathUtils.random(100) < spawnProb) {
+    if (areWeTesting) {
 
-      Gdx.app.log("spawn random char", "time in milliseconds: ${measureTimeMillis {
+      if(!weHaveSpawned) {
+//We need to spawn a fool!
+        val position = transformMpr[entity].position.toTile()
+
+        // We get a ring of tiles instead of an area
+
+        actorFactory.addNpcAtTileWithAnimation(type = "orc", x = position.first + 1, y = position.second + 1, spriteKey = "orc")
+
+        weHaveSpawned = true
+      }
+
+    } else {
+
+      if (MathUtils.random(100) < spawnProb) {
+
+
         //We need to spawn a fool!
         val position = transformMpr[entity].position.toTile()
 
         // We get a ring of tiles instead of an area
 
         val someTilesInRange = mapManager.getBandOfTiles(position, 3, 3).filter {
-          mapManager.getTileAt(it).tileType != "rock" && mapManager.getTileAt(it).tileType != "water"
+          it.tile.tileType != "rock" && it.tile.tileType != "water"
         }
 
         val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
 
-        val actualTile = mapManager.getTileAt(randomlySelectedTile)
-
         val dieRoll = MathUtils.random(100)
-        val npcType = spawningProbs[actualTile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
-        if(npcType != null) {
-          if(npcType == "orc")
-            actorFactory.addNpcAtTileWithAnimation(type=npcType, tileKey = randomlySelectedTile, spriteKey = "orc")
+        val npcType = spawningProbs[randomlySelectedTile.tile.tileType]!!.filterKeys { it.contains(dieRoll) }.values.firstOrNull()
+        if (npcType != null) {
+          if (npcType == "orc")
+            actorFactory.addNpcAtTileWithAnimation(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y, spriteKey = "saleswomanblonde")
           else
-            actorFactory.addNpcEntityAtTile(type = npcType, tileKey = randomlySelectedTile)
+            actorFactory.addNpcEntityAtTile(type = npcType, x = randomlySelectedTile.x, y = randomlySelectedTile.y)
         }
 
 
@@ -82,9 +95,7 @@ class MonsterSpawningSystem : IntervalIteratingSystem(allOf(PlayerComponent::cla
         No, here. This is where we do that.
 
          */
-
-      }}")
+      }
     }
-
   }
 }

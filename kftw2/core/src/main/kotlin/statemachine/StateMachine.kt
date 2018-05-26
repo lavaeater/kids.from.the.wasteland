@@ -4,8 +4,8 @@ package com.lavaeater.kftw.statemachine
  * Builds and operates state machines
  */
 class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
-    private lateinit var currentState: State<S,E>
-    private val states = mutableListOf<State<S,E>>()
+    lateinit var currentState: State<S,E>
+    val states = mutableListOf<State<S,E>>()
 
     fun state(stateName: S, init: State<S,E>.() -> Unit) {
         val state = State<S,E>(stateName)

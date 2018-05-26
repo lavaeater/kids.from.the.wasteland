@@ -23,18 +23,37 @@ enum class GameEvent {
   CharacterScreenClosed
 }
 
-class GameStateManager(private val stateChange: (newState: GameState)-> Unit) {
-fun handleEvent(event: GameEvent) {
+class GameStateManager() {
+
+  val changeListeners = mutableSetOf<(GameState)->Unit>()
+  fun addChangeListener(listener: (GameState) ->Unit) {
+    changeListeners.add(listener)
+  }
+
+  fun removeListener(listener: (GameState) -> Unit) {
+    changeListeners.remove(listener)
+  }
+
+  fun handleEvent(event: GameEvent) {
     gameStateMachine.acceptEvent(event)
   }
 
-  private val gameStateMachine : StateMachine<GameState, GameEvent> = StateMachine.buildStateMachine(GameState.WorldMap, stateChange) {
+  fun stateChange(newState: GameState) {
+    for (listener in changeListeners)
+      listener(newState)
+  }
+
+  private val gameStateMachine : StateMachine<GameState, GameEvent> = StateMachine.buildStateMachine(GameState.WorldMap, ::stateChange) {
     state(GameState.WorldMap) {
       edge(GameEvent.LootFound, GameState.Inventory) {}
       edge(GameEvent.InventoryToggled, GameState.Inventory) {}
+      edge(GameEvent.DialogStarted, GameState.Dialog) {}
     }
     state(GameState.Inventory) {
       edge(GameEvent.InventoryToggled, GameState.WorldMap) {}
+    }
+    state(GameState.Dialog) {
+      edge(GameEvent.DialogEnded, GameState.WorldMap) {}
     }
   }
 

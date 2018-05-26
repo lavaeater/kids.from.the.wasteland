@@ -22,10 +22,10 @@ class FaceDrawer(width: Float = 0.6f, height: Float = 0.8f) {
   val factor = 15f
 
   val colors = mapOf("base" to fromHSV(baseHue, baseSaturation, baseValue),
-      "lighter" to fromHSV(baseHue - factor, baseSaturation - factor, baseValue + factor),
-      "lightest" to fromHSV(baseHue - 2 * factor, baseSaturation - 2 * factor, baseValue + 2 * factor),
-      "darker" to fromHSV(baseHue + factor, baseSaturation + factor, baseValue - factor),
-      "darkest" to fromHSV(baseHue + 2* factor, baseSaturation + 2* factor, baseValue - 2* factor))
+      "lighter" to fromHSV(baseHue, baseSaturation - factor, baseValue + factor),
+      "lightest" to fromHSV(baseHue, baseSaturation - 2 * factor, baseValue + 2 * factor),
+      "darker" to fromHSV(baseHue, baseSaturation + factor, baseValue - factor),
+      "darkest" to fromHSV(baseHue, baseSaturation + 2* factor, baseValue - 2* factor))
 
   init {
     pixmap.setColor(Color.BLACK)
