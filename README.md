@@ -42,4 +42,31 @@ https://opengameart.org/users/calciumtrice
 Online pixel-editor: https://piskelapp.com - kan exportera spritesheets med metadata
 för PixiJS som jag sen kan konvertera till texturepacker... oh my god.
 
+## Teknisk inspiration
 
+So, so much. GDC talks är en guldgruva för inspiration för hur man implementerar
+saker...
+
+Men, OK:
+
+### Kartgenerering med Perlin Noise
+
+https://www.redblobgames.com/maps/terrain-from-noise/
+
+### Ink för dynamisk dialog
+
+https://www.inklestudios.com/ink/
+
+GDC talk: https://www.youtube.com/watch?v=KYBf6Ko1I2k
+
+### Global state för dialog? Nej, story. Nej, eeh, för regler och fakta?
+
+Det här gjorde jag klart bara dagen innan Innovation Day och är kanske en onödigt 
+komplicerad datastruktur för att spara information och nycklar så att man kan göra
+state-kollar i spelet. Så, när spelaren träffar en Beamon-kollega så kollar vi om 
+det finns någon regel som matchar det som just hände (typ "träffatkollega, kollega=Ulrica
+TräffatsFörut=nej osv) och om den regeln kan ge oss en konversation att köra.
+I vårt spel hade vi bara en regel - vi kör en dialog, men dialogen är sen dynamiskt
+modifierad beroende på om vi träffat kollegan tidigare osv. The sky is the limit.
+
+GDC Talk: https://www.gdcvault.com/play/1015317/AI-driven-Dynamic-Dialog-through
