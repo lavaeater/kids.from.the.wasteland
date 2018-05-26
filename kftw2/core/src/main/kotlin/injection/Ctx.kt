@@ -34,7 +34,7 @@ class Ctx {
         bindSingleton<InputProcessor>(InputMultiplexer())
         bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
-        bindSingleton(Player(name = "Thorborg"))
+        bindSingleton(Player(name = "William Hamparsomian"))
         bindSingleton<Batch>(SpriteBatch())
         bindSingleton<Camera>(OrthographicCamera())
         bindSingleton(createWorld())

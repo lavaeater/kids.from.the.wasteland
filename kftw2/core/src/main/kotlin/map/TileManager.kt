@@ -61,7 +61,6 @@ class TileManager(val chunkSize:Int = 100) {
                 if (actualX !in currentStore.xBounds || actualY !in currentStore.yBounds) {
                     currentStore = getTileStore(actualX, actualY)
                 }
-
                 currentTile = currentStore.getTile(actualX, actualY)!!
 
                 //check for neighbours!
@@ -213,7 +212,7 @@ class TileManager(val chunkSize:Int = 100) {
         val nX = x / MapManager.scale
         val nY = y / MapManager.scale
 
-        val priority = getTilePriorityFromNoise(nX, nY)
+        val priority = getTilePriorityFromNoise(nX, nY, x, y)
         val tileType = MapManager.terrains[priority]!!
         val code = MapManager.shortTerrains[priority]!!
         val subType = "center${MathUtils.random.nextInt(3) + 1}"

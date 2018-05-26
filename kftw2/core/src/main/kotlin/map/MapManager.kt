@@ -2,6 +2,7 @@ package map
 
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
+import com.badlogic.gdx.physics.box2d.BodyDef
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.BodyFactory
 import managers.GameManager
@@ -9,6 +10,7 @@ import com.lavaeater.kftw.map.Tile
 import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.systems.tileX
 import com.lavaeater.kftw.systems.tileY
+import ktx.math.vec2
 import kotlin.math.roundToInt
 
 class MapManager : IMapManager {
@@ -120,25 +122,21 @@ class MapManager : IMapManager {
   }
 
   fun checkHitBoxesForImpassibleTiles() {
-//    val impassibleTiles = visibleTiles
-//        .filter {
-//          (it.value.priority == 0 || it.value.priority == 3) && !it.value.shortCode.isOneTerrain()
-//        }
-//        .filter {
-//          !hitBoxes.containsKey(it.key)
-//        }
-//
-//    for (key in impassibleTiles.keys) {
-//      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
-//          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-//      val hitBox = bodyManager.createBody(
-//          GameManager.TILE_SIZE.toFloat(),
-//          GameManager.TILE_SIZE.toFloat(),
-//          10f,
-//          pos,
-//          BodyDef.BodyType.StaticBody)
-//      hitBoxes[key] = hitBox
-//    }
+
+    for (row in currentlyVisibleTiles!!)
+      for (tile in row) {
+        if (tile.needsHitBox && (tile.tile.priority == 0 || tile.tile.priority == 3) && !tile.tile.shortCode.isOneTerrain()) {
+          val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+              (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+          val hitBox = bodyManager.createBody(
+              GameManager.TILE_SIZE.toFloat(),
+              GameManager.TILE_SIZE.toFloat(),
+              10f,
+              pos,
+              BodyDef.BodyType.StaticBody)
+            tile.needsHitBox = false
+        }
+      }
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
@@ -165,6 +163,7 @@ class MapManager : IMapManager {
               (currentX - currentTileRange)..(currentX + currentTileRange),
               (currentY - currentTileRange)..(currentY + currentTileRange))
     }
+  checkHitBoxesForImpassibleTiles()
 //    tileCounter.stop()
     return currentlyVisibleTiles!!
   }

@@ -31,7 +31,7 @@ class RenderCharactersSystem() :
       false -> renderRegularCharacter(transform, spriteComponent)
     }
   }
-  private val frameRate = 1f / 6f
+  private val frameRate = 1f / 2f
   private fun renderAnimatedCharacter(transform: TransformComponent,
                                       spriteComponent: CharacterSpriteComponent,
                                       deltaTime: Float) {

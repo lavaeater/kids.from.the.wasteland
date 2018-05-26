@@ -20,6 +20,9 @@ class Facts {
     val FoundKey = "FoundKey"
     val MetOrcs = "MetOrcs"
     val NumberOfVisitedPlaces = "NumberOfVisitedPlaces"
+    val CurrentNpcName = "CurrentNpcName"
+    val Score = "Score"
+    val KnownNames = "KnownNames"
   }
 }
 
@@ -51,6 +54,7 @@ class ConversationManager {
     //Add to list of agents player has met
     FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
     FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
+    FactsOfTheWorld.stateStringFact(Facts.CurrentNpcName, npc.name)
 
     /**
      * Aaah, the remnants!
@@ -76,6 +80,7 @@ class ConversationManager {
       currentAgent = npc
       currentStory = (rules.first().consequence as ConversationConsequence).retrieve()
       ui.runConversation(InkConversation(currentStory!!, player, npc), {endConversation(npc)})
+
     } else {
       endConversation(npc)
     }
@@ -88,6 +93,11 @@ class ConversationManager {
     //Add to counter of this particular type
     FactsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
     FactsOfTheWorld.clearStringFact(Facts.CurrentNpc)
+
+    if (!FactsOfTheWorld.getFactList<String>(Facts.KnownNames).contains(npc.name) && currentStory!!.variablesState["guessed_right"] as Int == 1) {
+      FactsOfTheWorld.addToIntFact(Facts.Score, 1)
+      FactsOfTheWorld.addStringToList(Facts.KnownNames, npc.name)
+    }
 
     currentAgent = null
     currentStory = null

@@ -2,6 +2,7 @@ package com.lavaeater
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -39,6 +40,10 @@ object Assets : Disposable {
     )
   }
 
+  val splashScreen by lazy {
+    Texture(Gdx.files.internal("ui/graphics/splashscreen.gif"))
+  }
+
   val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
   val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
 
@@ -55,11 +60,32 @@ object Assets : Disposable {
 
   val animatedCharacters by lazy {
     mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
-        "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")))
+        "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")),
+        "ulricawikren" to TextureAtlas(Gdx.files.internal("chars/saleswomanblonde/saleswomanblonde.txp")),
+        "williamhamparsomian" to TextureAtlas(Gdx.files.internal("chars/williamhamparsomian/williamhamparsomian.txp")),
+        "andreaslindblad" to TextureAtlas(Gdx.files.internal("chars/andreaslindblad/andreaslindblad.txp")),
+        "babakvarfan" to TextureAtlas(Gdx.files.internal("chars/babakvarfan/babakvarfan.txp")),
+        "kimdinhthi" to TextureAtlas(Gdx.files.internal("chars/kimdinhthi/kimdinhthi.txp"))
+    )
   }
   val portraits by lazy {
     mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
         "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+  }
+
+  val music by lazy {
+    Gdx.audio.newMusic(Gdx.files.internal("music/ambient.mp3")).apply {
+      isLooping = true
+    }
+  }
+
+  val beamonHeadshots by lazy {
+    mapOf(
+        "WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")),
+        "AndreasLindblad" to Texture(Gdx.files.internal("chars/beamon/AndreasLindblad.png")),
+        "KimDinhThi" to Texture(Gdx.files.internal("chars/beamon/KimDinhThi.png")),
+        "BabakVarfan" to Texture(Gdx.files.internal("chars/beamon/BabakVarfan.png")),
+        "UlricaWikren" to Texture(Gdx.files.internal("chars/beamon/UlricaWikren.png")))
   }
 
   val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }
@@ -102,7 +128,7 @@ object Assets : Disposable {
     val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-      color = Color.GRAY
+      color = Color.WHITE
       size = gameSettings.baseFontSize
     }
 
