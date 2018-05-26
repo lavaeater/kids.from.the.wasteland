@@ -1,3 +1,3 @@
-# Kids from the Wasteland
+# Beamon RPG / Kids from the Wasteland
 
 ##
