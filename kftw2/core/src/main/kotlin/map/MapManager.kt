@@ -121,23 +121,22 @@ class MapManager : IMapManager {
     return !(currentX in (x - visibleRange)..(x + visibleRange) && currentY in (y - visibleRange)..(y + visibleRange))
   }
 
-  fun checkHitBoxesForImpassibleTiles(tiles:Array<Array<TileInstance>>) {
-    val impassibleTiles = tiles.flatten()
-        .filter {
-          (it.needsHitBox && (it.tile.priority == 0 || it.tile.priority == 3) && !it.tile.shortCode.isOneTerrain())
-        }
+  fun checkHitBoxesForImpassibleTiles() {
 
-    for (key in impassibleTiles) {
-      val pos = vec2((key.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
-          (key.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-      val hitBox = bodyManager.createBody(
-          GameManager.TILE_SIZE.toFloat(),
-          GameManager.TILE_SIZE.toFloat(),
-          10f,
-          pos,
-          BodyDef.BodyType.StaticBody)
-      key.needsHitBox = false
-    }
+    for (row in currentlyVisibleTiles!!)
+      for (tile in row) {
+        if (tile.needsHitBox && (tile.tile.priority == 0 || tile.tile.priority == 3) && !tile.tile.shortCode.isOneTerrain()) {
+          val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+              (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+          val hitBox = bodyManager.createBody(
+              GameManager.TILE_SIZE.toFloat(),
+              GameManager.TILE_SIZE.toFloat(),
+              10f,
+              pos,
+              BodyDef.BodyType.StaticBody)
+            tile.needsHitBox = false
+        }
+      }
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
@@ -163,9 +162,8 @@ class MapManager : IMapManager {
       currentlyVisibleTiles = tileManager.getTiles(
               (currentX - currentTileRange)..(currentX + currentTileRange),
               (currentY - currentTileRange)..(currentY + currentTileRange))
-
-
     }
+  checkHitBoxesForImpassibleTiles()
 //    tileCounter.stop()
     return currentlyVisibleTiles!!
   }

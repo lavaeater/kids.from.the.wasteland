@@ -61,7 +61,6 @@ class TileManager(val chunkSize:Int = 100) {
                 if (actualX !in currentStore.xBounds || actualY !in currentStore.yBounds) {
                     currentStore = getTileStore(actualX, actualY)
                 }
-
                 currentTile = currentStore.getTile(actualX, actualY)!!
 
                 //check for neighbours!

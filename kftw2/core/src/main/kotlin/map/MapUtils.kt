@@ -42,7 +42,7 @@ fun Int.getMinMax(range:Int) : Pair<Int, Int> {
 
 fun getTilePriorityFromNoise(x: Float, y: Float, tileX:Int, tileY:Int): Int {
 
-  val distanceFactor = Math.min((tileX.absoluteValue + tileY.absoluteValue) / (25.0), 1.0)
+  val distanceFactor = Math.min((tileX.absoluteValue + tileY.absoluteValue) / (40.0), 1.0)
 
   val part1 = distanceFactor * -100
   val part2 = (1 - distanceFactor) * (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)

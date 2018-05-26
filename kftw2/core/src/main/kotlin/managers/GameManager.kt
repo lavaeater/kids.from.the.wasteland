@@ -81,7 +81,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
 
     engine.addSystem(npcControlSystem)
     engine.addSystem(PhysicsSystem())
-   //engine.addSystem(PhysicsDebugSystem())
+    //engine.addSystem(PhysicsDebugSystem())
 
     val playerEntity = actorFactory.addHeroEntity()
     engine.addSystem(FollowCameraSystem(playerEntity))
