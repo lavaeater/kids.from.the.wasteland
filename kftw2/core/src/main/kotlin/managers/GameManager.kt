@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
-import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.Assets
 import com.lavaeater.kftw.GameSettings
@@ -26,13 +25,13 @@ class GameManager(
     viewPortProvider: () -> Viewport,
     private val engine: Engine, //Engine will come with all systems added already, yay!
     actorFactoryProvider: () -> ActorFactory,
-    private val messageDispatcher: MessageDispatcher ) : Disposable {
+    private val messageDispatcher: MessageDispatcher,
+    private val world: World,
+    private val ui: IUserInterface,
+    private val mapManager: IMapManager) : Disposable {
+
   private val viewPort = viewPortProvider()
   private val actorFactory = actorFactoryProvider()
-  val world = Ctx.context.inject<World>()
-  val hud = Ctx.context.inject<IUserInterface>()
-  val mapManager = Ctx.context.inject<IMapManager>()
-
 
   init {
     gameState.addChangeListener(::gameStateChanged)
@@ -142,7 +141,7 @@ class GameManager(
 
   private fun showInventory() {
     stopTheWorld()
-    hud.showInventory()
+    ui.showInventory()
   }
 
   private fun showDialog() {
@@ -160,7 +159,7 @@ class GameManager(
   }
 
   private fun resumeWorldMap() {
-    hud.hideInventory()
+    ui.hideInventory()
     resumeTheWorld()
   }
 

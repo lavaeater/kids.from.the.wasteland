@@ -75,6 +75,9 @@ class Ctx {
 			      this.provider(),
 			      this.inject(),
 			      this.provider(),
+			      this.inject(),
+			      this.inject(),
+			      this.inject(),
 			      this.inject()))
       }
     }
