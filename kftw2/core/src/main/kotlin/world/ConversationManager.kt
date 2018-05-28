@@ -32,12 +32,12 @@ class Contexts {
   }
 }
 
-class ConversationManager {
-  private val ui = Ctx.context.inject<IUserInterface>()
-  private val gameStateManager = Ctx.context.inject<GameState>()
+class ConversationManager(
+    private val ui: IUserInterface,
+    private val gameStateManager:GameState,
+    private val player: Player) {
   private var currentStory: Story? = null
   private var currentAgent: IAgent? = null
-  private val player = Ctx.context.inject<Player>()
 
   fun startWithNpc(npc: Npc) {
     /*

@@ -25,6 +25,7 @@ import systems.*
 import ui.IUserInterface
 import ui.UserInterface
 import world.ConversationManager
+import javax.swing.plaf.InputMapUIResource
 
 class Ctx {
 
@@ -47,8 +48,10 @@ class Ctx {
 			  addSystem(PhysicsSystem(context.inject()))
 //			  addSystem(PhysicsDebugSystem())
 			  addSystem(WorldFactsSystem())
-
-		  }
+				addSystem(FollowCameraSystem(
+						context.inject<ActorFactory>().addHeroEntity(),
+						context.inject()))
+			}
 	  }
 
     fun buildContext(gameSettings: GameSettings) {
@@ -80,7 +83,9 @@ class Ctx {
 		      setContactListener(CollisionManager(this@register.inject()))
 	      })
         bindSingleton(BodyFactory(this.inject()))
-        bindSingleton<IMapManager>(MapManager())
+        bindSingleton<IMapManager>(MapManager(
+						this.inject(),
+						this.inject()))
 
 	      bindSingleton(getEngine(this))
 
@@ -93,10 +98,14 @@ class Ctx {
 	      bindSingleton<IUserInterface>(
 			      UserInterface(
 					      this.inject(),
-					      this.inject()))
+					      this.inject(),
+								this.inject<InputProcessor>() as InputMultiplexer))
 
-	      bindSingleton(ConversationManager())
-
+	      bindSingleton(ConversationManager(
+						this.inject(),
+						this.inject(),
+						this.inject()
+				))
 
 	      bindSingleton(GameManager(
 		        gameSettings,

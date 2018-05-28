@@ -8,8 +8,7 @@ import components.TransformComponent
 import injection.Ctx
 import ktx.ashley.mapperFor
 
-class FollowCameraSystem( trackedEntity : Entity) : EntitySystem(300){
-    val camera = Ctx.context.inject<Camera>()
+class FollowCameraSystem( trackedEntity : Entity, private val camera:Camera) : EntitySystem(300){
     val transformComponet = mapperFor<TransformComponent>()[trackedEntity]
     val speed = 0.2f
     var y = 0f

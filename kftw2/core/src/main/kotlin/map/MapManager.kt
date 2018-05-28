@@ -11,7 +11,9 @@ import systems.tileY
 import ktx.math.vec2
 import kotlin.math.roundToInt
 
-class MapManager : IMapManager {
+class MapManager(
+    private val bodyManager: BodyFactory,
+    private val tileManager: TileManager) : IMapManager {
   override fun getBandOfTiles(tilePos: Pair<Int, Int>, range: Int, width: Int): List<TileInstance> {
     return getBandOfTiles(tilePos.first, tilePos.second, range, width)
   }
@@ -33,8 +35,6 @@ class MapManager : IMapManager {
     return tilesInRange.minus(tilesToExclude).toList()
   }
 
-  val bodyManager = Ctx.context.inject<BodyFactory>()
-  val tileManager = Ctx.context.inject<TileManager>()
   var currentlyVisibleTiles: Array<Array<TileInstance>>? = null
 
   //val inverseFogOfWar = mutableSetOf<TileKey>()

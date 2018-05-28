@@ -25,6 +25,7 @@ import world.IConversation
 class UserInterface(
 		private val batch: Batch,
 		private val gameState: GameState,
+    private val inputManager: InputMultiplexer,
 		debug: Boolean = false): IUserInterface {
 
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
@@ -83,7 +84,6 @@ class UserInterface(
 
   private fun setup() {
     stage.clear()
-    val inputManager = Ctx.context.inject<InputProcessor>() as InputMultiplexer
     inputManager.addProcessor(stage)
 
     setUpScoreBoard()

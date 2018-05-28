@@ -10,8 +10,8 @@ import ktx.app.KtxScreen
 class MainGameScreen : KtxScreen {
   private val gameManager by lazy { Ctx.context.inject<GameManager>() }
   private val gameState by lazy { Ctx.context.inject<GameState>() }
+  private val hud by lazy {Ctx.context.inject<IUserInterface>() }
 
-  private val hud = Ctx.context.inject<IUserInterface>()
   init {
   	Gdx.input.inputProcessor = Ctx.context.inject()
   }

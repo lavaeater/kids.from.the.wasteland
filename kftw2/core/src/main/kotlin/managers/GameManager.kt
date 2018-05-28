@@ -56,7 +56,7 @@ class GameManager(
   }
 
   private fun setupSystems() {
-    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
+//    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
     addBeamonPeople()
   }
 
