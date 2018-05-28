@@ -87,8 +87,7 @@ class Ctx {
 	      bindSingleton<IUserInterface>(
 			      UserInterface(
 					      batch = this.inject(),
-					      gameState = this.inject(),
-					      debug = true))
+					      gameState = this.inject()))
 
 	      bindSingleton(ConversationManager())
 
