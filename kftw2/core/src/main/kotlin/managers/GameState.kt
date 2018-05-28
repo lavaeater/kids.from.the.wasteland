@@ -62,9 +62,6 @@ class GameState {
     state(GameStates.Dialog) {
       edge(GameEvents.DialogEnded, GameStates.WorldMap) {}
     }
-//    state(GameStates.NotStarted) {
-//      edge(GameEvents.GameStarted, GameStates.SplashScreen) {}
-//    }
     state(GameStates.SplashScreen) {
       edge(GameEvents.GameResumed, GameStates.WorldMap) {}
     }

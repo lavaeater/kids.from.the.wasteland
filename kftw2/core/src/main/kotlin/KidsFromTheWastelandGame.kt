@@ -10,7 +10,7 @@ import com.lavaeater.kftw.screens.MainGameScreen
 import ktx.app.KtxGame
 
 
-class KidsFromTheWastelandGame(val gameSettings: GameSettings = GameSettings()) : KtxGame<Screen>() {
+class KidsFromTheWastelandGame(private val gameSettings: GameSettings = GameSettings()) : KtxGame<Screen>() {
 
   private lateinit var mainGameScreen: MainGameScreen
 
