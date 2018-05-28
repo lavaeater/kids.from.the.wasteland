@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Gdx
@@ -13,17 +13,14 @@ import map.IMapManager
 import ktx.app.use
 import kotlin.math.roundToInt
 
-class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
-
-  val batch = Ctx.context.inject<Batch>()
-  val camera = Ctx.context.inject<Camera>()
-  val mapManager = Ctx.context.inject<IMapManager>()
-  val counters = Ctx.context.inject<PerformanceCounters>()
-  var accruedDelta = 0f
+class RenderMapSystem(
+    private val batch: Batch,
+    private val camera: Camera,
+    private val mapManager: IMapManager,
+    val fogOfWar:Boolean = false) : EntitySystem(0) {
 
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
-//    if(fogOfWar) renderMapWithFogOfWar() else {
     val tileX = camera.position.tileX()
     val tileY = camera.position.tileY()
 
@@ -45,14 +42,7 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
           }
         }
     }
-    counters.tick()
-    accruedDelta += deltaTime
-    if (accruedDelta > 5) {
-      counters.counters.map { Gdx.app.log(it.name, it.toString()) }
-      accruedDelta = 0f
-
-    }
-  }
+   }
 }
 //  }
 

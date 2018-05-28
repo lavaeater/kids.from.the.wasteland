@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
@@ -16,6 +16,7 @@ import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.vec2
+import systems.directionalVelocity
 import java.util.*
 
 class CharacterControlSystem(

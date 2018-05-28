@@ -15,8 +15,8 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.*
+import systems.*
 import managers.GameManager
-import com.lavaeater.kftw.systems.*
 import map.IMapManager
 import map.MapManager
 import ui.UserInterface
@@ -39,7 +39,11 @@ class Ctx {
 					  inputProcessor = context.inject(),
 					  gameState = context.inject()))
 			  addSystem(NpcControlSystem())
-			  addSystem(RenderMapSystem(false))
+			  addSystem(RenderMapSystem(
+					  context.inject(),
+					  context.inject(),
+					  context.inject(),
+					  false))
 			  addSystem(RenderCharactersSystem())
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem())
@@ -53,7 +57,6 @@ class Ctx {
       context.register {
 	      bindSingleton(GameState())
         bindSingleton<InputProcessor>(InputMultiplexer())
-        bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
         bindSingleton(Player(name = "William Hamparsomian"))
         bindSingleton<Batch>(SpriteBatch())

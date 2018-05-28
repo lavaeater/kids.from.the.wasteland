@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Input

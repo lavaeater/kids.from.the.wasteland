@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
@@ -12,6 +12,7 @@ import ktx.ashley.allOf
 import ktx.ashley.has
 import ktx.ashley.mapperFor
 import ktx.ashley.remove
+import systems.toTile
 
 class PlayerEntityDiscoverySystem(val playerEntity: Entity) :
     IntervalIteratingSystem(allOf(TransformComponent::class, NpcComponent::class).get(),0.25f,1) {

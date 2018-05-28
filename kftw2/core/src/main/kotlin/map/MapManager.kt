@@ -8,8 +8,8 @@ import com.lavaeater.kftw.managers.BodyFactory
 import managers.GameManager
 import com.lavaeater.kftw.map.Tile
 import com.lavaeater.kftw.map.TileInstance
-import com.lavaeater.kftw.systems.tileX
-import com.lavaeater.kftw.systems.tileY
+import systems.tileX
+import systems.tileY
 import ktx.math.vec2
 import kotlin.math.roundToInt
 

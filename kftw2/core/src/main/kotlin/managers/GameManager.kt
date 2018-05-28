@@ -10,9 +10,12 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import Assets
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.managers.*
-import com.lavaeater.kftw.systems.*
 import ui.IUserInterface
 import map.IMapManager
+import systems.CharacterControlSystem
+import systems.FollowCameraSystem
+import systems.RenderCharactersSystem
+import systems.RenderMapSystem
 import world.*
 
 class GameManager(
