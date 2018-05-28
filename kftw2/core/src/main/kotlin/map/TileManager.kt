@@ -1,7 +1,7 @@
 package map
 
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.Assets
+import Assets
 import com.lavaeater.kftw.map.*
 
 class TileManager(val chunkSize:Int = 100) {

@@ -6,7 +6,7 @@ import com.badlogic.ashley.systems.IntervalSystem
 import com.lavaeater.kftw.components.AgentComponent
 import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 

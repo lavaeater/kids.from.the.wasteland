@@ -3,9 +3,7 @@ package managers
 import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.ai.msg.Telegraph
 import com.lavaeater.kftw.data.Npc
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvents
-import com.lavaeater.kftw.managers.GameState
+import injection.Ctx
 import com.lavaeater.kftw.managers.Messages
 import world.ConversationManager
 

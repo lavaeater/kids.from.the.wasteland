@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.PerformanceCounters
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import managers.GameManager
 import map.IMapManager
 import ktx.app.use

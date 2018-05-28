@@ -10,9 +10,8 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.KeyboardControlComponent
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvents
-import com.lavaeater.kftw.managers.GameState
+import managers.GameEvents
+import managers.GameState
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor

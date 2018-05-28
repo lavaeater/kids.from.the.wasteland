@@ -1,11 +1,10 @@
 package com.lavaeater.kftw.screens
 
 import com.badlogic.gdx.Gdx
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvents
-import com.lavaeater.kftw.managers.GameState
+import injection.Ctx
+import managers.GameState
 import managers.GameManager
-import com.lavaeater.kftw.ui.IUserInterface
+import ui.IUserInterface
 import ktx.app.KtxScreen
 
 class MainGameScreen : KtxScreen {

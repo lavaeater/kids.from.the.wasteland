@@ -5,7 +5,7 @@ import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.PlayerComponent
 import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import com.lavaeater.kftw.managers.ActorFactory
 import map.IMapManager
 import ktx.ashley.allOf

@@ -1,8 +1,5 @@
-package com.lavaeater
-
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -95,7 +92,7 @@ object Assets : Disposable {
   val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
   fun load(gameSettings: GameSettings): AssetManager {
-    this.gameSettings = gameSettings
+    Assets.gameSettings = gameSettings
     am = AssetManager()
 
     initializeMapTiles()

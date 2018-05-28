@@ -1,6 +1,6 @@
-package com.lavaeater.kftw.managers
+package managers
 
-import com.lavaeater.kftw.statemachine.StateMachine
+import statemachine.StateMachine
 
 enum class GameStates {
   WorldMap,

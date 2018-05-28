@@ -6,7 +6,7 @@ import com.lavaeater.kftw.components.TransformComponent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.data.rollAgainstAgent
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import map.isInRange
 import ktx.ashley.mapperFor
 

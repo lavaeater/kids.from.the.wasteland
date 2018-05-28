@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.injection
+package injection
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.InputMultiplexer
@@ -19,10 +19,11 @@ import managers.GameManager
 import com.lavaeater.kftw.systems.*
 import map.IMapManager
 import map.MapManager
-import com.lavaeater.kftw.ui.UserInterface
-import com.lavaeater.kftw.ui.IUserInterface
+import ui.UserInterface
+import ui.IUserInterface
 import ktx.box2d.createWorld
 import ktx.inject.Context
+import managers.GameState
 import managers.MessageSwitch
 import map.TileManager
 import world.ConversationManager
@@ -86,8 +87,8 @@ class Ctx {
 
 	      bindSingleton<IUserInterface>(
 			      UserInterface(
-					      batch = this.inject(),
-					      gameState = this.inject()))
+					     this.inject(),
+					      this.inject()))
 
 	      bindSingleton(ConversationManager())
 

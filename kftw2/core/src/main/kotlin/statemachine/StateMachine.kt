@@ -1,13 +1,13 @@
-package com.lavaeater.kftw.statemachine
+package statemachine
 
 /**
  * Builds and operates state machines
  */
 class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
-    lateinit var currentState: State<S,E>
-    val states = mutableListOf<State<S,E>>()
+    lateinit var currentState: State<S, E>
+    val states = mutableListOf<State<S, E>>()
 
-    fun state(stateName: S, init: State<S,E>.() -> Unit) {
+    fun state(stateName: S, init: State<S, E>.() -> Unit) {
         val state = State<S,E>(stateName)
         state.init()
 
@@ -17,7 +17,7 @@ class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(p
     /**
      * Translates state state to an object
      */
-    private fun getState(state: S): State<S,E> {
+    private fun getState(state: S): State<S, E> {
         return states.first { s -> s.state == state  }
     }
 
@@ -54,7 +54,7 @@ class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(p
     }
 
     companion object {
-        fun <S : kotlin.Enum<S>,E : kotlin.Enum<E>>buildStateMachine(initialState: S, globalStateAction: (S) -> Unit, init: StateMachine<S,E>.() -> Unit): StateMachine<S,E> {
+        fun <S : kotlin.Enum<S>,E : kotlin.Enum<E>>buildStateMachine(initialState: S, globalStateAction: (S) -> Unit, init: StateMachine<S, E>.() -> Unit): StateMachine<S, E> {
             val stateMachine = StateMachine<S,E>(initialState, globalStateAction)
             stateMachine.init()
             return stateMachine

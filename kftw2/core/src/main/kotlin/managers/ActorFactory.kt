@@ -13,7 +13,7 @@ import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.NpcType
 import com.lavaeater.kftw.data.Player
 import map.IMapManager
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import map.tileWorldCenter
 import ktx.math.vec2
 import world.FactsOfTheWorld.Companion.npcNames
@@ -115,7 +115,7 @@ class ActorFactory {
       add(PlayerComponent(Ctx.context.inject()))
       add(AgentComponent(Ctx.context.inject<Player>()))
       add(VisibleComponent())
-      add(Box2dBodyComponent(createPlayerBody(vec2(0f,0f),Ctx.context.inject())))
+      add(Box2dBodyComponent(createPlayerBody(vec2(0f,0f), Ctx.context.inject())))
     }
     engine.addEntity(entity)
     return entity

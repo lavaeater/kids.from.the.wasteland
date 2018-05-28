@@ -1,9 +1,8 @@
-package com.lavaeater.kftw.ui
+package ui
 
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.kftw.data.IAgent
 import world.IConversation
 
 interface IUserInterface : Disposable {

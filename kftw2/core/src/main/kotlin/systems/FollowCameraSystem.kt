@@ -5,7 +5,7 @@ import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.MathUtils
 import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import ktx.ashley.mapperFor
 
 class FollowCameraSystem( trackedEntity : Entity) : EntitySystem(300){

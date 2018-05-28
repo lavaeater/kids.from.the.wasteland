@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.ui
+package ui
 
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
@@ -11,26 +11,21 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.Assets
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvents
-import com.lavaeater.kftw.managers.GameState
-import ktx.actors.centerPosition
+import Assets
+import injection.Ctx
+import managers.GameEvents
+import managers.GameState
 import ktx.actors.keepWithinParent
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
-import world.IConversation
-import ui.IConversationPresenter
-import ui.image
-import ui.label
 import world.Facts
 import world.FactsOfTheWorld
+import world.IConversation
 
 class UserInterface(
-    var processInput: Boolean = true,
-    private val batch: Batch,
-    private val gameState: GameState,
-    debug: Boolean = false): IUserInterface {
+		private val batch: Batch,
+		private val gameState: GameState,
+		debug: Boolean = false): IUserInterface {
 
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
@@ -39,14 +34,14 @@ class UserInterface(
   }
 
   companion object {
-    val aspectRatio = 16 / 9
-    val uiWidth = 800f
-    val uiHeight = uiWidth * aspectRatio
+    private const val aspectRatio = 16 / 9
+    const val uiWidth = 800f
+    const val uiHeight = uiWidth * aspectRatio
   }
 
-  lateinit var conversationUi: IConversationPresenter
-  val labelStyle = Label.LabelStyle(Assets.standardFont, Color.WHITE)
-  lateinit var scoreLabel: Label
+  private lateinit var conversationUi: IConversationPresenter
+  private val labelStyle = Label.LabelStyle(Assets.standardFont, Color.WHITE)
+  private lateinit var scoreLabel: Label
 
 
   override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {

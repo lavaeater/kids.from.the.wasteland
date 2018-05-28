@@ -7,11 +7,11 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.Assets
+import Assets
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.managers.*
 import com.lavaeater.kftw.systems.*
-import com.lavaeater.kftw.ui.IUserInterface
+import ui.IUserInterface
 import map.IMapManager
 import world.*
 

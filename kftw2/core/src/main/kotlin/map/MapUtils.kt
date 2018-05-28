@@ -3,11 +3,10 @@ package map
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.lavaeater.Assets
-import com.lavaeater.kftw.injection.Ctx
+import Assets
+import injection.Ctx
 import managers.GameManager
 import com.lavaeater.kftw.map.Tile
 import com.lavaeater.kftw.map.TileInstance

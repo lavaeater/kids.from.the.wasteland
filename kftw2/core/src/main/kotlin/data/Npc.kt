@@ -2,7 +2,7 @@ package com.lavaeater.kftw.data
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import map.IMapManager
 import map.MapManager
 import com.lavaeater.kftw.map.TileInstance

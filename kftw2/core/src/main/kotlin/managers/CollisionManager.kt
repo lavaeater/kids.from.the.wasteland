@@ -4,7 +4,6 @@ import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.injection.Ctx
 
 class CollisionManager(private val messageDispatcher: MessageDispatcher) : ContactListener {
 

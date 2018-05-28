@@ -4,10 +4,10 @@ import com.bladecoder.ink.runtime.Story
 import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvents
-import com.lavaeater.kftw.managers.GameState
-import com.lavaeater.kftw.ui.IUserInterface
+import injection.Ctx
+import managers.GameEvents
+import managers.GameState
+import ui.IUserInterface
 
 
 class Facts {

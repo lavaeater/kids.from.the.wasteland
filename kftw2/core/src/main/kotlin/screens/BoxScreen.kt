@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.kftw.injection.Ctx
+import injection.Ctx
 import ktx.app.KtxScreen
 import ktx.app.use
 
