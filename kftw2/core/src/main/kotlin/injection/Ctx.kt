@@ -84,7 +84,10 @@ class Ctx {
 
 	      bind { ActorFactory() }
 
-	      bindSingleton<IUserInterface>(UserInterface())
+	      bindSingleton<IUserInterface>(
+			      UserInterface(
+					      batch = this.inject(),
+					      gameState = this.inject()))
 
 	      bindSingleton(ConversationManager())
 

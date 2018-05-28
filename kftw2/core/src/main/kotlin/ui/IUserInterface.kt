@@ -9,11 +9,11 @@ import world.IConversation
 interface IUserInterface : Disposable {
   val stage: Stage
   val hudViewPort: Viewport
-  val player: IAgent
   fun showInventory()
   fun hideInventory()
   fun update(delta: Float)
   override fun dispose()
   fun clear()
   fun runConversation(conversation: IConversation, conversationEnded: () -> Unit)
+	fun showSplashScreen()
 }

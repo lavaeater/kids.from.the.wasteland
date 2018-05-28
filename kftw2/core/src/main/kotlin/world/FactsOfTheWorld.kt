@@ -5,6 +5,11 @@ class FactsOfTheWorld {
 
   /*
  They are for everything
+ this is a static object, globally available.
+
+ This is bad and generally frowned upon. We shall
+ make it into a regular class with some init method or something
+ and register it into the context as a singleton instead.
     */
   companion object {
 

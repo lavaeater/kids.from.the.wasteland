@@ -7,7 +7,9 @@ enum class GameStates {
   Combat,
   Dialog,
   Inventory,
-  CharacterScreen
+  CharacterScreen,
+  NotStarted,
+  SplashScreen
 }
 
 enum class GameEvents {
@@ -20,14 +22,19 @@ enum class GameEvents {
   InventoryToggled,
   GamePaused,
   CharacterScreenOpened,
-  CharacterScreenClosed
+  CharacterScreenClosed,
+  GameResumed
 }
 
-class GameState() {
+class GameState {
 
   private val changeListeners = mutableSetOf<(GameStates)->Unit>()
   fun addChangeListener(listener: (GameStates) ->Unit) {
     changeListeners.add(listener)
+  }
+
+  fun start() {
+    stateMachine.initialize()
   }
 
   fun removeListener(listener: (GameStates) -> Unit) {
@@ -43,7 +50,7 @@ class GameState() {
       listener(newState)
   }
 
-  private val stateMachine : StateMachine<GameStates, GameEvents> = StateMachine.buildStateMachine(GameStates.WorldMap, ::stateChange) {
+  private val stateMachine : StateMachine<GameStates, GameEvents> = StateMachine.buildStateMachine(GameStates.SplashScreen, ::stateChange) {
     state(GameStates.WorldMap) {
       edge(GameEvents.LootFound, GameStates.Inventory) {}
       edge(GameEvents.InventoryToggled, GameStates.Inventory) {}
@@ -55,9 +62,11 @@ class GameState() {
     state(GameStates.Dialog) {
       edge(GameEvents.DialogEnded, GameStates.WorldMap) {}
     }
-  }
-
-  init {
-    stateMachine.initialize()
+//    state(GameStates.NotStarted) {
+//      edge(GameEvents.GameStarted, GameStates.SplashScreen) {}
+//    }
+    state(GameStates.SplashScreen) {
+      edge(GameEvents.GameResumed, GameStates.WorldMap) {}
+    }
   }
 }

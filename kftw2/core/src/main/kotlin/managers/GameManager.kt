@@ -5,12 +5,10 @@ import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.Assets
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.*
 import com.lavaeater.kftw.systems.*
 import com.lavaeater.kftw.ui.IUserInterface
@@ -34,7 +32,6 @@ class GameManager(
 
   init {
     gameState.addChangeListener(::gameStateChanged)
-
     setupSystems()
     setupRules()
     setupFacts()
@@ -57,22 +54,19 @@ class GameManager(
   }
 
   private fun setupSystems() {
-
-
-    /*
-    Some circular dependencies here...
-
-    the engine needs to be created to create a player entity
-    and the follow camera system needs the player entity. break this apart later!
-     */
-
     engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
-
     addBeamonPeople()
-
   }
 
   private fun addBeamonPeople() {
+
+    /*
+    Could be moved to some kind of init class or something, so the game manager manages a
+    running game, and some other class, called during startup, sets up the state using all the
+    dependencies necessary for that.
+     */
+
+
     for (name in FactsOfTheWorld.npcNames.values) {
       val someTilesInRange = mapManager.getBandOfTiles(0,0, 2, 3).filter {
         it.tile.tileType != "rock" && it.tile.tileType != "water"
@@ -82,12 +76,6 @@ class GameManager(
       actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", x = randomlySelectedTile.x, y = randomlySelectedTile.y)
     }
   }
-//
-//  private fun setupMessageSystem() {
-//    val messageManager = Ctx.context.inject<MessageSwitch>()
-//    messageDispatcher.addListener(messageManager, Messages.CollidedWithImpassibleTerrain)
-//    messageDispatcher.addListener(messageManager, Messages.PlayerMetSomeone)
-//  }
 
   fun update(delta: Float) {
     engine.update(delta)
@@ -117,10 +105,16 @@ class GameManager(
       GameStates.WorldMap -> resumeWorldMap()
       GameStates.Inventory -> showInventory()
       GameStates.Dialog -> showDialog()
+      GameStates.SplashScreen -> showSplashScreen()
       else -> {
         //These aren't defined yet!
       }
     }
+  }
+
+  private fun showSplashScreen() {
+    stopTheWorld()
+    ui.showSplashScreen()
   }
 
   private fun showInventory() {
@@ -143,7 +137,6 @@ class GameManager(
   }
 
   private fun resumeWorldMap() {
-    ui.hideInventory()
     resumeTheWorld()
   }
 
