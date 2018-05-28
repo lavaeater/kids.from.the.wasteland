@@ -12,17 +12,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
+import com.lavaeater.kftw.managers.CollisionManager
+import com.lavaeater.kftw.managers.Messages
 import data.Player
-import com.lavaeater.kftw.managers.*
-import systems.*
-import map.IMapManager
-import map.MapManager
-import ui.UserInterface
-import ui.IUserInterface
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.*
+import map.IMapManager
+import map.MapManager
 import map.TileManager
+import systems.*
+import ui.IUserInterface
+import ui.UserInterface
 import world.ConversationManager
 
 class Ctx {
@@ -43,7 +44,7 @@ class Ctx {
 					  false))
 			  addSystem(RenderCharactersSystem(context.inject()))
 			  addSystem(AiSystem())
-			  addSystem(PhysicsSystem())
+			  addSystem(PhysicsSystem(context.inject()))
 //			  addSystem(PhysicsDebugSystem())
 			  addSystem(WorldFactsSystem())
 
