@@ -7,19 +7,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.lavaeater.Assets
-import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 import com.lavaeater.kftw.managers.GameEvents
 import com.lavaeater.kftw.managers.GameState
+import ktx.actors.centerPosition
 import ktx.actors.keepWithinParent
 import ktx.scene2d.KTableWidget
-import ktx.scene2d.label
 import ktx.scene2d.table
 import world.IConversation
 import ui.IConversationPresenter
@@ -31,10 +29,14 @@ import world.FactsOfTheWorld
 class UserInterface(
     var processInput: Boolean = true,
     private val batch: Batch,
-    private val gameState: GameState): IUserInterface {
+    private val gameState: GameState,
+    debug: Boolean = false): IUserInterface {
 
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
+      .apply {
+    isDebugAll = debug
+  }
 
   companion object {
     val aspectRatio = 16 / 9
@@ -127,12 +129,12 @@ class UserInterface(
     val splashScreen = table {
       image(Assets.splashScreen) {
         setScaling(Scaling.fit)
-        scaleBy(3.0f)
-        setFillParent(true)
-      }.cell().setAlign(Align.center)
+        scaleBy(4.0f)
+      }.cell()
       setFillParent(true)
       isVisible = true
-      center()
+      bottom()
+      left()
     }
     stage.addActor(splashScreen)
     Timer.instance().clear()
