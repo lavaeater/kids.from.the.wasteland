@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.lavaeater.kftw.components.Box2dBodyComponent
 import com.lavaeater.kftw.components.KeyboardControlComponent
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvent
-import com.lavaeater.kftw.managers.GameStateManager
+import com.lavaeater.kftw.managers.GameEvents
+import com.lavaeater.kftw.managers.GameState
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
@@ -23,7 +23,7 @@ class CharacterControlSystem(val speed: Float = 20f, var processInput: Boolean =
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
-  val gameStateManager = Ctx.context.inject<GameStateManager>()
+  val gameStateManager = Ctx.context.inject<GameState>()
 
   init {
   	val inputManager = Ctx.context.inject<InputProcessor>() as InputMultiplexer
@@ -58,8 +58,8 @@ class CharacterControlSystem(val speed: Float = 20f, var processInput: Boolean =
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
-      Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryToggled)
-      Input.Keys.M -> gameStateManager.handleEvent(GameEvent.DialogStarted) //Will be something like "NPC met" and handled by some
+      Input.Keys.I -> gameStateManager.handleEvent(GameEvents.InventoryToggled)
+      Input.Keys.M -> gameStateManager.handleEvent(GameEvents.DialogStarted) //Will be something like "NPC met" and handled by some
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true

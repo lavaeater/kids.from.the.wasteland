@@ -161,6 +161,10 @@ class FactsOfTheWorld {
     fun clearAllFacts() {
       factsOfTheWorld.clear()
     }
+
+	  fun setupInitialFacts() {
+      stateIntFact("MetNumberOfNpcs", 0)
+	  }
   }
 }
 

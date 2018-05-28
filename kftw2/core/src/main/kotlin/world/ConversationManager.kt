@@ -5,8 +5,8 @@ import com.lavaeater.kftw.data.IAgent
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvent
-import com.lavaeater.kftw.managers.GameStateManager
+import com.lavaeater.kftw.managers.GameEvents
+import com.lavaeater.kftw.managers.GameState
 import com.lavaeater.kftw.ui.IUserInterface
 
 
@@ -34,7 +34,7 @@ class Contexts {
 
 class ConversationManager {
   private val ui = Ctx.context.inject<IUserInterface>()
-  private val gameStateManager = Ctx.context.inject<GameStateManager>()
+  private val gameStateManager = Ctx.context.inject<GameState>()
   private var currentStory: Story? = null
   private var currentAgent:IAgent? = null
   private val player = Ctx.context.inject<Player>()
@@ -101,7 +101,7 @@ class ConversationManager {
 
     currentAgent = null
     currentStory = null
-    gameStateManager.handleEvent(GameEvent.DialogEnded)
+    gameStateManager.handleEvent(GameEvents.DialogEnded)
   }
 
   init {

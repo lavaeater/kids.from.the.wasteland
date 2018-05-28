@@ -4,13 +4,13 @@ import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.ai.msg.Telegraph
 import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvent
-import com.lavaeater.kftw.managers.GameStateManager
+import com.lavaeater.kftw.managers.GameEvents
+import com.lavaeater.kftw.managers.GameState
 import com.lavaeater.kftw.managers.Messages
 import world.ConversationManager
 
 class MessageManager: Telegraph {
-  val gameStateManager = Ctx.context.inject<GameStateManager>()
+  val gameStateManager = Ctx.context.inject<GameState>()
   val conversationManager = Ctx.context.inject<ConversationManager>()
   override fun handleMessage(msg: Telegram): Boolean {
     when(msg.message) {
@@ -22,7 +22,7 @@ class MessageManager: Telegraph {
 
   private fun playerEncounteredNpc(npc: Npc): Boolean {
 
-    gameStateManager.handleEvent(GameEvent.DialogStarted)
+    gameStateManager.handleEvent(GameEvents.DialogStarted)
     conversationManager.startWithNpc(npc)
     return true
   }

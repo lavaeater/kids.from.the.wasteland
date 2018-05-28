@@ -30,7 +30,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
 
 
   init {
-    Ctx.context.inject<GameStateManager>().apply { addChangeListener(::gameStateChanged) }
+    Ctx.context.inject<GameState>().apply { addChangeListener(::gameStateChanged) }
     setupSystems()
 
     setupRules()
@@ -42,29 +42,15 @@ class GameManager(gameSettings: GameSettings) : Disposable {
     camera.position.x = 0f
     camera.position.y = 0f
 
-    //Skip this while implementing monster spawn!
-    //actorFactory.addTownsFolk()
     Assets.music.play()
   }
 
   private fun setupFacts() {
-    FactsOfTheWorld.stateIntFact("MetNumberOfNpcs", 0)
+    FactsOfTheWorld.setupInitialFacts()
   }
 
   private fun setupRules() {
-    /*
-    These rules are dumb: we shall also track WHOM we
-    are meeting, in the form of a contextual fact
-    for that agent.
-
-    So all agents need a key. Yay!
-
-    Later for that though
-     */
-
-    RulesOfTheWorld.addRule(Rule("FirstMeetingWithNPC", mutableListOf(
-        Criterion.context(Contexts.MetNpc)),
-        ConversationConsequence("conversations/beamon_memory.ink.json")))
+    RulesOfTheWorld.setupRules()
   }
 
   private fun setupSystems() {
@@ -138,11 +124,11 @@ class GameManager(gameSettings: GameSettings) : Disposable {
   fun pause() {
   }
 
-  fun gameStateChanged(newState: GameState) {
+  private fun gameStateChanged(newState: GameStates) {
     when(newState){
-      GameState.WorldMap -> resumeWorldMap()
-      GameState.Inventory -> showInventory()
-      GameState.Dialog -> showDialog()
+      GameStates.WorldMap -> resumeWorldMap()
+      GameStates.Inventory -> showInventory()
+      GameStates.Dialog -> showDialog()
       else -> {
         //These aren't defined yet!
       }

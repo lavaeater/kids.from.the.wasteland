@@ -14,7 +14,7 @@ import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
 import managers.GameManager
-import com.lavaeater.kftw.managers.GameStateManager
+import com.lavaeater.kftw.managers.GameState
 import map.IMapManager
 import map.MapManager
 import com.lavaeater.kftw.ui.UserInterface
@@ -42,7 +42,7 @@ class Ctx {
         bindSingleton(Engine())
         bindSingleton<IMapManager>(MapManager())
         bindSingleton(ActorFactory())
-        bindSingleton(GameStateManager())
+        bindSingleton(GameState())
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton<IUserInterface>(UserInterface())
         bindSingleton(ConversationManager())
