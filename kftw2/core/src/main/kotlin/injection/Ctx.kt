@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.PerformanceCounters
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.managers.ActorFactory
@@ -44,11 +46,18 @@ class Ctx {
         bindSingleton(Player(name = "William Hamparsomian"))
         bindSingleton<Batch>(SpriteBatch())
         bindSingleton<Camera>(OrthographicCamera())
+
+	      //Bind provider for a viewport with the correct settings for this game!
+	      bind<Viewport> {
+		      ExtendViewport(gameSettings.width,
+				      gameSettings.height,
+				      this.inject())
+	      }
         bindSingleton(createWorld())
         bindSingleton(BodyFactory())
         bindSingleton(Engine())
         bindSingleton<IMapManager>(MapManager())
-        bindSingleton(ActorFactory())
+        bind { ActorFactory() }
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
         bindSingleton<IUserInterface>(UserInterface())
         bindSingleton(ConversationManager())
@@ -60,7 +69,10 @@ class Ctx {
 		        this.provider(),
 			      this.inject(),
 			      this.inject(),
-			      this.inject()))
+			      this.inject(),
+			      this.provider(),
+			      this.inject(),
+			      this.provider()))
       }
     }
   }

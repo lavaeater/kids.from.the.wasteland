@@ -14,7 +14,8 @@ import ktx.ashley.mapperFor
 class MonsterSpawningSystem(val areWeTesting:Boolean) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
   var weHaveSpawned = false
 
-  val actorFactory = Ctx.context.inject<ActorFactory>()
+  //Move to constructor!
+  val actorFactory = Ctx.context.provider<ActorFactory>()()
   val mapManager = Ctx.context.inject<IMapManager>()
   val transformMpr = mapperFor<TransformComponent>()
   val spawnProb = 85

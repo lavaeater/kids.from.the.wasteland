@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.Assets
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.injection.Ctx
@@ -22,10 +23,12 @@ class GameManager(
     private val charControlSystemProvider: () -> CharacterControlSystem,
     gameState: GameState,
     private val batch: Batch,
-    private val camera: Camera) : Disposable {
-  val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
-  val engine = Ctx.context.inject<Engine>()
-  val actorFactory = Ctx.context.inject<ActorFactory>()
+    private val camera: Camera,
+    viewPortProvider: () -> Viewport,
+    private val engine: Engine,
+    actorFactoryProvider: () -> ActorFactory) : Disposable {
+  private val viewPort = viewPortProvider()
+  private val actorFactory = actorFactoryProvider()
   val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<IUserInterface>()
