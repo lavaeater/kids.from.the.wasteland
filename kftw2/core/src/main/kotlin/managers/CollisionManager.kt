@@ -6,8 +6,7 @@ import com.lavaeater.kftw.data.Npc
 import com.lavaeater.kftw.data.Player
 import com.lavaeater.kftw.injection.Ctx
 
-class CollisionManager() : ContactListener {
-  val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
+class CollisionManager(private val messageDispatcher: MessageDispatcher) : ContactListener {
 
   override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
 

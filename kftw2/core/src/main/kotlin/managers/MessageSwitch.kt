@@ -11,7 +11,7 @@ import world.ConversationManager
 
 class MessageSwitch: Telegraph {
   val gameStateManager = Ctx.context.inject<GameState>()
-  val conversationManager = Ctx.context.inject<ConversationManager>()
+  private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
   override fun handleMessage(msg: Telegram): Boolean {
     when(msg.message) {
       Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)

@@ -26,7 +26,6 @@ class GameManager(
     private val engine: Engine, //Engine will come with all systems added already, yay!
     actorFactoryProvider: () -> ActorFactory,
     private val messageDispatcher: MessageDispatcher,
-    private val world: World,
     private val ui: IUserInterface,
     private val mapManager: IMapManager) : Disposable {
 
@@ -59,7 +58,6 @@ class GameManager(
 
   private fun setupSystems() {
 
-    world.setContactListener(CollisionManager())
 
     /*
     Some circular dependencies here...

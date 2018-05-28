@@ -14,11 +14,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.managers.ActorFactory
-import com.lavaeater.kftw.managers.BodyFactory
+import com.lavaeater.kftw.managers.*
 import managers.GameManager
-import com.lavaeater.kftw.managers.GameState
-import com.lavaeater.kftw.managers.Messages
 import com.lavaeater.kftw.systems.*
 import map.IMapManager
 import map.MapManager
@@ -67,20 +64,30 @@ class Ctx {
 				      gameSettings.height,
 				      this.inject())
 	      }
-        bindSingleton(createWorld())
-        bindSingleton(BodyFactory())
-        bindSingleton<IMapManager>(MapManager())
-	      bindSingleton(getEngine(this))
-	      bind { ActorFactory() }
-        bindSingleton<IUserInterface>(UserInterface())
-        bindSingleton(ConversationManager())
-        bindSingleton<Telegraph>(MessageSwitch())
+
+	      bindSingleton<Telegraph>(MessageSwitch())
+
 	      bindSingleton<MessageDispatcher>(
 			      com.badlogic.gdx.ai.msg.MessageManager
 					      .getInstance().apply {
-		      addListener(this@register.inject(), Messages.CollidedWithImpassibleTerrain)
-		      addListener(this@register.inject(), Messages.PlayerMetSomeone)
+						      addListener(this@register.inject(), Messages.CollidedWithImpassibleTerrain)
+						      addListener(this@register.inject(), Messages.PlayerMetSomeone)
+					      })
+
+	      bindSingleton(createWorld().apply {
+		      setContactListener(CollisionManager(this@register.inject()))
 	      })
+        bindSingleton(BodyFactory())
+        bindSingleton<IMapManager>(MapManager())
+
+	      bindSingleton(getEngine(this))
+
+	      bind { ActorFactory() }
+
+	      bindSingleton<IUserInterface>(UserInterface())
+
+	      bindSingleton(ConversationManager())
+
 
 	      bindSingleton(GameManager(
 		        gameSettings,
@@ -90,7 +97,6 @@ class Ctx {
 			      this.provider(),
 			      this.inject(),
 			      this.provider(),
-			      this.inject(),
 			      this.inject(),
 			      this.inject(),
 			      this.inject()))
