@@ -1,6 +1,6 @@
 package world
 
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 
 interface IConversation {
   val antagonistCanSpeak:Boolean

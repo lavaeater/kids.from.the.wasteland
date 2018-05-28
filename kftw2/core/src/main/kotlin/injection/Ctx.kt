@@ -9,22 +9,19 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.utils.PerformanceCounters
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.data.Player
+import data.Player
 import com.lavaeater.kftw.managers.*
 import systems.*
-import managers.GameManager
 import map.IMapManager
 import map.MapManager
 import ui.UserInterface
 import ui.IUserInterface
 import ktx.box2d.createWorld
 import ktx.inject.Context
-import managers.GameState
-import managers.MessageSwitch
+import managers.*
 import map.TileManager
 import world.ConversationManager
 

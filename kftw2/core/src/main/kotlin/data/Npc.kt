@@ -1,11 +1,11 @@
-package com.lavaeater.kftw.data
+package data
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
 import map.IMapManager
 import map.MapManager
-import com.lavaeater.kftw.map.TileInstance
+import map.TileInstance
 
 class Npc(override val id: String, override var name: String = "Joshua",
           val npcType: NpcType,

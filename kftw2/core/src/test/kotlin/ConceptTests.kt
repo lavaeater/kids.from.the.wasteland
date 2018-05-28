@@ -1,4 +1,3 @@
-import com.lavaeater.kftw.data.IAgent
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass

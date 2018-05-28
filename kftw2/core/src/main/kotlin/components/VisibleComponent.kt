@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.components
+package components
 
 import com.badlogic.ashley.core.Component
 

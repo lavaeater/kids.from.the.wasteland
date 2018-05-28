@@ -8,15 +8,14 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import com.lavaeater.kftw.components.Box2dBodyComponent
-import com.lavaeater.kftw.components.KeyboardControlComponent
+import components.Box2dBodyComponent
+import components.KeyboardControlComponent
 import managers.GameEvents
 import managers.GameState
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.vec2
-import systems.directionalVelocity
 import java.util.*
 
 class CharacterControlSystem(

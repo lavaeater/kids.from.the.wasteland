@@ -5,9 +5,9 @@ import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import Assets
-import com.lavaeater.kftw.components.CharacterSpriteComponent
-import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.components.VisibleComponent
+import components.CharacterSpriteComponent
+import components.TransformComponent
+import components.VisibleComponent
 import injection.Ctx
 import ktx.app.use
 import ktx.ashley.allOf

@@ -8,8 +8,6 @@ import com.badlogic.gdx.math.Vector3
 import Assets
 import injection.Ctx
 import managers.GameManager
-import com.lavaeater.kftw.map.Tile
-import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.util.SimplexNoise
 import ktx.math.vec3
 import kotlin.math.absoluteValue

@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.components.TransformComponent
+import components.TransformComponent
 import injection.Ctx
 import ktx.ashley.mapperFor
 

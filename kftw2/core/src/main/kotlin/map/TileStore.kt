@@ -1,7 +1,5 @@
 package map
 
-import com.lavaeater.kftw.map.TileInstance
-
 class TileStore(val lowerBoundX: Int, val columns: Int, val lowerBoundY: Int, val rows: Int, val tiles: Array<Array<TileInstance>>) {
     val upperBoundX = lowerBoundX + columns - 1
     val upperBoundY = lowerBoundY + rows - 1

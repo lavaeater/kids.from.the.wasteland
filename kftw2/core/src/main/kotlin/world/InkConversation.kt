@@ -1,12 +1,10 @@
 package world
 
 import com.badlogic.gdx.math.MathUtils
-import com.bladecoder.ink.runtime.RTObject
 import com.bladecoder.ink.runtime.Story
-import com.bladecoder.ink.runtime.VariableAssignment
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 
-class InkConversation(val story:Story, override val protagonist:IAgent, override val antagonist:IAgent) : IConversation {
+class InkConversation(val story:Story, override val protagonist: IAgent, override val antagonist: IAgent) : IConversation {
   init {
     story.variablesState["c_name"] = antagonist.name
 

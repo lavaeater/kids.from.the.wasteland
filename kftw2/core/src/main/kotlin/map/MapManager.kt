@@ -4,10 +4,8 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import injection.Ctx
-import com.lavaeater.kftw.managers.BodyFactory
+import managers.BodyFactory
 import managers.GameManager
-import com.lavaeater.kftw.map.Tile
-import com.lavaeater.kftw.map.TileInstance
 import systems.tileX
 import systems.tileY
 import ktx.math.vec2

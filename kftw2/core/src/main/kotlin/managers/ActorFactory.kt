@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.managers
+package managers
 
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
@@ -8,16 +8,15 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.lavaeater.kftw.components.*
-import com.lavaeater.kftw.data.Npc
-import com.lavaeater.kftw.data.NpcType
-import com.lavaeater.kftw.data.Player
+import data.Npc
+import data.NpcType
+import data.Player
+import components.*
 import map.IMapManager
 import injection.Ctx
 import map.tileWorldCenter
 import ktx.math.vec2
 import world.FactsOfTheWorld.Companion.npcNames
-import world.FatsManager
 
 class ActorFactory {
   val engine = Ctx.context.inject<Engine>()
@@ -75,7 +74,6 @@ class ActorFactory {
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    FatsManager.addAgent(npc)
     return entity
 
   }
@@ -115,13 +113,13 @@ class ActorFactory {
       add(PlayerComponent(Ctx.context.inject()))
       add(AgentComponent(Ctx.context.inject<Player>()))
       add(VisibleComponent())
-      add(Box2dBodyComponent(createPlayerBody(vec2(0f,0f), Ctx.context.inject())))
+      add(Box2dBodyComponent(createPlayerBody(vec2(0f, 0f), Ctx.context.inject())))
     }
     engine.addEntity(entity)
     return entity
   }
 
-  fun createPlayerBody(position: Vector2, player:Player) : Body {
+  fun createPlayerBody(position: Vector2, player: Player) : Body {
     return bodyManager.createBody(2f, 4f, 15f, position, BodyDef.BodyType.DynamicBody).apply { userData = player }
   }
 

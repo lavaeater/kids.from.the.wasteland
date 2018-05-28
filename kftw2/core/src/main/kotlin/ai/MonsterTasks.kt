@@ -2,10 +2,10 @@ package com.lavaeater.kftw.ai
 
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
-import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.data.Npc
-import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.data.rollAgainstAgent
+import components.TransformComponent
+import data.Npc
+import data.Player
+import data.rollAgainstAgent
 import injection.Ctx
 import map.isInRange
 import ktx.ashley.mapperFor

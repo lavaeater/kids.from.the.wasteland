@@ -1,7 +1,7 @@
 package systems
 
 import com.badlogic.ashley.core.Entity
-import com.lavaeater.kftw.components.TransformComponent
+import components.TransformComponent
 import ktx.ashley.mapperFor
 
 class EntityYOrderComparator : Comparator<Entity> {

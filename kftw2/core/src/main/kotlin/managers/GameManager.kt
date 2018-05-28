@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import Assets
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.managers.*
 import ui.IUserInterface
 import map.IMapManager
 import systems.CharacterControlSystem

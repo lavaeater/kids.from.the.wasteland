@@ -3,10 +3,10 @@ package systems
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.components.PlayerComponent
-import com.lavaeater.kftw.components.TransformComponent
+import components.PlayerComponent
+import components.TransformComponent
 import injection.Ctx
-import com.lavaeater.kftw.managers.ActorFactory
+import managers.ActorFactory
 import map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor

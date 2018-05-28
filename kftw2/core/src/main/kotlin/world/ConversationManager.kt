@@ -1,9 +1,9 @@
 package world
 
 import com.bladecoder.ink.runtime.Story
-import com.lavaeater.kftw.data.IAgent
-import com.lavaeater.kftw.data.Npc
-import com.lavaeater.kftw.data.Player
+import data.IAgent
+import data.Npc
+import data.Player
 import injection.Ctx
 import managers.GameEvents
 import managers.GameState
@@ -36,10 +36,10 @@ class ConversationManager {
   private val ui = Ctx.context.inject<IUserInterface>()
   private val gameStateManager = Ctx.context.inject<GameState>()
   private var currentStory: Story? = null
-  private var currentAgent:IAgent? = null
+  private var currentAgent: IAgent? = null
   private val player = Ctx.context.inject<Player>()
 
-  fun startWithNpc(npc:Npc) {
+  fun startWithNpc(npc: Npc) {
     /*
 
     Glory.
@@ -86,7 +86,7 @@ class ConversationManager {
     }
   }
 
-  private fun endConversation(npc:Npc) {
+  private fun endConversation(npc: Npc) {
 
     //Add to list of agents player has met
     FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)

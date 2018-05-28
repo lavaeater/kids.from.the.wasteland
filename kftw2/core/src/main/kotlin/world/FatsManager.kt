@@ -1,6 +1,6 @@
 package world
 
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 
 /**
  * Created by tommie on 2018-03-18.

@@ -1,5 +1,4 @@
-package com.lavaeater.kftw.data
-
+package data
 
 
 class Player(override val id:String = "Player",

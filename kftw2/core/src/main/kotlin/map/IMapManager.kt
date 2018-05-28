@@ -1,8 +1,6 @@
 package map
 
 import com.badlogic.gdx.math.Vector3
-import com.lavaeater.kftw.map.Tile
-import com.lavaeater.kftw.map.TileInstance
 
 interface IMapManager {
 //  fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile>

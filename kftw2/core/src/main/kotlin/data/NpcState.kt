@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.data
+package data
 
 enum class NpcState {
   Idle,

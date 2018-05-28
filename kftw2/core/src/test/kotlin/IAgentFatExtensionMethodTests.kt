@@ -1,4 +1,4 @@
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock

@@ -2,7 +2,6 @@ package map
 
 import com.badlogic.gdx.math.MathUtils
 import Assets
-import com.lavaeater.kftw.map.*
 
 class TileManager(val chunkSize:Int = 100) {
     val upperBound = chunkSize - 1
