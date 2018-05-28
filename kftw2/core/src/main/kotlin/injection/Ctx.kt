@@ -84,11 +84,14 @@ class Ctx {
 
 	      bindSingleton(getEngine(this))
 
-	      bind { ActorFactory() }
+	      bind { ActorFactory(
+			      this.inject(),
+			      this.inject(),
+			      this.inject()) }
 
 	      bindSingleton<IUserInterface>(
 			      UserInterface(
-					     this.inject(),
+					      this.inject(),
 					      this.inject()))
 
 	      bindSingleton(ConversationManager())

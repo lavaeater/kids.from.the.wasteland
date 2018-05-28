@@ -8,20 +8,20 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
+import components.*
 import data.Npc
 import data.NpcType
 import data.Player
-import components.*
-import map.IMapManager
 import injection.Ctx
-import map.tileWorldCenter
 import ktx.math.vec2
+import map.IMapManager
+import map.tileWorldCenter
 import world.FactsOfTheWorld.Companion.npcNames
 
-class ActorFactory {
-  val engine = Ctx.context.inject<Engine>()
-  val mapManager = Ctx.context.inject<IMapManager>()
-  val bodyManager = Ctx.context.inject<BodyFactory>()
+class ActorFactory(
+    private val engine: Engine,
+    private val mapManager: IMapManager,
+    private val bodyManager: BodyFactory) {
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
