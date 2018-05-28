@@ -20,9 +20,9 @@ import world.*
 class GameManager(
     gameSettings: GameSettings,
     private val charControlSystemProvider: () -> CharacterControlSystem,
-    gameState: GameState) : Disposable {
-  val batch = Ctx.context.inject<Batch>()
-  val camera = Ctx.context.inject<Camera>()
+    gameState: GameState,
+    private val batch: Batch,
+    private val camera: Camera) : Disposable {
   val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
   val engine = Ctx.context.inject<Engine>()
   val actorFactory = Ctx.context.inject<ActorFactory>()

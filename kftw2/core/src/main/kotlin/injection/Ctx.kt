@@ -58,6 +58,8 @@ class Ctx {
 	      bindSingleton(GameManager(
 		        gameSettings,
 		        this.provider(),
+			      this.inject(),
+			      this.inject(),
 			      this.inject()))
       }
     }
