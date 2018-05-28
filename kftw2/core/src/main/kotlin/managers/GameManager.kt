@@ -35,8 +35,8 @@ class GameManager(
 
   init {
     gameState.addChangeListener(::gameStateChanged)
-    setupSystems()
 
+    setupSystems()
     setupRules()
     setupFacts()
     VIEWPORT_WIDTH = gameSettings.width
@@ -59,33 +59,19 @@ class GameManager(
 
   private fun setupSystems() {
 
-    //render the map and use fog of war
-    engine.addSystem(RenderMapSystem(false))
-    engine.addSystem(RenderCharactersSystem())
-    engine.addSystem(AiSystem())
-    val npcControlSystem = NpcControlSystem()
-
-    setupMessageSystem()
-
     world.setContactListener(CollisionManager())
 
-    engine.addSystem(npcControlSystem)
-    engine.addSystem(PhysicsSystem())
-    //engine.addSystem(PhysicsDebugSystem())
+    /*
+    Some circular dependencies here...
 
-    val playerEntity = actorFactory.addHeroEntity()
-    engine.addSystem(FollowCameraSystem(playerEntity))
-    //engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
+    the engine needs to be created to create a player entity
+    and the follow camera system needs the player entity. break this apart later!
+     */
 
-//    engine.addSystem(charControlSystemProvider())
+    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
 
     addBeamonPeople()
-    //MONSTER SPAWN!!
-    //engine.addSystem(MonsterSpawningSystem(false))
 
-    //Current tile system. Continually updates the agent instances with
-    //what tile they're on, used by the AI
-    engine.addSystem(WorldFactsSystem())
   }
 
   private fun addBeamonPeople() {
@@ -98,12 +84,12 @@ class GameManager(
       actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", x = randomlySelectedTile.x, y = randomlySelectedTile.y)
     }
   }
-
-  private fun setupMessageSystem() {
-    val messageManager = Ctx.context.inject<MessageManager>()
-    messageDispatcher.addListener(messageManager, Messages.CollidedWithImpassibleTerrain)
-    messageDispatcher.addListener(messageManager, Messages.PlayerMetSomeone)
-  }
+//
+//  private fun setupMessageSystem() {
+//    val messageManager = Ctx.context.inject<MessageSwitch>()
+//    messageDispatcher.addListener(messageManager, Messages.CollidedWithImpassibleTerrain)
+//    messageDispatcher.addListener(messageManager, Messages.PlayerMetSomeone)
+//  }
 
   fun update(delta: Float) {
     engine.update(delta)

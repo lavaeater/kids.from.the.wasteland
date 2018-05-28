@@ -9,7 +9,7 @@ import com.lavaeater.kftw.managers.GameState
 import com.lavaeater.kftw.managers.Messages
 import world.ConversationManager
 
-class MessageManager: Telegraph {
+class MessageSwitch: Telegraph {
   val gameStateManager = Ctx.context.inject<GameState>()
   val conversationManager = Ctx.context.inject<ConversationManager>()
   override fun handleMessage(msg: Telegram): Boolean {

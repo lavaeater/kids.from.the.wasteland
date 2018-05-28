@@ -1,10 +1,10 @@
 package com.lavaeater.kftw.injection
 
 import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.ai.msg.MessageDispatcher
+import com.badlogic.gdx.ai.msg.Telegraph
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -18,14 +18,15 @@ import com.lavaeater.kftw.managers.ActorFactory
 import com.lavaeater.kftw.managers.BodyFactory
 import managers.GameManager
 import com.lavaeater.kftw.managers.GameState
-import com.lavaeater.kftw.systems.CharacterControlSystem
+import com.lavaeater.kftw.managers.Messages
+import com.lavaeater.kftw.systems.*
 import map.IMapManager
 import map.MapManager
 import com.lavaeater.kftw.ui.UserInterface
 import com.lavaeater.kftw.ui.IUserInterface
 import ktx.box2d.createWorld
 import ktx.inject.Context
-import managers.MessageManager
+import managers.MessageSwitch
 import map.TileManager
 import world.ConversationManager
 
@@ -33,15 +34,27 @@ class Ctx {
 
   companion object {
     val context = Context()
+
+	  fun getEngine(context: Context) : Engine {
+		  return Engine().apply {
+			  addSystem(CharacterControlSystem(
+					  inputProcessor = context.inject(),
+					  gameState = context.inject()))
+			  addSystem(NpcControlSystem())
+			  addSystem(RenderMapSystem(false))
+			  addSystem(RenderCharactersSystem())
+			  addSystem(AiSystem())
+			  addSystem(PhysicsSystem())
+//			  addSystem(PhysicsDebugSystem())
+			  addSystem(WorldFactsSystem())
+
+		  }
+	  }
+
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(GameState())
         bindSingleton<InputProcessor>(InputMultiplexer())
-
-	      //Character control system with input multiplexer and game state machine
-	      bind { CharacterControlSystem(
-		        inputProcessor =  this.inject(),
-		        gameState = this.inject()) }
         bindSingleton(PerformanceCounters())
         bindSingleton(TileManager())
         bindSingleton(Player(name = "William Hamparsomian"))
@@ -56,17 +69,19 @@ class Ctx {
 	      }
         bindSingleton(createWorld())
         bindSingleton(BodyFactory())
-        bindSingleton(Engine().apply {
-	        addSystem(this@register.provider<CharacterControlSystem>()()) //Necessary?
-        })
         bindSingleton<IMapManager>(MapManager())
-        bind { ActorFactory() }
-        bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
+	      bindSingleton(getEngine(this))
+	      bind { ActorFactory() }
         bindSingleton<IUserInterface>(UserInterface())
         bindSingleton(ConversationManager())
-        bindSingleton(MessageManager())
+        bindSingleton<Telegraph>(MessageSwitch())
+	      bindSingleton<MessageDispatcher>(
+			      com.badlogic.gdx.ai.msg.MessageManager
+					      .getInstance().apply {
+		      addListener(this@register.inject(), Messages.CollidedWithImpassibleTerrain)
+		      addListener(this@register.inject(), Messages.PlayerMetSomeone)
+	      })
 
-        //Game manager with characterControl system injected
 	      bindSingleton(GameManager(
 		        gameSettings,
 			      this.inject(),
