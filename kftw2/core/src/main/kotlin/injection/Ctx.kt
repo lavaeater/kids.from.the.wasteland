@@ -57,7 +57,8 @@ class Ctx {
         //Game manager with characterControl system injected
 	      bindSingleton(GameManager(
 		        gameSettings,
-		        this.provider()))
+		        this.provider(),
+			      this.inject()))
       }
     }
   }

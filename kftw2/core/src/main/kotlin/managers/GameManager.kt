@@ -19,7 +19,8 @@ import world.*
 
 class GameManager(
     gameSettings: GameSettings,
-    private val charControlSystemProvider: () -> CharacterControlSystem) : Disposable {
+    private val charControlSystemProvider: () -> CharacterControlSystem,
+    gameState: GameState) : Disposable {
   val batch = Ctx.context.inject<Batch>()
   val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
@@ -32,7 +33,7 @@ class GameManager(
 
 
   init {
-    Ctx.context.inject<GameState>().apply { addChangeListener(::gameStateChanged) }
+    gameState.addChangeListener(::gameStateChanged)
     setupSystems()
 
     setupRules()
