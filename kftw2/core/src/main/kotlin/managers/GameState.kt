@@ -45,7 +45,7 @@ class GameState {
     stateMachine.acceptEvent(event)
   }
 
-  fun stateChange(newState: GameStates) {
+  private fun stateChange(newState: GameStates) {
     for (listener in changeListeners)
       listener(newState)
   }
