@@ -87,6 +87,7 @@ class Ctx {
 	      bind { ActorFactory(
 			      this.inject(),
 			      this.inject(),
+			      this.inject(),
 			      this.inject()) }
 
 	      bindSingleton<IUserInterface>(

@@ -12,7 +12,6 @@ import components.*
 import data.Npc
 import data.NpcType
 import data.Player
-import injection.Ctx
 import ktx.math.vec2
 import map.IMapManager
 import map.tileWorldCenter
@@ -21,7 +20,8 @@ import world.FactsOfTheWorld.Companion.npcNames
 class ActorFactory(
     private val engine: Engine,
     private val mapManager: IMapManager,
-    private val bodyManager: BodyFactory) {
+    private val bodyManager: BodyFactory,
+    private val player: Player) {
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
@@ -110,10 +110,10 @@ class ActorFactory(
       add(TransformComponent())
       add(CharacterSpriteComponent("williamhamparsomian", true))
       add(KeyboardControlComponent())
-      add(PlayerComponent(Ctx.context.inject()))
-      add(AgentComponent(Ctx.context.inject<Player>()))
+      add(PlayerComponent(player))
+      add(AgentComponent(player))
       add(VisibleComponent())
-      add(Box2dBodyComponent(createPlayerBody(vec2(0f, 0f), Ctx.context.inject())))
+      add(Box2dBodyComponent(createPlayerBody(vec2(0f, 0f), player)))
     }
     engine.addEntity(entity)
     return entity
