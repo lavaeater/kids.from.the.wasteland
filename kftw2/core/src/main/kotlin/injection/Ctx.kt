@@ -41,7 +41,7 @@ class Ctx {
 					  context.inject(),
 					  context.inject(),
 					  false))
-			  addSystem(RenderCharactersSystem())
+			  addSystem(RenderCharactersSystem(context.inject()))
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem())
 //			  addSystem(PhysicsDebugSystem())

@@ -13,15 +13,13 @@ import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class RenderCharactersSystem() :
+class RenderCharactersSystem(private val batch:Batch) :
     SortedIteratingSystem(
         allOf(CharacterSpriteComponent::class,
             TransformComponent::class,
             VisibleComponent::class).get(), EntityYOrderComparator()) {
   private val transformMapper = mapperFor<TransformComponent>()
   private val spriteMapper = mapperFor<CharacterSpriteComponent>()
-
-  private val batch = Ctx.context.inject<Batch>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val transform = transformMapper[entity]
