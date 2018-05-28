@@ -1,6 +1,7 @@
 package com.lavaeater.kftw.injection
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.ai.msg.MessageDispatcher
@@ -55,7 +56,9 @@ class Ctx {
 	      }
         bindSingleton(createWorld())
         bindSingleton(BodyFactory())
-        bindSingleton(Engine())
+        bindSingleton(Engine().apply {
+	        addSystem(this@register.provider<CharacterControlSystem>()()) //Necessary?
+        })
         bindSingleton<IMapManager>(MapManager())
         bind { ActorFactory() }
         bindSingleton<MessageDispatcher>(com.badlogic.gdx.ai.msg.MessageManager.getInstance())
@@ -66,13 +69,13 @@ class Ctx {
         //Game manager with characterControl system injected
 	      bindSingleton(GameManager(
 		        gameSettings,
-		        this.provider(),
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),
 			      this.provider(),
 			      this.inject(),
-			      this.provider()))
+			      this.provider(),
+			      this.inject()))
       }
     }
   }

@@ -20,16 +20,15 @@ import world.*
 
 class GameManager(
     gameSettings: GameSettings,
-    private val charControlSystemProvider: () -> CharacterControlSystem,
     gameState: GameState,
     private val batch: Batch,
     private val camera: Camera,
     viewPortProvider: () -> Viewport,
-    private val engine: Engine,
-    actorFactoryProvider: () -> ActorFactory) : Disposable {
+    private val engine: Engine, //Engine will come with all systems added already, yay!
+    actorFactoryProvider: () -> ActorFactory,
+    private val messageDispatcher: MessageDispatcher ) : Disposable {
   private val viewPort = viewPortProvider()
   private val actorFactory = actorFactoryProvider()
-  val messageDispatcher = Ctx.context.inject<MessageDispatcher>()
   val world = Ctx.context.inject<World>()
   val hud = Ctx.context.inject<IUserInterface>()
   val mapManager = Ctx.context.inject<IMapManager>()
@@ -79,7 +78,7 @@ class GameManager(
     engine.addSystem(FollowCameraSystem(playerEntity))
     //engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
-    engine.addSystem(charControlSystemProvider())
+//    engine.addSystem(charControlSystemProvider())
 
     addBeamonPeople()
     //MONSTER SPAWN!!
