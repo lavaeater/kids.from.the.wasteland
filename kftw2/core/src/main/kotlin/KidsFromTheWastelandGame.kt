@@ -26,6 +26,8 @@ class KidsFromTheWastelandGame(val gameSettings: GameSettings = GameSettings()) 
     mainGameScreen = MainGameScreen()
     addScreen(mainGameScreen)
     setScreen<MainGameScreen>()
+
+
   }
 
   override fun dispose() {

@@ -17,7 +17,9 @@ import com.lavaeater.kftw.ui.IUserInterface
 import map.IMapManager
 import world.*
 
-class GameManager(gameSettings: GameSettings) : Disposable {
+class GameManager(
+    gameSettings: GameSettings,
+    private val charControlSystemProvider: () -> CharacterControlSystem) : Disposable {
   val batch = Ctx.context.inject<Batch>()
   val camera = Ctx.context.inject<Camera>()
   val viewPort = ExtendViewport(gameSettings.width, gameSettings.height, camera)
@@ -73,7 +75,7 @@ class GameManager(gameSettings: GameSettings) : Disposable {
     engine.addSystem(FollowCameraSystem(playerEntity))
     //engine.addSystem(PlayerEntityDiscoverySystem(playerEntity))
 
-    engine.addSystem(CharacterControlSystem())
+    engine.addSystem(charControlSystemProvider())
 
     addBeamonPeople()
     //MONSTER SPAWN!!
