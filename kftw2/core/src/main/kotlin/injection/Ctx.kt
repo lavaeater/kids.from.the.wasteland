@@ -67,7 +67,7 @@ class Ctx {
 				      this.inject())
 	      }
 
-	      bindSingleton<Telegraph>(MessageSwitch())
+	      bindSingleton<Telegraph>(MessageSwitch(this.inject()))
 
 	      bindSingleton<MessageDispatcher>(
 			      com.badlogic.gdx.ai.msg.MessageManager
@@ -79,7 +79,7 @@ class Ctx {
 	      bindSingleton(createWorld().apply {
 		      setContactListener(CollisionManager(this@register.inject()))
 	      })
-        bindSingleton(BodyFactory())
+        bindSingleton(BodyFactory(this.inject()))
         bindSingleton<IMapManager>(MapManager())
 
 	      bindSingleton(getEngine(this))

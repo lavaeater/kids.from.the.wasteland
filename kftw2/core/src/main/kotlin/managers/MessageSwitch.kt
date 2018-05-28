@@ -7,8 +7,7 @@ import injection.Ctx
 import com.lavaeater.kftw.managers.Messages
 import world.ConversationManager
 
-class MessageSwitch: Telegraph {
-  val gameStateManager = Ctx.context.inject<GameState>()
+class MessageSwitch(private val gameState: GameState): Telegraph {
   private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
   override fun handleMessage(msg: Telegram): Boolean {
     when(msg.message) {
@@ -20,7 +19,7 @@ class MessageSwitch: Telegraph {
 
   private fun playerEncounteredNpc(npc: Npc): Boolean {
 
-    gameStateManager.handleEvent(GameEvents.DialogStarted)
+    gameState.handleEvent(GameEvents.DialogStarted)
     conversationManager.startWithNpc(npc)
     return true
   }
