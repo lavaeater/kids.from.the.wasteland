@@ -16,6 +16,10 @@ fun String.toShortCode() : String {
   return "${this[0]}${this[1]}${this[3]}${this[5]}${this[7]}"
 }
 
+
+
+/* SEARCH FOR THIS */
+
 fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
     val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))).absoluteValue }
     return noiseVal

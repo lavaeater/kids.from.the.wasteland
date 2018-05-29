@@ -163,10 +163,6 @@ class TileManager(val chunkSize:Int = 100) {
     private fun addEdgeSpritesForTile(ourTile: Tile, shortCode: String, tileType: String, priority: Int) {
 
         if (!MapManager.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
-
-            /*
-            The code below is retarded. We should use the shortCode to resolve this, easy!
-             */
             val tileC = shortCode.toCharArray()[0]
             val actualShortCode = shortCode.substring(1..4) //leave out the tile itself.
             val extraSprites = mutableListOf<Pair<String, String>>()

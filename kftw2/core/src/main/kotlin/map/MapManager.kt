@@ -123,7 +123,7 @@ class MapManager(
 
     for (row in currentlyVisibleTiles!!)
       for (tile in row) {
-        if (tile.needsHitBox && (tile.tile.priority == 0 || tile.tile.priority == 3) && !tile.tile.shortCode.isOneTerrain()) {
+        if (tile.needsHitBox && tile.tile.isImpassible()) {
           val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
               (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
           val hitBox = bodyManager.createBody(
