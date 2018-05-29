@@ -1,8 +1,5 @@
-package com.lavaeater
-
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -15,39 +12,41 @@ import com.lavaeater.kftw.GameSettings
 import ktx.scene2d.Scene2DSkin
 import ktx.style.skin
 import ktx.style.textButton
+import java.io.Reader
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
  */
 object Assets : Disposable {
   lateinit var gameSettings: GameSettings
+  val baseAssetPath get() = gameSettings.assetBaseDir
   lateinit var am: AssetManager
   private val atlases by lazy {
     mapOf(
-        "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
-        "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
-        "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
-        "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
-        "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
-        "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
-        "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+        "darkdirt" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/darkdirt/darkdirt.txp")),
+        "darkgrass" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/darkgrass/darkgrass.txp")),
+        "desert" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/desert/desert.txp")),
+        "dirt" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/dirt/dirt.txp")),
+        "grass" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/grass/grass.txp")),
+        "rock" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/rock/rock.txp")),
+        "water" to TextureAtlas(Gdx.files.internal("$baseAssetPath/tiles/water/water.txp")))
   }
 
   private val characters by lazy {
     mapOf(
-        "townsfolk" to TextureAtlas(Gdx.files.internal("chars/mtownsfolk/mtownsfolk.txp")),
-        "femaleranger" to TextureAtlas(Gdx.files.internal("chars/franger/franger.txp"))
+        "townsfolk" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/mtownsfolk/mtownsfolk.txp")),
+        "femaleranger" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/franger/franger.txp"))
     )
   }
 
   val splashScreen by lazy {
-    Texture(Gdx.files.internal("ui/graphics/splashscreen.gif"))
+    Texture(Gdx.files.internal("$baseAssetPath/ui/graphics/splashscreen.gif"))
   }
 
-  val speechBTexture by lazy { Texture(Gdx.files.internal("ui/graphics/speechbubble.png")) }
+  val speechBTexture by lazy { Texture(Gdx.files.internal("$baseAssetPath/ui/graphics/speechbubble.png")) }
   val speechBubble by lazy { NinePatch(speechBTexture, 14, 8,12,12) }
 
-  val tableNinePatch by lazy { Texture(Gdx.files.internal("ui/graphics/convobackground.png"))}
+  val tableNinePatch by lazy { Texture(Gdx.files.internal("$baseAssetPath/ui/graphics/convobackground.png"))}
   val tableBackGround by lazy { NinePatch(tableNinePatch, 4, 4, 4, 4 ) }
 
   lateinit var standardFont: BitmapFont
@@ -59,33 +58,33 @@ object Assets : Disposable {
   val DEATH = "death"
 
   val animatedCharacters by lazy {
-    mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("chars/frogue/frogue.txp")),
-        "orc" to TextureAtlas(Gdx.files.internal("chars/forc/forc.txp")),
-        "ulricawikren" to TextureAtlas(Gdx.files.internal("chars/saleswomanblonde/saleswomanblonde.txp")),
-        "williamhamparsomian" to TextureAtlas(Gdx.files.internal("chars/williamhamparsomian/williamhamparsomian.txp")),
-        "andreaslindblad" to TextureAtlas(Gdx.files.internal("chars/andreaslindblad/andreaslindblad.txp")),
-        "babakvarfan" to TextureAtlas(Gdx.files.internal("chars/babakvarfan/babakvarfan.txp")),
-        "kimdinhthi" to TextureAtlas(Gdx.files.internal("chars/kimdinhthi/kimdinhthi.txp"))
+    mapOf("femalerogue" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/frogue/frogue.txp")),
+        "orc" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/forc/forc.txp")),
+        "ulricawikren" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/saleswomanblonde/saleswomanblonde.txp")),
+        "williamhamparsomian" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/williamhamparsomian/williamhamparsomian.txp")),
+        "andreaslindblad" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/andreaslindblad/andreaslindblad.txp")),
+        "babakvarfan" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/babakvarfan/babakvarfan.txp")),
+        "kimdinhthi" to TextureAtlas(Gdx.files.internal("$baseAssetPath/chars/kimdinhthi/kimdinhthi.txp"))
     )
   }
   val portraits by lazy {
-    mapOf("femalerogue" to Texture(Gdx.files.internal("chars/frogue/portrait.png")),
-        "orc" to Texture(Gdx.files.internal("chars/forc/portrait.png")))
+    mapOf("femalerogue" to Texture(Gdx.files.internal("$baseAssetPath/chars/frogue/portrait.png")),
+        "orc" to Texture(Gdx.files.internal("$baseAssetPath/chars/forc/portrait.png")))
   }
 
   val music by lazy {
-    Gdx.audio.newMusic(Gdx.files.internal("music/ambient.mp3")).apply {
+    Gdx.audio.newMusic(Gdx.files.internal("$baseAssetPath/music/ambient.mp3")).apply {
       isLooping = true
     }
   }
 
   val beamonHeadshots by lazy {
     mapOf(
-        "WilliamHamparsomian" to Texture(Gdx.files.internal("chars/beamon/WilliamHamparsomian.png")),
-        "AndreasLindblad" to Texture(Gdx.files.internal("chars/beamon/AndreasLindblad.png")),
-        "KimDinhThi" to Texture(Gdx.files.internal("chars/beamon/KimDinhThi.png")),
-        "BabakVarfan" to Texture(Gdx.files.internal("chars/beamon/BabakVarfan.png")),
-        "UlricaWikren" to Texture(Gdx.files.internal("chars/beamon/UlricaWikren.png")))
+        "WilliamHamparsomian" to Texture(Gdx.files.internal("$baseAssetPath/chars/beamon/WilliamHamparsomian.png")),
+        "AndreasLindblad" to Texture(Gdx.files.internal("$baseAssetPath/chars/beamon/AndreasLindblad.png")),
+        "KimDinhThi" to Texture(Gdx.files.internal("$baseAssetPath/chars/beamon/KimDinhThi.png")),
+        "BabakVarfan" to Texture(Gdx.files.internal("$baseAssetPath/chars/beamon/BabakVarfan.png")),
+        "UlricaWikren" to Texture(Gdx.files.internal("$baseAssetPath/chars/beamon/UlricaWikren.png")))
   }
 
   val animatedCharacterSprites by lazy { mutableMapOf<String, Map<String, List<Sprite>>>() }
@@ -95,7 +94,7 @@ object Assets : Disposable {
   val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
   fun load(gameSettings: GameSettings): AssetManager {
-    this.gameSettings = gameSettings
+    Assets.gameSettings = gameSettings
     am = AssetManager()
 
     initializeMapTiles()
@@ -125,7 +124,7 @@ object Assets : Disposable {
   }
 
   private fun initializeFonts() {
-    val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P.ttf"))
+    val fontGenerator = FreeTypeFontGenerator(Gdx.files.internal("$baseAssetPath/fonts/PressStart2P.ttf"))
 
     val fontParams = FreeTypeFontGenerator.FreeTypeFontParameter().apply {
       color = Color.WHITE
@@ -217,5 +216,9 @@ object Assets : Disposable {
   override fun dispose() {
     for (atlas in atlases.values)
       atlas.dispose()
+  }
+
+  fun readerForTree(treeFileName: String): Reader {
+    return Gdx.files.internal("$baseAssetPath/btrees/$treeFileName").reader()
   }
 }

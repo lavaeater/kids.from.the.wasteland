@@ -1,45 +1,24 @@
 package world
 
 import com.bladecoder.ink.runtime.Story
-import com.lavaeater.kftw.data.IAgent
-import com.lavaeater.kftw.data.Npc
-import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvent
-import com.lavaeater.kftw.managers.GameStateManager
-import com.lavaeater.kftw.ui.IUserInterface
+import data.IAgent
+import data.Npc
+import data.Player
+import managers.GameEvents
+import managers.GameState
+import ui.IUserInterface
 
 
-class Facts {
-  companion object {
-    const val Context ="Context"
-    const val NpcsPlayerHasMet = "NpcsPlayerHasMet"
-    const val CurrentNpc = "CurrentNpc"
-    const val MetNumberOfNpcs ="MetNumberOfNpcs"
-    val VisitedPlaces = "VisitedPlaces"
-    val FoundKey = "FoundKey"
-    val MetOrcs = "MetOrcs"
-    val NumberOfVisitedPlaces = "NumberOfVisitedPlaces"
-    val CurrentNpcName = "CurrentNpcName"
-    val Score = "Score"
-    val KnownNames = "KnownNames"
-  }
-}
-
-class Contexts {
-  companion object {
-    const val MetNpc = "MetNpc"
-  }
-}
-
-class ConversationManager {
-  private val ui = Ctx.context.inject<IUserInterface>()
-  private val gameStateManager = Ctx.context.inject<GameStateManager>()
+class ConversationManager(
+    private val ui: IUserInterface,
+    private val gameStateManager:GameState,
+    private val player: Player,
+    private val factsOfTheWorld: FactsOfTheWorld,
+    private val rulesOfTheWorld: RulesOfTheWorld) {
   private var currentStory: Story? = null
-  private var currentAgent:IAgent? = null
-  private val player = Ctx.context.inject<Player>()
+  private var currentAgent: IAgent? = null
 
-  fun startWithNpc(npc:Npc) {
+  fun startWithNpc(npc: Npc) {
     /*
 
     Glory.
@@ -52,9 +31,9 @@ class ConversationManager {
      */
 
     //Add to list of agents player has met
-    FactsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
-    FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
-    FactsOfTheWorld.stateStringFact(Facts.CurrentNpcName, npc.name)
+    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
+    factsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
+    factsOfTheWorld.stateStringFact(Facts.CurrentNpcName, npc.name)
 
     /**
      * Aaah, the remnants!
@@ -64,7 +43,7 @@ class ConversationManager {
 
     //This is the simple Context, just a string for like an event or something
     //The Context will probably be a bunch of stuff, like who the npc is and stuff.
-    val rules = FactsOfTheWorld.rulesThatPass(RulesOfTheWorld.rules)
+    val rules = factsOfTheWorld.rulesThatPass(rulesOfTheWorld.rules)
         .filter {
           it.consequence.consequenceType == ConsequenceType.ConversationLoader
         }
@@ -86,26 +65,23 @@ class ConversationManager {
     }
   }
 
-  private fun endConversation(npc:Npc) {
+  private fun endConversation(npc: Npc) {
 
     //Add to list of agents player has met
-    FactsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)
+    factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
     //Add to counter of this particular type
-    FactsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
-    FactsOfTheWorld.clearStringFact(Facts.CurrentNpc)
+    factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
+    factsOfTheWorld.clearStringFact(Facts.CurrentNpc)
 
-    if (!FactsOfTheWorld.getFactList<String>(Facts.KnownNames).contains(npc.name) && currentStory!!.variablesState["guessed_right"] as Int == 1) {
-      FactsOfTheWorld.addToIntFact(Facts.Score, 1)
-      FactsOfTheWorld.addStringToList(Facts.KnownNames, npc.name)
+    if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
+        && currentStory!!.variablesState["guessed_right"] as Int == 1) {
+      factsOfTheWorld.addToIntFact(Facts.Score, 1)
+      factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
     }
 
     currentAgent = null
     currentStory = null
-    gameStateManager.handleEvent(GameEvent.DialogEnded)
-  }
-
-  init {
-    val rule = Rule("FirstTimeMeetingAColleague", mutableSetOf(), ConversationConsequence())
+    gameStateManager.handleEvent(GameEvents.DialogEnded)
   }
 }
 

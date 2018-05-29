@@ -1,6 +1,6 @@
-package com.lavaeater.kftw.components
+package components
 
 import com.badlogic.ashley.core.Component
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 
 class AgentComponent(val agent: IAgent): Component

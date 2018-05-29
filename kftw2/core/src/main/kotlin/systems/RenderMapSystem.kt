@@ -1,29 +1,23 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.EntitySystem
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.PerformanceCounters
-import com.lavaeater.kftw.injection.Ctx
+import ktx.app.use
 import managers.GameManager
 import map.IMapManager
-import ktx.app.use
 import kotlin.math.roundToInt
 
-class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
-
-  val batch = Ctx.context.inject<Batch>()
-  val camera = Ctx.context.inject<Camera>()
-  val mapManager = Ctx.context.inject<IMapManager>()
-  val counters = Ctx.context.inject<PerformanceCounters>()
-  var accruedDelta = 0f
+class RenderMapSystem(
+    private val batch: Batch,
+    private val camera: Camera,
+    private val mapManager: IMapManager,
+    val fogOfWar:Boolean = false) : EntitySystem(0) {
 
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
-//    if(fogOfWar) renderMapWithFogOfWar() else {
     val tileX = camera.position.tileX()
     val tileY = camera.position.tileY()
 
@@ -32,8 +26,8 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
 
       val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
 
-      for ((x, rows) in tilesToRender.withIndex())
-        for ((y, tileInstance) in rows.withIndex()) {
+      for (rows in tilesToRender)
+        for (tileInstance in rows) {
           val xPos = (tileInstance.x * 8).toFloat()
           val yPos = (tileInstance.y * 8).toFloat()
 
@@ -45,14 +39,7 @@ class RenderMapSystem(val fogOfWar:Boolean = false) : EntitySystem(0) {
           }
         }
     }
-    counters.tick()
-    accruedDelta += deltaTime
-    if (accruedDelta > 5) {
-      counters.counters.map { Gdx.app.log(it.name, it.toString()) }
-      accruedDelta = 0f
-
-    }
-  }
+   }
 }
 //  }
 

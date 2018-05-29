@@ -1,15 +1,14 @@
 package map
 
+import Assets
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.Assets
-import com.lavaeater.kftw.map.*
 
 class TileManager(val chunkSize:Int = 100) {
-    val upperBound = chunkSize - 1
+    private val upperBound = chunkSize - 1
     private val tileStores = mutableSetOf<TileStore>()
-    val usedTiles = mutableMapOf<String, Tile>()
+    private val usedTiles = mutableMapOf<String, Tile>()
 
-    fun getLowerBound(i: Int): Int {
+    private fun getLowerBound(i: Int): Int {
         if (i < 0) {
             return ((i + 1) / chunkSize) * chunkSize - chunkSize
         }
@@ -17,13 +16,13 @@ class TileManager(val chunkSize:Int = 100) {
         return (i / chunkSize) * chunkSize
     }
 
-    fun getTileStore(x: Int, y: Int): TileStore {
+    private fun getTileStore(x: Int, y: Int): TileStore {
         val lowerBoundX = getLowerBound(x)
         val lowerBoundY = getLowerBound(y)
         return getTileStoreLowerBounds(lowerBoundX, lowerBoundY)
     }
 
-    fun getTileStoreLowerBounds(lX: Int, lY: Int): TileStore {
+    private fun getTileStoreLowerBounds(lX: Int, lY: Int): TileStore {
         var store = tileStores.firstOrNull {
             lX in it.xBounds &&
                 lY in it.yBounds
@@ -37,10 +36,10 @@ class TileManager(val chunkSize:Int = 100) {
 
     fun getTile(x: Int, y: Int): TileInstance {
         val store = getTileStore(x, y)
-        return store.getTile(x, y)!!
+        return store.getTile(x, y)
     }
 
-    fun putTile(x: Int, y: Int, tile: TileInstance) {
+    private fun putTile(x: Int, y: Int, tile: TileInstance) {
         val store = getTileStore(x, y)
         store.putTile(x, y, tile)
     }
@@ -61,7 +60,7 @@ class TileManager(val chunkSize:Int = 100) {
                 if (actualX !in currentStore.xBounds || actualY !in currentStore.yBounds) {
                     currentStore = getTileStore(actualX, actualY)
                 }
-                currentTile = currentStore.getTile(actualX, actualY)!!
+                currentTile = currentStore.getTile(actualX, actualY)
 
                 //check for neighbours!
                 if (currentTile.tile.needsNeighbours) {
@@ -74,7 +73,7 @@ class TileManager(val chunkSize:Int = 100) {
         })
     }
 
-    fun getOrNull(x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile? {
+    private fun getOrNull(x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile? {
         if (tiles == null) { //Use the manager to get the tile to check!
             return getTile(x, y).tile
         }
@@ -89,16 +88,16 @@ class TileManager(val chunkSize:Int = 100) {
         return null
     }
 
-    fun fixNeighbours(tile: Tile, x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile {
+    private fun fixNeighbours(tile: Tile, x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile {
         val tempTile = tile.copy()
         var needsNeighbours = false
 
 
         MapManager.neiborMap.keys.forEach { (offX, offY) ->
             var code = "b"
-            val tile = getOrNull(x + offX, y + offY, tiles)
-            if (tile != null) {
-                code = MapManager.shortTerrains[tile.priority]!!
+            val t = getOrNull(x + offX, y + offY, tiles)
+            if (t != null) {
+                code = MapManager.shortTerrains[t.priority]!!
             } else {
                 needsNeighbours = true
             }
@@ -112,13 +111,13 @@ class TileManager(val chunkSize:Int = 100) {
 
         if (!usedTiles.containsKey(keyCode)) {
             //Add this new tile to the tile storage!
-            addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+            addEdgeSpritesForTile(tempTile.shortCode, tempTile.priority)
             usedTiles[keyCode] = tempTile
         }
         return usedTiles[keyCode]!!
     }
 
-    fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
+    private fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
         val tiles = Array(xBounds.count(), { x -> Array(yBounds.count(), { y -> generateTile(xBounds.elementAt(x), yBounds.elementAt(y)) }) })
 
         /*
@@ -133,7 +132,7 @@ class TileManager(val chunkSize:Int = 100) {
 
         //This is like orto or something
         for ((x, column) in tiles.withIndex())
-            for ((y, row) in column.withIndex()) {
+            for ((y, _) in column.withIndex()) {
                 val tempTile = fixNeighbours(tiles[x][y], x, y, tiles)
 
                 tiles[x][y] = tempTile
@@ -143,7 +142,7 @@ class TileManager(val chunkSize:Int = 100) {
             { column ->
                 Array(yBounds.count(),
                     { row ->
-                        tiles[column][row]!!
+                        tiles[column][row]
                             .getInstance(
                                 xBounds.elementAt(column),
                                 yBounds.elementAt(row))
@@ -151,7 +150,7 @@ class TileManager(val chunkSize:Int = 100) {
             })
     }
 
-    fun getDirectionFromIndex(index: Int): String {
+    private fun getDirectionFromIndex(index: Int): String {
         return when (index) {
             0 -> "north"
             1 -> "east"
@@ -161,13 +160,9 @@ class TileManager(val chunkSize:Int = 100) {
         }
     }
 
-    fun addEdgeSpritesForTile(ourTile: Tile, shortCode: String, tileType: String, priority: Int) {
+    private fun addEdgeSpritesForTile(shortCode: String, priority: Int) {
 
         if (!MapManager.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
-
-            /*
-            The code below is retarded. We should use the shortCode to resolve this, easy!
-             */
             val tileC = shortCode.toCharArray()[0]
             val actualShortCode = shortCode.substring(1..4) //leave out the tile itself.
             val extraSprites = mutableListOf<Pair<String, String>>()
@@ -208,7 +203,7 @@ class TileManager(val chunkSize:Int = 100) {
         }
     }
 
-    fun generateTile(x: Int, y: Int): Tile {
+    private fun generateTile(x: Int, y: Int): Tile {
         val nX = x / MapManager.scale
         val nY = y / MapManager.scale
 

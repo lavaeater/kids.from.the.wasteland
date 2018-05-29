@@ -1,12 +1,12 @@
 package world
 
 import com.badlogic.gdx.math.MathUtils
-import com.bladecoder.ink.runtime.RTObject
 import com.bladecoder.ink.runtime.Story
-import com.bladecoder.ink.runtime.VariableAssignment
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
+import injection.Ctx
 
-class InkConversation(val story:Story, override val protagonist:IAgent, override val antagonist:IAgent) : IConversation {
+class InkConversation(val story:Story, override val protagonist: IAgent, override val antagonist: IAgent) : IConversation {
+  private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
   init {
     story.variablesState["c_name"] = antagonist.name
 
@@ -108,19 +108,7 @@ class InkConversation(val story:Story, override val protagonist:IAgent, override
     story.variablesState["name_guess_1"] = if(correctIndex == 1) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size -1))
     story.variablesState["name_guess_2"] = if(correctIndex == 2) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size -1))
     //Query the global facts to see if we have met before:
-    story.variablesState["met_before"] = FactsOfTheWorld.getFactList<String>(Facts.NpcsPlayerHasMet).contains(antagonist.id)
-    /*
-    VAR met_before = false
-VAR c_name = "Petter Knöös"
-VAR knows_c_name = false
-VAR guessed_right = false
-
-VAR name_guess_0 = "Petter Knöös"
-VAR name_guess_1 = "Frank Artschwager"
-VAR name_guess_2 = "Ellika Skoogh"
-     */
-
-
+    story.variablesState["met_before"] = factsOfTheWorld.getFactList(Facts.NpcsPlayerHasMet).contains(antagonist.id)
   }
   override val antagonistCanSpeak: Boolean
     get() = story.canContinue()
@@ -145,7 +133,7 @@ VAR name_guess_2 = "Ellika Skoogh"
   }
 
   override fun makeChoice(index: Int): Boolean {
-    if(index in 0..story.currentChoices.size -1) {
+    if(index in 0 until story.currentChoices.size) {
       story.chooseChoiceIndex(index)
       return true
     }

@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.data
+package data
 
 data class NpcType(val name : String,
                    val strength:Int,

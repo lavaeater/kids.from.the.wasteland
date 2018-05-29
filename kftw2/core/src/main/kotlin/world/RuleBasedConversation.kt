@@ -1,6 +1,6 @@
 package world
 
-import com.lavaeater.kftw.data.IAgent
+import data.IAgent
 
 class RuleBasedConversation : IConversation {
   val rules = mutableSetOf<Rule>()

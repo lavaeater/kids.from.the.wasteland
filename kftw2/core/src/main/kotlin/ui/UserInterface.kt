@@ -1,44 +1,47 @@
-package com.lavaeater.kftw.ui
+package ui
 
+import Assets
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
+import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.lavaeater.Assets
-import com.lavaeater.kftw.data.Player
-import com.lavaeater.kftw.injection.Ctx
 import ktx.actors.keepWithinParent
 import ktx.scene2d.KTableWidget
-import ktx.scene2d.label
 import ktx.scene2d.table
-import world.IConversation
-import ui.IConversationPresenter
-import ui.image
-import ui.label
+import managers.GameEvents
+import managers.GameState
 import world.Facts
 import world.FactsOfTheWorld
+import world.IConversation
 
-class UserInterface(var processInput: Boolean = true): IUserInterface {
-  private val batch = Ctx.context.inject<Batch>()
+class UserInterface(
+    private val batch: Batch,
+    private val gameState: GameState,
+    private val inputManager: InputMultiplexer,
+    private val factsOfTheWorld: FactsOfTheWorld,
+    debug: Boolean = false): IUserInterface {
+
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
-  override val player = Ctx.context.inject<Player>()
-  companion object {
-    val aspectRatio = 16/9
-    val uiWidth = 800f
-    val uiHeight = uiWidth * aspectRatio
+      .apply {
+    isDebugAll = debug
   }
 
-  lateinit var conversationUi: IConversationPresenter
-  val labelStyle = Label.LabelStyle(Assets.standardFont, Color.WHITE)
-  lateinit var scoreLabel :Label
+  companion object {
+    private const val aspectRatio = 16 / 9
+    const val uiWidth = 800f
+    const val uiHeight = uiWidth * aspectRatio
+  }
+
+  private lateinit var conversationUi: IConversationPresenter
+  private val labelStyle = Label.LabelStyle(Assets.standardFont, Color.WHITE)
+  private lateinit var scoreLabel: Label
 
 
   override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {
@@ -62,8 +65,8 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
   private var score = 0
 
   private fun updateScore() {
-    val tempScore = FactsOfTheWorld.getIntValue(Facts.Score)
-    if(tempScore != score) {
+    val tempScore = factsOfTheWorld.getIntValue(Facts.Score)
+    if (tempScore != score) {
       score = tempScore
       scoreLabel.setText("Score: $score")
     }
@@ -80,7 +83,6 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
 
   private fun setup() {
     stage.clear()
-    val inputManager = Ctx.context.inject<InputProcessor>() as InputMultiplexer
     inputManager.addProcessor(stage)
 
     setUpScoreBoard()
@@ -92,7 +94,7 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
 
   private fun setUpScoreBoard() {
     scoreBoard = table {
-        scoreLabel = label("Score: $score", labelStyle) {
+      scoreLabel = label("Score: $score", labelStyle) {
         setWrap(true)
         keepWithinParent()
       }.cell(fill = true, align = Align.bottomLeft, padLeft = 16f, padBottom = 2f)
@@ -104,13 +106,41 @@ class UserInterface(var processInput: Boolean = true): IUserInterface {
 
     rootTable = table {
       setFillParent(true)
- bottom()
+      bottom()
       left()
       add(scoreBoard).expand().align(Align.bottomLeft)
     }
 
     stage.addActor(rootTable)
   }
+
+  override fun showSplashScreen() {
+    /*
+    Set up timer. Show splash screen.
+    When timer fires, remove splash screen, send resume game event. Yay!
+     */
+
+    val splashScreen = table {
+      image(Assets.splashScreen) {
+        setScaling(Scaling.fit)
+        scaleBy(4.0f)
+      }.cell()
+      setFillParent(true)
+      isVisible = true
+      bottom()
+      left()
+    }
+    stage.addActor(splashScreen)
+    Timer.instance().clear()
+
+    Timer.instance().scheduleTask(object : Timer.Task() {
+      override fun run() {
+        stage.actors.removeValue(splashScreen, true)
+        gameState.handleEvent(GameEvents.GameResumed)
+      }
+    }, 3f)
+  }
+
 
   override fun showInventory() {
 //    inventoryTable.isVisible = true

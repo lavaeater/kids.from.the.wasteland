@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
@@ -8,26 +8,26 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import com.lavaeater.kftw.components.Box2dBodyComponent
-import com.lavaeater.kftw.components.KeyboardControlComponent
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.GameEvent
-import com.lavaeater.kftw.managers.GameStateManager
+import components.Box2dBodyComponent
+import components.KeyboardControlComponent
+import managers.GameEvents
+import managers.GameState
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.vec2
 import java.util.*
 
-class CharacterControlSystem(val speed: Float = 20f, var processInput: Boolean = true) :
+class CharacterControlSystem(
+    val speed: Float = 20f,
+    var processInput: Boolean = true,
+    inputProcessor: InputProcessor,
+    private val gameState: GameState) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
-  val gameStateManager = Ctx.context.inject<GameStateManager>()
-
   init {
-  	val inputManager = Ctx.context.inject<InputProcessor>() as InputMultiplexer
-    inputManager.addProcessor(this)
+    (inputProcessor as InputMultiplexer).addProcessor(this)
   }
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
@@ -58,8 +58,8 @@ class CharacterControlSystem(val speed: Float = 20f, var processInput: Boolean =
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
-      Input.Keys.I -> gameStateManager.handleEvent(GameEvent.InventoryToggled)
-      Input.Keys.M -> gameStateManager.handleEvent(GameEvent.DialogStarted) //Will be something like "NPC met" and handled by some
+      Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
+      Input.Keys.M -> gameState.handleEvent(GameEvents.DialogStarted) //Will be something like "NPC met" and handled by some
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true

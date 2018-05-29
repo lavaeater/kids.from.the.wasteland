@@ -1,12 +1,12 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.components.NpcComponent
-import com.lavaeater.kftw.components.PlayerComponent
-import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.components.VisibleComponent
+import components.NpcComponent
+import components.PlayerComponent
+import components.TransformComponent
+import components.VisibleComponent
 import map.isInRange
 import ktx.ashley.allOf
 import ktx.ashley.has

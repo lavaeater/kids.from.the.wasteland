@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.ui
+package ui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
@@ -10,18 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
-import com.lavaeater.Assets
-import com.lavaeater.kftw.statemachine.StateMachine
+import Assets
+import statemachine.StateMachine
 import ktx.actors.*
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import ktx.scene2d.textButton
 import world.IConversation
-import ui.IConversationPresenter
-import ui.image
-import ui.label
-import ui.toNumber
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
@@ -177,7 +173,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
   }
 
-  fun stateChanged(state:ConversationState) {
+  fun stateChanged(state: ConversationState) {
     when (state) {
       ConversationState.NotStarted -> stateMachine.acceptEvent(ConversationEvent.ConversationStarted)
       ConversationState.Ended -> conversationEnded()

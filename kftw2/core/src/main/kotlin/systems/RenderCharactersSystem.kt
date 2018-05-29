@@ -1,27 +1,25 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.lavaeater.Assets
-import com.lavaeater.kftw.components.CharacterSpriteComponent
-import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.components.VisibleComponent
-import com.lavaeater.kftw.injection.Ctx
+import Assets
+import components.CharacterSpriteComponent
+import components.TransformComponent
+import components.VisibleComponent
+import injection.Ctx
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class RenderCharactersSystem() :
+class RenderCharactersSystem(private val batch:Batch) :
     SortedIteratingSystem(
         allOf(CharacterSpriteComponent::class,
             TransformComponent::class,
             VisibleComponent::class).get(), EntityYOrderComparator()) {
   private val transformMapper = mapperFor<TransformComponent>()
   private val spriteMapper = mapperFor<CharacterSpriteComponent>()
-
-  private val batch = Ctx.context.inject<Batch>()
 
   override fun processEntity(entity: Entity, deltaTime: Float) {
     val transform = transformMapper[entity]

@@ -3,7 +3,7 @@ package com.lavaeater.kftw.ai
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.data.Npc
+import data.Npc
 
 class Scavenge : LeafTask<Npc>() {
     override fun execute(): Status {

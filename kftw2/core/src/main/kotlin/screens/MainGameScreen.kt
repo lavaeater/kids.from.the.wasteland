@@ -1,14 +1,17 @@
 package com.lavaeater.kftw.screens
 
 import com.badlogic.gdx.Gdx
-import com.lavaeater.kftw.injection.Ctx
-import managers.GameManager
-import com.lavaeater.kftw.ui.IUserInterface
+import injection.Ctx
 import ktx.app.KtxScreen
+import managers.GameManager
+import managers.GameState
+import ui.IUserInterface
 
 class MainGameScreen : KtxScreen {
-  private val gameManager = Ctx.context.inject<GameManager>()
-  private val hud = Ctx.context.inject<IUserInterface>()
+  private val gameManager by lazy { Ctx.context.inject<GameManager>() }
+  private val gameState by lazy { Ctx.context.inject<GameState>() }
+  private val hud by lazy {Ctx.context.inject<IUserInterface>() }
+
   init {
   	Gdx.input.inputProcessor = Ctx.context.inject()
   }
@@ -16,6 +19,10 @@ class MainGameScreen : KtxScreen {
   private fun update(delta:Float) {
     gameManager.update(delta)
     hud.update(delta)
+  }
+
+  override fun show() {
+    gameState.start()
   }
 
   override fun render(delta: Float) {

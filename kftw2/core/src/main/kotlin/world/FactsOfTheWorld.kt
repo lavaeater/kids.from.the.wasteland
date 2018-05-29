@@ -1,178 +1,167 @@
 package world
 
+class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
+  val npcNames = mapOf(
+      1 to "Ulrica Wikren",
+      2 to "Kim Dinh Thi",
+      3 to "Andreas Lindblad",
+      4 to "Babak Varfan"
+  )
+	init {
+		if(clearFacts)
+			clearAllFacts()
+	}
 
-class FactsOfTheWorld {
+  fun factForKey(key: String): IFact<*>? {
+    if(preferences.contains(key))
+      return factForKey(key, preferences.get()[key]!!)
 
-  /*
- They are for everything
-    */
-  companion object {
-
-    val npcNames = mapOf(
-        1 to "Ulrica Wikren",
-        2 to "Kim Dinh Thi",
-        3 to "Andreas Lindblad",
-        4 to "Babak Varfan"
-    )
-    /*
-    Statically accessible from the entire game.
-    Contains Map of Facts?
-
-    We need a system that manages quickly changing concepts in the game
-    world, and these concepts can then affect:
-
-    * probabilities of encounters
-    * story advancement
-    * skip fudging GUIDS for agents, dull and boring, we need human-readable names
-    * for actor-related fats!
-    *
-    * Whenever something happens, a broadcast system can send a message (already used)
-    * to say that a "concept" has happened, like a player meeting an npc
-    * or whatevs.
-    *
-    * This global state can contain "count of heirlooms" - or whatevs.
-    *
-    * We  might need a sweet sweet dsl to build rules, but that should be easy:
-     */
-    private val factsOfTheWorld: MutableMap<String, Fact<*>> = mutableMapOf()
-
-    fun factsForKeys(keys: Set<String>) : Sequence<Fact<*>> {
-      //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
-
-      val facts = factsOfTheWorld.filterKeys { keys.contains(it) }.map { it.value }.asSequence()
-
-      return facts
-    }
-
-    fun <T> factValueOrNull(key: String):T? {
-      return factsOfTheWorld.valueOrNull(key)
-    }
-
-    fun <T> getFactList(key:String): Set<T> {
-      return factsOfTheWorld.valuesOrEmpty(key)
-    }
-
-    ///Checks the rule, with supplied Context. Any keys in Context
-    ///that exists in world facts are filtered out
-    ///so a fact only exists once. Yay
-    fun checkRule(rule: Rule) :Boolean {
-      val factsToCheck = factsForKeys(rule.keys)
-          .toSet()
-      return rule.pass(factsToCheck)
-    }
-
-    fun rulesThatPass(rules:Set<Rule>) : List<Rule> {
-      return rules.filter { checkRule(it)}
-		      .sortedByDescending { it.criteriaCount }
-    }
-
-    fun stateBoolFact(key:String, value: Boolean) {
-      ensureBooleanFact(key).value = value
-    }
-
-    fun stateStringFact(key: String, value: String) {
-      ensureStringFact(key).value = value
-    }
-
-    fun clearStringFact(key: String) {
-      ensureStringFact(key).value = ""
-    }
-
-    fun stateIntFact(key: String, value: Int) {
-      ensureIntFact(key).value = value
-    }
-
-    fun addToIntFact(key: String, value: Int) {
-      ensureIntFact(key).value+=value
-    }
-
-    fun subtractFromIntFact(key: String, value: Int) {
-      ensureIntFact(key).value-=value
-    }
-
-    fun addStringToList(key: String, value: String) {
-      ensureStringListFact(key).value.add(value)
-    }
-
-    //With this we can add whatever we want to the facts
-    fun stateAnyFact(fact: Fact<*>) {
-      factsOfTheWorld[fact.key] = fact
-    }
-
-    fun <T> addValueToFactList(key: String, value: T) {
-      ensureFactList<T>(key).value.add(value)
-    }
-
-    fun <T> ensureFactList(key: String) : Fact<MutableCollection<T>> {
-      if(!factsOfTheWorld.containsKey(key)) {
-        factsOfTheWorld[key] = Fact.createListFact<T>(key)
-      }
-      return (factsOfTheWorld[key]!! as Fact<MutableCollection<T>>)
-    }
-
-    fun <T> removeValueFromFactList(key: String, value: T) {
-      ensureFactList<T>(key).value.remove(value)
-    }
-
-    fun removeString(key: String, value: String) {
-      ensureStringListFact(key).value.remove(value)
-    }
-
-    private fun ensureBooleanFact(key: String): Fact<Boolean> {
-      if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(key, false)
-        factsOfTheWorld[key] = f
-      }
-      return factsOfTheWorld[key] as Fact<Boolean>
-    }
-
-    private fun ensureStringFact(key: String): Fact<String> {
-      if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(key, "")
-        factsOfTheWorld[key] = f
-      }
-      return factsOfTheWorld[key] as Fact<String>
-    }
-
-    fun getIntValue(key: String) : Int {
-      return factsOfTheWorld.valueOrNull<Int>(key) ?: 0
-    }
-
-    private fun ensureIntFact(key: String): Fact<Int> {
-      if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createFact(key, 0)
-        factsOfTheWorld[key] = f
-      }
-      return factsOfTheWorld[key] as Fact<Int>
-    }
-
-    private fun ensureStringListFact(key: String): Fact<MutableCollection<String>> {
-      if(!factsOfTheWorld.containsKey(key)) {
-        val f = Fact.createListFact<String>(key)
-        factsOfTheWorld[key] = f
-      }
-      return factsOfTheWorld[key] as Fact<MutableCollection<String>>
-    }
-
-    fun contains(key: String): Boolean {
-      return factsOfTheWorld.containsKey(key)
-    }
-
-    fun clearAllFacts() {
-      factsOfTheWorld.clear()
-    }
+    return null
   }
+
+  fun factForKey(key: String, value:Any): IFact<*> {
+
+    if(value is Boolean)
+      return BooleanFact(key, value)
+
+    if(value is Int)
+      return IntFact(key, value)
+
+    if(value is String) {
+      if (value.contains("List:"))
+        return ListFact(key, value.replace("List:", "").split("|").toMutableSet())
+      else
+        return StringFact(key, value)
+    }
+    throw IllegalArgumentException("BLAGH")
+  }
+
+  fun factsForKeys(keys: Set<String>) : Sequence<IFact<*>> {
+    //A key can be "VisitedCities" or "VisitedCities.Europe" or something...
+
+    val facts = preferences.get().filterKeys { keys.contains(it) }.map { factForKey(it.key, it.value!!) }.asSequence()
+    return facts
+  }
+
+  ///Checks the rule, with supplied Context. Any keys in Context
+  ///that exists in world facts are filtered out
+  ///so a fact only exists once. Yay
+  private fun checkRule(rule: Rule) :Boolean {
+    val factsToCheck = factsForKeys(rule.keys)
+        .toSet()
+    return rule.pass(factsToCheck)
+  }
+
+  fun rulesThatPass(rules:Set<Rule>) : List<Rule> {
+    return rules.filter { checkRule(it)}
+        .sortedByDescending { it.criteriaCount }
+  }
+
+  fun stateBoolFact(key:String, value: Boolean) {
+    val fact = BooleanFact(key, value)
+    storeBooleanFact(fact)
+  }
+
+  fun stateStringFact(key: String, value: String) {
+    val fact = StringFact(key, value)
+    storeStringFact(fact)
+  }
+
+  fun storeStringFact(fact: StringFact) {
+    preferences.putString(fact.key, fact.value)
+  }
+
+  fun clearStringFact(key: String) {
+    preferences.putString(key, "")
+  }
+
+  fun stateIntFact(key: String, value: Int) {
+    val fact = IntFact(key, value)
+    storeIntFact(fact)
+  }
+
+  fun addToIntFact(key: String, value: Int) {
+    val factValue = getIntValue(key)
+    storeIntFact(IntFact(key, factValue + value))
+  }
+
+  fun subtractFromIntFact(key: String, value: Int) {
+    val factValue = getIntValue(key)
+    storeIntFact(IntFact(key, factValue - value))
+  }
+
+  fun addToList(key: String, value: String) {
+    val fact = ensureListFact(key)
+    fact.value.add(value)
+    saveListFact(fact)
+  }
+
+  private fun saveListFact(fact: ListFact) {
+    preferences.putString(fact.key, fact.value.serializeToString())
+  }
+
+  fun removeFromList(key: String, value: String) {
+    val fact = ensureListFact(key)
+    fact.value.remove(value)
+    saveListFact(fact)
+  }
+
+  fun storeBooleanFact(fact: BooleanFact) {
+      preferences.putBoolean(fact.key, fact.value)
+  }
+
+  fun getIntValue(key: String) : Int {
+    return preferences.getInteger(key, 0)
+  }
+
+  private fun storeIntFact(fact: IntFact) {
+    preferences.putInteger(fact.key, fact.value)
+  }
+
+  private fun ensureListFact(key: String): ListFact {
+    return if(preferences.contains(key)) ListFact(key, preferences.getString(key).toMutableSet()) else ListFact(key, mutableSetOf())
+  }
+
+  fun contains(key: String): Boolean {
+    return preferences.contains(key)
+  }
+
+  fun clearAllFacts() {
+    preferences.clear()
+  }
+
+  fun setupInitialFacts() {
+
+  }
+
+  fun getFactList(key: String): ListFact {
+    return ensureListFact(key)
+  }
+
+  fun getStringFact(key: String): StringFact {
+    return if(preferences.contains(key)) StringFact(key, preferences.getString(key)) else StringFact(key, "")
+  }
+
+	fun getIntFact(key:String):IntFact {
+		return if (preferences.contains(key)) IntFact(key, preferences.getInteger(key)) else IntFact(key, 0)
+	}
+
+	fun getBooleanFact(key:String): BooleanFact {
+		return if (preferences.contains(key)) BooleanFact(key, preferences.getBoolean(key)) else BooleanFact(key, false)
+	}
+
+  fun stringForKey(key: String): String {
+    return getStringFact(key).value
+  }
+
+	fun save() {
+		preferences.flush()
+	}
 }
 
-fun <T> MutableMap<String, Fact<*>>.valueOrNull(key: String): T? {
-  return if(this.containsKey(key)) (this[key] as Fact<T>).value else null
+enum class FactTypes {
+  String,
+  Int,
+  Boolean,
+  List
 }
-
-fun <T> MutableMap<String, Fact<*>>.valuesOrEmpty(key:String): Set<T> {
-  return if(this.containsKey(key)) (this[key] as Fact<MutableCollection<T>>).value.toSet() else emptySet()
-}
-
-fun MutableMap<String, Fact<*>>.factForKey(key: String):Fact<*>? {
-  return this[key]
-}
-

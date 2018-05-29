@@ -1,16 +1,13 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.EntitySystem
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.lavaeater.kftw.injection.Ctx
+import com.badlogic.gdx.graphics.Camera
 import ktx.app.KtxInputAdapter
 
-class KeyboardCameraControlSystem():
+class KeyboardCameraControlSystem(private val camera: Camera):
         KtxInputAdapter,
         EntitySystem(299) {
-
-    val camera = Ctx.context.inject<OrthographicCamera>()
 
     val speed = 0.5f
     var y = 0f;

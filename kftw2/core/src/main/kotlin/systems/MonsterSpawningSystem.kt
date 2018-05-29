@@ -1,21 +1,22 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
-import com.lavaeater.kftw.components.PlayerComponent
-import com.lavaeater.kftw.components.TransformComponent
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.ActorFactory
+import components.PlayerComponent
+import components.TransformComponent
+import injection.Ctx
+import managers.ActorFactory
 import map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
-class MonsterSpawningSystem(val areWeTesting:Boolean) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
-  var weHaveSpawned = false
+class MonsterSpawningSystem(
+    val areWeTesting:Boolean,
+    private val actorFactory: ActorFactory,
+    private val mapManager: IMapManager) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
 
-  val actorFactory = Ctx.context.inject<ActorFactory>()
-  val mapManager = Ctx.context.inject<IMapManager>()
+  var weHaveSpawned = false
   val transformMpr = mapperFor<TransformComponent>()
   val spawnProb = 85
 

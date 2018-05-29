@@ -1,9 +1,9 @@
-package com.lavaeater.kftw.systems
+package systems
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
-import com.lavaeater.kftw.components.AiComponent
-import com.lavaeater.kftw.data.Npc
+import components.AiComponent
+import data.Npc
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 

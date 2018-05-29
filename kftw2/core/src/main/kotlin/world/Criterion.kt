@@ -1,11 +1,15 @@
 package world
 
-class Criterion(val key: String, private val matcher: (Fact<*>) -> Boolean) {
-  fun isMatch(fact: Fact<*>):Boolean {
+import injection.Ctx
+
+class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
+  fun isMatch(fact: IFact<*>):Boolean {
     return matcher(fact)
   }
 
   companion object {
+    private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+
     fun booleanCriterion(key: String, checkFor: Boolean) : Criterion {
       return Criterion(key, { it.value == checkFor })
     }
@@ -22,35 +26,24 @@ class Criterion(val key: String, private val matcher: (Fact<*>) -> Boolean) {
       })
     }
 
-    fun <T> containsCriterion(key: String, value: T) :Criterion {
+    fun containsCriterion(key: String, value: String) :Criterion {
       return Criterion(key, {
-        val factList = FactsOfTheWorld.getFactList<T>(key)
+        val factList = factsOfTheWorld.getFactList(key)
         factList.contains(value)
       })
     }
 
-    fun <T> factContainsFactValue(key:String, contextKey:String): Criterion {
+    fun listContainsFact(key:String, contextKey:String): Criterion {
       return Criterion(key, {
-        var match = false
-        val contextValue = FactsOfTheWorld.factValueOrNull<T>(contextKey)
-        if (contextValue != null) {
-          if(FactsOfTheWorld.getFactList<T>(key).contains(contextValue)) {
-            match = true }
-
-        }
-         match
+        val contextValue = factsOfTheWorld.stringForKey(contextKey)
+           factsOfTheWorld.getFactList(key).contains(contextValue)
       })
     }
-    fun <T> factDoesNotContainsFactValue(key:String, contextKey:String): Criterion {
-      return Criterion(key, {
-        var match = false
-        val contextValue = FactsOfTheWorld.factValueOrNull<T>(contextKey)
-        if (contextValue != null) {
-          if(!FactsOfTheWorld.getFactList<T>(key).contains(contextValue)) {
-            match = true }
 
-        }
-        match
+    fun listDoesNotContainFact(key:String, contextKey:String): Criterion {
+      return Criterion(key, {
+        val contextValue = factsOfTheWorld.stringForKey(contextKey)
+        !factsOfTheWorld.getFactList(key).contains(contextValue)
       })
     }
 
@@ -60,10 +53,9 @@ class Criterion(val key: String, private val matcher: (Fact<*>) -> Boolean) {
       })
     }
 
-    fun <T> notContainsCriterion(key: String, value: T): Criterion {
+    fun notContainsCriterion(key: String, value: String): Criterion {
       return Criterion(key, {
-        val factList = FactsOfTheWorld.getFactList<T>(key)
-        !factList.contains(value)
+        !factsOfTheWorld.getFactList(key).contains(value)
       })
     }
   }

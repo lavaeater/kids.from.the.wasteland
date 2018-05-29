@@ -3,14 +3,11 @@ package map
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.lavaeater.Assets
-import com.lavaeater.kftw.injection.Ctx
+import Assets
+import injection.Ctx
 import managers.GameManager
-import com.lavaeater.kftw.map.Tile
-import com.lavaeater.kftw.map.TileInstance
 import com.lavaeater.kftw.util.SimplexNoise
 import ktx.math.vec3
 import kotlin.math.absoluteValue
@@ -18,6 +15,10 @@ import kotlin.math.absoluteValue
 fun String.toShortCode() : String {
   return "${this[0]}${this[1]}${this[3]}${this[5]}${this[7]}"
 }
+
+
+
+/* SEARCH FOR THIS */
 
 fun getNoise(x: Int, y: Int, vararg frequencies: Double): Double {
     val noiseVal = frequencies.sumByDouble { it * (SimplexNoise.noise(x.toDouble() * (1 / it), y.toDouble() * (1 / it))).absoluteValue }

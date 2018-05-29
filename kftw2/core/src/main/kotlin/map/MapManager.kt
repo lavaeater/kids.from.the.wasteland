@@ -3,17 +3,16 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.lavaeater.kftw.injection.Ctx
-import com.lavaeater.kftw.managers.BodyFactory
-import managers.GameManager
-import com.lavaeater.kftw.map.Tile
-import com.lavaeater.kftw.map.TileInstance
-import com.lavaeater.kftw.systems.tileX
-import com.lavaeater.kftw.systems.tileY
 import ktx.math.vec2
+import managers.BodyFactory
+import managers.GameManager
+import systems.tileX
+import systems.tileY
 import kotlin.math.roundToInt
 
-class MapManager : IMapManager {
+class MapManager(
+    private val bodyManager: BodyFactory,
+    private val tileManager: TileManager) : IMapManager {
   override fun getBandOfTiles(tilePos: Pair<Int, Int>, range: Int, width: Int): List<TileInstance> {
     return getBandOfTiles(tilePos.first, tilePos.second, range, width)
   }
@@ -35,8 +34,6 @@ class MapManager : IMapManager {
     return tilesInRange.minus(tilesToExclude).toList()
   }
 
-  val bodyManager = Ctx.context.inject<BodyFactory>()
-  val tileManager = Ctx.context.inject<TileManager>()
   var currentlyVisibleTiles: Array<Array<TileInstance>>? = null
 
   //val inverseFogOfWar = mutableSetOf<TileKey>()
@@ -125,10 +122,10 @@ class MapManager : IMapManager {
 
     for (row in currentlyVisibleTiles!!)
       for (tile in row) {
-        if (tile.needsHitBox && (tile.tile.priority == 0 || tile.tile.priority == 3) && !tile.tile.shortCode.isOneTerrain()) {
+        if (tile.needsHitBox && tile.tile.isImpassible()) {
           val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
               (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-          val hitBox = bodyManager.createBody(
+          bodyManager.createBody(
               GameManager.TILE_SIZE.toFloat(),
               GameManager.TILE_SIZE.toFloat(),
               10f,

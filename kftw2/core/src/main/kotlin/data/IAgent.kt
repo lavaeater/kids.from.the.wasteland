@@ -1,4 +1,4 @@
-package com.lavaeater.kftw.data
+package data
 
 import com.badlogic.gdx.math.MathUtils
 
