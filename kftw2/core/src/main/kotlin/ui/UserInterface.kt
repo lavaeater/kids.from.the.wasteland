@@ -1,7 +1,7 @@
 package ui
 
+import Assets
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -11,22 +11,21 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import Assets
-import injection.Ctx
-import managers.GameEvents
-import managers.GameState
 import ktx.actors.keepWithinParent
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
+import managers.GameEvents
+import managers.GameState
 import world.Facts
 import world.FactsOfTheWorld
 import world.IConversation
 
 class UserInterface(
-		private val batch: Batch,
-		private val gameState: GameState,
+    private val batch: Batch,
+    private val gameState: GameState,
     private val inputManager: InputMultiplexer,
-		debug: Boolean = false): IUserInterface {
+    private val factsOfTheWorld: FactsOfTheWorld,
+    debug: Boolean = false): IUserInterface {
 
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)
@@ -66,7 +65,7 @@ class UserInterface(
   private var score = 0
 
   private fun updateScore() {
-    val tempScore = FactsOfTheWorld.getIntValue(Facts.Score)
+    val tempScore = factsOfTheWorld.getIntValue(Facts.Score)
     if (tempScore != score) {
       score = tempScore
       scoreLabel.setText("Score: $score")

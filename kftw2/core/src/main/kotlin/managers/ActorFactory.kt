@@ -15,21 +15,20 @@ import data.Player
 import ktx.math.vec2
 import map.IMapManager
 import map.tileWorldCenter
-import world.FactsOfTheWorld.Companion.npcNames
+import world.FactsOfTheWorld
 
 class ActorFactory(
     private val engine: Engine,
     private val mapManager: IMapManager,
     private val bodyManager: BodyFactory,
-    private val player: Player) {
+    private val player: Player,
+    private val factsOfTheWorld: FactsOfTheWorld) {
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
       "sneakypanther" to NpcType("sneakypanther",6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
       "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
       "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
-
-
 
   fun addTownsFolk() {
 
@@ -41,12 +40,12 @@ class ActorFactory(
         .toTypedArray()
 
     for (i in 1..20)
-      addNpcEntity(npcNames[i]!!, "townsfolk", startPositions)
+      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
   }
 
   fun randomNpcName() : String {
 
-    return npcNames[MathUtils.random(1, npcNames.size)]!!
+    return factsOfTheWorld.npcNames[MathUtils.random(1, factsOfTheWorld.npcNames.size)]!!
   }
 
   fun randomNpcType(): String {

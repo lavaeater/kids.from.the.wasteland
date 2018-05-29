@@ -21,7 +21,7 @@ class TileStore(val lowerBoundX: Int, val columns: Int, val lowerBoundY: Int, va
         val xIndex = getXIndex(x)
         val yIndex = getYIndex(y)
 
-        return tiles[xIndex][yIndex]!!
+        return tiles[xIndex][yIndex]
     }
 
     fun putTile(x: Int, y: Int, tile: TileInstance) {

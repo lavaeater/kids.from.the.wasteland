@@ -11,3 +11,24 @@ class Fact<T>(val key: String, var value: T) {
     }
   }
 }
+
+interface IFact<T> {
+  val key:String
+  var value: T
+}
+
+interface IListFact<T>: IFact<MutableSet<T>> {
+  fun contains(value: T):Boolean
+}
+
+class StringFact(override val key: String, override var value: String) :IFact<String>
+
+class IntFact(override val key: String, override var value: Int) : IFact<Int>
+
+class BooleanFact(override val key: String, override var value: Boolean) :IFact<Boolean>
+
+class ListFact(override val key: String, override var value: MutableSet<String> = mutableSetOf()) : IListFact<String> {
+  override fun contains(value: String): Boolean {
+    return value.contains(value)
+  }
+}

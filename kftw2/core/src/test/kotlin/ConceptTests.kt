@@ -135,7 +135,7 @@ class ConceptTests {
 		FactsOfTheWorld.stateStringFact(Facts.CurrentNpc, "SteveTheOrc")
 
 		val contextRule = Rule("Contextual", mutableListOf(
-				Criterion.factContainsFactValue<String>(Facts.NpcsPlayerHasMet, Facts.CurrentNpc)
+				Criterion.listContainsFact<String>(Facts.NpcsPlayerHasMet, Facts.CurrentNpc)
 		), ApplyFactsConsequence(emptyMap()))
 	}
 

@@ -13,7 +13,7 @@ public class Lwjgl3Launcher {
 
     private static Lwjgl3Application createApplication() {
         //return new Lwjgl3Application(new KidsFromTheWastelandGame(), getDefaultConfiguration());
-        return new Lwjgl3Application(new KidsFromTheWastelandGame(new GameSettings(96f, 72f, 8, 16)), getDefaultConfiguration());
+        return new Lwjgl3Application(new KidsFromTheWastelandGame(new GameSettings(96f, 72f, 8, 16, "kftw")), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

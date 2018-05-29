@@ -1,6 +1,7 @@
 package injection
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.ai.msg.MessageDispatcher
@@ -25,7 +26,8 @@ import systems.*
 import ui.IUserInterface
 import ui.UserInterface
 import world.ConversationManager
-import javax.swing.plaf.InputMapUIResource
+import world.FactsOfTheWorld
+import world.RulesOfTheWorld
 
 class Ctx {
 
@@ -56,6 +58,12 @@ class Ctx {
 
     fun buildContext(gameSettings: GameSettings) {
       context.register {
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default")).apply {
+		      setupInitialFacts()
+	      })
+	      bindSingleton(RulesOfTheWorld().apply {
+		      setupRules()
+	      })
 	      bindSingleton(GameState())
         bindSingleton<InputProcessor>(InputMultiplexer())
         bindSingleton(TileManager())
@@ -93,18 +101,22 @@ class Ctx {
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),
+			      this.inject(),
 			      this.inject()) }
 
 	      bindSingleton<IUserInterface>(
 			      UserInterface(
 					      this.inject(),
 					      this.inject(),
-								this.inject<InputProcessor>() as InputMultiplexer))
+					      this.inject<InputProcessor>() as InputMultiplexer,
+					      this.inject()))
 
 	      bindSingleton(ConversationManager(
 						this.inject(),
 						this.inject(),
-						this.inject()
+						this.inject(),
+			      this.inject(),
+			      this.inject()
 				))
 
 	      bindSingleton(GameManager(
@@ -115,6 +127,7 @@ class Ctx {
 			      this.provider(),
 			      this.inject(),
 			      this.provider(),
+			      this.inject(),
 			      this.inject(),
 			      this.inject(),
 			      this.inject()))

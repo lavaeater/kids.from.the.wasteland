@@ -1,7 +1,7 @@
 package map
 
-import com.badlogic.gdx.math.MathUtils
 import Assets
+import com.badlogic.gdx.math.MathUtils
 
 class TileManager(val chunkSize:Int = 100) {
     private val upperBound = chunkSize - 1
@@ -36,7 +36,7 @@ class TileManager(val chunkSize:Int = 100) {
 
     fun getTile(x: Int, y: Int): TileInstance {
         val store = getTileStore(x, y)
-        return store.getTile(x, y)!!
+        return store.getTile(x, y)
     }
 
     private fun putTile(x: Int, y: Int, tile: TileInstance) {
@@ -60,7 +60,7 @@ class TileManager(val chunkSize:Int = 100) {
                 if (actualX !in currentStore.xBounds || actualY !in currentStore.yBounds) {
                     currentStore = getTileStore(actualX, actualY)
                 }
-                currentTile = currentStore.getTile(actualX, actualY)!!
+                currentTile = currentStore.getTile(actualX, actualY)
 
                 //check for neighbours!
                 if (currentTile.tile.needsNeighbours) {
@@ -95,9 +95,9 @@ class TileManager(val chunkSize:Int = 100) {
 
         MapManager.neiborMap.keys.forEach { (offX, offY) ->
             var code = "b"
-            val tile = getOrNull(x + offX, y + offY, tiles)
-            if (tile != null) {
-                code = MapManager.shortTerrains[tile.priority]!!
+            val t = getOrNull(x + offX, y + offY, tiles)
+            if (t != null) {
+                code = MapManager.shortTerrains[t.priority]!!
             } else {
                 needsNeighbours = true
             }
@@ -111,7 +111,7 @@ class TileManager(val chunkSize:Int = 100) {
 
         if (!usedTiles.containsKey(keyCode)) {
             //Add this new tile to the tile storage!
-            addEdgeSpritesForTile(tempTile, tempTile.shortCode, tempTile.tileType, tempTile.priority)
+            addEdgeSpritesForTile(tempTile.shortCode, tempTile.priority)
             usedTiles[keyCode] = tempTile
         }
         return usedTiles[keyCode]!!
@@ -132,7 +132,7 @@ class TileManager(val chunkSize:Int = 100) {
 
         //This is like orto or something
         for ((x, column) in tiles.withIndex())
-            for ((y, row) in column.withIndex()) {
+            for ((y, _) in column.withIndex()) {
                 val tempTile = fixNeighbours(tiles[x][y], x, y, tiles)
 
                 tiles[x][y] = tempTile
@@ -142,7 +142,7 @@ class TileManager(val chunkSize:Int = 100) {
             { column ->
                 Array(yBounds.count(),
                     { row ->
-                        tiles[column][row]!!
+                        tiles[column][row]
                             .getInstance(
                                 xBounds.elementAt(column),
                                 yBounds.elementAt(row))
@@ -160,7 +160,7 @@ class TileManager(val chunkSize:Int = 100) {
         }
     }
 
-    private fun addEdgeSpritesForTile(ourTile: Tile, shortCode: String, tileType: String, priority: Int) {
+    private fun addEdgeSpritesForTile(shortCode: String, priority: Int) {
 
         if (!MapManager.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
             val tileC = shortCode.toCharArray()[0]

@@ -2,10 +2,10 @@ package com.lavaeater.kftw.screens
 
 import com.badlogic.gdx.Gdx
 import injection.Ctx
-import managers.GameState
-import managers.GameManager
-import ui.IUserInterface
 import ktx.app.KtxScreen
+import managers.GameManager
+import managers.GameState
+import ui.IUserInterface
 
 class MainGameScreen : KtxScreen {
   private val gameManager by lazy { Ctx.context.inject<GameManager>() }

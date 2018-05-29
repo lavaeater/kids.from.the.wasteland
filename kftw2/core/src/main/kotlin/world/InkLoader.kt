@@ -12,8 +12,7 @@ class InkLoader {
       var line = br.readLine()
 
       // Replace the BOM mark
-      if (line != null)
-        line = line!!.replace('\uFEFF', ' ')
+      line = line?.replace('\uFEFF', ' ')
 
       while (line != null) {
         sb.append(line)

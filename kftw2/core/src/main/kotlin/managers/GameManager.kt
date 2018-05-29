@@ -1,5 +1,6 @@
 package managers
 
+import Assets
 import com.badlogic.ashley.core.Engine
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.graphics.Camera
@@ -7,15 +8,13 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import Assets
 import com.lavaeater.kftw.GameSettings
-import ui.IUserInterface
 import map.IMapManager
 import systems.CharacterControlSystem
-import systems.FollowCameraSystem
 import systems.RenderCharactersSystem
 import systems.RenderMapSystem
-import world.*
+import ui.IUserInterface
+import world.FactsOfTheWorld
 
 class GameManager(
     gameSettings: GameSettings,
@@ -27,7 +26,8 @@ class GameManager(
     actorFactoryProvider: () -> ActorFactory,
     private val messageDispatcher: MessageDispatcher,
     private val ui: IUserInterface,
-    private val mapManager: IMapManager) : Disposable {
+    private val mapManager: IMapManager,
+    private val factsOfTheWorld: FactsOfTheWorld) : Disposable {
 
   private val viewPort = viewPortProvider()
   private val actorFactory = actorFactoryProvider()
@@ -35,8 +35,6 @@ class GameManager(
   init {
     gameState.addChangeListener(::gameStateChanged)
     setupSystems()
-    setupRules()
-    setupFacts()
     VIEWPORT_WIDTH = gameSettings.width
     VIEWPORT_HEIGHT = gameSettings.height
     TILE_SIZE = gameSettings.tileSize
@@ -45,14 +43,6 @@ class GameManager(
     camera.position.y = 0f
 
     Assets.music.play()
-  }
-
-  private fun setupFacts() {
-    FactsOfTheWorld.setupInitialFacts()
-  }
-
-  private fun setupRules() {
-    RulesOfTheWorld.setupRules()
   }
 
   private fun setupSystems() {
@@ -69,7 +59,7 @@ class GameManager(
      */
 
 
-    for (name in FactsOfTheWorld.npcNames.values) {
+    for (name in factsOfTheWorld.npcNames.values) {
       val someTilesInRange = mapManager.getBandOfTiles(0,0, 2, 3).filter {
         it.tile.tileType != "rock" && it.tile.tileType != "water"
       }
@@ -91,6 +81,7 @@ class GameManager(
 
   override fun dispose() {
     batch.dispose()
+    factsOfTheWorld.save()
   }
 
   companion object {
@@ -100,6 +91,7 @@ class GameManager(
   }
 
   fun pause() {
+    factsOfTheWorld.save()
   }
 
   private fun gameStateChanged(newState: GameStates) {

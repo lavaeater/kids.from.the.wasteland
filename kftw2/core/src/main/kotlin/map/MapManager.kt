@@ -3,12 +3,11 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import injection.Ctx
+import ktx.math.vec2
 import managers.BodyFactory
 import managers.GameManager
 import systems.tileX
 import systems.tileY
-import ktx.math.vec2
 import kotlin.math.roundToInt
 
 class MapManager(
@@ -126,7 +125,7 @@ class MapManager(
         if (tile.needsHitBox && tile.tile.isImpassible()) {
           val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
               (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-          val hitBox = bodyManager.createBody(
+          bodyManager.createBody(
               GameManager.TILE_SIZE.toFloat(),
               GameManager.TILE_SIZE.toFloat(),
               10f,

@@ -1,16 +1,13 @@
 package systems
 
 import com.badlogic.ashley.core.EntitySystem
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.PerformanceCounters
-import injection.Ctx
+import ktx.app.use
 import managers.GameManager
 import map.IMapManager
-import ktx.app.use
 import kotlin.math.roundToInt
 
 class RenderMapSystem(
@@ -29,8 +26,8 @@ class RenderMapSystem(
 
       val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
 
-      for ((x, rows) in tilesToRender.withIndex())
-        for ((y, tileInstance) in rows.withIndex()) {
+      for (rows in tilesToRender)
+        for (tileInstance in rows) {
           val xPos = (tileInstance.x * 8).toFloat()
           val yPos = (tileInstance.y * 8).toFloat()
 
