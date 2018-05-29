@@ -28,7 +28,7 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
 
     fun containsCriterion(key: String, value: String) :Criterion {
       return Criterion(key, {
-        val factList = factsOfTheWorld.factListForKey(key)
+        val factList = factsOfTheWorld.getFactList(key)
         factList.contains(value)
       })
     }
@@ -36,14 +36,14 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
     fun listContainsFact(key:String, contextKey:String): Criterion {
       return Criterion(key, {
         val contextValue = factsOfTheWorld.stringForKey(contextKey)
-           factsOfTheWorld.factListForKey(key).contains(contextValue)
+           factsOfTheWorld.getFactList(key).contains(contextValue)
       })
     }
 
     fun listDoesNotContainFact(key:String, contextKey:String): Criterion {
       return Criterion(key, {
         val contextValue = factsOfTheWorld.stringForKey(contextKey)
-        !factsOfTheWorld.factListForKey(key).contains(contextValue)
+        !factsOfTheWorld.getFactList(key).contains(contextValue)
       })
     }
 
@@ -55,7 +55,7 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
 
     fun notContainsCriterion(key: String, value: String): Criterion {
       return Criterion(key, {
-        !factsOfTheWorld.factListForKey(key).contains(value)
+        !factsOfTheWorld.getFactList(key).contains(value)
       })
     }
   }

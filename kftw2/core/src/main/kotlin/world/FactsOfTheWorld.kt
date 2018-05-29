@@ -1,15 +1,16 @@
 package world
 
-class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences) {
-
-  val valueTypes = mapOf<String, FactTypes>()
-
+class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
   val npcNames = mapOf(
       1 to "Ulrica Wikren",
       2 to "Kim Dinh Thi",
       3 to "Andreas Lindblad",
       4 to "Babak Varfan"
   )
+	init {
+		if(clearFacts)
+			clearAllFacts()
+	}
 
   fun factForKey(key: String): IFact<*>? {
     if(preferences.contains(key))
@@ -19,13 +20,20 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences) {
   }
 
   fun factForKey(key: String, value:Any): IFact<*> {
-    when(valueTypes[key]) {
-      FactTypes.Boolean -> return BooleanFact(key, value as Boolean)
-      FactTypes.Int -> return IntFact(key, value as Int)
-      FactTypes.String -> return StringFact(key, value as String)
-      FactTypes.List -> return ListFact(key, (value as String).split("|").toMutableSet())
+
+    if(value is Boolean)
+      return BooleanFact(key, value)
+
+    if(value is Int)
+      return IntFact(key, value)
+
+    if(value is String) {
+      if (value.contains("List:"))
+        return ListFact(key, value.replace("List:", "").split("|").toMutableSet())
+      else
+        return StringFact(key, value)
     }
-    throw IllegalArgumentException("No fact with key $key is registered in the type list.")
+    throw IllegalArgumentException("BLAGH")
   }
 
   fun factsForKeys(keys: Set<String>) : Sequence<IFact<*>> {
@@ -50,95 +58,68 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences) {
   }
 
   fun stateBoolFact(key:String, value: Boolean) {
-    ensureBooleanFact(key).value = value
+    val fact = BooleanFact(key, value)
+    storeBooleanFact(fact)
   }
 
   fun stateStringFact(key: String, value: String) {
-    ensureStringFact(key).value = value
+    val fact = StringFact(key, value)
+    storeStringFact(fact)
+  }
+
+  fun storeStringFact(fact: StringFact) {
+    preferences.putString(fact.key, fact.value)
   }
 
   fun clearStringFact(key: String) {
-    ensureStringFact(key).value = ""
+    preferences.putString(key, "")
   }
 
   fun stateIntFact(key: String, value: Int) {
-    ensureIntFact(key).value = value
+    val fact = IntFact(key, value)
+    storeIntFact(fact)
   }
 
   fun addToIntFact(key: String, value: Int) {
-    ensureIntFact(key).value+=value
+    val factValue = getIntValue(key)
+    storeIntFact(IntFact(key, factValue + value))
   }
 
   fun subtractFromIntFact(key: String, value: Int) {
-    ensureIntFact(key).value-=value
+    val factValue = getIntValue(key)
+    storeIntFact(IntFact(key, factValue - value))
   }
 
-  fun addStringToList(key: String, value: String) {
-    ensureListFact(key).value.add(value)
-  }
-
-  fun addValueToFactList(key: String, value: String) {
+  fun addToList(key: String, value: String) {
     val fact = ensureListFact(key)
     fact.value.add(value)
     saveListFact(fact)
   }
 
   private fun saveListFact(fact: ListFact) {
-    preferences.putString(fact.key, fact.value.joinToString { "|" })
+    preferences.putString(fact.key, fact.value.serializeToString())
   }
 
-  fun removeValueFromFactList(key: String, value: String) {
+  fun removeFromList(key: String, value: String) {
     val fact = ensureListFact(key)
     fact.value.remove(value)
     saveListFact(fact)
   }
 
-  private fun ensureBooleanFact(key: String): BooleanFact {
-    if(!preferences.contains(key)) {
-      if(valueTypes.containsKey(key) && valueTypes[key] != FactTypes.Boolean)
-        throw IllegalArgumentException("Cannot state a Boolean fact for a key already declared as ${valueTypes[key]}")
-
-      preferences.putBoolean(key, false)
-    }
-
-    return BooleanFact(key, preferences.getBoolean(key))
-  }
-
-  private fun ensureStringFact(key: String): StringFact {
-    if(!preferences.contains(key)) {
-      if(valueTypes.containsKey(key) && valueTypes[key] != FactTypes.String)
-        throw IllegalArgumentException("Cannot state a String fact for a key already declared as ${valueTypes[key]}")
-
-      preferences.putString(key, "")
-    }
-
-    return StringFact(key, preferences.getString(key))
+  fun storeBooleanFact(fact: BooleanFact) {
+      preferences.putBoolean(fact.key, fact.value)
   }
 
   fun getIntValue(key: String) : Int {
     return preferences.getInteger(key, 0)
   }
 
-  private fun ensureIntFact(key: String): IntFact {
-    if(!preferences.contains(key)) {
-      if(valueTypes.containsKey(key) && valueTypes[key] != FactTypes.Int)
-        throw IllegalArgumentException("Cannot state an int fact for a key already declared as ${valueTypes[key]}")
-
-      preferences.putInteger(key, 0)
-    }
-
-    return IntFact(key, preferences.getInteger(key))
+  private fun storeIntFact(fact: IntFact) {
+    preferences.putInteger(fact.key, fact.value)
   }
 
   private fun ensureListFact(key: String): ListFact {
-    if(!preferences.contains(key)) {
-      if(valueTypes.containsKey(key) && valueTypes[key] != FactTypes.List)
-        throw IllegalArgumentException("Cannot state a List fact for a key already declared as ${valueTypes[key]}")
-
-      preferences.putString(key, "")
-    }
-
-    return ListFact(key, preferences.getString(key).split("|").toMutableSet())
+    return if(preferences.contains(key)) ListFact(key, preferences.getString(key).toMutableSet()) else ListFact(key, mutableSetOf())
   }
 
   fun contains(key: String): Boolean {
@@ -150,19 +131,27 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences) {
   }
 
   fun setupInitialFacts() {
-    stateIntFact("MetNumberOfNpcs", 0)
+
   }
 
-  fun factListForKey(key: String): ListFact {
+  fun getFactList(key: String): ListFact {
     return ensureListFact(key)
   }
 
-  fun stringFactForKey(key: String): StringFact {
-    return ensureStringFact(key)
+  fun getStringFact(key: String): StringFact {
+    return if(preferences.contains(key)) StringFact(key, preferences.getString(key)) else StringFact(key, "")
   }
 
+	fun getIntFact(key:String):IntFact {
+		return if (preferences.contains(key)) IntFact(key, preferences.getInteger(key)) else IntFact(key, 0)
+	}
+
+	fun getBooleanFact(key:String): BooleanFact {
+		return if (preferences.contains(key)) BooleanFact(key, preferences.getBoolean(key)) else BooleanFact(key, false)
+	}
+
   fun stringForKey(key: String): String {
-    return stringFactForKey(key).value
+    return getStringFact(key).value
   }
 
 	fun save() {

@@ -34,7 +34,7 @@ class Ctx {
   companion object {
     val context = Context()
 
-	  fun getEngine(context: Context) : Engine {
+	  private fun getEngine(context: Context) : Engine {
 		  return Engine().apply {
 			  addSystem(CharacterControlSystem(
 					  inputProcessor = context.inject(),
@@ -50,14 +50,13 @@ class Ctx {
 			  addSystem(PhysicsSystem(context.inject()))
 //			  addSystem(PhysicsDebugSystem())
 			  addSystem(WorldFactsSystem())
-				addSystem(FollowCameraSystem(
-						context.inject<ActorFactory>().addHeroEntity(),
-						context.inject()))
+				addSystem(FollowCameraSystem(context.inject()))
 			}
 	  }
 
     fun buildContext(gameSettings: GameSettings) {
       context.register {
+	      bindSingleton(gameSettings)
 	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default")).apply {
 		      setupInitialFacts()
 	      })
@@ -95,14 +94,15 @@ class Ctx {
 						this.inject(),
 						this.inject()))
 
-	      bindSingleton(getEngine(this))
-
 	      bind { ActorFactory(
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),
 			      this.inject()) }
+
+	      bindSingleton(getEngine(this))
+
 
 	      bindSingleton<IUserInterface>(
 			      UserInterface(

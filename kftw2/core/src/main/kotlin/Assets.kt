@@ -12,6 +12,7 @@ import com.lavaeater.kftw.GameSettings
 import ktx.scene2d.Scene2DSkin
 import ktx.style.skin
 import ktx.style.textButton
+import java.io.Reader
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
@@ -215,5 +216,9 @@ object Assets : Disposable {
   override fun dispose() {
     for (atlas in atlases.values)
       atlas.dispose()
+  }
+
+  fun readerForTree(treeFileName: String): Reader {
+    return Gdx.files.internal("$baseAssetPath/btrees/$treeFileName").reader()
   }
 }

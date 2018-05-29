@@ -28,7 +28,15 @@ class IntFact(override val key: String, override var value: Int) : IFact<Int>
 class BooleanFact(override val key: String, override var value: Boolean) :IFact<Boolean>
 
 class ListFact(override val key: String, override var value: MutableSet<String> = mutableSetOf()) : IListFact<String> {
-  override fun contains(value: String): Boolean {
-    return value.contains(value)
+  override fun contains(v: String): Boolean {
+    return value.contains(v)
   }
+}
+
+fun MutableSet<String>.serializeToString() :String {
+  return this.joinToString("|", "List:")
+}
+
+fun String.toMutableSet() : MutableSet<String> {
+  return this.replace("List:","").split("|").toMutableSet()
 }

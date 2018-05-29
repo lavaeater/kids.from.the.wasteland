@@ -68,15 +68,15 @@ class ConversationManager(
   private fun endConversation(npc: Npc) {
 
     //Add to list of agents player has met
-    factsOfTheWorld.addStringToList(Facts.NpcsPlayerHasMet, npc.id)
+    factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
     //Add to counter of this particular type
     factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
     factsOfTheWorld.clearStringFact(Facts.CurrentNpc)
 
-    if (!factsOfTheWorld.factListForKey(Facts.KnownNames).contains(npc.name)
+    if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
         && currentStory!!.variablesState["guessed_right"] as Int == 1) {
       factsOfTheWorld.addToIntFact(Facts.Score, 1)
-      factsOfTheWorld.addStringToList(Facts.KnownNames, npc.name)
+      factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
     }
 
     currentAgent = null

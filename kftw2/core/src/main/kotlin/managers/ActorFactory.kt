@@ -1,8 +1,9 @@
 package managers
 
+import Assets
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.ai.btree.BehaviorTree
 import com.badlogic.gdx.ai.btree.utils.BehaviorTreeParser
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
@@ -60,13 +61,10 @@ class ActorFactory(
 
   fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
-    val reader = Gdx.files.internal("btrees/townfolk.tree").reader()
-    val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
-    val tree = parser.parse(reader, npc)
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(AiComponent(tree))
+      add(AiComponent(npc.getBehaviorTree()))
       add(NpcComponent(npc))
       add(AgentComponent(npc))
       add(CharacterSpriteComponent("townsfolk"))
@@ -86,13 +84,10 @@ class ActorFactory(
 
     val position = Pair(x,y).tileWorldCenter()
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
-    val reader = if(type == "orc") Gdx.files.internal("btrees/orc.tree").reader() else Gdx.files.internal("btrees/townfolk.tree").reader()
-    val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
-    val tree = parser.parse(reader, npc)
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(AiComponent(tree))
+      add(AiComponent(npc.getBehaviorTree()))
       add(NpcComponent(npc))
       add(AgentComponent(npc))
       add(VisibleComponent())
@@ -137,4 +132,11 @@ class ActorFactory(
       return "${name}_${getNextNpcId()}"
     }
   }
+}
+
+fun Npc.getBehaviorTree() : BehaviorTree<Npc> {
+
+  val reader = if(this.npcType.name == "orc") Assets.readerForTree("orc.tree") else Assets.readerForTree("townfolk.tree")
+  val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
+  return parser.parse(reader, this)
 }
