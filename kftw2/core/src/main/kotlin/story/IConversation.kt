@@ -1,4 +1,4 @@
-package world
+package story
 
 import data.IAgent
 

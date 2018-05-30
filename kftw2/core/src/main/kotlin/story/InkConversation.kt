@@ -1,4 +1,4 @@
-package world
+package story
 
 import com.badlogic.gdx.math.MathUtils
 import com.bladecoder.ink.runtime.Story

@@ -1,4 +1,4 @@
-package managers
+package factory
 
 import Assets
 import com.badlogic.ashley.core.Engine
@@ -16,14 +16,14 @@ import data.Player
 import ktx.math.vec2
 import map.IMapManager
 import map.tileWorldCenter
-import world.FactsOfTheWorld
+import story.FactsOfTheWorld
 
 class ActorFactory(
-    private val engine: Engine,
-    private val mapManager: IMapManager,
-    private val bodyManager: BodyFactory,
-    private val player: Player,
-    private val factsOfTheWorld: FactsOfTheWorld) {
+		private val engine: Engine,
+		private val mapManager: IMapManager,
+		private val bodyManager: BodyFactory,
+		private val player: Player,
+		private val factsOfTheWorld: FactsOfTheWorld) {
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),

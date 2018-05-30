@@ -1,4 +1,4 @@
-package world
+package story
 
 class Fact<T>(val key: String, var value: T) {
   companion object {

@@ -1,4 +1,4 @@
-package world
+package story
 
 import com.bladecoder.ink.runtime.Story
 import data.IAgent

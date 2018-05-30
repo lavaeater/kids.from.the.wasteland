@@ -16,9 +16,9 @@ import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import managers.GameEvents
 import managers.GameState
-import world.Facts
-import world.FactsOfTheWorld
-import world.IConversation
+import story.Facts
+import story.FactsOfTheWorld
+import story.IConversation
 
 class UserInterface(
     private val batch: Batch,

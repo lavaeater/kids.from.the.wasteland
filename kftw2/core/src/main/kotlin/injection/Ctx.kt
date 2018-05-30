@@ -16,6 +16,8 @@ import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.managers.CollisionManager
 import com.lavaeater.kftw.managers.Messages
 import data.Player
+import factory.ActorFactory
+import factory.BodyFactory
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.*
@@ -25,9 +27,9 @@ import map.TileManager
 import systems.*
 import ui.IUserInterface
 import ui.UserInterface
-import world.ConversationManager
-import world.FactsOfTheWorld
-import world.RulesOfTheWorld
+import story.ConversationManager
+import story.FactsOfTheWorld
+import story.RulesOfTheWorld
 
 class Ctx {
 
@@ -94,12 +96,14 @@ class Ctx {
 						this.inject(),
 						this.inject()))
 
-	      bind { ActorFactory(
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject()) }
+	      bind {
+		      ActorFactory(
+				      this.inject(),
+				      this.inject(),
+				      this.inject(),
+				      this.inject(),
+				      this.inject())
+	      }
 
 	      bindSingleton(getEngine(this))
 

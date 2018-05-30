@@ -5,7 +5,7 @@ import com.badlogic.gdx.ai.msg.Telegraph
 import data.Npc
 import injection.Ctx
 import com.lavaeater.kftw.managers.Messages
-import world.ConversationManager
+import story.ConversationManager
 
 class MessageSwitch(private val gameState: GameState): Telegraph {
   private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }

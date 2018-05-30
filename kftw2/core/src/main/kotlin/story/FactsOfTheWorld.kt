@@ -1,4 +1,4 @@
-package world
+package story
 
 class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
   val npcNames = mapOf(

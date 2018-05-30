@@ -5,16 +5,15 @@ import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
 import components.PlayerComponent
 import components.TransformComponent
-import injection.Ctx
-import managers.ActorFactory
+import factory.ActorFactory
 import map.IMapManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
 class MonsterSpawningSystem(
-    val areWeTesting:Boolean,
-    private val actorFactory: ActorFactory,
-    private val mapManager: IMapManager) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+		val areWeTesting:Boolean,
+		private val actorFactory: ActorFactory,
+		private val mapManager: IMapManager) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
 
   var weHaveSpawned = false
   val transformMpr = mapperFor<TransformComponent>()

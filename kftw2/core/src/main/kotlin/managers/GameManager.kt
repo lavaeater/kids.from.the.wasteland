@@ -9,12 +9,13 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
+import factory.ActorFactory
 import map.IMapManager
 import systems.CharacterControlSystem
 import systems.RenderCharactersSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
-import world.FactsOfTheWorld
+import story.FactsOfTheWorld
 
 class GameManager(
     gameSettings: GameSettings,

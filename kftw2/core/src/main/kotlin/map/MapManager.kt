@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import ktx.math.vec2
-import managers.BodyFactory
+import factory.BodyFactory
 import managers.GameManager
 import systems.tileX
 import systems.tileY
