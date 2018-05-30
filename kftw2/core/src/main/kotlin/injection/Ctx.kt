@@ -119,10 +119,6 @@ class Ctx {
 
 	      bindSingleton(ConversationManager(
 			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
 			      this.inject()
 	      ))
 

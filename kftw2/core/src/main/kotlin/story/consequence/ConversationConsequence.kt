@@ -1,7 +1,6 @@
 package story.consequence
 
 import com.bladecoder.ink.runtime.Story
-import com.lavaeater.kftw.GameSettings
 import data.Player
 import injection.Ctx
 import managers.GameEvents
@@ -9,55 +8,33 @@ import managers.GameState
 import story.FactsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InkConversation
-import story.conversation.InkLoader
-import story.fact.Facts
 import story.fact.IFact
 import story.rule.Rule
 
-class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.json"): RetrieveConsequence<Story> {
+class ConversationConsequence (
+    val story: Story,
+    private var afterConversation: (story: Story) -> Unit = {},
+    private var beforeConversation: (story: Story)-> Unit = {}
+    ): Consequence {
 
-  private val basePath by lazy { Ctx.context.inject<GameSettings>().assetBaseDir}
   private val gameState by lazy { Ctx.context.inject<GameState>() }
   private val conversationManager by lazy { Ctx.context.inject<ConversationManager>()}
   private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
   private val player by lazy { Ctx.context.inject<Player>() }
-  private val path by lazy {"$basePath/$storyPath" }
-
 
   override fun apply() {
 
     val npc = factsOfTheWorld.getCurrentNpc()
-    if(npc != null) {//If null something is weird
+    if (npc != null) {//If null something is weird
       gameState.handleEvent(GameEvents.DialogStarted)
-      val story = Story(storyReader.readStoryJson(path))
+
+      beforeConversation(story)
 
       conversationManager.startConversation(InkConversation(story, player, npc), {
-        factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
-        //Add to counter of this particular type
-        factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
-
-        if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
-            && story.variablesState["guessed_right"] as Int == 1) {
-          factsOfTheWorld.addToIntFact(Facts.Score, 1)
-          factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
-        }
+        afterConversation(story)
       })
     }
-    /*
-    factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
-    //Add to counter of this particular type
-    factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
-    factsOfTheWorld.clearStringFact(Facts.CurrentNpc)
-
-    if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
-        && currentStory!!.variablesState["guessed_right"] as Int == 1) {
-      factsOfTheWorld.addToIntFact(Facts.Score, 1)
-      factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
-    }
-     */
-
   }
-
   /*
 
   This is an experiment.
@@ -76,8 +53,4 @@ class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.jso
   override lateinit var rule: Rule
   override lateinit var facts: Set<IFact<*>>
   override val consequenceType = ConsequenceType.ConversationLoader
-  private val storyReader = InkLoader()
-  override fun retrieve(): Story {
-    return Story(storyReader.readStoryJson("$basePath/$storyPath"))
-  }
 }
