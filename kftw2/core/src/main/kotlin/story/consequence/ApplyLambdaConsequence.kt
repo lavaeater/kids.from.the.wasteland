@@ -1,4 +1,7 @@
-package story
+package story.consequence
+
+import story.rule.Rule
+import story.fact.IFact
 
 class ApplyLambdaConsequence(private val applier:(Rule, Set<IFact<*>>)->Unit): ApplyConsequence {
   override lateinit var rule: Rule
@@ -6,13 +9,5 @@ class ApplyLambdaConsequence(private val applier:(Rule, Set<IFact<*>>)->Unit): A
   override val consequenceType = ConsequenceType.ApplyLambdaConsequence
   override fun applyConsequence() {
     applier(rule, facts)
-  }
-}
-
-class ApplyLambdaConsequenceBuilder:Builder<ApplyLambdaConsequence> {
-  var applier: (Rule, Set<IFact<*>>) -> Unit = {_,_ -> }
-
-  override fun build(): ApplyLambdaConsequence {
-    return ApplyLambdaConsequence(applier)
   }
 }

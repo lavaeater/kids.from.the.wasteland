@@ -1,4 +1,4 @@
-package story
+package story.conversation
 
 import com.bladecoder.ink.runtime.Story
 import data.IAgent
@@ -6,6 +6,12 @@ import data.Npc
 import data.Player
 import managers.GameEvents
 import managers.GameState
+import story.fact.Contexts
+import story.FactsOfTheWorld
+import story.RulesOfTheWorld
+import story.consequence.ConsequenceType
+import story.consequence.ConversationConsequence
+import story.fact.Facts
 import ui.IUserInterface
 
 
@@ -85,9 +91,3 @@ class ConversationManager(
   }
 }
 
-enum class ConsequenceType {
-  ConversationLoader,
-  ApplyFactsConsequence,
-  ApplyLambdaConsequence,
-  Empty
-}

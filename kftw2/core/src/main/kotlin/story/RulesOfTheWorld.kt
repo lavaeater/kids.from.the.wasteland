@@ -1,5 +1,7 @@
 package story
 
+import story.rule.Rule
+
 class RulesOfTheWorld {
 	private val rulesOfTheWorld = mutableMapOf<String, Rule>()
 
@@ -13,12 +15,6 @@ class RulesOfTheWorld {
 
 	fun findRuleByName(name:String) : Rule? {
 		return rulesOfTheWorld[name]
-	}
-
-	fun setupRules() {
-		addRule(Rule("FirstMeetingWithNPC", mutableListOf(
-				Criterion.context(Contexts.MetNpc)),
-				ConversationConsequence("conversations/beamon_memory.ink.json")))
 	}
 
 	val rules : Set<Rule> get() { return rulesOfTheWorld.values.toSet() }

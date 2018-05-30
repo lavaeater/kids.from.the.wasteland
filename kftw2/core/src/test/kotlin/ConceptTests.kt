@@ -5,8 +5,8 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
-import story.Contexts
-import story.Facts
+import story.fact.Contexts
+import story.fact.Facts
 import story.FactsOfTheWorld
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

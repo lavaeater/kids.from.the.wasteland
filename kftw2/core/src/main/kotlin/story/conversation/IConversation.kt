@@ -1,4 +1,4 @@
-package story
+package story.conversation
 
 import data.IAgent
 

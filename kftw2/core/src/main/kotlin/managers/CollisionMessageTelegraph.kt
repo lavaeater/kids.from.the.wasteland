@@ -4,7 +4,7 @@ import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.ai.msg.Telegraph
 import data.Npc
 import injection.Ctx
-import story.ConversationManager
+import story.conversation.ConversationManager
 
 
 /**

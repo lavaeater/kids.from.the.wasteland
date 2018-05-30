@@ -1,8 +1,11 @@
-package story
+package story.consequence
 
 import com.bladecoder.ink.runtime.Story
 import com.lavaeater.kftw.GameSettings
 import injection.Ctx
+import story.conversation.InkLoader
+import story.rule.Rule
+import story.fact.IFact
 
 class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.json"): RetrieveConsequence<Story> {
 	private val basePath by lazy { Ctx.context.inject<GameSettings>().assetBaseDir}
@@ -13,12 +16,4 @@ class ConversationConsequence(private val storyPath:String = "ink/dialog.ink.jso
   override fun retrieve(): Story {
     return Story(storyReader.readStoryJson("$basePath/$storyPath"))
   }
-}
-
-class ConversationConsequenceBuilder : Builder<ConversationConsequence> {
-  var storyPath: String = ""
-  override fun build(): ConversationConsequence {
-    return ConversationConsequence(storyPath)
-  }
-
 }

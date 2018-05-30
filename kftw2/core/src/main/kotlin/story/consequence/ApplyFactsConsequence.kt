@@ -1,6 +1,9 @@
-package story
+package story.consequence
 
 import injection.Ctx
+import story.FactsOfTheWorld
+import story.rule.Rule
+import story.fact.IFact
 
 class ApplyFactsConsequence(val factsMap: Map<String, (IFact<*>)->Unit>) : ApplyConsequence {
   override lateinit var rule: Rule

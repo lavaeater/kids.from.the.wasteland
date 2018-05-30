@@ -1,9 +1,10 @@
-package story
+package story.conversation
 
 import com.badlogic.gdx.math.MathUtils
 import com.bladecoder.ink.runtime.Story
 import data.IAgent
 import injection.Ctx
+import story.FactsOfTheWorld
 
 class InkConversation(val story:Story, override val protagonist: IAgent, override val antagonist: IAgent) : IConversation {
   private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
@@ -108,7 +109,7 @@ class InkConversation(val story:Story, override val protagonist: IAgent, overrid
     story.variablesState["name_guess_1"] = if(correctIndex == 1) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size -1))
     story.variablesState["name_guess_2"] = if(correctIndex == 2) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size -1))
     //Query the global facts to see if we have met before:
-    story.variablesState["met_before"] = factsOfTheWorld.getFactList(Facts.NpcsPlayerHasMet).contains(antagonist.id)
+    story.variablesState["met_before"] = factsOfTheWorld.getFactList(story.fact.Facts.NpcsPlayerHasMet).contains(antagonist.id)
   }
   override val antagonistCanSpeak: Boolean
     get() = story.canContinue()

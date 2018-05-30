@@ -1,4 +1,7 @@
-package story
+package story.consequence
+
+import story.rule.Rule
+import story.fact.IFact
 
 interface Consequence {
   var rule: Rule

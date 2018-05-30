@@ -1,5 +1,9 @@
 package story
 
+import injection.Ctx
+import story.fact.Facts
+import story.rule.Rule
+
 
 /**
  * A "story" in the game.
@@ -39,102 +43,34 @@ package story
  * class that handles messages
  *
  */
-class Story(val name:String, val rules: Set<Rule>)
+data class Story(val name:String, val rules: List<Rule>)
 
-interface Builder<out T> {
-	fun build(): T
-}
+class StoryManager {
+	private val stories = mutableSetOf<Story>()
+	val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
 
-class StoryBuilder: Builder<Story> {
-	var name = ""
-	private val rules = mutableSetOf<Rule>()
-
-	fun rule(block: RuleBuilder.() -> Unit) {
-		rules.add(RuleBuilder().apply(block).build())
+	fun addStory(story:Story) {
+		stories.add(story)
 	}
 
-	override fun build() : Story = Story(name, rules)
-}
-
-class CriteriaBuilder:Builder<Criterion> {
-	var key = ""
-	var matcher: (IFact<*>) -> Boolean = { false }
-	/*
-	val key: String, private val matcher: (IFact<*>) -> Boolean
-	 */
-
-	override fun build(): Criterion {
-		return Criterion(key, matcher)
-	}
-
-}
-
-class RuleBuilder:Builder<Rule> {
-	var name = ""
-	private val criteria = mutableSetOf<Criterion>()
-	var consequence: Consequence? = null
-
-	fun criterion(block: CriteriaBuilder.() -> Unit) {
-		criteria.add(CriteriaBuilder().apply(block).build())
-	}
-
-	fun booleanCriteria(key: String, checkFor:Boolean) {
-		criteria.add(Criterion.booleanCriterion(key, checkFor))
-	}
-
-	fun <T> equalsCriterion(key: String, value: T) {
-		criteria.add(Criterion.equalsCriterion(key, value))
-	}
-	fun rangeCriterion(key: String, range: IntRange) {
-		criteria.add(Criterion.rangeCriterion(key, range))
-	}
-
-	fun containsCriterion(key: String, value: String) {
-		criteria.add(Criterion.containsCriterion(key, value))
-	}
-	fun listContainsFact(key:String, contextKey:String) {
-		criteria.add(Criterion.listContainsFact(key, contextKey))
-	}
-
-	fun listDoesNotContainFact(key:String, contextKey:String) {
-		criteria.add(Criterion.listDoesNotContainFact(key, contextKey))
-	}
-
-	fun context(context: String) {
-		criteria.add(Criterion.context(context))
-	}
-
-	fun notContainsCriterion(key: String, value: String) {
-		criteria.add(Criterion.notContainsCriterion(key, value))
-	}
-
-	fun applyLambdaConsequence(block: ApplyLambdaConsequenceBuilder.() -> Unit) {
-		consequence = ApplyLambdaConsequenceBuilder().apply(block).build()
-	}
-
-	fun conversation(block: ConversationConsequenceBuilder.() -> Unit) {
-		consequence = ConversationConsequenceBuilder().apply(block).build()
-	}
-
-	override fun build(): Rule {
-		if(consequence == null)
-			throw IllegalStateException("You must define a consequence for a rule")
-		return Rule(name, criteria, consequence!!)
-	}
-
-}
-
-fun story(block: StoryBuilder.() -> Unit) = StoryBuilder().apply(block).build()
-
-object TEST {
-	val testStory = story {
-		name = "FindTheCheerLeader"
-		rule {
-			name = "HasCheerLeaderBeenFound"
-			containsCriterion(Facts.NpcsPlayerHasMet, "Cheerleader")
-			conversation {
-				storyPath ="Someinkfile"
+	init {
+		addStory(story {
+			name = "MetAllTheEmployees"
+			rule {
+				name = "WhenMeetingNpcStartConversation"
+				context("MetNpc")
+				conversation {
+					storyPath = "conversations/beamon_memory.ink.json"
+				}
 			}
-		}
+			rule {
+				name = "CheckIfScoreIsFour"
+				equalsCriterion(Facts.Score, 4)
+				applyLambdaConsequence {
+					applier = {r, f -> }
+
+				}
+			}
+		})
 	}
 }

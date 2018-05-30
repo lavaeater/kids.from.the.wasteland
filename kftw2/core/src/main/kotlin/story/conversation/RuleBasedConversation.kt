@@ -1,6 +1,7 @@
-package story
+package story.conversation
 
 import data.IAgent
+import story.rule.Rule
 
 class RuleBasedConversation : IConversation {
   val rules = mutableSetOf<Rule>()

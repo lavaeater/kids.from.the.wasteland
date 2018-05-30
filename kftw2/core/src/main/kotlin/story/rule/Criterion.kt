@@ -1,6 +1,9 @@
-package story
+package story.rule
 
 import injection.Ctx
+import story.FactsOfTheWorld
+import story.fact.Facts
+import story.fact.IFact
 
 class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
   fun isMatch(fact: IFact<*>):Boolean {
@@ -26,7 +29,7 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
       })
     }
 
-    fun containsCriterion(key: String, value: String) :Criterion {
+    fun containsCriterion(key: String, value: String) : Criterion {
       return Criterion(key, {
         val factList = factsOfTheWorld.getFactList(key)
         factList.contains(value)
@@ -36,7 +39,7 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
     fun listContainsFact(key:String, contextKey:String): Criterion {
       return Criterion(key, {
         val contextValue = factsOfTheWorld.stringForKey(contextKey)
-           factsOfTheWorld.getFactList(key).contains(contextValue)
+        factsOfTheWorld.getFactList(key).contains(contextValue)
       })
     }
 
@@ -48,8 +51,8 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
     }
 
     fun context(context: String) : Criterion {
-      return Criterion(Facts.Context, {
-        fact -> fact.value == context
+      return Criterion(Facts.Context, { fact ->
+        fact.value == context
       })
     }
 

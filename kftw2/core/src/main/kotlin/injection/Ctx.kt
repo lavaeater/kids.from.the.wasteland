@@ -27,7 +27,7 @@ import map.TileManager
 import systems.*
 import ui.IUserInterface
 import ui.UserInterface
-import story.ConversationManager
+import story.conversation.ConversationManager
 import story.FactsOfTheWorld
 import story.RulesOfTheWorld
 
@@ -116,12 +116,12 @@ class Ctx {
 					      this.inject()))
 
 	      bindSingleton(ConversationManager(
-						this.inject(),
-						this.inject(),
-						this.inject(),
+			      this.inject(),
+			      this.inject(),
+			      this.inject(),
 			      this.inject(),
 			      this.inject()
-				))
+	      ))
 
 	      bindSingleton(GameManager(
 		        gameSettings,

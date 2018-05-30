@@ -1,5 +1,8 @@
 package story
 
+import story.fact.*
+import story.rule.Rule
+
 class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
   val npcNames = mapOf(
       1 to "Ulrica Wikren",
@@ -142,7 +145,7 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
     return if(preferences.contains(key)) StringFact(key, preferences.getString(key)) else StringFact(key, "")
   }
 
-	fun getIntFact(key:String):IntFact {
+	fun getIntFact(key:String): IntFact {
 		return if (preferences.contains(key)) IntFact(key, preferences.getInteger(key)) else IntFact(key, 0)
 	}
 

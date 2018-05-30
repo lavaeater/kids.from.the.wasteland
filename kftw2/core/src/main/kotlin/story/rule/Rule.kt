@@ -1,4 +1,8 @@
-package story
+package story.rule
+
+import story.consequence.Consequence
+import story.consequence.EmptyConsequence
+import story.fact.IFact
 
 class Rule(var name: String = "",
            private val criteria: MutableCollection<Criterion> = mutableListOf(),
