@@ -3,12 +3,13 @@ package story
 import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
 import story.fact.Facts
+import ui.IUserInterface
 
 class StoryManager {
 	private val stories  = mutableListOf<Story>()
 	private val finishedStories = mutableListOf<Story>()
 	//val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
-	val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
 	fun checkStories() {
 		val story = stories.first { it.active } //just grab the first active story - null  check later
@@ -38,9 +39,9 @@ class StoryManager {
 		addStory(story {
 			name = "MeetAllTheEmployees"
 			consequence {
-				applier = { r, f ->
-					//Just stop right here
-					val s = "s"
+				apply = {
+					if(factsOfTheWorld.getBooleanFact(Facts.GameWon).value)
+						Ctx.context.inject<IUserInterface>().showSplashScreen()
 				}
 			}
 			rule {
@@ -174,9 +175,12 @@ class StoryManager {
 			rule {
 				name = "CheckIfScoreIsFour"
 				equalsCriterion(Facts.Score, 4)
-				applyLambdaConsequence {
-					applier = { r, f -> }
-
+				consequence {
+					apply  = {
+						factsOfTheWorld.stateBoolFact(Facts.GameWon, true)
+						val prop by lazy { Ctx.context.inject<IUserInterface>() }
+						prop.showSplashScreen()
+					}
 				}
 			}
 		})

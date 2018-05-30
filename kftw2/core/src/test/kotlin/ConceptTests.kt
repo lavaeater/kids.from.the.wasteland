@@ -154,7 +154,7 @@ class ConceptTests {
 //				Criterion.booleanCriterion(Facts.FoundKey, true),
 //				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
 //				Criterion.rangeCriterion(Facts.MetOrcs, 8..12),
-//				Criterion.context(Contexts.MetNpc)), ApplyLambdaConsequence{r, f ->  consequenceHappened = "${r.name }"})
+//				Criterion.context(Contexts.MetNpc)), SimpleConsequence{r, f ->  consequenceHappened = "${r.name }"})
 //
 //		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule))
 //    (result.first().consequence as ApplyConsequence).applyConsequence()

@@ -2,20 +2,20 @@ package story
 
 import com.lavaeater.kftw.GameSettings
 import injection.Ctx
-import story.consequence.ApplyLambdaConsequence
 import story.consequence.Consequence
 import story.consequence.ConversationConsequence
 import story.consequence.EmptyConsequence
+import story.consequence.SimpleConsequence
 import story.conversation.InkLoader
 import story.fact.IFact
 import story.rule.Criterion
 import story.rule.Rule
 
-class ApplyLambdaConsequenceBuilder: Builder<ApplyLambdaConsequence> {
-  var applier: (Rule, Set<IFact<*>>) -> Unit = { _, _ -> }
+class ConsequenceBuilder: Builder<Consequence> {
+	var apply: () -> Unit = {}
 
-  override fun build(): ApplyLambdaConsequence {
-    return ApplyLambdaConsequence(applier)
+  override fun build(): SimpleConsequence {
+    return SimpleConsequence(apply)
   }
 }
 
@@ -50,8 +50,8 @@ class StoryBuilder: Builder<Story> {
 		rules.add(RuleBuilder().apply(block).build())
 	}
 
-	fun consequence(block: ApplyLambdaConsequenceBuilder.() -> Unit) {
-		consequence = ApplyLambdaConsequenceBuilder().apply(block).build()
+	fun consequence(block: ConsequenceBuilder.() -> Unit) {
+		consequence = ConsequenceBuilder().apply(block).build()
 	}
 
 	override fun build() : Story = Story(name, rules, consequence)
@@ -109,8 +109,8 @@ class RuleBuilder:Builder<Rule> {
 		criteria.add(Criterion.notContainsCriterion(key, value))
 	}
 
-	fun applyLambdaConsequence(block: ApplyLambdaConsequenceBuilder.() -> Unit) {
-		consequence = ApplyLambdaConsequenceBuilder().apply(block).build()
+	fun consequence(block: ConsequenceBuilder.() -> Unit) {
+		consequence = ConsequenceBuilder().apply(block).build()
 	}
 
 	fun conversation(block: ConversationConsequenceBuilder.() -> Unit) {

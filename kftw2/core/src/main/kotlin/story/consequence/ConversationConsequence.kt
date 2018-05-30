@@ -32,6 +32,7 @@ class ConversationConsequence (
 
       conversationManager.startConversation(InkConversation(story, player, npc), {
         afterConversation(story)
+        story.resetState()
       })
     }
   }

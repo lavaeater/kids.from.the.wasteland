@@ -88,7 +88,6 @@ class Ctx {
 								      Messages.PlayerMetSomeone,
 								      Messages.StoryCompleted)
 					      })
-	      bindSingleton(StoryManager())
 
 	      bindSingleton(createWorld().apply {
 		      setContactListener(CollisionListener(this@register.inject()))
@@ -121,6 +120,8 @@ class Ctx {
 			      this.inject(),
 			      this.inject()
 	      ))
+
+	      bindSingleton(StoryManager())
 
 	      bindSingleton(GameManager(
 		        gameSettings,

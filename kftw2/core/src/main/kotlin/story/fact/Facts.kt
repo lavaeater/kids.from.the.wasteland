@@ -13,5 +13,6 @@ class Facts {
     const val CurrentNpcName = "CurrentNpcName"
     const val Score = "Score"
     const val KnownNames = "KnownNames"
+	  const val GameWon = "GameWon"
   }
 }
