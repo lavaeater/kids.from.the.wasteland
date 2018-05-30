@@ -6,7 +6,7 @@ import story.fact.Facts
 class StoryManager {
 	private val stories  = mutableListOf<Story>()
 	private val finishedStories = mutableListOf<Story>()
-	val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
+	//val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
 	val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
 	fun checkStories() {

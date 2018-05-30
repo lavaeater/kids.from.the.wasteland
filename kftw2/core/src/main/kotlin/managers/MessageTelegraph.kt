@@ -4,7 +4,9 @@ import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.ai.msg.Telegraph
 import data.Npc
+import injection.Ctx
 import story.FactsOfTheWorld
+import story.StoryManager
 import story.fact.Contexts
 import story.fact.Facts
 
@@ -20,23 +22,27 @@ import story.fact.Facts
  *
  * This makes it easire to contain their responsibilities.
  */
-class EncounterTelegraph(
-    private val factsOfTheWorld: FactsOfTheWorld,
-    private val messageDispatcher: MessageDispatcher): Telegraph {
+class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph {
+
+  private val messageDispatcher by lazy { Ctx.context.inject<MessageDispatcher>() }
+
+  private val storyManager by lazy { Ctx.context.inject<StoryManager>() }
+
   override fun handleMessage(msg: Telegram): Boolean {
-    if(msg.message !in EncounterMessages.validRange) return true
+    if(msg.message !in Messages.validRange) throw IllegalArgumentException("Message id ${msg.message} not in valid range ${Messages.validRange}")
     when(msg.message) {
-      EncounterMessages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
-      EncounterMessages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
-      EncounterMessages.EncounterOver -> encounterOver()
+      Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
+      Messages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
+      Messages.EncounterOver -> encounterOver()
+      Messages.FactsUpdated -> storyManager.checkStories() //this method will trigger all stories to check if their rules have passed, for instance
+      Messages.StoryCompleted -> return true //this method will trigger the "story ended" thingie related to a story... ending. Might not be relevant
     }
     return true
   }
 
   private fun encounterOver() {
-    factsOfTheWorld
     factsOfTheWorld.clearFacts(setOf(Facts.Context, Facts.CurrentNpc, Facts.CurrentNpcName))
-    messageDispatcher.dispatchMessage(StoryMessages.FactsUpdated)
+    messageDispatcher.dispatchMessage(Messages.FactsUpdated)
   }
 
   private fun playerEncounteredNpc(npc: Npc): Boolean {
@@ -50,7 +56,7 @@ class EncounterTelegraph(
     factsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
     factsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
     factsOfTheWorld.stateStringFact(Facts.CurrentNpcName, npc.name)
-    messageDispatcher.dispatchMessage(StoryMessages.FactsUpdated)
+    messageDispatcher.dispatchMessage(Messages.FactsUpdated)
     return true
   }
 
