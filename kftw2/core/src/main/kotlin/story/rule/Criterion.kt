@@ -23,6 +23,24 @@ class Criterion(val key: String, private val matcher: (IFact<*>) -> Boolean) {
       })
     }
 
+    fun <T> notEqualsCriterion(key: String, value: T): Criterion {
+      return Criterion(key, {
+        it.value != value
+      })
+    }
+
+    fun lessThanCriterion(key: String, value: Int) : Criterion {
+      return Criterion(key, {
+        (it.value as Int) < value
+      })
+    }
+
+    fun moreThanCriterion(key: String, value: Int) : Criterion {
+      return Criterion(key, {
+        (it.value as Int) > value
+      })
+    }
+
     fun rangeCriterion(key: String, range: IntRange): Criterion {
       return Criterion(key, {
         it.value in range

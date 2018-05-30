@@ -3,6 +3,7 @@ package story
 import story.consequence.ApplyLambdaConsequence
 import story.consequence.Consequence
 import story.consequence.ConversationConsequence
+import story.consequence.EmptyConsequence
 import story.fact.IFact
 import story.rule.Criterion
 import story.rule.Rule
@@ -31,12 +32,17 @@ interface Builder<out T> {
 class StoryBuilder: Builder<Story> {
 	var name = ""
 	private val rules = mutableListOf<Rule>()
+	private var consequence: Consequence = EmptyConsequence()
 
 	fun rule(block: RuleBuilder.() -> Unit) {
 		rules.add(RuleBuilder().apply(block).build())
 	}
 
-	override fun build() : Story = Story(name, rules)
+	fun consequence(block: ApplyLambdaConsequenceBuilder.() -> Unit) {
+		consequence = ApplyLambdaConsequenceBuilder().apply(block).build()
+	}
+
+	override fun build() : Story = Story(name, rules, consequence)
 }
 
 class CriteriaBuilder:Builder<Criterion> {

@@ -1,7 +1,6 @@
 package story
 
-import injection.Ctx
-import story.fact.Facts
+import story.consequence.Consequence
 import story.rule.Rule
 
 
@@ -43,34 +42,8 @@ import story.rule.Rule
  * class that handles messages
  *
  */
-data class Story(val name:String, val rules: List<Rule>)
+class Story(val name:String, val rules: List<Rule>, val consequence: Consequence, var active: Boolean = true) {
+	val finishedRules = mutableSetOf<String>()
 
-class StoryManager {
-	private val stories = mutableSetOf<Story>()
-	val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
-
-	fun addStory(story:Story) {
-		stories.add(story)
-	}
-
-	init {
-		addStory(story {
-			name = "MetAllTheEmployees"
-			rule {
-				name = "WhenMeetingNpcStartConversation"
-				context("MetNpc")
-				conversation {
-					storyPath = "conversations/beamon_memory.ink.json"
-				}
-			}
-			rule {
-				name = "CheckIfScoreIsFour"
-				equalsCriterion(Facts.Score, 4)
-				applyLambdaConsequence {
-					applier = {r, f -> }
-
-				}
-			}
-		})
-	}
+	val storyFinished:Boolean get() = finishedRules.containsAll(rules.map { it.name })
 }

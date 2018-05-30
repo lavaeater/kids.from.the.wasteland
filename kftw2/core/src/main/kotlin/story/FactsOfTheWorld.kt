@@ -1,5 +1,7 @@
 package story
 
+import data.Npc
+import factory.ActorFactory
 import story.fact.*
 import story.rule.Rule
 
@@ -159,6 +161,20 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 
 	fun save() {
 		preferences.flush()
+	}
+
+	/**
+	 * Do not clear list keys, the entire list will disappear...
+	 */
+	fun clearFacts(facts: Set<String>) {
+		for (key in facts) {
+			preferences.remove(key)
+		}
+	}
+
+	fun getCurrentNpc(): Npc? {
+		val npcId = getStringFact(Facts.CurrentNpc).value
+		return ActorFactory.npcByKeys[npcId]
 	}
 }
 

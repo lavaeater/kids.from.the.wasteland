@@ -1,10 +1,11 @@
 package managers
 
-class CollisionMessages {
+class EncounterMessages {
   companion object {
     val validRange = 1001..2000
     val CollidedWithImpassibleTerrain = 1001
     val PlayerMetSomeone = 1002
+    val EncounterOver = 1003
   }
 }
 

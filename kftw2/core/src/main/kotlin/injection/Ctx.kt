@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
 import managers.CollisionListener
-import managers.CollisionMessages
+import managers.EncounterMessages
 import data.Player
 import factory.ActorFactory
 import factory.BodyFactory
@@ -79,13 +79,13 @@ class Ctx {
 				      this.inject())
 	      }
 
-	      bindSingleton<Telegraph>(CollisionMessageTelegraph(this.inject()))
+	      bindSingleton<Telegraph>(EncounterTelegraph(this.inject()))
 
 	      bindSingleton<MessageDispatcher>(
 			      com.badlogic.gdx.ai.msg.MessageManager
 					      .getInstance().apply {
-						      addListener(this@register.inject(), CollisionMessages.CollidedWithImpassibleTerrain)
-						      addListener(this@register.inject(), CollisionMessages.PlayerMetSomeone)
+						      addListener(this@register.inject(), EncounterMessages.CollidedWithImpassibleTerrain)
+						      addListener(this@register.inject(), EncounterMessages.PlayerMetSomeone)
 					      })
 
 	      bindSingleton(createWorld().apply {

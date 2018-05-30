@@ -31,6 +31,8 @@ class ActorFactory(
       "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
       "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
+
+
   fun addTownsFolk() {
 
     val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
@@ -57,10 +59,13 @@ class ActorFactory(
 
     val startPosition = startTiles[MathUtils.random(0, startTiles.size - 1)]
     return addNpcEntityAt(name, type, startPosition)
+
   }
 
   fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
+
+    npcByKeys[npc.id] = npc
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
@@ -84,6 +89,7 @@ class ActorFactory(
 
     val position = Pair(x,y).tileWorldCenter()
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
+    npcByKeys[npc.id] = npc
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
@@ -123,6 +129,7 @@ class ActorFactory(
   }
 
   companion object {
+    val npcByKeys = mutableMapOf<String, Npc>()
     var npcIds: Int = 0
     fun getNextNpcId():Int {
       return npcIds++

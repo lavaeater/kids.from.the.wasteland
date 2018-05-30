@@ -37,7 +37,7 @@ class CollisionListener(private val messageDispatcher: MessageDispatcher) : Cont
     //Check the userData of the body, it's either an NPC; then it needs a message!
     val ud = dynamicBody.userData
     when (ud) {
-      is Npc -> messageDispatcher.dispatchMessage(CollisionMessages.CollidedWithImpassibleTerrain, ud)
+      is Npc -> messageDispatcher.dispatchMessage(EncounterMessages.CollidedWithImpassibleTerrain, ud)
     }
   }
 
@@ -46,7 +46,7 @@ class CollisionListener(private val messageDispatcher: MessageDispatcher) : Cont
         contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) {
       if (contact.fixtureA.body.userData is Player || contact.fixtureB.body.userData is Player) {
         val npc = if (contact.fixtureA.body.userData is Npc) contact.fixtureA.body.userData as Npc else contact.fixtureB.body.userData as Npc
-        messageDispatcher.dispatchMessage(CollisionMessages.PlayerMetSomeone, npc)
+        messageDispatcher.dispatchMessage(EncounterMessages.PlayerMetSomeone, npc)
       }
       return true
     }
