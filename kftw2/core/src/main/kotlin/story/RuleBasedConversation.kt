@@ -24,16 +24,4 @@ class RuleBasedConversation : IConversation {
   override fun makeChoice(index: Int): Boolean {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
-
-  fun buildConvo():RuleBasedConversation {
-    return conversation {
-
-    }
-  }
-}
-
-fun conversation(init: RuleBasedConversation.()-> Unit) : RuleBasedConversation {
-  val conversation = RuleBasedConversation()
-  conversation.init()
-  return conversation
 }

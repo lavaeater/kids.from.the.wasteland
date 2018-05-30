@@ -1,11 +1,11 @@
-package com.lavaeater.kftw.managers
+package managers
 
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
 import data.Npc
 import data.Player
 
-class CollisionManager(private val messageDispatcher: MessageDispatcher) : ContactListener {
+class CollisionListener(private val messageDispatcher: MessageDispatcher) : ContactListener {
 
   override fun postSolve(contact: Contact?, impulse: ContactImpulse?) {
 
@@ -37,7 +37,7 @@ class CollisionManager(private val messageDispatcher: MessageDispatcher) : Conta
     //Check the userData of the body, it's either an NPC; then it needs a message!
     val ud = dynamicBody.userData
     when (ud) {
-      is Npc -> messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, ud)
+      is Npc -> messageDispatcher.dispatchMessage(CollisionMessages.CollidedWithImpassibleTerrain, ud)
     }
   }
 
@@ -46,7 +46,7 @@ class CollisionManager(private val messageDispatcher: MessageDispatcher) : Conta
         contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) {
       if (contact.fixtureA.body.userData is Player || contact.fixtureB.body.userData is Player) {
         val npc = if (contact.fixtureA.body.userData is Npc) contact.fixtureA.body.userData as Npc else contact.fixtureB.body.userData as Npc
-        messageDispatcher.dispatchMessage(Messages.PlayerMetSomeone, npc)
+        messageDispatcher.dispatchMessage(CollisionMessages.PlayerMetSomeone, npc)
       }
       return true
     }

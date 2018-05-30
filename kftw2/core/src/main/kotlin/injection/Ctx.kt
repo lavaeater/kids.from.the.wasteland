@@ -13,8 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.managers.CollisionManager
-import com.lavaeater.kftw.managers.Messages
+import managers.CollisionListener
+import managers.CollisionMessages
 import data.Player
 import factory.ActorFactory
 import factory.BodyFactory
@@ -79,17 +79,17 @@ class Ctx {
 				      this.inject())
 	      }
 
-	      bindSingleton<Telegraph>(MessageSwitch(this.inject()))
+	      bindSingleton<Telegraph>(CollisionMessageTelegraph(this.inject()))
 
 	      bindSingleton<MessageDispatcher>(
 			      com.badlogic.gdx.ai.msg.MessageManager
 					      .getInstance().apply {
-						      addListener(this@register.inject(), Messages.CollidedWithImpassibleTerrain)
-						      addListener(this@register.inject(), Messages.PlayerMetSomeone)
+						      addListener(this@register.inject(), CollisionMessages.CollidedWithImpassibleTerrain)
+						      addListener(this@register.inject(), CollisionMessages.PlayerMetSomeone)
 					      })
 
 	      bindSingleton(createWorld().apply {
-		      setContactListener(CollisionManager(this@register.inject()))
+		      setContactListener(CollisionListener(this@register.inject()))
 	      })
         bindSingleton(BodyFactory(this.inject()))
         bindSingleton<IMapManager>(MapManager(
