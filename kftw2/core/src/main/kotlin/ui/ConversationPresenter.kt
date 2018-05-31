@@ -17,7 +17,7 @@ import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import ktx.scene2d.textButton
-import world.IConversation
+import story.conversation.IConversation
 
 class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)

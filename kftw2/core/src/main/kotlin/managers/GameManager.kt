@@ -9,12 +9,13 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
+import factory.ActorFactory
 import map.IMapManager
+import story.FactsOfTheWorld
 import systems.CharacterControlSystem
 import systems.RenderCharactersSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
-import world.FactsOfTheWorld
 
 class GameManager(
     gameSettings: GameSettings,
@@ -47,10 +48,10 @@ class GameManager(
 
   private fun setupSystems() {
 //    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
-    addBeamonPeople()
+    addEmployees()
   }
 
-  private fun addBeamonPeople() {
+  private fun addEmployees() {
 
     /*
     Could be moved to some kind of init class or something, so the game manager manages a

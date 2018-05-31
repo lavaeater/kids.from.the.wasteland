@@ -1,14 +1,13 @@
 package systems
 
+import Assets
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
-import Assets
 import components.CharacterSpriteComponent
 import components.TransformComponent
 import components.VisibleComponent
-import injection.Ctx
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
@@ -54,7 +53,7 @@ class RenderCharactersSystem(private val batch:Batch) :
 
     batch.draw(sprite,
         sprite.x,
-        sprite.y,
+        sprite.y - sprite.height / 5,
         0f,
         0f,
         sprite.width,

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils
 import components.TransformComponent
 import injection.Ctx
 import ktx.ashley.mapperFor
-import managers.ActorFactory
+import factory.ActorFactory
 
 class FollowCameraSystem(private val camera:Camera) : EntitySystem(300) {
 	private val trackedEntity by lazy { Ctx.context.inject<ActorFactory>().addHeroEntity() }

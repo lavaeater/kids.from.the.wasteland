@@ -5,9 +5,9 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
-import world.Contexts
-import world.Facts
-import world.FactsOfTheWorld
+import story.fact.Contexts
+import story.fact.Facts
+import story.FactsOfTheWorld
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -154,7 +154,7 @@ class ConceptTests {
 //				Criterion.booleanCriterion(Facts.FoundKey, true),
 //				Criterion.containsCriterion(Facts.VisitedPlaces, "Berlin"),
 //				Criterion.rangeCriterion(Facts.MetOrcs, 8..12),
-//				Criterion.context(Contexts.MetNpc)), ApplyLambdaConsequence{r, f ->  consequenceHappened = "${r.name }"})
+//				Criterion.context(Contexts.MetNpc)), SimpleConsequence{r, f ->  consequenceHappened = "${r.name }"})
 //
 //		val result = FactsOfTheWorld.rulesThatPass(setOf(passRule))
 //    (result.first().consequence as ApplyConsequence).applyConsequence()

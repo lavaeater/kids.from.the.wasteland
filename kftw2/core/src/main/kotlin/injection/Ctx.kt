@@ -13,21 +13,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
-import com.lavaeater.kftw.managers.CollisionManager
-import com.lavaeater.kftw.managers.Messages
 import data.Player
+import factory.ActorFactory
+import factory.BodyFactory
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.*
 import map.IMapManager
 import map.MapManager
 import map.TileManager
+import story.FactsOfTheWorld
+import story.RulesOfTheWorld
+import story.StoryManager
+import story.conversation.ConversationManager
 import systems.*
 import ui.IUserInterface
 import ui.UserInterface
-import world.ConversationManager
-import world.FactsOfTheWorld
-import world.RulesOfTheWorld
 
 class Ctx {
 
@@ -60,9 +61,7 @@ class Ctx {
 	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default")).apply {
 		      setupInitialFacts()
 	      })
-	      bindSingleton(RulesOfTheWorld().apply {
-		      setupRules()
-	      })
+	      bindSingleton(RulesOfTheWorld()) //Might be pointless
 	      bindSingleton(GameState())
         bindSingleton<InputProcessor>(InputMultiplexer())
         bindSingleton(TileManager())
@@ -77,29 +76,35 @@ class Ctx {
 				      this.inject())
 	      }
 
-	      bindSingleton<Telegraph>(MessageSwitch(this.inject()))
+	      bindSingleton<Telegraph>(MessageTelegraph(this.inject()))
 
 	      bindSingleton<MessageDispatcher>(
 			      com.badlogic.gdx.ai.msg.MessageManager
 					      .getInstance().apply {
-						      addListener(this@register.inject(), Messages.CollidedWithImpassibleTerrain)
-						      addListener(this@register.inject(), Messages.PlayerMetSomeone)
+						      addListeners(this@register.inject(),
+								      Messages.CollidedWithImpassibleTerrain,
+								      Messages.EncounterOver,
+								      Messages.FactsUpdated,
+								      Messages.PlayerMetSomeone,
+								      Messages.StoryCompleted)
 					      })
 
 	      bindSingleton(createWorld().apply {
-		      setContactListener(CollisionManager(this@register.inject()))
+		      setContactListener(CollisionListener(this@register.inject()))
 	      })
         bindSingleton(BodyFactory(this.inject()))
         bindSingleton<IMapManager>(MapManager(
 						this.inject(),
 						this.inject()))
 
-	      bind { ActorFactory(
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject(),
-			      this.inject()) }
+	      bind {
+		      ActorFactory(
+				      this.inject(),
+				      this.inject(),
+				      this.inject(),
+				      this.inject(),
+				      this.inject())
+	      }
 
 	      bindSingleton(getEngine(this))
 
@@ -112,12 +117,11 @@ class Ctx {
 					      this.inject()))
 
 	      bindSingleton(ConversationManager(
-						this.inject(),
-						this.inject(),
-						this.inject(),
 			      this.inject(),
 			      this.inject()
-				))
+	      ))
+
+	      bindSingleton(StoryManager())
 
 	      bindSingleton(GameManager(
 		        gameSettings,
