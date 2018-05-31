@@ -145,6 +145,9 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 
 	  if(!preferences.contains(Facts.Score))
 		  stateIntFact(Facts.Score, 0)
+
+    if(!preferences.contains(Facts.MetNumberOfNpcs))
+      stateIntFact(Facts.MetNumberOfNpcs, 0)
   }
 
 	private fun storeFacts(facts: Set<IFact<*>>) {
