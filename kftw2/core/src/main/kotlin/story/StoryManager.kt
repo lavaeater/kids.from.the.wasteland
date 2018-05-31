@@ -12,22 +12,24 @@ class StoryManager {
 	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
 	fun checkStories() {
-		val story = stories.first { it.active } //just grab the first active story - null  check later
+		val story = stories.firstOrNull { it.active } //just grab the first active story - null  check later
 
 		/*
 		Consequences MUST be self-contained, I realize this now
 		they need to lazy-load all dependencies and just do their THANG
 		 */
-		val rule = factsOfTheWorld.rulesThatPass(story.rules.toSet()).firstOrNull()
-		if(rule != null) {
-			rule.consequence.apply()
-			story.finishedRules.add(rule.name)
-		}
-		if(story.storyFinished) {
-			//A STORY NEEDS A CONSEQUENCE! <- Mind blown!
-			stories.remove(story)
-			finishedStories.add(story)
-			story.consequence.apply()
+		if(story != null) {
+			val rule = factsOfTheWorld.rulesThatPass(story.rules.toSet()).firstOrNull()
+			if (rule != null) {
+				rule.consequence.apply()
+				story.finishedRules.add(rule.name)
+			}
+			if (story.storyFinished) {
+				//A STORY NEEDS A CONSEQUENCE! <- Mind blown!
+				stories.remove(story)
+				finishedStories.add(story)
+				story.consequence.apply()
+			}
 		}
 	}
 
