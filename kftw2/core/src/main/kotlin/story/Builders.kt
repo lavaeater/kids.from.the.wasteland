@@ -1,7 +1,5 @@
 package story
 
-import com.lavaeater.kftw.GameSettings
-import injection.Ctx
 import story.consequence.Consequence
 import story.consequence.ConversationConsequence
 import story.consequence.EmptyConsequence
@@ -20,16 +18,14 @@ class ConsequenceBuilder: Builder<Consequence> {
 }
 
 class ConversationConsequenceBuilder : Builder<ConversationConsequence> {
-	private val basePath by lazy { Ctx.context.inject<GameSettings>().assetBaseDir}
-	private fun getPath(path:String): String {
-		return "$basePath/$path" }
+
 	var afterConversation: (story: com.bladecoder.ink.runtime.Story) -> Unit = {}
 	var beforeConversation: (story: com.bladecoder.ink.runtime.Story)-> Unit = {}
 
 	private lateinit var story: com.bladecoder.ink.runtime.Story
 
 	fun inkStory(storyPath: String, block: com.bladecoder.ink.runtime.Story.() -> Unit) {
-		story = com.bladecoder.ink.runtime.Story(InkLoader().readStoryJson(getPath(storyPath))).apply(block)
+		story = com.bladecoder.ink.runtime.Story(InkLoader().readStoryJson(storyPath)).apply(block)
 	}
 
 	override fun build(): ConversationConsequence {

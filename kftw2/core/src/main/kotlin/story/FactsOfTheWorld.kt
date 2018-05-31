@@ -7,10 +7,10 @@ import story.rule.Rule
 
 class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
   val npcNames = mapOf(
-      1 to "Ulrica Wikren",
-      2 to "Kim Dinh Thi",
-      3 to "Andreas Lindblad",
-      4 to "Babak Varfan"
+      1 to "Carl Sagan",
+      2 to "Stephen Hawking",
+      3 to "Carolyn Shoemaker",
+      4 to "Sandra Faber"
   )
 	init {
 		if(clearFacts)
