@@ -1,12 +1,44 @@
 package story
 
 import com.badlogic.gdx.math.MathUtils
+import factory.ActorFactory
 import injection.Ctx
+import map.IMapManager
 import story.fact.Facts
 import ui.IUserInterface
 
 class StoryHelper {
 	val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
+
+	fun createStoryWithStartingFactsEtc() : Story {
+		var npcId = ""
+		var story = story {
+			name = "Find a certain guy"
+			initializer = {
+				/*
+				Inject a factory to create a specific npc at some location in the world.
+
+
+				 */
+				val actorFactory = Ctx.context.inject<ActorFactory>()
+
+				val mapManager = Ctx.context.inject<IMapManager>()
+
+				val someTilesInRange = mapManager.getBandOfTiles(0,0, 100, 3).filter {
+					it.tile.tileType != "rock" && it.tile.tileType != "water"
+				}
+
+				val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+
+				//Type set to townsfolk to make the behavior tree random, basically
+				val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", "townsfolk", "stephenhawking",randomlySelectedTile.x, randomlySelectedTile.y)
+				npcId = npcToFind.second.id
+			}
+
+		}
+
+		return story
+	}
 
 	fun createMainStory(): Story {
 		return (story {

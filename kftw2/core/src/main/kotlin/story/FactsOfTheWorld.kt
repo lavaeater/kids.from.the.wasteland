@@ -6,16 +6,17 @@ import story.fact.*
 import story.rule.Rule
 
 class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, clearFacts: Boolean = false) {
-  val npcNames = mapOf(
-      1 to "Carl Sagan",
-      2 to "Stephen Hawking",
-      3 to "Carolyn Shoemaker",
-      4 to "Sandra Faber"
-  )
 	init {
 		if(clearFacts)
 			clearAllFacts()
 	}
+
+	val npcNames = mapOf(
+			1 to "Carl Sagan",
+			2 to "Stephen Hawking",
+			3 to "Carolyn Shoemaker",
+			4 to "Sandra Faber"
+	)
 
   fun factForKey(key: String): IFact<*>? {
     if(preferences.contains(key))
@@ -202,6 +203,12 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 	fun getCurrentNpc(): Npc? {
 		val npcId = getStringFact(Facts.CurrentNpc).value
 		return ActorFactory.npcByKeys[npcId]
+	}
+
+	fun storyMatches(story: Story): Boolean {
+		val rule = rulesThatPass(story.rules.toSet()).firstOrNull()
+		story.matchingRule = rule
+		return rule != null
 	}
 }
 

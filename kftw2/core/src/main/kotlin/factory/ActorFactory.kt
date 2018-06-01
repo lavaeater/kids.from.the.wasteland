@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import components.*
+import data.IAgent
 import data.Npc
 import data.NpcType
 import data.Player
@@ -42,11 +43,12 @@ class ActorFactory(
         .map { Pair(it.x,it.y).tileWorldCenter() }
         .toTypedArray()
 
-    for (i in 1..20)
-      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
+//    for (i in 1..20)
+//      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
   }
 
   fun randomNpcName() : String {
+    return ""
 
     return factsOfTheWorld.npcNames[MathUtils.random(1, factsOfTheWorld.npcNames.size)]!!
   }
@@ -85,7 +87,7 @@ class ActorFactory(
     return addNpcEntityAt(name, type, startPosition)
   }
 
-  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String ="", x:Int, y:Int) : Entity {
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String ="", x:Int, y:Int) : Pair<Entity, IAgent> {
 
     val position = Pair(x,y).tileWorldCenter()
     val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
@@ -97,11 +99,11 @@ class ActorFactory(
       add(NpcComponent(npc))
       add(AgentComponent(npc))
       add(VisibleComponent())
-      add(CharacterSpriteComponent(npc.name.replace(" ", "").toLowerCase(), true))
+      add(CharacterSpriteComponent(spriteKey, true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    return entity
+    return Pair(entity, npc)
   }
 
   fun addHeroEntity() : Entity {

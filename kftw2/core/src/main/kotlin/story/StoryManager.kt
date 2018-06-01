@@ -12,16 +12,23 @@ class StoryManager {
 	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
 	fun checkStories() {
-		val stories = stories.filter { it.active } //just grab the first active story - null  check later
+		val matchingStories = stories.filter { it.active && factsOfTheWorld.storyMatches(it) }.sortedByDescending { it.matchingRule?.criteriaCount } //just grab the first active story - null  check later
 
 		/*
 		Consequences MUST be self-contained, I realize this now
 		they need to lazy-load all dependencies and just do their THANG
+
+		Thing is, the code below will not wait for the consequences of stories before it continues...
+		how do we implement this?
+
+		A call back? Some kind of async mechanism?
+
+		I think some kind of simple callback mechanism to do one story at a time,
+		somehow. So to begin with we do "more complicated story first" if there are more than one!
 		 */
-		stories.associateBy({it}, {factsOfTheWorld.rulesThatPass(it.rules.toSet()).firstOrNull()} ).filter { it.value != null }
-
-
+		var story = matchingStories.firstOrNull()
 		if(story != null) {
+
 			val rule = factsOfTheWorld.rulesThatPass(story.rules.toSet()).firstOrNull()
 			if (rule != null) {
 				rule.consequence.apply()
@@ -38,6 +45,7 @@ class StoryManager {
 	}
 
 	fun addStory(story: Story) {
+		story.activate()
 		stories.add(story)
 	}
 

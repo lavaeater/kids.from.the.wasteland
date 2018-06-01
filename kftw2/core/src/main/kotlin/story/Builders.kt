@@ -39,6 +39,7 @@ interface Builder<out T> {
 
 class StoryBuilder: Builder<Story> {
 	var name = ""
+	var initializer : () -> Unit = {}
 	private val rules = mutableListOf<Rule>()
 	private var consequence: Consequence = EmptyConsequence()
 
@@ -50,7 +51,7 @@ class StoryBuilder: Builder<Story> {
 		consequence = ConsequenceBuilder().apply(block).build()
 	}
 
-	override fun build() : Story = Story(name, rules, consequence)
+	override fun build() : Story = Story(name, rules, consequence, initializer)
 }
 
 class CriteriaBuilder:Builder<Criterion> {
