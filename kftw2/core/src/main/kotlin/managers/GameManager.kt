@@ -8,10 +8,9 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import factory.ActorFactory
 import map.IMapManager
-import map.MapManager
 import story.FactsOfTheWorld
 import systems.CharacterControlSystem
 import systems.RenderCharactersSystem

@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import data.Player
 import factory.ActorFactory
 import factory.BodyFactory

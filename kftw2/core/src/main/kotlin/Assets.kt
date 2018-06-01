@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.utils.Disposable
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import ktx.scene2d.Scene2DSkin
 import ktx.style.skin
 import ktx.style.textButton

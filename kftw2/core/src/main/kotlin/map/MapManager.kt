@@ -3,7 +3,7 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import ktx.math.vec2
 import factory.BodyFactory
 import injection.Ctx

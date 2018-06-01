@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.lavaeater.kftw.GameSettings;
+import data.GameSettings;
 import com.lavaeater.kftw.KidsFromTheWastelandGame;
 
 /** Launches the Android application. */

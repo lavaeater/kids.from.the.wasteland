@@ -5,45 +5,15 @@ import injection.Ctx
 import story.fact.Facts
 import ui.IUserInterface
 
-class StoryManager {
-	private val stories  = mutableListOf<Story>()
-	private val finishedStories = mutableListOf<Story>()
-	//val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
-	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+class StoryHelper {
+	val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
 
-	fun checkStories() {
-		val story = stories.firstOrNull { it.active } //just grab the first active story - null  check later
-
-		/*
-		Consequences MUST be self-contained, I realize this now
-		they need to lazy-load all dependencies and just do their THANG
-		 */
-		if(story != null) {
-			val rule = factsOfTheWorld.rulesThatPass(story.rules.toSet()).firstOrNull()
-			if (rule != null) {
-				rule.consequence.apply()
-				story.finishedRules.add(rule.name)
-			}
-			if (story.storyFinished) {
-				//A story sets its own finished state when it's done
-				//A STORY NEEDS A CONSEQUENCE! <- Mind blown!
-				stories.remove(story)
-				finishedStories.add(story)
-				story.consequence.apply()
-			}
-		}
-	}
-
-	fun addStory(story: Story) {
-		stories.add(story)
-	}
-
-	init {
-		addStory(story {
+	fun createMainStory(): Story {
+		return (story {
 			name = "MeetAllTheEmployees"
 			consequence {
 				apply = {
-					if(factsOfTheWorld.getBooleanFact(Facts.GameWon).value)
+					if (factsOfTheWorld.getBooleanFact(Facts.GameWon).value)
 						Ctx.context.inject<IUserInterface>().showSplashScreen()
 				}
 			}
@@ -55,7 +25,7 @@ class StoryManager {
 					inkStory("conversations/basic_dialog.ink.json") {} //This block can be used to set vars at time of creation, but we need something more powerful
 					beforeConversation = {
 						val antagonist = factsOfTheWorld.getCurrentNpc()
-						if(antagonist != null) {
+						if (antagonist != null) {
 							it.variablesState["c_name"] = antagonist.name
 
 							val potentialNames = mutableListOf(
@@ -70,7 +40,7 @@ class StoryManager {
 									"Galileo Galilei",
 									"Carolyn Shoemaker",
 									"Sandra Faber"
-									).filter { it != antagonist.name }.toMutableList()
+							).filter { it != antagonist.name }.toMutableList()
 
 							val correctIndex = MathUtils.random(0, 2)
 
@@ -102,7 +72,7 @@ class StoryManager {
 				name = "CheckIfScoreIsFour"
 				equalsCriterion(Facts.Score, 4)
 				consequence {
-					apply  = {
+					apply = {
 						factsOfTheWorld.stateBoolFact(Facts.GameWon, true)
 						val prop by lazy { Ctx.context.inject<IUserInterface>() }
 						prop.showSplashScreen()
