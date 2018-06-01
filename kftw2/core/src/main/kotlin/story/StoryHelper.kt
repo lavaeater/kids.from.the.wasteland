@@ -1,9 +1,11 @@
 package story
 
 import com.badlogic.gdx.math.MathUtils
+import data.Player
 import factory.ActorFactory
 import injection.Ctx
 import map.IMapManager
+import story.fact.Contexts
 import story.fact.Facts
 import ui.IUserInterface
 
@@ -33,6 +35,35 @@ class StoryHelper {
 				//Type set to townsfolk to make the behavior tree random, basically
 				val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", "townsfolk", "stephenhawking",randomlySelectedTile.x, randomlySelectedTile.y)
 				npcId = npcToFind.second.id
+			}
+			rule {
+				name = "First time meeting Flexbert"
+				context(Contexts.MetNpc)
+				equalsCriterion(Facts.CurrentNpc, npcId)
+				notContainsCriterion(Facts.NpcsPlayerHasMet, npcId)
+				conversation {
+					inkStory("conversations/flexbert.ink.json") {
+						/*
+						Thougts: in this case we can
+						certainly imagine keeping this particular story around. Maybe we will set some
+						flag for the story using a different rule, opening up more options, but
+						the story will remember "itself" so we can use ONE story...
+						 */
+					}
+					beforeConversation = {
+						it.variablesState["met_before"] = false
+						it.variablesState["player_name"] = Ctx.context.inject<Player>().name
+					}
+					afterConversation = {
+						/*
+						save story state in prefs?
+						we need a general "update basic facts about the world-method for all things
+						that will be getting
+						 */
+						factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npcId)
+						factsOfTheWorld.addToList(Facts.KnownNames, "Flexbert")
+					}
+				}
 			}
 
 		}

@@ -124,7 +124,6 @@ class Ctx {
 	      bindSingleton(StoryManager())
 
 	      bindSingleton(GameManager(
-		        gameSettings,
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),

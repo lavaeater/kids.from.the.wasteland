@@ -6,16 +6,19 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import components.Box2dBodyComponent
 import components.KeyboardControlComponent
-import managers.GameEvents
-import managers.GameState
+import injection.Ctx
 import ktx.app.KtxInputAdapter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.vec2
+import managers.GameEvents
+import managers.GameState
 import java.util.*
 
 class CharacterControlSystem(
@@ -25,6 +28,8 @@ class CharacterControlSystem(
     private val gameState: GameState) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
+
+  val camera by lazy { Ctx.context.inject<Camera>() as OrthographicCamera}
 
   init {
     (inputProcessor as InputMultiplexer).addProcessor(this)
@@ -60,6 +65,8 @@ class CharacterControlSystem(
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
       Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
       Input.Keys.M -> gameState.handleEvent(GameEvents.DialogStarted) //Will be something like "NPC met" and handled by some
+      Input.Keys.U -> camera.zoom+=0.05f
+      Input.Keys.J -> camera.zoom-=0.05f
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true

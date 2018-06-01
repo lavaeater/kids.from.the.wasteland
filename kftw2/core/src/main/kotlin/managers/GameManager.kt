@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import data.GameSettings
 import factory.ActorFactory
 import map.IMapManager
 import story.FactsOfTheWorld
@@ -19,7 +18,6 @@ import ui.IUserInterface
 import kotlin.math.roundToInt
 
 class GameManager(
-    gameSettings: GameSettings,
     gameState: GameState,
     private val batch: Batch,
     private val camera: Camera,
@@ -37,10 +35,6 @@ class GameManager(
   init {
     gameState.addChangeListener(::gameStateChanged)
     setupSystems()
-    VIEWPORT_WIDTH = gameSettings.width
-    VIEWPORT_HEIGHT = gameSettings.height
-    TILE_SIZE = gameSettings.tileSize
-
     camera.position.x = 0f
     camera.position.y = 0f
 
