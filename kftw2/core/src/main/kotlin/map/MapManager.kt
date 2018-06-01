@@ -3,8 +3,10 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
+import com.lavaeater.kftw.GameSettings
 import ktx.math.vec2
 import factory.BodyFactory
+import injection.Ctx
 import managers.GameManager
 import systems.tileX
 import systems.tileY
@@ -13,6 +15,14 @@ import kotlin.math.roundToInt
 class MapManager(
     private val bodyManager: BodyFactory,
     private val tileManager: TileManager) : IMapManager {
+
+  private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>()}
+
+
+  val widthInTiles = (gameSettings.width / gameSettings.tileSize).roundToInt()
+  val currentTileRange: Int = widthInTiles * 2
+  val visibleRange = widthInTiles / 4
+
   override fun getBandOfTiles(tilePos: Pair<Int, Int>, range: Int, width: Int): List<TileInstance> {
     return getBandOfTiles(tilePos.first, tilePos.second, range, width)
   }
@@ -109,9 +119,6 @@ class MapManager(
 
     val scale = 80.0f
 
-    val widthInTiles = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt()
-    val currentTileRange: Int = widthInTiles * 2
-    val visibleRange = widthInTiles / 2
   }
 
   fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
@@ -150,9 +157,7 @@ class MapManager(
     return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
 
-//  val tileCounter = Ctx.context.inject<PerformanceCounters>().add("TileGetting")
   override fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
-//    tileCounter.start()
     if(currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x,y)) {
       currentX = x
       currentY = y
@@ -161,7 +166,6 @@ class MapManager(
               (currentY - currentTileRange)..(currentY + currentTileRange))
     }
   checkHitBoxesForImpassibleTiles()
-//    tileCounter.stop()
     return currentlyVisibleTiles!!
   }
 

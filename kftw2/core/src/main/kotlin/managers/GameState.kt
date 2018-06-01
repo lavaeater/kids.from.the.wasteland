@@ -55,6 +55,7 @@ class GameState {
       edge(GameEvents.LootFound, GameStates.Inventory) {}
       edge(GameEvents.InventoryToggled, GameStates.Inventory) {}
       edge(GameEvents.DialogStarted, GameStates.Dialog) {}
+      edge(GameEvents.GameResumed, GameStates.WorldMap) {}
     }
     state(GameStates.Inventory) {
       edge(GameEvents.InventoryToggled, GameStates.WorldMap) {}

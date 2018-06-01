@@ -43,13 +43,13 @@ fun Int.getMinMax(range:Int) : Pair<Int, Int> {
 
 fun getTilePriorityFromNoise(x: Float, y: Float, tileX:Int, tileY:Int): Int {
 
-  val distanceFactor = Math.min((tileX.absoluteValue + tileY.absoluteValue) / (40.0), 1.0)
+  val distanceFactor = 0//Math.min((tileX.absoluteValue + tileY.absoluteValue) / (40.0), 1.0)
 
   val part1 = distanceFactor * -100
   val part2 = (1 - distanceFactor) * (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100)
 
   val noiseValue = part1 + part2
-  Gdx.app.log("testTag","$x, $y, ${noiseValue} $distanceFactor")
+  //Gdx.app.log("testTag","$x, $y, ${noiseValue} $distanceFactor")
 
   //val factor = (x.absoluteValue + y.absoluteValue) * 0.5
   //val noiseValue = (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100).toFloat() - factor
