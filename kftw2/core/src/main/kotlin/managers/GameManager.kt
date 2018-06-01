@@ -11,11 +11,13 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.lavaeater.kftw.GameSettings
 import factory.ActorFactory
 import map.IMapManager
+import map.MapManager
 import story.FactsOfTheWorld
 import systems.CharacterControlSystem
 import systems.RenderCharactersSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
+import kotlin.math.roundToInt
 
 class GameManager(
     gameSettings: GameSettings,
@@ -89,6 +91,8 @@ class GameManager(
     var VIEWPORT_HEIGHT = 64f
     var VIEWPORT_WIDTH = 48f
     var TILE_SIZE = 8
+    val WIDTH_IN_TILES: Int get() = (GameManager.VIEWPORT_WIDTH / GameManager.TILE_SIZE).roundToInt()
+    val VISIBLE_RANGE: Int get() = GameManager.WIDTH_IN_TILES / 2
   }
 
   fun pause() {

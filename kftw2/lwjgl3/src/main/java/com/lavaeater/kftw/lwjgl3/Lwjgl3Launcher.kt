@@ -1,7 +1,9 @@
 package com.lavaeater.kftw.lwjgl3
 
+import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowConfiguration
 import com.lavaeater.kftw.GameSettings
 import com.lavaeater.kftw.KidsFromTheWastelandGame
 
@@ -12,7 +14,7 @@ object Lwjgl3Launcher {
 		get() {
 			val configuration = Lwjgl3ApplicationConfiguration()
 			configuration.setTitle("Lost Beamon People")
-			configuration.setWindowedMode(800, 600)
+			configuration.setWindowedMode(1800, 1600)
 			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png")
 			return configuration
 		}
@@ -24,6 +26,6 @@ object Lwjgl3Launcher {
 
 	private fun createApplication(): Lwjgl3Application {
 		//return new Lwjgl3Application(new KidsFromTheWastelandGame(), getDefaultConfiguration());
-		return Lwjgl3Application(KidsFromTheWastelandGame(GameSettings(96f, 72f, 8, 16)), defaultConfiguration)
+		return Lwjgl3Application(KidsFromTheWastelandGame(GameSettings(196f, 144f, 8, 16)), defaultConfiguration)
 	}
 }

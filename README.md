@@ -1,3 +1,0 @@
-# Kids from the Wasteland
-
-##
