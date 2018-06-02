@@ -40,5 +40,12 @@ class InkConversation(val story:Story, override val protagonist: IAgent, overrid
     }
     return false
   }
+
+  companion object {
+    val MET_BEFORE = "met_before"
+    val PLAYER_NAME = "player_name"
+    val REACTION_SCORE = "reaction_score"
+    val STEP_OF_STORY = "step_of_story"
+  }
 }
 

@@ -8,140 +8,169 @@ import map.IMapManager
 import story.fact.Contexts
 import story.fact.Facts
 import ui.IUserInterface
+import story.conversation.InkConversation
 
 class StoryHelper {
-	val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
 
-	fun createStoryWithStartingFactsEtc() : Story {
-		var npcId = ""
-		var story = story {
-			name = "Find a certain guy"
-			initializer = {
-				/*
+	companion object {
+		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+		val mainStory by lazy {
+			val storyName = "MainStory"
+			var npcId = ""
+			story {
+				name = storyName
+				initializer = {
+					/*
 				Inject a factory to create a specific npc at some location in the world.
 
-
 				 */
-				val actorFactory = Ctx.context.inject<ActorFactory>()
+					val actorFactory = Ctx.context.inject<ActorFactory>()
 
-				val mapManager = Ctx.context.inject<IMapManager>()
+					val mapManager = Ctx.context.inject<IMapManager>()
 
-				val someTilesInRange = mapManager.getBandOfTiles(0,0, 100, 3).filter {
-					it.tile.tileType != "rock" && it.tile.tileType != "water"
+					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 50, 3).filter {
+						it.tile.tileType != "rock" && it.tile.tileType != "water"
+					}
+
+					val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+
+					/*
+				Create some world facts or something for this story.
+
+				Do they have to be global? No, they do not!
+				 */
+					factsOfTheWorld.stateIntFact(Facts.subFact(Facts.StoryStep, storyName), 0)
+
+
+					//Type set to townsfolk to make the behavior tree random, basically
+					val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", "townsfolk", "stephenhawking", randomlySelectedTile.x, randomlySelectedTile.y)
+					npcId = npcToFind.second.id
 				}
+				rule {
+					name = "Meeting Flexbert"
+					/*
+				Thing is, we can use all sorts of properties etc for
+				a meeting with flexbert, that do not necessarily require
+				different rules -> setting of met / not met can be done for a
+				all the conversations with this guy.
 
-				val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
-
-				//Type set to townsfolk to make the behavior tree random, basically
-				val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", "townsfolk", "stephenhawking",randomlySelectedTile.x, randomlySelectedTile.y)
-				npcId = npcToFind.second.id
-			}
-			rule {
-				name = "First time meeting Flexbert"
-				context(Contexts.MetNpc)
-				equalsCriterion(Facts.CurrentNpc, npcId)
-				notContainsCriterion(Facts.NpcsPlayerHasMet, npcId)
-				conversation {
-					inkStory("conversations/flexbert.ink.json") {
-						/*
+				This actually persists the story, by itself, during the current game session
+				at least. To persist it into preferences, it will need some work...
+				*/
+					context(Contexts.MetNpc)
+					equalsCriterion(Facts.CurrentNpc, npcId)
+					conversation {
+						inkStory("conversations/flexbert.ink.json") {
+							/*
 						Thougts: in this case we can
 						certainly imagine keeping this particular story around. Maybe we will set some
 						flag for the story using a different rule, opening up more options, but
 						the story will remember "itself" so we can use ONE story...
 						 */
-					}
-					beforeConversation = {
-						it.variablesState["met_before"] = false
-						it.variablesState["player_name"] = Ctx.context.inject<Player>().name
-					}
-					afterConversation = {
-						/*
+						}
+						beforeConversation = {
+							/*
+						If they have met before, set that variable in the convo. The convo itself might set it, of course
+						but I want the state in the world - since that state can be persisted. On the OTHER
+						hand, we might be able to serialize a list of convos to preferences...
+
+						 */
+
+							it.variablesState[InkConversation.MET_BEFORE] = factsOfTheWorld.getFactList(Facts.NpcsPlayerHasMet).contains(npcId)
+							it.variablesState[InkConversation.PLAYER_NAME] = Ctx.context.inject<Player>().name
+							it.variablesState[InkConversation.STEP_OF_STORY] = factsOfTheWorld.getIntValue(Facts.subFact(Facts.StoryStep, storyName))
+							it.variablesState[InkConversation.REACTION_SCORE] = factsOfTheWorld.getIntValue(Facts.subFact(Facts.NpcReactionScore, npcId))
+						}
+						afterConversation = {
+							/*
 						save story state in prefs?
 						we need a general "update basic facts about the world-method for all things
 						that will be getting
+
+						Cool thing: we can update the "step" of a story, a simple
+						mechanism to keep track of "where" we are in a story.
 						 */
-						factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npcId)
-						factsOfTheWorld.addToList(Facts.KnownNames, "Flexbert")
-					}
-				}
-			}
-
-		}
-
-		return story
-	}
-
-	fun createMainStory(): Story {
-		return (story {
-			name = "MeetAllTheEmployees"
-			consequence {
-				apply = {
-					if (factsOfTheWorld.getBooleanFact(Facts.GameWon).value)
-						Ctx.context.inject<IUserInterface>().showSplashScreen()
-				}
-			}
-			rule {
-				name = "WhenMeetingNpcStartConversation"
-				context("MetNpc")
-				rangeCriterion(Facts.Score, 0..3)
-				conversation {
-					inkStory("conversations/basic_dialog.ink.json") {} //This block can be used to set vars at time of creation, but we need something more powerful
-					beforeConversation = {
-						val antagonist = factsOfTheWorld.getCurrentNpc()
-						if (antagonist != null) {
-							it.variablesState["c_name"] = antagonist.name
-
-							val potentialNames = mutableListOf(
-									"Carl Sagan",
-									"Stephen Hawking",
-									"Erwin Hubble",
-									"Nikolas Kopernikus",
-									"Julius Caeasar",
-									"Marcus Antonious",
-									"Sun Tzu",
-									"Mark Wahlberg",
-									"Galileo Galilei",
-									"Carolyn Shoemaker",
-									"Sandra Faber"
-							).filter { it != antagonist.name }.toMutableList()
-
-							val correctIndex = MathUtils.random(0, 2)
-
-							it.variablesState["name_guess_0"] = if (correctIndex == 0) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
-							it.variablesState["name_guess_1"] = if (correctIndex == 1) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
-							it.variablesState["name_guess_2"] = if (correctIndex == 2) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
-							//Query the global facts to see if we have met before:
-							it.variablesState["met_before"] = factsOfTheWorld.getFactList(Facts.NpcsPlayerHasMet).contains(antagonist.id)
-							it.variablesState["first_encounter"] = factsOfTheWorld.getIntValue(Facts.MetNumberOfNpcs) == 0
+							factsOfTheWorld.stateIntFact(Facts.subFact(Facts.StoryStep, storyName), it.variablesState[InkConversation.STEP_OF_STORY] as Int)
+							factsOfTheWorld.stateIntFact(Facts.subFact(Facts.NpcReactionScore, npcId), it.variablesState[InkConversation.REACTION_SCORE] as Int)
+							factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npcId)
+							factsOfTheWorld.addToList(Facts.KnownNames, "Flexbert")
 						}
 					}
-					afterConversation = {
-						val npc = factsOfTheWorld.getCurrentNpc()
-						if (npc != null) {
-							factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
-							//Add to counter of this particular type
-							factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
+				}
+			}
+		}
 
-							if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
-									&& it.variablesState["guessed_right"] as Int == 1) {
-								factsOfTheWorld.addToIntFact(Facts.Score, 1)
-								factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
+		val simpleEncounters by lazy {
+			story {
+				name = "MeetAllTheEmployees"
+				consequence {
+					apply = {
+						if (factsOfTheWorld.getBooleanFact(Facts.GameWon).value)
+							Ctx.context.inject<IUserInterface>().showSplashScreen()
+					}
+				}
+				rule {
+					name = "WhenMeetingNpcStartConversation"
+					context("MetNpc")
+					conversation {
+						inkStory("conversations/basic_dialog.ink.json") {} //This block can be used to set vars at time of creation, but we need something more powerful
+						beforeConversation = {
+							val antagonist = factsOfTheWorld.getCurrentNpc()
+							if (antagonist != null) {
+								it.variablesState["c_name"] = antagonist.name
+
+								val potentialNames = mutableListOf(
+										"Carl Sagan",
+										"Stephen Hawking",
+										"Erwin Hubble",
+										"Nikolas Kopernikus",
+										"Julius Caeasar",
+										"Marcus Antonious",
+										"Sun Tzu",
+										"Mark Wahlberg",
+										"Galileo Galilei",
+										"Carolyn Shoemaker",
+										"Sandra Faber"
+								).filter { it != antagonist.name }.toMutableList()
+
+								val correctIndex = MathUtils.random(0, 2)
+
+								it.variablesState["name_guess_0"] = if (correctIndex == 0) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
+								it.variablesState["name_guess_1"] = if (correctIndex == 1) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
+								it.variablesState["name_guess_2"] = if (correctIndex == 2) antagonist.name else potentialNames.removeAt(MathUtils.random(0, potentialNames.size - 1))
+								//Query the global facts to see if we have met before:
+								it.variablesState[InkConversation.MET_BEFORE] = factsOfTheWorld.getFactList(Facts.NpcsPlayerHasMet).contains(antagonist.id)
+								it.variablesState["first_encounter"] = factsOfTheWorld.getIntValue(Facts.MetNumberOfNpcs) == 0
+							}
+						}
+						afterConversation = {
+							val npc = factsOfTheWorld.getCurrentNpc()
+							if (npc != null) {
+								factsOfTheWorld.addToList(Facts.NpcsPlayerHasMet, npc.id)
+								//Add to counter of this particular type
+								factsOfTheWorld.addToIntFact(Facts.MetNumberOfNpcs, 1)
+
+								if (!factsOfTheWorld.getFactList(Facts.KnownNames).contains(npc.name)
+										&& it.variablesState["guessed_right"] as Int == 1) {
+									factsOfTheWorld.addToIntFact(Facts.Score, 1)
+									factsOfTheWorld.addToList(Facts.KnownNames, npc.name)
+								}
 							}
 						}
 					}
 				}
-			}
-			rule {
-				name = "CheckIfScoreIsFour"
-				equalsCriterion(Facts.Score, 4)
-				consequence {
-					apply = {
-						factsOfTheWorld.stateBoolFact(Facts.GameWon, true)
-						val prop by lazy { Ctx.context.inject<IUserInterface>() }
-						prop.showSplashScreen()
+				rule {
+					name = "CheckIfScoreIsFour"
+					equalsCriterion(Facts.Score, 4)
+					consequence {
+						apply = {
+							factsOfTheWorld.stateBoolFact(Facts.GameWon, true)
+							val prop by lazy { Ctx.context.inject<IUserInterface>() }
+							prop.showSplashScreen()
+						}
 					}
 				}
 			}
-		})
+		}
 	}
 }

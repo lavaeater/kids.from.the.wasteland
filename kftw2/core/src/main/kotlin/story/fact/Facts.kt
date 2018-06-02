@@ -2,6 +2,9 @@ package story.fact
 
 class Facts {
   companion object {
+    fun subFact(factKey:String, subKey: String) : String {
+      return "$factKey.$subKey"
+    }
     const val Context ="Context"
     const val NpcsPlayerHasMet = "NpcsPlayerHasMet"
     const val CurrentNpc = "CurrentNpc"
@@ -14,5 +17,7 @@ class Facts {
     const val Score = "Score"
     const val KnownNames = "KnownNames"
 	  const val GameWon = "GameWon"
+    const val StoryStep = "StoryStep" //subfact
+    const val NpcReactionScore = "ReactionScore" //subfact
   }
 }
