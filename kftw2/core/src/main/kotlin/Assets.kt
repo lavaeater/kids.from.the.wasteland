@@ -91,6 +91,7 @@ object Assets : Disposable {
         "SandraFaber" to Texture(Gdx.files.internal("chars/portraits/SandraFaber.png")),
         "CarolynShoemaker" to Texture(Gdx.files.internal("chars/portraits/CarolynShoemaker.png")),
         "StephenHawking" to Texture(Gdx.files.internal("chars/portraits/StephenHawking.png")),
+        "Flexbert" to Texture(Gdx.files.internal("chars/portraits/StephenHawking.png")),
         "UlricaWikren" to Texture(Gdx.files.internal("chars/portraits/UlricaWikren.png")))
   }
 

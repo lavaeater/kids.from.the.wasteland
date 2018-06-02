@@ -51,6 +51,7 @@ class StoryManager {
 	}
 
 	init {
-		addStory()
+		addStory(StoryHelper.simpleEncounters)
+		addStory(StoryHelper.mainStory)
 	}
 }

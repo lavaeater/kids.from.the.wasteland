@@ -87,10 +87,10 @@ class ActorFactory(
     return addNpcEntityAt(name, type, startPosition)
   }
 
-  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String ="", x:Int, y:Int) : Pair<Entity, IAgent> {
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), id: String = getNpcId(name), type: String, spriteKey:String ="", x:Int, y:Int) : Pair<Entity, IAgent> {
 
     val position = Pair(x,y).tileWorldCenter()
-    val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
+    val npc = Npc(id, name, npcTypes[type]!!)
     npcByKeys[npc.id] = npc
 
     val entity = engine.createEntity().apply {

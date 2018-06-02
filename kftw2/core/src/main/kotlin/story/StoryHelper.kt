@@ -16,7 +16,7 @@ class StoryHelper {
 		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 		val mainStory by lazy {
 			val storyName = "MainStory"
-			var npcId = ""
+			var npcId = "StaticTestId"
 			story {
 				name = storyName
 				initializer = {
@@ -28,7 +28,7 @@ class StoryHelper {
 
 					val mapManager = Ctx.context.inject<IMapManager>()
 
-					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 50, 3).filter {
+					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 15, 3).filter {
 						it.tile.tileType != "rock" && it.tile.tileType != "water"
 					}
 
@@ -43,8 +43,7 @@ class StoryHelper {
 
 
 					//Type set to townsfolk to make the behavior tree random, basically
-					val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", "townsfolk", "stephenhawking", randomlySelectedTile.x, randomlySelectedTile.y)
-					npcId = npcToFind.second.id
+					val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", npcId, "townsfolk", "stephenhawking", randomlySelectedTile.x, randomlySelectedTile.y)
 				}
 				rule {
 					name = "Meeting Flexbert"
