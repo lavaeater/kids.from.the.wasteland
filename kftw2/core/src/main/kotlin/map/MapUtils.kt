@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import Assets
+import com.badlogic.gdx.math.Rectangle
 import injection.Ctx
 import managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
@@ -35,6 +36,30 @@ fun getNoiseNotAbs(x: Float, y: Float, vararg frequencies: Double): Double {
 
 fun String.isOneTerrain() : Boolean {
   return this == "ggggg" || this == "ddddd" || this == "wwwww" || this == "rrrrr"
+}
+
+//fun TileInstance.getBox() : Rectangle {
+//
+//  val height = GameManager.TILE_SIZE
+//  if()
+//}
+
+enum class Directions {
+  NORTH,
+  EAST,
+  SOUTH,
+  WEST
+}
+
+class DirectionPos {
+  companion object {
+    val dirPos = mapOf(
+        Directions.NORTH to 1,
+        Directions.EAST to 2,
+        Directions.SOUTH to 3,
+        Directions.WEST to 4
+        )
+  }
 }
 
 fun Int.getMinMax(range:Int) : Pair<Int, Int> {

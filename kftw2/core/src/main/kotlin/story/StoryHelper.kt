@@ -43,7 +43,7 @@ class StoryHelper {
 
 
 					//Type set to townsfolk to make the behavior tree random, basically
-					val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", npcId, "townsfolk", "stephenhawking", randomlySelectedTile.x, randomlySelectedTile.y)
+					val npcToFind = actorFactory.addNpcAtTileWithAnimation("Flexbert", npcId, "orc", "stephenhawking", randomlySelectedTile.x, randomlySelectedTile.y)
 				}
 				rule {
 					name = "Meeting Flexbert"

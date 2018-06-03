@@ -49,7 +49,9 @@ class Ctx {
 			  addSystem(RenderCharactersSystem(context.inject()))
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem(context.inject()))
-//			  addSystem(PhysicsDebugSystem())
+//			  addSystem(PhysicsDebugSystem(
+//						context.inject(),
+//						context.inject()))
 			  addSystem(WorldFactsSystem())
 				addSystem(FollowCameraSystem(context.inject()))
 			}
@@ -58,7 +60,8 @@ class Ctx {
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(gameSettings)
-	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default")).apply {
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"), true)
+						.apply {
 		      setupInitialFacts()
 	      })
 	      bindSingleton(RulesOfTheWorld()) //Might be pointless
