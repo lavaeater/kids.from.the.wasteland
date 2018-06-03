@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
+import com.sun.org.apache.xpath.internal.operations.Bool
 import components.Box2dBodyComponent
 import components.KeyboardControlComponent
 import injection.Ctx
@@ -23,13 +24,23 @@ import java.util.*
 
 class CharacterControlSystem(
     val speed: Float = 20f,
-    var processInput: Boolean = true,
-    inputProcessor: InputProcessor,
+    val inputProcessor: InputProcessor,
     private val gameState: GameState) :
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
   val camera by lazy { Ctx.context.inject<Camera>() as OrthographicCamera}
+  var pInput = true
+  var processInput: Boolean
+    get() = this.pInput
+    set(value) {
+      this.pInput = processInput
+      if(value) {
+        (inputProcessor as InputMultiplexer).addProcessor(this)
+      } else {
+        (inputProcessor as InputMultiplexer).removeProcessor(this)
+      }
+    }
 
   init {
     (inputProcessor as InputMultiplexer).addProcessor(this)
@@ -58,6 +69,7 @@ class CharacterControlSystem(
   var ctrlBody: Body? = null
 
   override fun keyDown(keycode: Int): Boolean {
+    if(!processInput) return false
     when (keycode) {
       Input.Keys.A, Input.Keys.LEFT -> x = 1f
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
@@ -81,21 +93,23 @@ class CharacterControlSystem(
   }
 
   override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+    if(!processInput) return false
 
     val dirV = touchToVector(screenX, screenY)
-
     x = dirV.x
     y = dirV.y
     return true
   }
 
   override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+    if(!processInput) return false
     x = 0f
     y = 0f
     return true
   }
 
   override fun touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean {
+    if(!processInput) return false
     val dirV = touchToVector(screenX, screenY)
 
     x = dirV.x
@@ -104,6 +118,7 @@ class CharacterControlSystem(
   }
 
   override fun keyUp(keycode: Int): Boolean {
+    if(!processInput) return false
     when (keycode) {
       Input.Keys.A, Input.Keys.LEFT -> x = 0f
       Input.Keys.D, Input.Keys.RIGHT -> x = 0f
