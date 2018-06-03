@@ -28,7 +28,7 @@ class StoryHelper {
 
 					val mapManager = Ctx.context.inject<IMapManager>()
 
-					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 15, 3).filter {
+					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 5, 3).filter {
 						it.tile.tileType != "rock" && it.tile.tileType != "water"
 					}
 

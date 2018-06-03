@@ -56,7 +56,7 @@ class GameManager(
 
 
     for (name in factsOfTheWorld.npcNames.values) {
-      val someTilesInRange = mapManager.getBandOfTiles(0,0, 2, 3).filter {
+      val someTilesInRange = mapManager.getBandOfTiles(0,0, 50, 3).filter {
         it.tile.tileType != "rock" && it.tile.tileType != "water"
       }
 
