@@ -37,7 +37,7 @@ class Ctx {
 
 	  private fun getEngine(context: Context) : Engine {
 		  return Engine().apply {
-			  addSystem(CharacterControlSystem(
+			  addSystem(GameInputSystem(
 					  inputProcessor = context.inject(),
 					  gameState = context.inject()))
 			  addSystem(NpcControlSystem())

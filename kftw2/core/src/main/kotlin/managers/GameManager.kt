@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import factory.ActorFactory
 import map.IMapManager
 import story.FactsOfTheWorld
-import systems.CharacterControlSystem
+import systems.GameInputSystem
 import systems.RenderCharactersSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
@@ -121,7 +121,7 @@ class GameManager(
   private fun stopTheWorld() {
     for (system in engine.systems.filter { it !is RenderCharactersSystem && it !is RenderMapSystem }) {
       system.setProcessing(false)
-      if (system is CharacterControlSystem) {
+      if (system is GameInputSystem) {
         system.processInput = false
       }
 
@@ -135,7 +135,7 @@ class GameManager(
   private fun resumeTheWorld() {
     for (system in engine.systems) {
       system.setProcessing(true)
-      if(system is CharacterControlSystem)
+      if(system is GameInputSystem)
       {
         system.processInput = true
       }
