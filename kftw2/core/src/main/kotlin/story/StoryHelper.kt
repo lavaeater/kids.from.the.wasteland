@@ -113,6 +113,11 @@ class StoryHelper {
 						}
 					}
 				}
+				/*
+				Not everything needs to be setup in a story's initializer!
+
+				And also, rules should probably be able to have more than one consequence!
+				 */
 			}
 		}
 
