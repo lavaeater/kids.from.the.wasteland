@@ -5,12 +5,29 @@ import data.Player
 import factory.ActorFactory
 import injection.Ctx
 import map.IMapManager
+import story.conversation.InkConversation
 import story.fact.Contexts
 import story.fact.Facts
 import ui.IUserInterface
-import story.conversation.InkConversation
 
 class StoryHelper {
+
+	/*
+	Make it possible to bundle the assets
+	to some random folder, that would be pretty sweet.
+
+	So, we use external files.
+
+	In a particular folder, we could just add
+	a story code file, then some kind of hierarchical file structure
+	to add new content as needed. So the code file is parsed and if
+	new characters are added, they need to have their content there.
+
+	In this particular case, I have hard-coded the file name etc, which
+	works for now, but the end goal must be code-independet content for
+	reusability.
+	 */
+
 
 	companion object {
 		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
@@ -59,7 +76,7 @@ class StoryHelper {
 					context(Contexts.MetNpc)
 					equalsCriterion(Facts.CurrentNpc, npcId)
 					conversation {
-						inkStory("conversations/flexbert.ink.json") {
+						inkStory("conversations/flexbert.sv.ink.json") {
 							/*
 						Thougts: in this case we can
 						certainly imagine keeping this particular story around. Maybe we will set some

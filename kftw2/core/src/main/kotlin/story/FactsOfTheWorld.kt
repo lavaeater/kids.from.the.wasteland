@@ -1,7 +1,9 @@
 package story
 
 import data.Npc
+import data.Player
 import factory.ActorFactory
+import injection.Ctx
 import story.fact.*
 import story.rule.Rule
 
@@ -188,6 +190,27 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
   }
 
 	fun save() {
+
+		/*
+		Should we stealthily save position etc?
+
+		I think we should, actually.
+
+		Just get the player and set the values.
+
+		This code can and will be used to save the current position
+		of every actor in the world.
+
+		But how, oh, how, do we keep track of their state? Either by serializing
+		stories, trees etc, or by simple, for simple actors, variables in the prefs
+		using the key / subkey syntax.
+		 */
+
+		val player = Ctx.context.inject<Player>()
+
+		stateIntFact(Facts.PlayerTileX, player.currentX)
+		stateIntFact(Facts.PlayerTileY, player.currentY)
+
 		preferences.flush()
 	}
 

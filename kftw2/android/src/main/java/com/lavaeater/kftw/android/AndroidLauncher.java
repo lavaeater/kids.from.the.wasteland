@@ -4,8 +4,9 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import data.GameSettings;
 import com.lavaeater.kftw.KidsFromTheWastelandGame;
+
+import data.GameSettings;
 
 /** Launches the Android application. */
 public class AndroidLauncher extends AndroidApplication {
@@ -13,6 +14,6 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
-        initialize(new KidsFromTheWastelandGame(new GameSettings(72f, 56f, 8, 16)), configuration);
+        initialize(new KidsFromTheWastelandGame(new GameSettings(72f, 56f, 8, 16, "sv")), configuration);
     }
 }

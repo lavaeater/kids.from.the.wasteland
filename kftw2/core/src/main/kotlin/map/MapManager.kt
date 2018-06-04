@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import data.GameSettings
-import ktx.math.vec2
 import factory.BodyFactory
 import injection.Ctx
+import ktx.math.vec2
 import managers.GameManager
 import systems.tileX
 import systems.tileY
@@ -121,12 +121,11 @@ class MapManager(
 
   }
 
-  fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
+  private fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
     return !(currentX in (x - visibleRange)..(x + visibleRange) && currentY in (y - visibleRange)..(y + visibleRange))
   }
 
-  fun checkHitBoxesForImpassibleTiles() {
-
+  private fun checkHitBoxesForImpassibleTiles() {
     for (row in currentlyVisibleTiles!!)
       for (tile in row) {
         if (tile.needsHitBox && tile.tile.isImpassible()) {
@@ -149,7 +148,7 @@ class MapManager(
 
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileInstance? {
     val tilesInRange = getTilesInRange(x, y, range)
-    return tilesInRange.filter { it.tile.tileType == tileType }.firstOrNull()
+    return tilesInRange.firstOrNull { it.tile.tileType == tileType }
   }
 
 

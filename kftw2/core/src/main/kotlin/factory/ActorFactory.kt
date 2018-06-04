@@ -14,10 +14,10 @@ import data.IAgent
 import data.Npc
 import data.NpcType
 import data.Player
-import ktx.math.vec2
 import map.IMapManager
 import map.tileWorldCenter
 import story.FactsOfTheWorld
+import story.fact.Facts
 
 class ActorFactory(
 		private val engine: Engine,
@@ -108,6 +108,11 @@ class ActorFactory(
 
   fun addHeroEntity() : Entity {
 
+    val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
+    val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
+
+    val position = Pair(tileX, tileY).tileWorldCenter()
+
     val entity = engine.createEntity().apply {
       add(TransformComponent())
       add(CharacterSpriteComponent("williamhamparsomian", true))
@@ -115,7 +120,7 @@ class ActorFactory(
       add(PlayerComponent(player))
       add(AgentComponent(player))
       add(VisibleComponent())
-      add(Box2dBodyComponent(createPlayerBody(vec2(0f, 0f), player)))
+      add(Box2dBodyComponent(createPlayerBody(position, player)))
     }
     engine.addEntity(entity)
     return entity

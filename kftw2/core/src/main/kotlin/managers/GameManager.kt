@@ -42,7 +42,6 @@ class GameManager(
   }
 
   private fun setupSystems() {
-//    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
     addEmployees()
   }
 

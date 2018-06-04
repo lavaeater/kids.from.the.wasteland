@@ -19,5 +19,7 @@ class Facts {
 	  const val GameWon = "GameWon"
     const val StoryStep = "StoryStep" //subfact
     const val NpcReactionScore = "ReactionScore" //subfact
+	  const val PlayerTileX = "PlayerTileX"
+    const val PlayerTileY = "PlayerTileY"
   }
 }
