@@ -121,6 +121,15 @@ class StoryHelper {
 			}
 		}
 
+		val locations by lazy {
+			story {
+				name ="Just a simple location story. Has no overarching consequence"
+				rule {
+					context(Contexts.EnteredLocation)
+				}
+			}
+		}
+
 		val simpleEncounters by lazy {
 			story {
 				name = "MeetAllTheEmployees"

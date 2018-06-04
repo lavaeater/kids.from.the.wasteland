@@ -1,16 +1,15 @@
 package story
 
-import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
-import story.fact.Facts
-import ui.IUserInterface
-import story.conversation.InkConversation
 
 class StoryManager {
 	private val stories  = mutableListOf<Story>()
 	private val finishedStories = mutableListOf<Story>()
-	//val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
 	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+	private val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
+	/*
+	or do we create a global, main story... yes we do, yes we do...
+	 */
 
 	fun checkStories() {
 		val matchingStories = stories.filter { it.active && factsOfTheWorld.storyMatches(it) }.sortedByDescending { it.matchingRule?.criteriaCount } //just grab the first active story - null  check later

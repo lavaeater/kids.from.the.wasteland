@@ -25,22 +25,3 @@ class BodyFactory(private val world: World) {
     return body
   }
 }
-//  companion object {
-//      fun createBody(width: Float,
-//                     height: Float,
-//                     densityIn: Float,
-//                     position: Vector2,
-//                     bodyType: BodyDef.BodyType): Body {
-//
-//        val body = world.body {
-//          this.position.set(position)
-//          angle = 0f
-//          fixedRotation = true
-//          type = bodyType
-//          box(width, height) {
-//            density = densityIn
-//          }
-//        }
-//        return body
-//      }
-//  }
