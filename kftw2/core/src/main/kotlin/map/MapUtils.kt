@@ -40,8 +40,22 @@ fun String.isOneTerrain() : Boolean {
 
 //fun TileInstance.getBox() : Rectangle {
 //
+//  /*
+//  if tile in say, north, direction, is of HIGHER priority, then that northern tile is
+//  encroaching on this one -> the hitbox becomes smaller
+//  if it is of lower priority, then THIS tile encroaches on THAT tile - the hitbox grows!
+//
+//  So, we'll try with a hitbox growth / shrinkage of say 1/4 tile size.
+//   */
+//  val charArray = this.tile.shortCode.toCharArray()
+//  val thisType = charArray[0]
+//  val typeNorth = charArray[1]
+//  if(MapManager.shortTerrainPriority[typeNorth]!! > MapManager.shortTerrainPriority[thisType]!!) {
+//
+//  }
+//
 //  val height = GameManager.TILE_SIZE
-//  if()
+////  if()
 //}
 
 enum class Directions {
