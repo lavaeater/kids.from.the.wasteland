@@ -28,7 +28,7 @@ class GameInputSystem(
     KtxInputAdapter,
     IteratingSystem(allOf(KeyboardControlComponent::class, Box2dBodyComponent::class).get(), 45) {
 
-  val camera by lazy { Ctx.context.inject<Camera>() as OrthographicCamera}
+	val camera by lazy { Ctx.context.inject<Camera>() as OrthographicCamera}
   var pInput = true
   var processInput: Boolean
     get() = this.pInput
@@ -99,8 +99,6 @@ class GameInputSystem(
     y = dirV.y
     return true
   }
-
-	override
 
   override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
     if(!processInput) return false
