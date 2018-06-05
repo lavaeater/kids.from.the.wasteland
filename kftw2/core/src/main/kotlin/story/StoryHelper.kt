@@ -31,6 +31,10 @@ class StoryHelper {
 
 	companion object {
 		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+		val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
+		val mapManager by lazy { Ctx.context.inject<IMapManager>() }
+		val player by lazy { Ctx.context.inject<Player>() }
+
 		val mainStory by lazy {
 			val storyName = "MainStory"
 			var npcId = "StaticTestId"
@@ -41,9 +45,6 @@ class StoryHelper {
 				Inject a factory to create a specific npc at some location in the world.
 
 				 */
-					val actorFactory = Ctx.context.inject<ActorFactory>()
-
-					val mapManager = Ctx.context.inject<IMapManager>()
 
 					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 5, 3).filter {
 						it.tile.tileType != "rock" && it.tile.tileType != "water"
@@ -118,15 +119,6 @@ class StoryHelper {
 
 				And also, rules should probably be able to have more than one consequence!
 				 */
-			}
-		}
-
-		val locations by lazy {
-			story {
-				name ="Just a simple location story. Has no overarching consequence"
-				rule {
-					context(Contexts.EnteredLocation)
-				}
 			}
 		}
 

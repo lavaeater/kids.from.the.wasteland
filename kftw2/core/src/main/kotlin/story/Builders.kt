@@ -39,7 +39,7 @@ interface Builder<out T> {
 
 class StoryBuilder: Builder<Story> {
 	var name = ""
-	var initializer : () -> Unit = {}
+	lateinit var initializer : () -> Unit
 	private val rules = mutableListOf<Rule>()
 	private var consequence: Consequence = EmptyConsequence()
 

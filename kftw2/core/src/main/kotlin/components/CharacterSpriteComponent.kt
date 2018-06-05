@@ -7,3 +7,4 @@ class CharacterSpriteComponent(val spriteKey: String,
                                var currentAnim:String = "idle",
                                var currentIndex : Int = 0,
                                var deltaTime: Float = 0f) : Component
+

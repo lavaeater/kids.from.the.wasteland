@@ -16,7 +16,10 @@ class RenderCharactersSystem(private val batch:Batch) :
     SortedIteratingSystem(
         allOf(CharacterSpriteComponent::class,
             TransformComponent::class,
-            VisibleComponent::class).get(), EntityYOrderComparator()) {
+            VisibleComponent::class
+        ).get(),
+        EntityYOrderComparator(),
+        5) {
   private val transformMapper = mapperFor<TransformComponent>()
   private val spriteMapper = mapperFor<CharacterSpriteComponent>()
 
@@ -67,7 +70,7 @@ class RenderCharactersSystem(private val batch:Batch) :
   }
 
   private fun renderRegularCharacter(transform: TransformComponent, spriteComponent: CharacterSpriteComponent) {
-    val sprite = Assets.sprites[spriteComponent.spriteKey]!!.entries.first().value //Just to test it
+    val sprite = Assets.tileSprites[spriteComponent.spriteKey]!!.entries.first().value //Just to test it
     sprite.setPosition(transform.position.x - sprite.width / 2, transform.position.y - sprite.height / 3)
 
     sprite.draw(batch)
@@ -80,3 +83,4 @@ class RenderCharactersSystem(private val batch:Batch) :
     }
   }
 }
+

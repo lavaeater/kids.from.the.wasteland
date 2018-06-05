@@ -1,12 +1,10 @@
 package map
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import Assets
-import com.badlogic.gdx.math.Rectangle
 import injection.Ctx
 import managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
@@ -155,7 +153,7 @@ fun Tile.isImpassible() : Boolean {
 }
 
 fun Tile.getSprite() : Sprite {
-  return Assets.sprites[this.tileType]!![this.subType]!!
+  return Assets.tileSprites[this.tileType]!![this.subType]!!
 }
 
 fun Tile.getExtraSprites() : Array<Sprite> {

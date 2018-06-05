@@ -17,5 +17,5 @@ package story.places
  * Or are all things containers of rules with consequences etc?
  *
  */
-class Place {
+class Place(val name: String) {
 }

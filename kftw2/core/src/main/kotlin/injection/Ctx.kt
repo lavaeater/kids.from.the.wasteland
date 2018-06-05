@@ -26,6 +26,7 @@ import story.FactsOfTheWorld
 import story.RulesOfTheWorld
 import story.StoryManager
 import story.conversation.ConversationManager
+import story.places.PlacesOfTheWorld
 import systems.*
 import ui.IUserInterface
 import ui.UserInterface
@@ -47,6 +48,7 @@ class Ctx {
 					  context.inject(),
 					  false))
 			  addSystem(RenderCharactersSystem(context.inject()))
+				addSystem(RenderFeatureSystem(context.inject()))
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem(context.inject()))
 //			  addSystem(PhysicsDebugSystem(
@@ -125,6 +127,8 @@ class Ctx {
 	      ))
 
 	      bindSingleton(StoryManager())
+
+				bindSingleton(PlacesOfTheWorld())
 
 	      bindSingleton(GameManager(
 			      this.inject(),

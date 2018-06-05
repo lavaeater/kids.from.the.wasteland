@@ -1,6 +1,7 @@
 package factory
 
 import Assets
+import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.ai.btree.BehaviorTree
@@ -14,10 +15,13 @@ import data.IAgent
 import data.Npc
 import data.NpcType
 import data.Player
+import ktx.math.vec2
+import managers.GameManager
 import map.IMapManager
 import map.tileWorldCenter
 import story.FactsOfTheWorld
 import story.fact.Facts
+import story.places.Place
 
 class ActorFactory(
 		private val engine: Engine,
@@ -135,6 +139,31 @@ class ActorFactory(
         .apply { userData = npc }
   }
 
+  fun createFeatureBody(x:Int, y:Int, place: Place) : Body {
+    val pos = vec2((x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+        (y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+    return bodyManager.createBody(
+        GameManager.TILE_SIZE.toFloat(),
+        GameManager.TILE_SIZE.toFloat(),
+        10f,
+        pos,
+        BodyDef.BodyType.StaticBody)
+  }
+
+  fun addFeatureEntity(placeName:String, tileX: Int, tileY: Int): Entity {
+    val position = Pair(tileX, tileY).tileWorldCenter()
+    val place = Place(placeName)
+
+    val entity = engine.createEntity().apply {
+      add(TransformComponent())
+      add(FeatureSpriteComponent("house", false))
+      add(FeatureComponent(place))
+      add(Box2dBodyComponent(createFeatureBody(tileX, tileY, place)))
+    }
+    engine.addEntity(entity)
+    return entity
+  }
+
   companion object {
     val npcByKeys = mutableMapOf<String, Npc>()
     var npcIds: Int = 0
@@ -147,6 +176,8 @@ class ActorFactory(
     }
   }
 }
+
+class FeatureComponent(val place: Place) : Component
 
 fun Npc.getBehaviorTree() : BehaviorTree<Npc> {
 

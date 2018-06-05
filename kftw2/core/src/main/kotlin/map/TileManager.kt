@@ -197,7 +197,7 @@ class TileManager(val chunkSize:Int = 100) {
             }
 
             if (extraSprites.any())
-                Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.sprites[it.first]!![it.second]!! }
+                Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.tileSprites[it.first]!![it.second]!! }
             else
                 MapManager.noExtraSprites.add(shortCode)
         }

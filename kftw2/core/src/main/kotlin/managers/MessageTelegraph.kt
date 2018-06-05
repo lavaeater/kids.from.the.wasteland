@@ -9,6 +9,8 @@ import story.FactsOfTheWorld
 import story.StoryManager
 import story.fact.Contexts
 import story.fact.Facts
+import story.places.Place
+import story.places.PlacesOfTheWorld
 
 
 /**
@@ -27,6 +29,7 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
   private val messageDispatcher by lazy { Ctx.context.inject<MessageDispatcher>() }
 
   private val storyManager by lazy { Ctx.context.inject<StoryManager>() }
+  private val placesOfTheWorld by lazy { Ctx.context.inject<PlacesOfTheWorld>() }
 
   override fun handleMessage(msg: Telegram): Boolean {
     if(msg.message !in Messages.validRange) throw IllegalArgumentException("Message id ${msg.message} not in valid range ${Messages.validRange}")
@@ -37,8 +40,16 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
       Messages.FactsUpdated -> checkTheWorld() //this method will trigger all stories to check if their rules have passed, for instance
       Messages.StoryCompleted -> return true //this method will trigger the "story ended" thingie related to a story... ending. Might not be relevant
       Messages.NewTile -> newTile(msg.extraInfo as Pair<Int, Int>)
+      Messages.PlayerWentToAPlace -> wentSomewhere(msg.extraInfo as Place)
     }
     return true
+  }
+
+  private fun wentSomewhere(place: Place) {
+    factsOfTheWorld.stateStringFact(Facts.CurrentPlace, place.name)
+    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.EnteredLocation)
+    placesOfTheWorld.enterPlace(place)
+
   }
 
   private fun checkTheWorld() {

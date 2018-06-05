@@ -99,7 +99,7 @@ object Assets : Disposable {
 
   val codeToExtraTiles by lazy { mutableMapOf<String, List<Sprite>>() }
 
-  val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
+  val tileSprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
   fun load(gameSettings: GameSettings): AssetManager {
     Assets.gameSettings = gameSettings
@@ -109,6 +109,8 @@ object Assets : Disposable {
     initializeCharacterSprites()
 
     initAnimatedCharacterSprites()
+
+    initializeFeatureSprites()
 
     initializeFonts()
 
@@ -191,13 +193,20 @@ object Assets : Disposable {
   private fun initializeCharacterSprites() {
     for (atlasMap in characters) {
       val atlas = atlasMap.value
-      sprites.put(atlasMap.key, hashMapOf())
+      tileSprites.put(atlasMap.key, hashMapOf())
       for (region in atlas.regions) {
         val sprite = atlas.createSprite(region.name)
         sprite.setSize(4f, 4.5f)
-        sprites[atlasMap.key]!!.put(region.name, sprite)
+        tileSprites[atlasMap.key]!!.put(region.name, sprite)
       }
     }
+  }
+
+  val featureSprites = mutableMapOf<String, MutableList<Sprite>>()
+
+  private fun initializeFeatureSprites() {
+    featureSprites["house"] = mutableListOf()
+    featureSprites["house"]!!.add(Sprite(Texture(Gdx.files.internal("features/house.png"))))
   }
 
   private fun initializeMapTiles() {
@@ -205,14 +214,14 @@ object Assets : Disposable {
     var xFactor = 1f
     for (atlasMap in atlases) {
       val atlas = atlasMap.value
-      sprites.put(atlasMap.key, hashMapOf())
+      tileSprites.put(atlasMap.key, hashMapOf())
       for (region in atlas.regions) {
         if (region.name != "blank") {
           val sprite = atlas.createSprite(region.name)
           sprite.setSize(8f, 8f)
           sprite.x = xFactor * 8f
           sprite.y = yFactor * 8f
-          sprites[atlasMap.key]!!.put(region.name, sprite)
+          tileSprites[atlasMap.key]!!.put(region.name, sprite)
           yFactor++
         }
       }

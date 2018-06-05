@@ -8,6 +8,7 @@ class Facts {
     const val Context ="Context"
     const val NpcsPlayerHasMet = "NpcsPlayerHasMet"
     const val CurrentNpc = "CurrentNpc"
+    const val CurrentPlace = "CurrentPlace"
     const val MetNumberOfNpcs ="MetNumberOfNpcs"
     const val VisitedPlaces = "VisitedPlaces"
     const val FoundKey = "FoundKey"
