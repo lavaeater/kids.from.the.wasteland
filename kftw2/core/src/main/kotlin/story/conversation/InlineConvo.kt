@@ -5,20 +5,22 @@ import data.IAgent
 import injection.Ctx
 import story.FactsOfTheWorld
 
-class InlineConvo(override val protagonist: IAgent, override val antagonist: IAgent = EmptyAgent(), val antagonistLines: Map<Int, List<String>> = mapOf<Int, List<String>>()) : IConversation {
+class InlineConvo(override val protagonist: IAgent, override val antagonist: IAgent = EmptyAgent(), val antagonistLines: Map<Int, List<String>> = mapOf()) : IConversation {
 
-  var storyIndex = 0
+  private var storyIndex = 0
   val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
   override val antagonistCanSpeak: Boolean
-    get() = storyIndex < antagonistLines.keys.count()
+    get() = storyIndex >= 0 && storyIndex < antagonistLines.keys.count()
   override val protagonistCanChoose: Boolean
     get() = !quit
   override val choiceCount: Int
     get() = 4
 
   override fun getAntagonistLines(): Iterable<String> {
-    return getForIndex(storyIndex)
+    if(storyIndex < 0)
+      quit = true
+    return if(!quit) getForIndex(storyIndex) else emptyList()
   }
 
   private fun getForIndex(index: Int): Iterable<String> {
