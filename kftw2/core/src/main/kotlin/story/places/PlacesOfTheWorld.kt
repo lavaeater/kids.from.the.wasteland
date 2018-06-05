@@ -7,11 +7,11 @@ import injection.Ctx
 import managers.GameEvents
 import managers.GameState
 import map.IMapManager
-import story.StoryHelper.Companion.factsOfTheWorld
+import story.FactsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InlineConvo
 import story.conversation.InternalConversation
-import story.conversation.convo
+import story.convo
 import story.fact.Facts
 
 class PlacesOfTheWorld {
@@ -21,18 +21,23 @@ class PlacesOfTheWorld {
   val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
   val mapManager by lazy { Ctx.context.inject<IMapManager>() }
   val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
+  val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 
   init {
     val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY,
-        10, 5).filter {
+        50, 15).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()
-    for(city in 0..5) {
+    for(city in 0..10) {
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
       someTilesInRange.remove(randomlySelectedTile)
+      val tilesInRangeOfSelected = mapManager.getTilesInRange(randomlySelectedTile.x, randomlySelectedTile.y, 10)
+      //Remove a lot of tiles from the band of possible tiles to have the city at
+      for(tile in tilesInRangeOfSelected)
+        someTilesInRange.remove(tile)
 
-      val actor = actorFactory.addFeatureEntity("city_$city", randomlySelectedTile.x, randomlySelectedTile.y)
+      actorFactory.addFeatureEntity("city_$city", randomlySelectedTile.x, randomlySelectedTile.y)
     }
   }
 
@@ -49,7 +54,6 @@ class PlacesOfTheWorld {
         },
         true,
         false)
-
   }
 
   private fun createPlaceConvo() :InlineConvo {

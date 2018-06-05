@@ -13,6 +13,7 @@ import map.IMapManager
 import story.FactsOfTheWorld
 import systems.GameInputSystem
 import systems.RenderCharactersSystem
+import systems.RenderFeatureSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
 import kotlin.math.roundToInt
@@ -118,7 +119,10 @@ class GameManager(
   }
 
   private fun stopTheWorld() {
-    for (system in engine.systems.filter { it !is RenderCharactersSystem && it !is RenderMapSystem }) {
+    for (system in engine.systems.filter {
+      it !is RenderCharactersSystem &&
+          it !is RenderMapSystem &&
+          it !is RenderFeatureSystem }) {
       system.setProcessing(false)
       if (system is GameInputSystem) {
         system.processInput = false
