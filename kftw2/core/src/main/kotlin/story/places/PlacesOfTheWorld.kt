@@ -39,10 +39,14 @@ class PlacesOfTheWorld {
     show some shit for a city. For now, how about we show a little conversation?
      */
     gameState.handleEvent(GameEvents.DialogStarted)
-    conversationManager.startConversation(createPlaceConvo(), {
-      //set some facts?
-      var bla = "Blo"
-    })
+    conversationManager.startConversation(
+        createPlaceConvo(),
+        {
+          //set some facts?
+          var bla = "Blo"
+        },
+        true,
+        false)
 
   }
 
@@ -51,7 +55,7 @@ class PlacesOfTheWorld {
     val antagonistLines = mutableMapOf<Int, List<String>>()
 
     antagonistLines[0] = listOf(
-            "Välkommen till staden ${factsOfTheWorld.getStringFact(Facts.CurrentPlace)}!",
+            "Välkommen till staden ${factsOfTheWorld.getStringFact(Facts.CurrentPlace).value}!",
             "Ödemarkens sanna pärla!",
             "Vill du hedra oss med ett besök?"
         )

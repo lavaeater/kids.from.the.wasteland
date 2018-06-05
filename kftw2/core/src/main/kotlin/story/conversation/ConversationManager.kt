@@ -9,11 +9,18 @@ class ConversationManager(
     private val ui: IUserInterface,
     private val gameState:GameState) {
 
-  fun startConversation(conversation: IConversation, endConversation: ()-> Unit) {
-    ui.runConversation(conversation, {
+  fun startConversation(
+      conversation: IConversation,
+      endConversation: ()-> Unit,
+      showProtagonistPortrait: Boolean = true,
+      showAntagonistPortrait: Boolean = true) {
+    ui.runConversation(
+        conversation, {
       endConversation()
       gameState.handleEvent(GameEvents.DialogEnded)
-    })
+    },
+        showProtagonistPortrait,
+        showAntagonistPortrait)
 
   }
 }
