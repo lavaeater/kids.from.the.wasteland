@@ -10,6 +10,8 @@ import map.IMapManager
 import story.StoryHelper.Companion.factsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InlineConvo
+import story.conversation.InternalConversation
+import story.conversation.convo
 import story.fact.Facts
 
 class PlacesOfTheWorld {
@@ -40,7 +42,7 @@ class PlacesOfTheWorld {
      */
     gameState.handleEvent(GameEvents.DialogStarted)
     conversationManager.startConversation(
-        createPlaceConvo(),
+        anotherConvo(),
         {
           //set some facts?
           var bla = "Blo"
@@ -64,4 +66,38 @@ class PlacesOfTheWorld {
     )
     return InlineConvo(player, antagonistLines = antagonistLines)
    }
+
+  private fun anotherConvo() : InternalConversation {
+    return convo {
+      startingStepKey = "start"
+      step {
+        key = "start"
+        addLine("Välkommen!")
+        addLine("Du är säkert trött sedan resan")
+        addLine("- kom in och ta ett glas")
+        positive("entered_house", "Ja tack, gärna, jag är otroligt törstig")
+        abort("abort", "Nej tack, så törstig är jag inte.")
+        rude("abort", "Nej tack, så du är jag inte att jag dricker ditt vatten.")
+      }
+      step {
+        key = "entered_house"
+        addLine("Du har säkert rest länge och väl.")
+        addLine("Ödemarken är inte snäll mot en vandrares fötter.")
+        addLine("Här, drick vatten!")
+        positive("is_poisoned", "Ja, gud så törstig jag är!")
+        abort("abort", "Nej, vid närmare eftertanke kom jag nog på att jag måste gå nu!")
+      }
+      step {
+        key = "is_poisoned"
+        addLine("Ha! HA! HAHA!")
+        addLine("Det var inte vatten, din idiot")
+        addLine("Det är gift!")
+        addLine("Men du dör inte. Oroa dig inte.")
+        addLine("Nej, du kommer bli slö. trött och dum.")
+        addLine("Du kommer lyda allt jag säger. Väldigt bra...")
+        addLine("...för en slav i gruvan")
+        rude("abort", "FAN ta dig!")
+      }
+    }
+  }
 }
