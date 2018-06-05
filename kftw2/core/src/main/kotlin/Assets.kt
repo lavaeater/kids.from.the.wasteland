@@ -206,7 +206,7 @@ object Assets : Disposable {
 
   private fun initializeFeatureSprites() {
     featureSprites["house"] = mutableListOf()
-    featureSprites["house"]!!.add(Sprite(Texture(Gdx.files.internal("features/house.png"))))
+    featureSprites["house"]!!.add(Sprite(Texture(Gdx.files.internal("tiles/features/house.png"))))
   }
 
   private fun initializeMapTiles() {

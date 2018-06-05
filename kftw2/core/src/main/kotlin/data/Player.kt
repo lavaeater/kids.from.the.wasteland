@@ -3,6 +3,8 @@ package data
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import injection.Ctx
 import managers.Messages
+import story.FactsOfTheWorld
+import story.fact.Facts
 import kotlin.properties.Delegates
 
 
@@ -18,17 +20,20 @@ class Player(override val id:String = "Player",
           "tracking" to 50,
           "stealth" to 35)
 
-  val messageDispatcher by lazy { Ctx.context.inject<MessageDispatcher>()}
+  private val messageDispatcher by lazy { Ctx.context.inject<MessageDispatcher>()}
+
+  val initialX by lazy { Ctx.context.inject<FactsOfTheWorld>().getIntValue(Facts.PlayerTileX)}
+  val initialY by lazy { Ctx.context.inject<FactsOfTheWorld>().getIntValue(Facts.PlayerTileY)}
 
   var canSend = true
 
-  override var currentX:Int by Delegates.observable(0, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
+  override var currentX:Int by Delegates.observable(initialX, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
     canSend = false //might stop tons of sending...
     messageDispatcher.dispatchMessage(Messages.NewTile, Pair(currentX, currentY))
     canSend = true
   }
   })
-  override var currentY:Int by Delegates.observable(0, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
+  override var currentY:Int by Delegates.observable(initialY, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
     canSend = false //might stop tons of sending...
     messageDispatcher.dispatchMessage(Messages.NewTile, Pair(currentX, currentY))
     canSend = true

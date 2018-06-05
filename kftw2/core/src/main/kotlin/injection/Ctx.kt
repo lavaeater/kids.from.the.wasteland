@@ -89,6 +89,7 @@ class Ctx {
 						      addListeners(this@register.inject(),
 								      Messages.CollidedWithImpassibleTerrain,
 								      Messages.EncounterOver,
+								      Messages.PlayerWentToAPlace,
 								      Messages.FactsUpdated,
 								      Messages.PlayerMetSomeone,
 								      Messages.StoryCompleted)

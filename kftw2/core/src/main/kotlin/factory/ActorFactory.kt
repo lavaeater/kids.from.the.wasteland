@@ -115,6 +115,9 @@ class ActorFactory(
     val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
     val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
 
+    player.currentX = tileX
+    player.currentY = tileY
+
     val position = Pair(tileX, tileY).tileWorldCenter()
 
     val entity = engine.createEntity().apply {
@@ -148,6 +151,7 @@ class ActorFactory(
         10f,
         pos,
         BodyDef.BodyType.StaticBody)
+        .apply { userData = place }
   }
 
   fun addFeatureEntity(placeName:String, tileX: Int, tileY: Int): Entity {

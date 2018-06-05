@@ -7,7 +7,6 @@ import injection.Ctx
 import managers.GameEvents
 import managers.GameState
 import map.IMapManager
-import story.StoryHelper
 import story.StoryHelper.Companion.factsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InlineConvo
@@ -22,11 +21,14 @@ class PlacesOfTheWorld {
   val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
 
   init {
-    for(city in 0..10) {
-      val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY, MathUtils.random(MathUtils.random(1,2),5 + city * MathUtils.random(1,3)), 5).filter {
-        it.tile.tileType != "rock" && it.tile.tileType != "water"
-      }
+    val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY,
+        10, 5).filter {
+      it.tile.tileType != "rock" && it.tile.tileType != "water"
+    }.toMutableList()
+    for(city in 0..5) {
+
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+      someTilesInRange.remove(randomlySelectedTile)
 
       val actor = actorFactory.addFeatureEntity("city_$city", randomlySelectedTile.x, randomlySelectedTile.y)
     }
@@ -44,7 +46,7 @@ class PlacesOfTheWorld {
 
   }
 
-  fun createPlaceConvo() :InlineConvo {
+  private fun createPlaceConvo() :InlineConvo {
 
     val antagonistLines = mutableMapOf<Int, List<String>>()
 

@@ -6,13 +6,15 @@ class StoryManager {
 	private val stories  = mutableListOf<Story>()
 	private val finishedStories = mutableListOf<Story>()
 	private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
-	private val rulesOfTheWorld by lazy { Ctx.context.inject<RulesOfTheWorld>() }
 	/*
 	or do we create a global, main story... yes we do, yes we do...
 	 */
 
 	fun checkStories() {
-		val matchingStories = stories.filter { it.active && factsOfTheWorld.storyMatches(it) }.sortedByDescending { it.matchingRule?.criteriaCount } //just grab the first active story - null  check later
+		val matchingStories = stories.filter {
+			it.active &&
+					factsOfTheWorld.storyMatches(it) }
+				.sortedByDescending { it.matchingRule?.criteriaCount } //just grab the first active story - null  check later
 
 		/*
 		Consequences MUST be self-contained, I realize this now
