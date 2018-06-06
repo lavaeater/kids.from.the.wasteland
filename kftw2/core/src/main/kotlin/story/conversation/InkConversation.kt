@@ -1,11 +1,9 @@
 package story.conversation
 
-import com.badlogic.gdx.math.MathUtils
 import com.bladecoder.ink.runtime.Story
 import data.IAgent
 import injection.Ctx
 import story.FactsOfTheWorld
-import story.fact.Facts
 
 class InkConversation(val story:Story, override val protagonist: IAgent, override val antagonist: IAgent) : IConversation {
   private val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>()}
@@ -39,6 +37,13 @@ class InkConversation(val story:Story, override val protagonist: IAgent, overrid
       return true
     }
     return false
+  }
+
+  companion object {
+    val MET_BEFORE = "met_before"
+    val PLAYER_NAME = "player_name"
+    val REACTION_SCORE = "reaction_score"
+    val STEP_OF_STORY = "step_of_story"
   }
 }
 

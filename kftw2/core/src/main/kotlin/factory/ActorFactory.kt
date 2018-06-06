@@ -10,13 +10,17 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import components.*
+import data.IAgent
 import data.Npc
 import data.NpcType
 import data.Player
 import ktx.math.vec2
+import managers.GameManager
 import map.IMapManager
 import map.tileWorldCenter
 import story.FactsOfTheWorld
+import story.fact.Facts
+import story.places.Place
 
 class ActorFactory(
 		private val engine: Engine,
@@ -42,11 +46,12 @@ class ActorFactory(
         .map { Pair(it.x,it.y).tileWorldCenter() }
         .toTypedArray()
 
-    for (i in 1..20)
-      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
+//    for (i in 1..20)
+//      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
   }
 
   fun randomNpcName() : String {
+    return ""
 
     return factsOfTheWorld.npcNames[MathUtils.random(1, factsOfTheWorld.npcNames.size)]!!
   }
@@ -85,10 +90,10 @@ class ActorFactory(
     return addNpcEntityAt(name, type, startPosition)
   }
 
-  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), type: String, spriteKey:String ="", x:Int, y:Int) : Entity {
+  fun addNpcAtTileWithAnimation(name: String = randomNpcName(), id: String = getNpcId(name), type: String, spriteKey:String ="", x:Int, y:Int) : Pair<Entity, IAgent> {
 
     val position = Pair(x,y).tileWorldCenter()
-    val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
+    val npc = Npc(id, name, npcTypes[type]!!)
     npcByKeys[npc.id] = npc
 
     val entity = engine.createEntity().apply {
@@ -97,14 +102,22 @@ class ActorFactory(
       add(NpcComponent(npc))
       add(AgentComponent(npc))
       add(VisibleComponent())
-      add(CharacterSpriteComponent(npc.name.replace(" ", "").toLowerCase(), true))
+      add(CharacterSpriteComponent(spriteKey, true))
       add(Box2dBodyComponent(createNpcBody(position, npc)))
     }
     engine.addEntity(entity)
-    return entity
+    return Pair(entity, npc)
   }
 
   fun addHeroEntity() : Entity {
+
+    val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
+    val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
+
+    player.currentX = tileX
+    player.currentY = tileY
+
+    val position = Pair(tileX, tileY).tileWorldCenter()
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
@@ -113,7 +126,7 @@ class ActorFactory(
       add(PlayerComponent(player))
       add(AgentComponent(player))
       add(VisibleComponent())
-      add(Box2dBodyComponent(createPlayerBody(vec2(0f, 0f), player)))
+      add(Box2dBodyComponent(createPlayerBody(position, player)))
     }
     engine.addEntity(entity)
     return entity
@@ -126,6 +139,32 @@ class ActorFactory(
   fun createNpcBody(position: Vector2, npc: Npc) : Body {
     return bodyManager.createBody(2f, 2.5f, 15f, position, BodyDef.BodyType.DynamicBody)
         .apply { userData = npc }
+  }
+
+  fun createFeatureBody(x:Int, y:Int, place: Place) : Body {
+    val pos = vec2((x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+        (y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+    return bodyManager.createBody(
+        GameManager.TILE_SIZE.toFloat(),
+        GameManager.TILE_SIZE.toFloat(),
+        10f,
+        pos,
+        BodyDef.BodyType.StaticBody)
+        .apply { userData = place }
+  }
+
+  fun addFeatureEntity(placeName:String, tileX: Int, tileY: Int): Entity {
+    val position = Pair(tileX, tileY).tileWorldCenter()
+    val place = Place(placeName)
+
+    val entity = engine.createEntity().apply {
+      add(TransformComponent())
+      add(FeatureSpriteComponent("house", false))
+      add(FeatureComponent(place))
+      add(Box2dBodyComponent(createFeatureBody(tileX, tileY, place)))
+    }
+    engine.addEntity(entity)
+    return entity
   }
 
   companion object {

@@ -4,7 +4,7 @@ import story.consequence.Consequence
 import story.consequence.ConversationConsequence
 import story.consequence.EmptyConsequence
 import story.consequence.SimpleConsequence
-import story.conversation.InkLoader
+import story.conversation.*
 import story.fact.IFact
 import story.rule.Criterion
 import story.rule.Rule
@@ -39,6 +39,7 @@ interface Builder<out T> {
 
 class StoryBuilder: Builder<Story> {
 	var name = ""
+	var initializer : () -> Unit = {}
 	private val rules = mutableListOf<Rule>()
 	private var consequence: Consequence = EmptyConsequence()
 
@@ -50,12 +51,12 @@ class StoryBuilder: Builder<Story> {
 		consequence = ConsequenceBuilder().apply(block).build()
 	}
 
-	override fun build() : Story = Story(name, rules, consequence)
+	override fun build() : Story = Story(name, rules, consequence, initializer)
 }
 
 class CriteriaBuilder:Builder<Criterion> {
 	var key = ""
-	var matcher: (IFact<*>) -> Boolean = { false }
+	private var matcher: (IFact<*>) -> Boolean = { false }
 	/*
 	val key: String, private val matcher: (IFact<*>) -> Boolean
 	 */
@@ -122,4 +123,52 @@ class RuleBuilder:Builder<Rule> {
 }
 
 fun story(block: StoryBuilder.() -> Unit) = StoryBuilder().apply(block).build()
+
+fun convo(block: InternalConversationBuilder.() -> Unit) = InternalConversationBuilder().apply(block).build()
+
+class InternalConversationBuilder : Builder<InternalConversation> {
+	var startingStepKey = ""
+	val steps = mutableMapOf<String, ConversationStep>()
+	fun step(block: ConversationStepBuilder.() -> Unit) {
+		val c = ConversationStepBuilder().apply(block).build()
+		steps[c.key] = c
+	}
+
+	override fun build(): InternalConversation {
+		if(!steps.containsKey("abort"))
+			steps["abort"] = ConversationStep("abort", listOf("Tack för pratet"), emptyList())
+
+		return InternalConversation(startingStepKey, steps)
+	}
+}
+
+class ConversationStepBuilder() : Builder<ConversationStep> {
+	var key = ""
+	private val antagonistLines = mutableListOf<String>()
+	private val conversationRoutes = mutableListOf<ConversationRoute>()
+
+	fun addLine(line:String) {
+		antagonistLines.add(line)
+	}
+
+	fun positive(key: String, text: String ="Ja") {
+		if(!conversationRoutes.any { it.routeType == RouteType.positive })
+			conversationRoutes.add(ConversationRoute(key, text, RouteType.positive))
+	}
+
+	fun negative(key:String, text: String = "Nej") {
+		if(!conversationRoutes.any {it.routeType == RouteType.negative})
+			conversationRoutes.add(ConversationRoute(key, text, RouteType.negative))
+	}
+	fun rude(key:String, text: String = "Far åt helvete!") {
+		if(!conversationRoutes.any {it.routeType == RouteType.rude})
+			conversationRoutes.add(ConversationRoute(key, text, RouteType.rude))
+	}
+	fun abort(key:String, text: String = "Avsluta") {
+		if(!conversationRoutes.any {it.routeType == RouteType.abort})
+			conversationRoutes.add(ConversationRoute(key, text, RouteType.abort))
+	}
+
+	override fun build(): ConversationStep = ConversationStep(key, antagonistLines, conversationRoutes)
+}
 

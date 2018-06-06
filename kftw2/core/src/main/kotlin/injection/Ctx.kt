@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import data.Player
 import factory.ActorFactory
 import factory.BodyFactory
@@ -26,6 +26,7 @@ import story.FactsOfTheWorld
 import story.RulesOfTheWorld
 import story.StoryManager
 import story.conversation.ConversationManager
+import story.places.PlacesOfTheWorld
 import systems.*
 import ui.IUserInterface
 import ui.UserInterface
@@ -37,7 +38,7 @@ class Ctx {
 
 	  private fun getEngine(context: Context) : Engine {
 		  return Engine().apply {
-			  addSystem(CharacterControlSystem(
+			  addSystem(GameInputSystem(
 					  inputProcessor = context.inject(),
 					  gameState = context.inject()))
 			  addSystem(NpcControlSystem())
@@ -45,20 +46,26 @@ class Ctx {
 					  context.inject(),
 					  context.inject(),
 					  context.inject(),
-					  false))
+					  true))
 			  addSystem(RenderCharactersSystem(context.inject()))
+				addSystem(RenderFeatureSystem(context.inject()))
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem(context.inject()))
-//			  addSystem(PhysicsDebugSystem())
+//			  addSystem(PhysicsDebugSystem(
+//						context.inject(),
+//						context.inject()))
 			  addSystem(WorldFactsSystem())
 				addSystem(FollowCameraSystem(context.inject()))
+				addSystem(PlayerEntityDiscoverySystem())
+				addSystem(FeatureDiscoverySystem())
 			}
 	  }
 
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(gameSettings)
-	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default")).apply {
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"))
+						.apply {
 		      setupInitialFacts()
 	      })
 	      bindSingleton(RulesOfTheWorld()) //Might be pointless
@@ -84,6 +91,7 @@ class Ctx {
 						      addListeners(this@register.inject(),
 								      Messages.CollidedWithImpassibleTerrain,
 								      Messages.EncounterOver,
+								      Messages.PlayerWentToAPlace,
 								      Messages.FactsUpdated,
 								      Messages.PlayerMetSomeone,
 								      Messages.StoryCompleted)
@@ -123,8 +131,9 @@ class Ctx {
 
 	      bindSingleton(StoryManager())
 
+				bindSingleton(PlacesOfTheWorld())
+
 	      bindSingleton(GameManager(
-		        gameSettings,
 			      this.inject(),
 			      this.inject(),
 			      this.inject(),

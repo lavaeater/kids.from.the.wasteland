@@ -7,6 +7,7 @@ import com.kotcrab.vis.ui.VisUI
 import Assets
 import injection.Ctx
 import com.lavaeater.kftw.screens.MainGameScreen
+import data.GameSettings
 import ktx.app.KtxGame
 
 

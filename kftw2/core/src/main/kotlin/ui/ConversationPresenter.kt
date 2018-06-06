@@ -1,5 +1,6 @@
 package ui
 
+import Assets
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
@@ -10,16 +11,23 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
-import Assets
-import statemachine.StateMachine
-import ktx.actors.*
+import ktx.actors.keepWithinParent
+import ktx.actors.onChange
+import ktx.actors.onKey
+import ktx.actors.txt
 import ktx.math.vec2
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import ktx.scene2d.textButton
+import statemachine.StateMachine
 import story.conversation.IConversation
 
-class ConversationPresenter(override val s: Stage, override val conversation: IConversation, override val conversationEnded: () -> Unit) : IConversationPresenter {
+class ConversationPresenter(
+		override val s: Stage,
+		override val conversation: IConversation,
+		override val conversationEnded: () -> Unit,
+		val showProtagonistPortrait: Boolean = true,
+		val showAntagonistPortrait: Boolean = true) : IConversationPresenter {
   private val speechBubbleNinePatch = NinePatchDrawable(Assets.speechBubble)
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
 
@@ -54,8 +62,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
 	init {
 
-
-
 	  protagonistRoot = table {
 		  choiceTable = table {
 			  background = speechBubbleNinePatch
@@ -63,11 +69,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 			  left()
 			  bottom()
 		  }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
-		  row()
-		  image(Assets.beamonHeadshots["WilliamHamparsomian"]!!) {
-			  setScaling(Scaling.fit)
-			  keepWithinParent()
-		  }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft, pad = 2f, colspan = 2)
+		  if(showProtagonistPortrait) {
+			  row()
+			  image(Assets.beamonHeadshots["WilliamHamparsomian"]!!) {
+				  setScaling(Scaling.fit)
+				  keepWithinParent()
+			  }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft, pad = 2f, colspan = 2)
+		  }
 		  isVisible = false
 		  pack()
 	  }
@@ -79,11 +87,13 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 		    setWrap(true)
 		    keepWithinParent()
 	    }.cell(expandY = true, width = baseWidth, align = Align.bottomRight, padLeft = 16f, padBottom = 2f)
-	    row()
-	    image(Assets.beamonHeadshots[antagonistKey]!!) {
-		    setScaling(Scaling.fit)
-		    keepWithinParent()
-	    }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft,pad = 2f, colspan = 2)
+	    if(showAntagonistPortrait) {
+		    row()
+		    image(Assets.beamonHeadshots[antagonistKey]!!) {
+			    setScaling(Scaling.fit)
+			    keepWithinParent()
+		    }.cell(fill = true, width = baseWidth / 3, height = baseWidth / 3, align = Align.bottomLeft, pad = 2f, colspan = 2)
+	    }
       isVisible = true
 	    pack()
     }
@@ -112,7 +122,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 	  s.actors.removeValue(rootTable, true)
   }
 
-  fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
+  private fun showProtagonistChoices(protagonistChoices: Iterable<String>) {
 	  choiceTable.clearChildren()
 	  protagonistRoot.isVisible = true
 	  choiceTable.apply {
@@ -122,15 +132,6 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
         button.onChange {
           makeChoice(indexedValue.index)
         }
-//        button.addListener (object: KtxInputListener() {
-//          override fun touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-//            makeChoice(indexedValue.index)
-//            return super.touchDown(event, x, y, pointer, button)
-//          }
-//        })
-//			  button.onChange {
-//          makeChoice(indexedValue.index)
-//        }
 			  button.label.setWrap(true)
 			  add(button).align(Align.left).expandY().growX().pad(8f).space(4f).row()
 			  button.keepWithinParent()
@@ -173,7 +174,7 @@ class ConversationPresenter(override val s: Stage, override val conversation: IC
 
   }
 
-  fun stateChanged(state: ConversationState) {
+  private fun stateChanged(state: ConversationState) {
     when (state) {
       ConversationState.NotStarted -> stateMachine.acceptEvent(ConversationEvent.ConversationStarted)
       ConversationState.Ended -> conversationEnded()

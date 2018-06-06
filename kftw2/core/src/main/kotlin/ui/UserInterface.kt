@@ -16,9 +16,9 @@ import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
 import managers.GameEvents
 import managers.GameState
-import story.fact.Facts
 import story.FactsOfTheWorld
 import story.conversation.IConversation
+import story.fact.Facts
 
 class UserInterface(
     private val batch: Batch,
@@ -44,11 +44,20 @@ class UserInterface(
   private lateinit var scoreLabel: Label
 
 
-  override fun runConversation(conversation: IConversation, conversationEnded: () -> Unit) {
-    conversationUi = ConversationPresenter(stage, conversation, {
+  override fun runConversation(
+      conversation: IConversation,
+      conversationEnded: () -> Unit,
+      showProtagonistPortrait: Boolean,
+      showAntagonistPortrait:Boolean) {
+
+    conversationUi = ConversationPresenter(
+        stage,
+        conversation, {
       conversationUi.dispose()
       conversationEnded()
-    })
+    },
+        showProtagonistPortrait,
+        showAntagonistPortrait)
   }
 
   init {

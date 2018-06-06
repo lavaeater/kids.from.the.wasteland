@@ -2,11 +2,13 @@ package managers
 
 class Messages {
   companion object {
-    val validRange = 1001..1005
-    val CollidedWithImpassibleTerrain = 1001
-    val PlayerMetSomeone = 1002
-    val EncounterOver = 1003
-    val FactsUpdated = 1004
-    val StoryCompleted = 1005
+    const val CollidedWithImpassibleTerrain = 1001
+    const val PlayerMetSomeone = 1002
+    const val EncounterOver = 1003
+    const val FactsUpdated = 1004
+    const val StoryCompleted = 1005
+    const val NewTile = 1006
+    const val PlayerWentToAPlace: Int = 1007
+    val validRange = 1000..1007
   }
 }

@@ -8,11 +8,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.utils.Disposable
-import com.lavaeater.kftw.GameSettings
+import data.GameSettings
 import ktx.scene2d.Scene2DSkin
 import ktx.style.skin
 import ktx.style.textButton
 import java.io.Reader
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+
+
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
@@ -91,6 +94,7 @@ object Assets : Disposable {
         "SandraFaber" to Texture(Gdx.files.internal("chars/portraits/SandraFaber.png")),
         "CarolynShoemaker" to Texture(Gdx.files.internal("chars/portraits/CarolynShoemaker.png")),
         "StephenHawking" to Texture(Gdx.files.internal("chars/portraits/StephenHawking.png")),
+        "Flexbert" to Texture(Gdx.files.internal("chars/portraits/StephenHawking.png")),
         "UlricaWikren" to Texture(Gdx.files.internal("chars/portraits/UlricaWikren.png")))
   }
 
@@ -98,7 +102,7 @@ object Assets : Disposable {
 
   val codeToExtraTiles by lazy { mutableMapOf<String, List<Sprite>>() }
 
-  val sprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
+  val tileSprites by lazy { mutableMapOf<String, HashMap<String, Sprite>>() }
 
   fun load(gameSettings: GameSettings): AssetManager {
     Assets.gameSettings = gameSettings
@@ -108,6 +112,8 @@ object Assets : Disposable {
     initializeCharacterSprites()
 
     initAnimatedCharacterSprites()
+
+    initializeFeatureSprites()
 
     initializeFonts()
 
@@ -190,33 +196,33 @@ object Assets : Disposable {
   private fun initializeCharacterSprites() {
     for (atlasMap in characters) {
       val atlas = atlasMap.value
-      sprites.put(atlasMap.key, hashMapOf())
+      tileSprites.put(atlasMap.key, hashMapOf())
       for (region in atlas.regions) {
         val sprite = atlas.createSprite(region.name)
         sprite.setSize(4f, 4.5f)
-        sprites[atlasMap.key]!!.put(region.name, sprite)
+        tileSprites[atlasMap.key]!!.put(region.name, sprite)
       }
     }
   }
 
+  val featureSprites = mutableMapOf<String, MutableList<Sprite>>()
+
+  private fun initializeFeatureSprites() {
+    featureSprites["house"] = mutableListOf()
+    featureSprites["house"]!!.add(Sprite(Texture(Gdx.files.internal("tiles/features/house.png"))))
+  }
+
   private fun initializeMapTiles() {
-    var yFactor = 1f
-    var xFactor = 1f
     for (atlasMap in atlases) {
       val atlas = atlasMap.value
-      sprites.put(atlasMap.key, hashMapOf())
+      tileSprites.put(atlasMap.key, hashMapOf())
       for (region in atlas.regions) {
         if (region.name != "blank") {
+          fixBleeding(region)
           val sprite = atlas.createSprite(region.name)
-          sprite.setSize(8f, 8f)
-          sprite.x = xFactor * 8f
-          sprite.y = yFactor * 8f
-          sprites[atlasMap.key]!!.put(region.name, sprite)
-          yFactor++
+          tileSprites[atlasMap.key]!!.put(region.name, sprite)
         }
       }
-      xFactor++
-      yFactor = 1f
     }
   }
 
@@ -227,5 +233,16 @@ object Assets : Disposable {
 
   fun readerForTree(treeFileName: String): Reader {
     return Gdx.files.internal("btrees/$treeFileName").reader()
+  }
+
+  fun fixBleeding(region: TextureRegion) {
+    val fix = 0.01f
+    val x = region.regionX.toFloat()
+    val y = region.regionY.toFloat()
+    val width = region.regionWidth.toFloat()
+    val height = region.regionHeight.toFloat()
+    val invTexWidth = 1f / region.texture.width
+    val invTexHeight = 1f / region.texture.height
+    region.setRegion((x + fix) * invTexWidth, (y + fix) * invTexHeight, (x + width - fix) * invTexWidth, (y + height - fix) * invTexHeight) // Trims Region
   }
 }

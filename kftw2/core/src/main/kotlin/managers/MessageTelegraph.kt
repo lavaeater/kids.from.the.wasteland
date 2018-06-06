@@ -9,6 +9,8 @@ import story.FactsOfTheWorld
 import story.StoryManager
 import story.fact.Contexts
 import story.fact.Facts
+import story.places.Place
+import story.places.PlacesOfTheWorld
 
 
 /**
@@ -27,6 +29,7 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
   private val messageDispatcher by lazy { Ctx.context.inject<MessageDispatcher>() }
 
   private val storyManager by lazy { Ctx.context.inject<StoryManager>() }
+  private val placesOfTheWorld by lazy { Ctx.context.inject<PlacesOfTheWorld>() }
 
   override fun handleMessage(msg: Telegram): Boolean {
     if(msg.message !in Messages.validRange) throw IllegalArgumentException("Message id ${msg.message} not in valid range ${Messages.validRange}")
@@ -34,10 +37,55 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
       Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
       Messages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
       Messages.EncounterOver -> encounterOver()
-      Messages.FactsUpdated -> storyManager.checkStories() //this method will trigger all stories to check if their rules have passed, for instance
+      Messages.FactsUpdated -> checkTheWorld() //this method will trigger all stories to check if their rules have passed, for instance
       Messages.StoryCompleted -> return true //this method will trigger the "story ended" thingie related to a story... ending. Might not be relevant
+      Messages.NewTile -> newTile(msg.extraInfo as Pair<Int, Int>)
+      Messages.PlayerWentToAPlace -> wentSomewhere(msg.extraInfo as Place)
     }
     return true
+  }
+
+  private fun wentSomewhere(place: Place) {
+    factsOfTheWorld.stateStringFact(Facts.CurrentPlace, place.name)
+    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.EnteredLocation)
+    placesOfTheWorld.enterPlace(place)
+
+  }
+
+  private fun checkTheWorld() {
+    /*
+    is a place a place or a story
+    or a rule or what?
+
+    Is everything connected to a story but the storymanager might
+    check our places as well? Or do we need a worldManager?
+
+    We need the good old "global world rules again"
+     */
+    storyManager.checkStories()
+  }
+
+  private fun newTile(newTile: Pair<Int,Int>) {
+    /*
+    To make it easier, facts are indeed always facts and never shit we read from the code...
+     */
+    factsOfTheWorld.stateIntFact(Facts.PlayerTileX, newTile.first)
+    factsOfTheWorld.stateIntFact(Facts.PlayerTileY, newTile.second)
+
+    /*
+    We meed to check the places thing if there is a place in this new tile.
+    If there is a place here....
+
+    No, the place thing can be... a rule? No? Yes?
+
+    Is a fucking place a fucking hitbox? FUUUCK
+
+    Places should be entities that have hitboxes. Tiles etc could very well be area-related
+    or something
+     */
+
+
+    messageDispatcher.dispatchMessage(Messages.FactsUpdated)
   }
 
   private fun encounterOver() {

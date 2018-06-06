@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.MathUtils
 
 class TileManager(val chunkSize:Int = 100) {
     private val upperBound = chunkSize - 1
-    private val tileStores = mutableSetOf<TileStore>()
+    private val tileStores = mutableSetOf<TileStoreBase>()
     private val usedTiles = mutableMapOf<String, Tile>()
 
     private fun getLowerBound(i: Int): Int {
@@ -16,19 +16,24 @@ class TileManager(val chunkSize:Int = 100) {
         return (i / chunkSize) * chunkSize
     }
 
-    private fun getTileStore(x: Int, y: Int): TileStore {
+    private fun getTileStore(x: Int, y: Int): ITileStore {
         val lowerBoundX = getLowerBound(x)
         val lowerBoundY = getLowerBound(y)
         return getTileStoreLowerBounds(lowerBoundX, lowerBoundY)
     }
 
-    private fun getTileStoreLowerBounds(lX: Int, lY: Int): TileStore {
+    private fun getTileStoreLowerBounds(lX: Int, lY: Int): ITileStore {
         var store = tileStores.firstOrNull {
             lX in it.xBounds &&
                 lY in it.yBounds
         }
         if (store == null) {
-            store = TileStore(lX, chunkSize, lY, chunkSize, generateTilesForRange(lX..(lX + upperBound), lY..(lY + upperBound)))
+            store = FlatTileStore(
+                lX,
+                chunkSize,
+                lY,
+                chunkSize,
+                generateTilesForRange(lX..(lX + upperBound), lY..(lY + upperBound)))
             tileStores.add(store)
         }
         return store
@@ -44,13 +49,47 @@ class TileManager(val chunkSize:Int = 100) {
         store.putTile(x, y, tile)
     }
 
+    fun getTilesFlat(xBounds: IntRange, yBounds: IntRange) : Array<TileInstance> {
+
+        lateinit var currentTile: TileInstance
+        var currentStore = getTileStore(xBounds.start, yBounds.start)
+        val columns = xBounds.count()
+        val rows = yBounds.count()
+        val size = columns * rows
+        var row = 0
+        var column = 0
+        return Array(size, { index ->
+
+            val x = xBounds.start + column
+            val y = yBounds.start + row
+
+            if (x !in currentStore.xBounds || y !in currentStore.yBounds) {
+                currentStore = getTileStore(x, y)
+            }
+            currentTile = currentStore.getTile(x, y)
+
+            if (currentTile.tile.needsNeighbours) {
+                currentTile = fixNeighbours(currentTile.tile, x, y).getInstance(x, y)
+                putTile(x, y, currentTile)
+            }
+
+            column++
+            if(column > xBounds.count() - 1) {
+                column = 0
+                row++
+            }
+
+            return@Array currentTile
+        })
+    }
+
     fun getTiles(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
 
         //This is a for loop. This gets the renderable map
         //To optimize, we should have all stores ready, but that's unnecesarry
         //We just get the first store and get a new one if needed!
         lateinit var currentTile: TileInstance
-        var currentStore: TileStore = getTileStore(xBounds.start, yBounds.start)
+        var currentStore = getTileStore(xBounds.start, yBounds.start)
         return Array(xBounds.count(), { x ->
             Array(yBounds.count(), { y ->
 
@@ -130,7 +169,7 @@ class TileManager(val chunkSize:Int = 100) {
         Checking a true-false is fast, I imagine.
          */
 
-        //This is like orto or something
+        //This is like ordo or something
         for ((x, column) in tiles.withIndex())
             for ((y, _) in column.withIndex()) {
                 val tempTile = fixNeighbours(tiles[x][y], x, y, tiles)
@@ -197,7 +236,7 @@ class TileManager(val chunkSize:Int = 100) {
             }
 
             if (extraSprites.any())
-                Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.sprites[it.first]!![it.second]!! }
+                Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.tileSprites[it.first]!![it.second]!! }
             else
                 MapManager.noExtraSprites.add(shortCode)
         }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
 import data.Npc
 import data.Player
+import story.places.Place
 
 class CollisionListener(private val messageDispatcher: MessageDispatcher) : ContactListener {
 
@@ -27,17 +28,32 @@ class CollisionListener(private val messageDispatcher: MessageDispatcher) : Cont
     if (evaluatePlayerOnNpcContact(contact)) return
 
     //one is dynamic, other is static, we are, for now, hitting impassible terrain
-    evaluateNpcOnStatic(contact)
+    evaluateDynamicOnStatic(contact)
   }
 
-  private fun evaluateNpcOnStatic(contact: Contact) {
+  private fun evaluateDynamicOnStatic(contact: Contact) {
+    /*
+    Either player on static bodies OR a @Place
+
+     */
     val dynamicBody = if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody)
       contact.fixtureA.body else contact.fixtureB.body
 
     //Check the userData of the body, it's either an NPC; then it needs a message!
     val ud = dynamicBody.userData
     when (ud) {
+      is Player -> evaluatePlayerOnStaticContact(ud, contact)
       is Npc -> messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, ud)
+    }
+  }
+
+  private fun evaluatePlayerOnStaticContact(player: Player, contact: Contact) {
+    val staticBody = if (contact.fixtureA.body.type == BodyDef.BodyType.StaticBody)
+      contact.fixtureA.body else contact.fixtureB.body
+
+    val ud = staticBody.userData
+    when(ud) {
+      is Place -> messageDispatcher.dispatchMessage(Messages.PlayerWentToAPlace, ud)
     }
   }
 

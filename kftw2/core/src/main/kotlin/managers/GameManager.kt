@@ -8,19 +8,18 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.lavaeater.kftw.GameSettings
 import factory.ActorFactory
 import map.IMapManager
 import map.MapManager
 import story.FactsOfTheWorld
-import systems.CharacterControlSystem
+import systems.GameInputSystem
 import systems.RenderCharactersSystem
+import systems.RenderFeatureSystem
 import systems.RenderMapSystem
 import ui.IUserInterface
 import kotlin.math.roundToInt
 
 class GameManager(
-    gameSettings: GameSettings,
     gameState: GameState,
     private val batch: Batch,
     private val camera: Camera,
@@ -38,10 +37,6 @@ class GameManager(
   init {
     gameState.addChangeListener(::gameStateChanged)
     setupSystems()
-    VIEWPORT_WIDTH = gameSettings.width
-    VIEWPORT_HEIGHT = gameSettings.height
-    TILE_SIZE = gameSettings.tileSize
-
     camera.position.x = 0f
     camera.position.y = 0f
 
@@ -49,7 +44,6 @@ class GameManager(
   }
 
   private fun setupSystems() {
-//    engine.addSystem(FollowCameraSystem(actorFactory.addHeroEntity()))
     addEmployees()
   }
 
@@ -63,12 +57,12 @@ class GameManager(
 
 
     for (name in factsOfTheWorld.npcNames.values) {
-      val someTilesInRange = mapManager.getBandOfTiles(0,0, 2, 3).filter {
+      val someTilesInRange = mapManager.getBandOfTiles(0,0, 50, 3).filter {
         it.tile.tileType != "rock" && it.tile.tileType != "water"
       }
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
-      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", x = randomlySelectedTile.x, y = randomlySelectedTile.y)
+      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", spriteKey =  name.replace(" ", "").toLowerCase(), x = randomlySelectedTile.x, y = randomlySelectedTile.y)
     }
   }
 
@@ -126,9 +120,12 @@ class GameManager(
   }
 
   private fun stopTheWorld() {
-    for (system in engine.systems.filter { it !is RenderCharactersSystem && it !is RenderMapSystem }) {
+    for (system in engine.systems.filter {
+      it !is RenderCharactersSystem &&
+          it !is RenderMapSystem &&
+          it !is RenderFeatureSystem }) {
       system.setProcessing(false)
-      if (system is CharacterControlSystem) {
+      if (system is GameInputSystem) {
         system.processInput = false
       }
 
@@ -142,7 +139,7 @@ class GameManager(
   private fun resumeTheWorld() {
     for (system in engine.systems) {
       system.setProcessing(true)
-      if(system is CharacterControlSystem)
+      if(system is GameInputSystem)
       {
         system.processInput = true
       }

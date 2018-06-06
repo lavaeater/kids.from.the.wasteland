@@ -3,10 +3,17 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
+<<<<<<< HEAD
 import com.lavaeater.kftw.GameSettings
 import ktx.math.vec2
 import factory.BodyFactory
 import injection.Ctx
+=======
+import data.GameSettings
+import factory.BodyFactory
+import injection.Ctx
+import ktx.math.vec2
+>>>>>>> dev
 import managers.GameManager
 import systems.tileX
 import systems.tileY
@@ -16,7 +23,11 @@ class MapManager(
     private val bodyManager: BodyFactory,
     private val tileManager: TileManager) : IMapManager {
 
+<<<<<<< HEAD
   private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>()}
+=======
+  private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>() }
+>>>>>>> dev
 
 
   val widthInTiles = (gameSettings.width / gameSettings.tileSize).roundToInt()
@@ -28,28 +39,29 @@ class MapManager(
   }
 
   override fun getBandOfTiles(x: Int, y: Int, range: Int, width: Int): List<TileInstance> {
-        if (range < 1 || width < 1) return listOf()
-    if (width == 1) return getRingOfTiles(x,y, range)
+    if (range < 1 || width < 1) return listOf()
+    if (width == 1) return getRingOfTiles(x, y, range)
 
-    val tilesInMaxRange = getTilesInRange(x,y, range + width)
-    val tilesToExclude = getTilesInRange(x,y, range - 1)
+    val tilesInMaxRange = getTilesInRange(x, y, range + width)
+    val tilesToExclude = getTilesInRange(x, y, range - 1)
     return tilesInMaxRange.minus(tilesToExclude).toList()
   }
 
   override fun getRingOfTiles(x: Int, y: Int, range: Int): List<TileInstance> {
     if (range < 1) return listOf()
 
-    val tilesInRange = getTilesInRange(x,y, range)
-    val tilesToExclude = getTilesInRange(x,y, range - 1)
+    val tilesInRange = getTilesInRange(x, y, range)
+    val tilesToExclude = getTilesInRange(x, y, range - 1)
     return tilesInRange.minus(tilesToExclude).toList()
   }
 
-  var currentlyVisibleTiles: Array<Array<TileInstance>>? = null
+  var currentlyVisibleTiles: Array<TileInstance>? = null
 
   //val inverseFogOfWar = mutableSetOf<TileKey>()
   val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
+
   companion object {
     val weirdDirections = mapOf(
         "southwest" to "southwest",
@@ -63,7 +75,7 @@ class MapManager(
     )
 
     val simpleDirections = mapOf(
-            Pair(-1, 0) to "east",
+        Pair(-1, 0) to "east",
         Pair(0, 1) to "south",
         Pair(1, 0) to "west",
         Pair(0, -1) to "north"
@@ -93,10 +105,10 @@ class MapManager(
     )
 
     val shortTerrainPriority = mapOf(
-            'w' to 0,
-            'd' to 1,
-            'g' to 2,
-            'r' to 3
+        'w' to 0,
+        'd' to 1,
+        'g' to 2,
+        'r' to 3
     )
 
     val shortLongTerrains = mapOf(
@@ -121,35 +133,32 @@ class MapManager(
 
   }
 
-  fun doWeNeedNewVisibleTiles(x:Int, y:Int): Boolean {
+  private fun doWeNeedNewVisibleTiles(x: Int, y: Int): Boolean {
     return !(currentX in (x - visibleRange)..(x + visibleRange) && currentY in (y - visibleRange)..(y + visibleRange))
   }
 
-  fun checkHitBoxesForImpassibleTiles() {
-
-    for (row in currentlyVisibleTiles!!)
-      for (tile in row) {
-        if (tile.needsHitBox && tile.tile.isImpassible()) {
-          val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
-              (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
-          bodyManager.createBody(
-              GameManager.TILE_SIZE.toFloat(),
-              GameManager.TILE_SIZE.toFloat(),
-              10f,
-              pos,
-              BodyDef.BodyType.StaticBody)
-            tile.needsHitBox = false
-        }
+  private fun checkHitBoxesForImpassibleTiles() {
+    for (tile in currentlyVisibleTiles!!)
+      if (tile.needsHitBox && tile.tile.isImpassible()) {
+        val pos = vec2((tile.x * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2,
+            (tile.y * GameManager.TILE_SIZE).toFloat() + GameManager.TILE_SIZE / 2)
+        bodyManager.createBody(
+            GameManager.TILE_SIZE.toFloat(),
+            GameManager.TILE_SIZE.toFloat(),
+            10f,
+            pos,
+            BodyDef.BodyType.StaticBody)
+        tile.needsHitBox = false
       }
   }
 
   override fun getTileAt(x: Int, y: Int): Tile {
-    return tileManager.getTile(x,y).tile
+    return tileManager.getTile(x, y).tile
   }
 
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileInstance? {
     val tilesInRange = getTilesInRange(x, y, range)
-    return tilesInRange.filter { it.tile.tileType == tileType }.firstOrNull()
+    return tilesInRange.firstOrNull { it.tile.tileType == tileType }
   }
 
 
@@ -157,23 +166,32 @@ class MapManager(
     return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
 
+<<<<<<< HEAD
   override fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
     if(currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x,y)) {
+=======
+  override fun getVisibleTiles(x: Int, y: Int): Array<TileInstance> {
+    if (currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x, y)) {
+>>>>>>> dev
       currentX = x
       currentY = y
-      currentlyVisibleTiles = tileManager.getTiles(
-              (currentX - currentTileRange)..(currentX + currentTileRange),
-              (currentY - currentTileRange)..(currentY + currentTileRange))
+      currentlyVisibleTiles = tileManager.getTilesFlat(
+          (currentX - currentTileRange)..(currentX + currentTileRange),
+          (currentY - currentTileRange)..(currentY + currentTileRange))
     }
+<<<<<<< HEAD
   checkHitBoxesForImpassibleTiles()
+=======
+    checkHitBoxesForImpassibleTiles()
+>>>>>>> dev
     return currentlyVisibleTiles!!
   }
 
-  override fun getVisibleTiles(position: Vector3): Array<Array<TileInstance>> {
+  override fun getVisibleTiles(position: Vector3): Array<TileInstance> {
     return getVisibleTiles(position.tileX(), position.tileY())
   }
 
-  override fun getTilesInRange(x:Int, y:Int, range: Int): List<TileInstance> {
+  override fun getTilesInRange(x: Int, y: Int, range: Int): List<TileInstance> {
     val minX = x.coordAtDistanceFrom(-range)
     val maxX = x.coordAtDistanceFrom(range)
     val minY = y.coordAtDistanceFrom(-range)
@@ -181,30 +199,22 @@ class MapManager(
 
     return tileManager.getTiles(minX..maxX, minY..maxY).flatten()
   }
+
+  //This needs work to... work.
+  override fun getVisibleTilesWithFog(x:Int, y:Int, range:Int): Array<TileInstance> {
+    val tiles = getVisibleTiles(x, y)
+
+    //first, all of the visible tiles need to be seen. THEN we need to set them to seeing when rendering?
+
+    //WHaat is going on?
+    for (tile in tiles) {
+      if (isInCircle(tile.x, tile.y, x, y, range)) {
+        tile.seeing = true
+        tile.seen = true
+      } else {
+        tile.seeing = false
+      }
+    }
+    return tiles
+  }
 }
-/*
-The code below contains some fog of war-specific code. We're not there yet
- */
-
-
-//  //This needs work to... work.
-//  override fun getVisibleTilesWithFog(position: Vector3): List<RenderableTile> {
-//    return listOf()
-//    val tiles = getVisibleTiles(position)
-//    val key = position.toTile()
-//    return tiles.map { RenderableTile(it.key, it.value, getFogStatus(it.key, key)) }
-//  }
-
-//  private fun getFogStatus(key: TileKey, position: TileKey): TileFog {
-//    //1.Everything within some radius of the player is currently seen
-//    if (key.isInRange(position, 5)) {
-//      if (!inverseFogOfWar.contains(key)) //Now it's seen!
-//        inverseFogOfWar.add(key)
-//      return TileFog.Seeing
-//    }
-//
-//    //2. Everything that we have visited HAS been seen
-//
-//    //3. Everything else is unseen
-//    return if (inverseFogOfWar.contains(key)) TileFog.Seen else TileFog.NotSeen
-//  }
