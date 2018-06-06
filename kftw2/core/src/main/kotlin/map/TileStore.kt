@@ -44,17 +44,6 @@ class TileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, val
     }
 }
 
-<<<<<<< HEAD
-class FlatTileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, tiles: Array<Array<TileInstance>>) : TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
-    val flatTiles = tiles.flatten().toTypedArray() //Oooh
-
-    override fun getTile(x: Int, y: Int): TileInstance {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun putTile(x: Int, y: Int, tile: TileInstance) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-=======
 class FlatTileStore(lowerBoundX: Int,
                     columns: Int,
                     lowerBoundY: Int,
@@ -84,6 +73,5 @@ class FlatTileStore(lowerBoundX: Int,
 
         val actualIndex = xIndex + (yIndex * columns) //column x at row y
         flatTiles[actualIndex] = tile
->>>>>>> dev
     }
 }

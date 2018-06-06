@@ -11,14 +11,10 @@ class StoryManager {
 	 */
 
 	fun checkStories() {
-<<<<<<< HEAD
-		val story = stories.firstOrNull { it.active } //just grab the first active story - null  check later
-=======
 		val matchingStories = stories.filter {
 			it.active &&
 					factsOfTheWorld.storyMatches(it) }
 				.sortedByDescending { it.matchingRule?.criteriaCount } //just grab the first active story - null  check later
->>>>>>> dev
 
 		/*
 		Consequences MUST be self-contained, I realize this now
@@ -32,23 +28,16 @@ class StoryManager {
 		I think some kind of simple callback mechanism to do one story at a time,
 		somehow. So to begin with we do "more complicated story first" if there are more than one!
 		 */
-<<<<<<< HEAD
-		if(story != null) {
-=======
 		var story = matchingStories.firstOrNull()
 		if(story != null) {
 
->>>>>>> dev
 			val rule = factsOfTheWorld.rulesThatPass(story.rules.toSet()).firstOrNull()
 			if (rule != null) {
 				rule.consequence.apply()
 				story.finishedRules.add(rule.name)
 			}
 			if (story.storyFinished) {
-<<<<<<< HEAD
-=======
 				//A story sets its own finished state when it's done
->>>>>>> dev
 				//A STORY NEEDS A CONSEQUENCE! <- Mind blown!
 				stories.remove(story)
 				finishedStories.add(story)

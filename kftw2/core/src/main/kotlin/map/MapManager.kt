@@ -3,17 +3,10 @@ package map
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
-<<<<<<< HEAD
-import com.lavaeater.kftw.GameSettings
-import ktx.math.vec2
-import factory.BodyFactory
-import injection.Ctx
-=======
 import data.GameSettings
 import factory.BodyFactory
 import injection.Ctx
 import ktx.math.vec2
->>>>>>> dev
 import managers.GameManager
 import systems.tileX
 import systems.tileY
@@ -23,13 +16,7 @@ class MapManager(
     private val bodyManager: BodyFactory,
     private val tileManager: TileManager) : IMapManager {
 
-<<<<<<< HEAD
-  private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>()}
-=======
   private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>() }
->>>>>>> dev
-
-
   val widthInTiles = (gameSettings.width / gameSettings.tileSize).roundToInt()
   val currentTileRange: Int = widthInTiles * 2
   val visibleRange = widthInTiles / 4
@@ -56,8 +43,6 @@ class MapManager(
   }
 
   var currentlyVisibleTiles: Array<TileInstance>? = null
-
-  //val inverseFogOfWar = mutableSetOf<TileKey>()
   val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
@@ -128,9 +113,7 @@ class MapManager(
         Pair(-1, 1) to "northwest")
 
     val noExtraSprites = hashSetOf<String>()
-
     val scale = 80.0f
-
   }
 
   private fun doWeNeedNewVisibleTiles(x: Int, y: Int): Boolean {
@@ -166,24 +149,15 @@ class MapManager(
     return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
 
-<<<<<<< HEAD
-  override fun getVisibleTiles(x:Int, y:Int) : Array<Array<TileInstance>> {
-    if(currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x,y)) {
-=======
   override fun getVisibleTiles(x: Int, y: Int): Array<TileInstance> {
     if (currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x, y)) {
->>>>>>> dev
       currentX = x
       currentY = y
       currentlyVisibleTiles = tileManager.getTilesFlat(
           (currentX - currentTileRange)..(currentX + currentTileRange),
           (currentY - currentTileRange)..(currentY + currentTileRange))
     }
-<<<<<<< HEAD
-  checkHitBoxesForImpassibleTiles()
-=======
     checkHitBoxesForImpassibleTiles()
->>>>>>> dev
     return currentlyVisibleTiles!!
   }
 
