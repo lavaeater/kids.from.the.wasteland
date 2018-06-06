@@ -44,19 +44,34 @@ class TileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, val
     }
 }
 
-class FlatTileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, tiles: Array<Array<TileInstance>>) : TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
-    val flatTiles = tiles.flatten().toTypedArray() //Oooh
-
-    fun getIndex(x:Int, y:Int): Int {
-        //How does flatten actually flatten an array of arrays? Lets assume it works with
-    }
+class FlatTileStore(lowerBoundX: Int,
+                    columns: Int,
+                    lowerBoundY: Int,
+                    rows: Int,
+                    tiles: Array<Array<TileInstance>>) :
+    TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
+    val size = columns * rows
+    val flatTiles = Array(size, {
+        val column = it.rem(columns)
+        val row = it / columns
+        return@Array tiles[column][row]
+    })
 
     override fun getTile(x: Int, y: Int): TileInstance {
-        //We need to calculate what absolute position in the array a certain coordinate has.
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val xIndex = getXIndex(x)
+        val yIndex = getYIndex(y)
+
+        val actualIndex = xIndex  + (yIndex * columns) //column x at row y
+        return flatTiles[actualIndex]
     }
 
     override fun putTile(x: Int, y: Int, tile: TileInstance) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val xIndex = getXIndex(x)
+        val yIndex = getYIndex(y)
+
+      //y equals row. so for every y we must add that number of columns
+
+        val actualIndex = xIndex + (yIndex * columns) //column x at row y
+        flatTiles[actualIndex] = tile
     }
 }

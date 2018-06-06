@@ -159,10 +159,9 @@ class MapManager(
     if (currentlyVisibleTiles == null || doWeNeedNewVisibleTiles(x, y)) {
       currentX = x
       currentY = y
-      currentlyVisibleTiles = tileManager.getTiles(
+      currentlyVisibleTiles = tileManager.getTilesFlat(
           (currentX - currentTileRange)..(currentX + currentTileRange),
           (currentY - currentTileRange)..(currentY + currentTileRange))
-          .flatten().toTypedArray()
     }
     checkHitBoxesForImpassibleTiles()
     return currentlyVisibleTiles!!
