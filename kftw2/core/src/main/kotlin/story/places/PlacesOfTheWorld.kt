@@ -25,14 +25,14 @@ class PlacesOfTheWorld {
 
   init {
     val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY,
-        50, 15).filter {
+        20, 7).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()
     for(city in 0..10) {
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
       someTilesInRange.remove(randomlySelectedTile)
-      val tilesInRangeOfSelected = mapManager.getTilesInRange(randomlySelectedTile.x, randomlySelectedTile.y, 10)
+      val tilesInRangeOfSelected = mapManager.getTilesInRange(randomlySelectedTile.x, randomlySelectedTile.y, 5)
       //Remove a lot of tiles from the band of possible tiles to have the city at
       for(tile in tilesInRangeOfSelected)
         someTilesInRange.remove(tile)

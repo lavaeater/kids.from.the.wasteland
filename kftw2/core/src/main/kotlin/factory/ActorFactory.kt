@@ -1,7 +1,6 @@
 package factory
 
 import Assets
-import com.badlogic.ashley.core.Component
 import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.ai.btree.BehaviorTree
@@ -180,8 +179,6 @@ class ActorFactory(
     }
   }
 }
-
-class FeatureComponent(val place: Place) : Component
 
 fun Npc.getBehaviorTree() : BehaviorTree<Npc> {
 

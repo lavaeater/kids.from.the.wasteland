@@ -5,6 +5,7 @@ import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.g2d.Batch
 import components.FeatureSpriteComponent
 import components.TransformComponent
+import components.VisibleComponent
 import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
@@ -12,7 +13,8 @@ import ktx.ashley.mapperFor
 class RenderFeatureSystem(private val batch: Batch) :
     SortedIteratingSystem(
         allOf(FeatureSpriteComponent::class,
-            TransformComponent::class).get(),
+            TransformComponent::class,
+            VisibleComponent::class).get(),
         EntityYOrderComparator(),
         10
     ) {

@@ -12,7 +12,7 @@ object Lwjgl3Launcher {
 		get() {
 			val configuration = Lwjgl3ApplicationConfiguration()
 			configuration.setTitle("Lost Beamon People")
-			configuration.setWindowedMode(1280, 720)
+			configuration.setWindowedMode(1920, 1080)
 			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png")
 			return configuration
 		}

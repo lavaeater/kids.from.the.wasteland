@@ -29,20 +29,20 @@ class RenderMapSystem(
 
         val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
 
-        for (rows in tilesToRender)
-          for (tileInstance in rows) {
-            val xPos = (tileInstance.x * 8).toFloat()
-            val yPos = (tileInstance.y * 8).toFloat()
+        for (tileInstance in tilesToRender) {
 
-            tileInstance.baseSprite.setPosition(xPos, yPos)
-            tileInstance.baseSprite.draw(batch)
-            for (extraSprite in tileInstance.extraSprites) {
-              extraSprite.setPosition(xPos, yPos)
-              extraSprite.draw(batch)
-            }
+          val xPos = (tileInstance.x * 8).toFloat()
+          val yPos = (tileInstance.y * 8).toFloat()
+
+          tileInstance.baseSprite.setPosition(xPos, yPos)
+          tileInstance.baseSprite.draw(batch)
+          for (extraSprite in tileInstance.extraSprites) {
+            extraSprite.setPosition(xPos, yPos)
+            extraSprite.draw(batch)
           }
+        }
       }
-    }else {
+    } else {
       renderMapWithFogOfWar()
     }
    }
@@ -54,7 +54,7 @@ class RenderMapSystem(
     batch.projectionMatrix = camera.combined
     batch.use {
 
-      for(tile in mapManager.getVisibleTilesWithFog(tileX, tileY)) {
+      for(tile in mapManager.getVisibleTilesWithFog(tileX, tileY, 8)) {
 
         val xPos = tile.x * 8f
         val yPos = tile.y * 8f

@@ -56,13 +56,15 @@ class Ctx {
 //						context.inject()))
 			  addSystem(WorldFactsSystem())
 				addSystem(FollowCameraSystem(context.inject()))
+				addSystem(PlayerEntityDiscoverySystem())
+				addSystem(FeatureDiscoverySystem())
 			}
 	  }
 
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(gameSettings)
-	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"), true)
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"))
 						.apply {
 		      setupInitialFacts()
 	      })

@@ -13,7 +13,7 @@ class Player(override val id:String = "Player",
              override var strength: Int = 10,
              override var health: Int = 10,
              override var intelligence: Int = 10,
-             override var sightRange: Int = 3) : IAgent {
+             override var sightRange: Int = 8) : IAgent {
   override val inventory = mutableListOf("Mat", "Extra varm rock", "Litet, dåligt svärd")
   override val skills: MutableMap<String, Int> =
       mutableMapOf(
