@@ -47,7 +47,12 @@ class TileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, val
 class FlatTileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, tiles: Array<Array<TileInstance>>) : TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
     val flatTiles = tiles.flatten().toTypedArray() //Oooh
 
+    fun getIndex(x:Int, y:Int): Int {
+        //How does flatten actually flatten an array of arrays? Lets assume it works with
+    }
+
     override fun getTile(x: Int, y: Int): TileInstance {
+        //We need to calculate what absolute position in the array a certain coordinate has.
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

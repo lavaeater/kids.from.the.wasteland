@@ -44,6 +44,19 @@ class TileManager(val chunkSize:Int = 100) {
         store.putTile(x, y, tile)
     }
 
+    fun getTilesFlat(xBounds: IntRange, yBounds: IntRange) : Array<TileInstance> {
+        lateinit var currentTile: TileInstance
+        var currentStore = getTileStore(xBounds.start, yBounds.start)
+
+        for(x in xBounds)
+            for(y in yBounds) {
+                if(x !in currentStore.xBounds || y !in currentStore.yBounds) {
+                    currentStore = getTileStore(x,y)
+
+                }
+            }
+    }
+
     fun getTiles(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
 
         //This is a for loop. This gets the renderable map

@@ -10,6 +10,11 @@ import ktx.app.use
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
+/*
+TODO: This code needs to be moved into the render character system
+to get valid y-order to keep people in front and back of each other correctly
+ */
+
 class RenderFeatureSystem(private val batch: Batch) :
     SortedIteratingSystem(
         allOf(FeatureSpriteComponent::class,
