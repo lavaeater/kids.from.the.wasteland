@@ -13,6 +13,9 @@ import ktx.scene2d.Scene2DSkin
 import ktx.style.skin
 import ktx.style.textButton
 import java.io.Reader
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+
+
 
 /**
  * Created by barry on 12/9/15 @ 11:17 PM.
@@ -210,23 +213,16 @@ object Assets : Disposable {
   }
 
   private fun initializeMapTiles() {
-    var yFactor = 1f
-    var xFactor = 1f
     for (atlasMap in atlases) {
       val atlas = atlasMap.value
       tileSprites.put(atlasMap.key, hashMapOf())
       for (region in atlas.regions) {
         if (region.name != "blank") {
+          fixBleeding(region)
           val sprite = atlas.createSprite(region.name)
-          sprite.setSize(8f, 8f)
-          sprite.x = xFactor * 8f
-          sprite.y = yFactor * 8f
           tileSprites[atlasMap.key]!!.put(region.name, sprite)
-          yFactor++
         }
       }
-      xFactor++
-      yFactor = 1f
     }
   }
 
@@ -237,5 +233,16 @@ object Assets : Disposable {
 
   fun readerForTree(treeFileName: String): Reader {
     return Gdx.files.internal("btrees/$treeFileName").reader()
+  }
+
+  fun fixBleeding(region: TextureRegion) {
+    val fix = 0.01f
+    val x = region.regionX.toFloat()
+    val y = region.regionY.toFloat()
+    val width = region.regionWidth.toFloat()
+    val height = region.regionHeight.toFloat()
+    val invTexWidth = 1f / region.texture.width
+    val invTexHeight = 1f / region.texture.height
+    region.setRegion((x + fix) * invTexWidth, (y + fix) * invTexHeight, (x + width - fix) * invTexWidth, (y + height - fix) * invTexHeight) // Trims Region
   }
 }
