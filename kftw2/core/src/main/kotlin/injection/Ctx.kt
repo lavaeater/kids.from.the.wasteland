@@ -46,7 +46,7 @@ class Ctx {
 					  context.inject(),
 					  context.inject(),
 					  context.inject(),
-					  false))
+					  true))
 			  addSystem(RenderCharactersSystem(context.inject()))
 				addSystem(RenderFeatureSystem(context.inject()))
 			  addSystem(AiSystem())
@@ -62,7 +62,7 @@ class Ctx {
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(gameSettings)
-	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"))
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"), true)
 						.apply {
 		      setupInitialFacts()
 	      })

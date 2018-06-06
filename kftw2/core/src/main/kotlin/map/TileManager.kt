@@ -130,7 +130,7 @@ class TileManager(val chunkSize:Int = 100) {
         Checking a true-false is fast, I imagine.
          */
 
-        //This is like orto or something
+        //This is like ordo or something
         for ((x, column) in tiles.withIndex())
             for ((y, _) in column.withIndex()) {
                 val tempTile = fixNeighbours(tiles[x][y], x, y, tiles)
