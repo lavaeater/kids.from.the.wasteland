@@ -4,5 +4,6 @@ enum class RouteType {
   positive,
   negative,
   rude,
-  abort
+  abort,
+  neutral
 }

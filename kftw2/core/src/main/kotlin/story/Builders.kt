@@ -127,7 +127,7 @@ fun story(block: StoryBuilder.() -> Unit) = StoryBuilder().apply(block).build()
 fun convo(block: InternalConversationBuilder.() -> Unit) = InternalConversationBuilder().apply(block).build()
 
 class InternalConversationBuilder : Builder<InternalConversation> {
-	var startingStepKey = ""
+	var startingStepKey = "start"
 	val steps = mutableMapOf<String, ConversationStep>()
 	fun step(block: ConversationStepBuilder.() -> Unit) {
 		val c = ConversationStepBuilder().apply(block).build()
@@ -140,6 +140,76 @@ class InternalConversationBuilder : Builder<InternalConversation> {
 
 		return InternalConversation(startingStepKey, steps)
 	}
+
+	fun trader(topKey: String) {
+		step {
+			key ="trade"
+			addLine("Goddag, kära kund!")
+			addLine("Vad kan ni vara intresserad av idag, tro?")
+			neutral("weapons", "Jag letar efter vapen")
+			neutral("armor", "Jag behöver skydd")
+			neutral("gadgets", "Vad har du för prylar?")
+			neutral("selling", "Jag har prylar att sälja")
+			negative(topKey, "Sluta handla")
+		}
+		//Weapons menu
+		step {
+			key ="weapons"
+			addLine("VAPEN!")
+			negative("trade", "Jag vill köpa något annat")
+		}
+		//Armor menu
+		step {
+			key ="armor"
+			addLine("Skydd!")
+			negative("trade", "Jag vill köpa något annat")
+		}
+		//Gadget menu
+		step {
+			key ="gadgets"
+			addLine("PRYLAR!")
+			negative("trade", "Jag vill köpa något annat")
+		}
+		//Selling menu
+		step {
+			key ="selling"
+			addLine("Jag kan ta en titt på det du har med dig")
+			addLine("och ge dig ett erbjudande.")
+			negative("trade", "Jag vill nog inte sälja något ändå")
+		}
+	}
+
+	fun bulletin(topKey: String, bulletinKey: String = "bulletin") {
+		step {
+			key = bulletinKey
+			addLine("I alla städer finns det en anslagstavla")
+			addLine("med saker att läsa.")
+			addLine("Vad vill du läsa om?")
+			neutral("local_news", "Lokala nyheter")
+			neutral("world_news", "Nyheter från hela ödemarken")
+			neutral("quests", "Uppdrag och annonser")
+			negative(topKey, "Sluta läsa")
+		}
+		//Weapons menu
+		val topText = "Njae, läs något annat"
+		step {
+			key ="local_news"
+			addLine("Nyheter")
+			negative(bulletinKey, topText)
+		}
+		//Armor menu
+		step {
+			key ="world_news"
+			addLine("Ödemarksnytt!")
+			negative(bulletinKey, topText)
+		}
+		//Gadget menu
+		step {
+			key ="quests"
+			addLine("Dårar och äventyrare sökes!")
+			negative(bulletinKey, topText)
+		}
+	}
 }
 
 class ConversationStepBuilder() : Builder<ConversationStep> {
@@ -149,6 +219,11 @@ class ConversationStepBuilder() : Builder<ConversationStep> {
 
 	fun addLine(line:String) {
 		antagonistLines.add(line)
+	}
+
+	fun neutral(key: String, text: String = "Neutral") {
+		//We can have any number of NEUTRAL routes... why? Don't ask
+		conversationRoutes.add(ConversationRoute(key, text, RouteType.neutral))
 	}
 
 	fun positive(key: String, text: String ="Ja") {

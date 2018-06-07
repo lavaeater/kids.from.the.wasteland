@@ -9,26 +9,36 @@ import managers.GameState
 import map.IMapManager
 import story.FactsOfTheWorld
 import story.conversation.ConversationManager
-import story.conversation.InlineConvo
 import story.conversation.InternalConversation
 import story.convo
-import story.fact.Facts
 
 class PlacesOfTheWorld {
 
   val player by lazy { Ctx.context.inject<Player>() }
-  val gameState by lazy { Ctx.context.inject<GameState>() }
-  val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
-  val mapManager by lazy { Ctx.context.inject<IMapManager>() }
-  val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
+  private val gameState by lazy { Ctx.context.inject<GameState>() }
+  private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
+  private val mapManager by lazy { Ctx.context.inject<IMapManager>() }
+  private val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
   val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
+	val cityNames = arrayOf(
+			"Bytarstan",
+			"Oljestan",
+			"Slavstan",
+			"Hålegrund",
+			"Snygelbro",
+			"Mygelhamn",
+			"Wonkelbo",
+			"Sandhamn",
+			"Bylte",
+			"Hylte"
+			)
 
   init {
     val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY,
         20, 7).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()
-    for(city in 0..10) {
+    for(city in 0..9) {
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
       someTilesInRange.remove(randomlySelectedTile)
@@ -37,7 +47,7 @@ class PlacesOfTheWorld {
       for(tile in tilesInRangeOfSelected)
         someTilesInRange.remove(tile)
 
-      actorFactory.addFeatureEntity("city_$city", randomlySelectedTile.x, randomlySelectedTile.y)
+      actorFactory.addFeatureEntity(cityNames[city], randomlySelectedTile.x, randomlySelectedTile.y)
     }
   }
 
@@ -47,7 +57,7 @@ class PlacesOfTheWorld {
      */
     gameState.handleEvent(GameEvents.DialogStarted)
     conversationManager.startConversation(
-        anotherConvo(),
+        placeConvo(place),
         {
           //set some facts?
           var bla = "Blo"
@@ -56,22 +66,54 @@ class PlacesOfTheWorld {
         false)
   }
 
-  private fun createPlaceConvo() :InlineConvo {
+	private fun placeConvo(place:Place) : InternalConversation {
+		val city_gate = "Återvänd till stadsporten"
+		val topKey = "enter_city"
+		return convo {
+			step {
+				key = "start"
+				addLine("Du har anlänt till ${place.name}")
+				addLine("Vad vill du göra nu?")
+				positive(topKey, "Jag vill besöka staden")
+				negative("abort", "Jag fortsätta min resa")
+			}
+			step {
+				key = topKey
+				addLine("Allt luktar illa i den här staden")
+				addLine("Men det finns mat att köpa,")
+				addLine("handlare att besöka,")
+				addLine("och en anslagstavla med anslag.")
+				addLine("Vad vill du göra?")
+				neutral("food", "Jag vill äta")
+				neutral("trade", "Jag vill handla")
+				neutral("bulletin", "Jag vill läsa anslagen")
+				negative("start", "Jag vill gå ut ur staden")
+			}
+			bulletin(topKey)
+			trader(topKey)
+			step {
+				key ="food"
+				addLine("Som alla städer i regionen")
+				addLine("säljs maten på ett stökigt torg.")
+				addLine("säljs maten på ett stökigt torg.")
+				addLine("Lokala specialiteter blandas med exotisk mat.")
+				neutral("eat_food", "Köp kebab")
+				neutral("eat_food", "Köp djur-på-pinne")
+				neutral("eat_food", "Köp inte-alls-människokött")
+				negative(topKey, city_gate)
+			}
+			step {
+				key = "eat_food"
+				addLine("Maten är förvånansvärt god")
+				addLine("och mättande.")
+				addLine("Men dess verkliga konsekvenser brukar")
+				addLine("ta ett par dagar.")
+				negative(topKey, city_gate)
+			}
+		}
+	}
 
-    val antagonistLines = mutableMapOf<Int, List<String>>()
-
-    antagonistLines[0] = listOf(
-            "Välkommen till staden ${factsOfTheWorld.getStringFact(Facts.CurrentPlace).value}!",
-            "Ödemarkens sanna pärla!",
-            "Vill du hedra oss med ett besök?"
-        )
-    antagonistLines[1] = listOf(
-        "Än så länge kan man inget göra i städer!"
-    )
-    return InlineConvo(player, antagonistLines = antagonistLines)
-   }
-
-  private fun anotherConvo() : InternalConversation {
+  private fun internalConversation() : InternalConversation {
     return convo {
       startingStepKey = "start"
       step {
