@@ -54,6 +54,7 @@ class GameState {
     state(GameStates.WorldMap) {
       edge(GameEvents.LootFound, GameStates.Inventory) {}
       edge(GameEvents.InventoryToggled, GameStates.Inventory) {}
+      edge(GameEvents.CombatStarted, GameStates.Combat) {}
       edge(GameEvents.DialogStarted, GameStates.Dialog) {}
       edge(GameEvents.GameResumed, GameStates.WorldMap) {}
     }
@@ -65,6 +66,9 @@ class GameState {
     }
     state(GameStates.SplashScreen) {
       edge(GameEvents.GameResumed, GameStates.WorldMap) {}
+    }
+    state(GameStates.Combat) {
+      edge(GameEvents.CombatEnded, GameStates.WorldMap) {}
     }
   }
 }

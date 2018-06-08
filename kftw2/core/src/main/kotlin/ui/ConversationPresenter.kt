@@ -116,8 +116,6 @@ class ConversationPresenter(
     stateMachine.initialize()
   }
 
-
-
   override fun dispose() {
 	  s.actors.removeValue(rootTable, true)
   }
@@ -220,8 +218,4 @@ class ConversationPresenter(
     ProtagonistChoosing,
     CanConversationContinue
   }
-}
-
-private fun Vector3.toVec2(): Vector2 {
-	return vec2(this.x, this.y)
 }

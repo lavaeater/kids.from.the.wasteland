@@ -74,8 +74,8 @@ class GameInputSystem(
       Input.Keys.D, Input.Keys.RIGHT -> x = -1f
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
+      Input.Keys.C -> gameState.handleEvent(GameEvents.CombatStarted)//Maybe this code should call some other code, not sending events here? I'll figure it out
       Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
-      Input.Keys.M -> gameState.handleEvent(GameEvents.DialogStarted) //Will be something like "NPC met" and handled by some
       Input.Keys.U -> camera.zoom+=0.05f
       Input.Keys.J -> camera.zoom-=0.05f
       //Global object or other that manages meetings, encounters and dialogs

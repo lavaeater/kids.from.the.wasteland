@@ -19,4 +19,5 @@ interface IUserInterface : Disposable {
       showProtagonistPortrait: Boolean = true,
       showAntagonistPortrait:Boolean = true)
 	fun showSplashScreen()
+  fun showCombat()
 }

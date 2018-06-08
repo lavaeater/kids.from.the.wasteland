@@ -96,12 +96,18 @@ class GameManager(
     when(newState){
       GameStates.WorldMap -> resumeWorldMap()
       GameStates.Inventory -> showInventory()
+      GameStates.Combat -> doFighting()
       GameStates.Dialog -> showDialog()
       GameStates.SplashScreen -> showSplashScreen()
       else -> {
         //These aren't defined yet!
       }
     }
+  }
+
+  private fun doFighting() {
+    stopTheWorld()
+    ui.showCombat()
   }
 
   private fun showSplashScreen() {

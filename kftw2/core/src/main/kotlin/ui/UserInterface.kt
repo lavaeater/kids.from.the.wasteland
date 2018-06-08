@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.Timer
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import factory.ActorFactory
 import ktx.actors.keepWithinParent
 import ktx.scene2d.KTableWidget
 import ktx.scene2d.table
@@ -26,6 +27,46 @@ class UserInterface(
     private val inputManager: InputMultiplexer,
     private val factsOfTheWorld: FactsOfTheWorld,
     debug: Boolean = false): IUserInterface {
+  override fun showCombat() {
+    /*
+    So, combat, how's that gonna work?
+
+    What do I want with a combat system? That is more important than anything else.
+
+    What is it that I DON'T WANT with a combat system?
+
+    Well, my game is supposed to be about storytelling.
+
+    I want to be able to tell a tale while a player is exploring some strange world.
+    In this world, combat will happen from time to time - but I don't want combat to
+    be...
+    * tedious
+    * drawn out
+    * repetitive
+    It should be fun but dangerous? Does that make sense?
+    How about combat basically always having the option of quitting?
+    This goes for everyone, npc:s as well as players. Running away makes
+    you drop something but you live to fight another day.
+    Npc:s that attack the player but realize they should run away, they
+    add some fear to their behaviour regarding the player, which is a cool
+    concept.
+
+    So, rock-paper-scissors it is, meaning
+    that all attacks are better or worse at other attacks / defenses
+    All moves have defense built into them - we could imagine something
+    like "Heavy Attack Parry and Counter" which would be able to block a heavy attack
+    from an attacker AND potentially do a counter to his attack - if a heavy attack is
+    actually performed. If not, the player might be able to block the actual attack but not
+    perform a counter. Yay!
+
+    So, if an action is "defense first", the player / npc waits for the other persons attack, which
+    affects initiative and stuff. This is cool.
+
+    Apart from that, do the JRP article thingie...
+     */
+    var combatUI = CombatPresenter(stage, setOf(ActorFactory.npcByKeys.values.first()))
+    combatUI.runCombat()
+  }
 
   override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
   override val stage = Stage(hudViewPort, batch)

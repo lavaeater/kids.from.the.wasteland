@@ -58,10 +58,7 @@ class PlacesOfTheWorld {
     gameState.handleEvent(GameEvents.DialogStarted)
     conversationManager.startConversation(
         placeConvo(place),
-        {
-          //set some facts?
-          var bla = "Blo"
-        },
+        {},
         true,
         false)
   }
