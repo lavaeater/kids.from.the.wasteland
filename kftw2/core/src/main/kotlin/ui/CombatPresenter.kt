@@ -136,9 +136,6 @@ class CombatPresenter(private val stage:Stage, val targets: Set<IAgent> = emptyS
     combatState.initialize()
   }
 
-
-
-
   fun combatActionExecuted(agent: IAgent) {
     if(agent is Player)
       combatActions.add(playerSelectAction)
