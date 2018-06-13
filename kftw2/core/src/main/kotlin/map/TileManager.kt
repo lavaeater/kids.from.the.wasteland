@@ -3,10 +3,56 @@ package map
 import Assets
 import com.badlogic.gdx.math.MathUtils
 
+/**
+ * The tile manager class could be one
+ * entry point for the concept of multiple maps.
+ *
+ * The TileManager actually delivers the tiles that we are using right now
+ *
+ * The Map Manager basically just delivers tiles for the rendering engine
+ * and keeps track of very little, it's mostly pass-through to this
+ * class.
+ *
+ * This class creates maps as we go, in the case of the world map.
+ *
+ * How do we partition this into something that can generate maps in
+ * a different way?
+ *
+ * We need to partition up the code into the parts we need.
+ *
+ * We need some way to store and retrieve tiles. That's the tilestore class, which
+ * can be reused for any type of map representation (but how do we handle "blank" tiles?
+ * do we need a black sprite, or just mark it in some special way? Best would be to not draw
+ * anything at all - because the background is black... OK; more on that later).
+ *
+ * The generation algorithm must be replaceable.
+ *
+ * We want to be able to use one algorithm for the world map (the current).
+ * Then we want to be able to switch areas - this can be handled using a dictionary of
+ * tilestores - one entry per "context" or id, if we need to save them later.
+ *
+ * So we have mutableMapOf("worldmap" to mutableSetOf<TileStoreBase>,
+ * "dungeon_1" to mutableSetOf<TileStoreBase>
+ *   and so on.
+ */
 class TileManager(val chunkSize:Int = 100) {
     private val upperBound = chunkSize - 1
-    private val tileStores = mutableSetOf<TileStoreBase>()
-    private val usedTiles = mutableMapOf<String, Tile>()
+
+    private val locations = mutableMapOf<String, MutableSet<TileStoreBase>>()
+    private val locationAlgorithms = mutableMapOf<String, (IntRange, IntRange) -> Array<Array<TileInstance>>>()
+
+    private var currentLocation = "worldmap"
+    private var currentTileStores : MutableSet<TileStoreBase>
+    private val usedTiles = mutableMapOf<String, Tile>() //can be used globally
+    private var currentAlgorithm : (xBounds: IntRange, yBounds: IntRange)-> Array<Array<TileInstance>>
+
+    init {
+        currentLocation = "worldmap"
+        currentTileStores = mutableSetOf()
+        locations[currentLocation] = currentTileStores
+        locationAlgorithms[currentLocation] = ::generateDungeonForRange
+        currentAlgorithm = locationAlgorithms[currentLocation]!!
+    }
 
     private fun getLowerBound(i: Int): Int {
         if (i < 0) {
@@ -23,7 +69,7 @@ class TileManager(val chunkSize:Int = 100) {
     }
 
     private fun getTileStoreLowerBounds(lX: Int, lY: Int): ITileStore {
-        var store = tileStores.firstOrNull {
+        var store = currentTileStores.firstOrNull {
             lX in it.xBounds &&
                 lY in it.yBounds
         }
@@ -33,8 +79,8 @@ class TileManager(val chunkSize:Int = 100) {
                 chunkSize,
                 lY,
                 chunkSize,
-                generateTilesForRange(lX..(lX + upperBound), lY..(lY + upperBound)))
-            tileStores.add(store)
+                currentAlgorithm(lX..(lX + upperBound), lY..(lY + upperBound)))
+            currentTileStores.add(store)
         }
         return store
     }
@@ -83,35 +129,6 @@ class TileManager(val chunkSize:Int = 100) {
         })
     }
 
-    fun getTiles(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
-
-        //This is a for loop. This gets the renderable map
-        //To optimize, we should have all stores ready, but that's unnecesarry
-        //We just get the first store and get a new one if needed!
-        lateinit var currentTile: TileInstance
-        var currentStore = getTileStore(xBounds.start, yBounds.start)
-        return Array(xBounds.count(), { x ->
-            Array(yBounds.count(), { y ->
-
-                val actualX = xBounds.start + x
-                val actualY = yBounds.start + y
-
-                if (actualX !in currentStore.xBounds || actualY !in currentStore.yBounds) {
-                    currentStore = getTileStore(actualX, actualY)
-                }
-                currentTile = currentStore.getTile(actualX, actualY)
-
-                //check for neighbours!
-                if (currentTile.tile.needsNeighbours) {
-                    currentTile = fixNeighbours(currentTile.tile, actualX, actualY).getInstance(actualX, actualY)
-                    putTile(actualX, actualY, currentTile)
-                }
-
-                return@Array currentTile
-            })
-        })
-    }
-
     private fun getOrNull(x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile? {
         if (tiles == null) { //Use the manager to get the tile to check!
             return getTile(x, y).tile
@@ -156,8 +173,48 @@ class TileManager(val chunkSize:Int = 100) {
         return usedTiles[keyCode]!!
     }
 
+    private fun generateDungeonForRange(xBounds: IntRange, yBounds: IntRange):Array<Array<TileInstance>> {
+        /*
+        Dungeons, eh?
+
+        Like, a dungeon or city is a world, in our weird abstraction, which is fine
+
+        But how do we generate it?
+
+        How do we create rooms, mazes and stuff like that?
+
+        Ah. We create an array of tileinstances where all instances are the default, dark type. They
+        could conceivably be the exact same instance, for sure...
+         */
+
+        var bigempty =
+            Array(
+                xBounds.count(),
+                { x ->
+                    Array(
+                        yBounds.count(),
+                        { y ->
+                            tileFor(0,
+                                MapManager.terrains[3]!!,
+                            "center${MathUtils.random.nextInt(3) + 1}",
+                                MapManager.shortTerrains[3]!!)
+                                .getInstance(
+                                    xBounds.elementAt(x),
+                                    yBounds.elementAt(y))
+                        })})
+
+        return bigempty
+    }
+
     private fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
-        val tiles = Array(xBounds.count(), { x -> Array(yBounds.count(), { y -> generateTile(xBounds.elementAt(x), yBounds.elementAt(y)) }) })
+        val tiles = Array(
+            xBounds.count(),
+            { x ->
+                Array(yBounds.count(),
+                    { y ->
+                        generateTile(
+                            xBounds.elementAt(x),
+                            yBounds.elementAt(y)) }) })
 
         /*
         The extra sprite functionality must be adressed here, I guess? How do we manage
@@ -242,6 +299,14 @@ class TileManager(val chunkSize:Int = 100) {
         }
     }
 
+    private fun tileFor(priority: Int, tileType: String, subType: String, code: String) :Tile {
+        val tileCode = "$priority$tileType$subType$code$code${true}" //Only temporary, actually
+        if(!usedTiles.containsKey(tileCode))
+            usedTiles[tileCode] = Tile(priority, tileType, subType, code, code)
+
+        return usedTiles[tileCode]!!
+    }
+
     private fun generateTile(x: Int, y: Int): Tile {
         val nX = x / MapManager.scale
         val nY = y / MapManager.scale
@@ -250,10 +315,6 @@ class TileManager(val chunkSize:Int = 100) {
         val tileType = MapManager.terrains[priority]!!
         val code = MapManager.shortTerrains[priority]!!
         val subType = "center${MathUtils.random.nextInt(3) + 1}"
-        val tileCode = "$priority$tileType$subType$code$code${true}" //Only temporary, actually
-        if (!usedTiles.containsKey(tileCode))
-            usedTiles[tileCode] = Tile(priority, tileType, subType, code, code)
-
-        return usedTiles[tileCode]!!
+        return tileFor(priority, tileType, subType, code)
     }
 }

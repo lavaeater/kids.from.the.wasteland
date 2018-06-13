@@ -43,7 +43,7 @@ class GameManager(
   }
 
   private fun setupSystems() {
-    addEmployees()
+//    addEmployees()
   }
 
   private fun addEmployees() {

@@ -64,7 +64,7 @@ class Ctx {
     fun buildContext(gameSettings: GameSettings) {
       context.register {
 	      bindSingleton(gameSettings)
-	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"))
+	      bindSingleton(FactsOfTheWorld(Gdx.app.getPreferences("default"),true)
 						.apply {
 		      setupInitialFacts()
 	      })

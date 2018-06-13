@@ -177,7 +177,7 @@ class MapManager(
     val minY = y.coordAtDistanceFrom(-range)
     val maxY = y.coordAtDistanceFrom(range)
 
-    return tileManager.getTiles(minX..maxX, minY..maxY).flatten()
+    return tileManager.getTilesFlat(minX..maxX, minY..maxY).toList()
   }
 
   //This needs work to... work.
