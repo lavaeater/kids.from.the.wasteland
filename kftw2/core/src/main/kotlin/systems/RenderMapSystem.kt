@@ -16,7 +16,7 @@ class RenderMapSystem(
     private val batch: Batch,
     private val camera: Camera,
     private val mapManager: IMapManager,
-    val fogOfWar:Boolean = true) : EntitySystem(0) {
+    val fogOfWar:Boolean = false) : EntitySystem(0) {
 
   override fun update(deltaTime: Float) {
     super.update(deltaTime)

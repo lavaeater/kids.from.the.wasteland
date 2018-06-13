@@ -194,7 +194,7 @@ class TileManager(val chunkSize:Int = 100) {
                     Array(
                         yBounds.count(),
                         { y ->
-                            tileFor(0,
+                            tileFor(3,
                                 MapManager.terrains[3]!!,
                             "center${MathUtils.random.nextInt(3) + 1}",
                                 MapManager.shortTerrains[3]!!)
@@ -202,6 +202,154 @@ class TileManager(val chunkSize:Int = 100) {
                                     xBounds.elementAt(x),
                                     yBounds.elementAt(y))
                         })})
+
+        /**
+         * Now for some action!
+         *
+         * 1. place rooms
+         */
+        val rooms = mutableListOf<Room>()
+        for(roomIndex in 0..MathUtils.random(50, 100)) {
+            val width = MathUtils.random(5, 20)
+            val height = MathUtils.random(5, 20)
+            /*
+            randomly place it for n tries.
+            after n tries, this room fails and we continue
+            with a new one.
+             */
+            var tries = 0
+            var failed = true
+            while (tries < 10 && failed) {
+                val topLeftX = MathUtils.random(0, xBounds.count() - width - 1)
+                val topLeftY = MathUtils.random(0, yBounds.count() - height - 1)
+
+                var allRock = true
+                for (x in topLeftX..topLeftX + width)
+                    for (y in topLeftY..topLeftY + height) {
+                        val tileInstance = bigempty[x][y]
+                        if(tileInstance.tile.priority != 3)
+                            allRock = false
+                    }
+                if(allRock) {
+                    failed = false
+                    rooms.add(Room(topLeftX, topLeftY, width, height))
+                    for (x in topLeftX..topLeftX + width)
+                        for (y in topLeftY..topLeftY + height) {
+                            val priority = 1//desert
+                            val tileType = MapManager.terrains[priority]!!
+                            val code = MapManager.shortTerrains[priority]!!
+                            val subType = "center${MathUtils.random.nextInt(3) + 1}"
+                            val tile = tileFor(priority, tileType, subType, code)
+                            //What happens to the old one? eh?
+                            bigempty[x][y] = tile.getInstance(bigempty[x][y].x, bigempty[x][y].y)
+                        }
+                }
+
+                tries++
+            }
+        }
+            //Try to place it by getting the tiles that are within the same bounds
+
+//        for(x in xBounds.withIndex())
+//            for(y in yBounds.withIndex()) {
+//
+//            }
+        /**
+         * 2. make mazes
+         * 3. connect rooms
+         * 4. kill dead ends
+         * 5. add encounters? how? Not here?
+         */
+
+        return bigempty
+    }
+
+    private fun generateCityForRange(xBounds: IntRange, yBounds: IntRange):Array<Array<TileInstance>> {
+        /*
+        Dungeons, eh?
+
+        Like, a dungeon or city is a world, in our weird abstraction, which is fine
+
+        But how do we generate it?
+
+        How do we create rooms, mazes and stuff like that?
+
+        Ah. We create an array of tileinstances where all instances are the default, dark type. They
+        could conceivably be the exact same instance, for sure...
+         */
+
+        var bigempty =
+            Array(
+                xBounds.count(),
+                { x ->
+                    Array(
+                        yBounds.count(),
+                        { y ->
+                            tileFor(1,
+                                MapManager.terrains[1]!!,
+                                "center${MathUtils.random.nextInt(3) + 1}",
+                                MapManager.shortTerrains[1]!!)
+                                .getInstance(
+                                    xBounds.elementAt(x),
+                                    yBounds.elementAt(y))
+                        })})
+
+        /**
+         * Now for some action!
+         *
+         * 1. place rooms
+         */
+        for(roomIndex in 0..MathUtils.random(50, 100)) {
+            val width = MathUtils.random(5, 20)
+            val height = MathUtils.random(5, 20)
+            /*
+            randomly place it for n tries.
+            after n tries, this room fails and we continue
+            with a new one.
+             */
+            var tries = 0
+            var failed = true
+            while (tries < 10 && failed) {
+                val topLeftX = MathUtils.random(0, xBounds.count() - width - 1)
+                val topLeftY = MathUtils.random(0, yBounds.count() - height - 1)
+
+                var allRock = true
+                for (x in topLeftX..topLeftX + width)
+                    for (y in topLeftY..topLeftY + height) {
+                        val tileInstance = bigempty[x][y]
+                        if(tileInstance.tile.priority != 1)
+                            allRock = false
+                    }
+                if(allRock) {
+                    failed = false
+
+                    for (x in topLeftX..topLeftX + width)
+                        for (y in topLeftY..topLeftY + height) {
+                            val priority = 3//desert
+                            val tileType = MapManager.terrains[priority]!!
+                            val code = MapManager.shortTerrains[priority]!!
+                            val subType = "center${MathUtils.random.nextInt(3) + 1}"
+                            val tile = tileFor(priority, tileType, subType, code)
+                            //What happens to the old one? eh?
+                            bigempty[x][y] = tile.getInstance(bigempty[x][y].x, bigempty[x][y].y)
+                        }
+                }
+
+                tries++
+            }
+        }
+        //Try to place it by getting the tiles that are within the same bounds
+
+//        for(x in xBounds.withIndex())
+//            for(y in yBounds.withIndex()) {
+//
+//            }
+        /**
+         * 2. make mazes
+         * 3. connect rooms
+         * 4. kill dead ends
+         * 5. add encounters? how? Not here?
+         */
 
         return bigempty
     }
@@ -318,3 +466,10 @@ class TileManager(val chunkSize:Int = 100) {
         return tileFor(priority, tileType, subType, code)
     }
 }
+
+data class Room(
+    val topLeftX:Int,
+    val topLeftY:Int,
+    val width: Int,
+    val height:Int,
+    val tileInstances: MutableList<TileInstance> = mutableListOf())
