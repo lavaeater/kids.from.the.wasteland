@@ -1,15 +1,15 @@
 package map
 
+import Assets
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import Assets
-import com.badlogic.gdx.math.Circle
-import injection.Ctx
-import managers.GameManager
 import com.lavaeater.kftw.util.SimplexNoise
+import injection.Ctx
 import ktx.math.vec3
+import managers.GameManager
 import kotlin.math.absoluteValue
 
 fun String.toShortCode() : String {
@@ -169,6 +169,13 @@ fun Tile.getKeyCode() : String {
 
 fun Tile.getInstance(x:Int, y:Int): TileInstance {
   return TileInstance(x, y, this.getSprite(), this.getExtraSprites(), this.isImpassible(), tile = this)
+}
+
+fun Tile.updateInstance(tileInstance: TileInstance) {
+	tileInstance.baseSprite = this.getSprite()
+	tileInstance.extraSprites = this.getExtraSprites()
+	tileInstance.needsHitBox = this.isImpassible()
+	tileInstance.tile = this
 }
 
 fun Tile.isImpassible() : Boolean {

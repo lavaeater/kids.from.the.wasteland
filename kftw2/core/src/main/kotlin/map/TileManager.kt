@@ -175,6 +175,13 @@ class TileManager(val chunkSize:Int = 100) {
 
     private fun generateDungeonForRange(xBounds: IntRange, yBounds: IntRange):Array<Array<TileInstance>> {
         /*
+
+        Can we visualize this "live"
+
+        Like, first generate the tiles as rock and then in a separate thread just keep modifying them?
+
+        That would be really cool
+
         Dungeons, eh?
 
         Like, a dungeon or city is a world, in our weird abstraction, which is fine
@@ -259,19 +266,68 @@ class TileManager(val chunkSize:Int = 100) {
          *
          * a. find a tile made of rock where all neigbours are also rock.This is easy!
          */
-//
-//        var flatTileCollectioN = bigempty.flatten()
-//        var tilesLeftToCheck = true
-//
-//        while(tilesLeftToCheck) {
-//            var startTile = flatTileCollectioN.firstOrNull { it.tile.tileType == "rock" && it.tile.shortCode.isOneTerrain() }
-//            if(startTile == null) {
-//                tilesLeftToCheck = false
-//                continue
-//            }
-//
-//
-//        }
+
+        val flatTileCollectioN = bigempty.flatten()
+        var tilesLeftToCheck = true
+        val priority = MapManager.terrainPriorities["grass"]!!
+        val grassTile = tileFor(priority, MapManager.terrains[priority]!!, "center1", MapManager.shortTerrains[priority]!!)
+
+        while(tilesLeftToCheck) {
+            val startTile = flatTileCollectioN.firstOrNull { it.tile.tileType == "rock" && it.tile.shortCode.isOneTerrain() }
+            if(startTile == null) {
+                tilesLeftToCheck = false
+                continue
+            }
+
+            /*
+            We have a start tile. Choose a random direction and make a maze if that direction is valid.
+
+            What is a valid direction or tile? Well, a valid direction or tile is obviously a tile that is "oneterrain"
+
+            So we just get all the neighbours of a tile and filter out the ones that are all rock. If there is none that actually
+            is all rock, then this maze is done!
+             */
+            var deadEndNotFound = true
+            var currentTile = startTile!!
+            grassTile.updateInstance(currentTile)
+            val triedDirections = mutableListOf<String>()
+            val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
+
+            while(deadEndNotFound) {
+
+                //the current tile needs to be changed into a desert tile! but we do grass instead
+                //because of how we do this, we should throw away the existing tile at some coordinate
+                //and replace it with a new one...
+
+                var directionFound = false
+                var currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+                availableDirections.remove(currentDirection)
+                while(!directionFound && availableDirections.any()) {
+
+                    val nCoord = Pair(
+                        currentTile.x + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
+                        currentTile.y + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
+                    val neighbourOrNull = flatTileCollectioN.firstOrNull{
+                        it.x == nCoord.first &&
+                            it.y == nCoord.second &&
+                            it.tile.tileType == "rock" &&
+                            it.tile.shortCode.isOneTerrain() } //this might be seriously slow...
+                    if(neighbourOrNull == null) {
+                        currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+                        availableDirections.remove(currentDirection)
+                        continue
+                    }
+                    currentTile = neighbourOrNull!!
+                    directionFound = true
+                }
+
+                availableDirections.clear()
+                availableDirections.addAll(MapManager.simpleDirectionsInverse.keys)
+
+
+                deadEndNotFound = directionFound
+            }
+        }
 
 
 

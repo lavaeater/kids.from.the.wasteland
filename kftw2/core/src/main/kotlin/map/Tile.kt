@@ -20,11 +20,11 @@ data class Tile(
 data class TileInstance(
     val x:Int,
     val y:Int,
-    val baseSprite:Sprite,
-    val extraSprites: Array<Sprite>,
+    var baseSprite:Sprite,
+    var extraSprites: Array<Sprite>,
     var needsHitBox: Boolean = true,
     var seen: Boolean = false,
     var seeing: Boolean = false,
-    val tile: Tile) {
+    var tile: Tile) {
   val fogStatus: TileFog get() =  if(seeing) TileFog.Seeing else if(!seeing && !seen) TileFog.NotSeen else TileFog.Seen
 }
