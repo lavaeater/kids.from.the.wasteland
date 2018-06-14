@@ -209,9 +209,9 @@ class TileManager(val chunkSize:Int = 100) {
          * 1. place rooms
          */
         val rooms = mutableListOf<Room>()
-        for(roomIndex in 0..MathUtils.random(50, 100)) {
-            val width = MathUtils.random(5, 20)
-            val height = MathUtils.random(5, 20)
+        for(roomIndex in 0..MathUtils.random(150, 200)) {
+            val width = MathUtils.random(2, 20)
+            val height = MathUtils.random(2, 20)
             /*
             randomly place it for n tries.
             after n tries, this room fails and we continue
@@ -220,12 +220,15 @@ class TileManager(val chunkSize:Int = 100) {
             var tries = 0
             var failed = true
             while (tries < 10 && failed) {
-                val topLeftX = MathUtils.random(0, xBounds.count() - width - 1)
-                val topLeftY = MathUtils.random(0, yBounds.count() - height - 1)
+                val topLeftX = MathUtils.random(0, xBounds.count() - width - 2)
+                val topLeftY = MathUtils.random(0, yBounds.count() - height - 2)
+
+                val leftX =MathUtils.clamp(topLeftX - 1, 0, topLeftX - 1)
+                val leftY = MathUtils.clamp(topLeftY - 1, 0, topLeftY - 1)
 
                 var allRock = true
-                for (x in topLeftX..topLeftX + width)
-                    for (y in topLeftY..topLeftY + height) {
+                for (x in leftX..leftX + width + 2)
+                    for (y in leftY..leftY + height +2) {
                         val tileInstance = bigempty[x][y]
                         if(tileInstance.tile.priority != 3)
                             allRock = false
@@ -248,14 +251,31 @@ class TileManager(val chunkSize:Int = 100) {
                 tries++
             }
         }
-            //Try to place it by getting the tiles that are within the same bounds
 
-//        for(x in xBounds.withIndex())
-//            for(y in yBounds.withIndex()) {
-//
-//            }
         /**
          * 2. make mazes
+         *
+         * How are mazes made?
+         *
+         * a. find a tile made of rock where all neigbours are also rock.This is easy!
+         */
+
+        var flatTileCollectioN = bigempty.flatten()
+        var tilesLeftToCheck = true
+
+        while(tilesLeftToCheck) {
+            var startTile = flatTileCollectioN.firstOrNull { it.tile.tileType == "rock" && it.tile.shortCode.isOneTerrain() }
+            if(startTile == null) {
+                tilesLeftToCheck = false
+                continue
+            }
+
+            
+        }
+
+
+
+        /**
          * 3. connect rooms
          * 4. kill dead ends
          * 5. add encounters? how? Not here?
