@@ -35,15 +35,11 @@ class GameManager(
 
   init {
     gameState.addChangeListener(::gameStateChanged)
-    setupSystems()
+    addEmployees()
     camera.position.x = 0f
     camera.position.y = 0f
 
     Assets.music.play()
-  }
-
-  private fun setupSystems() {
-//    addEmployees()
   }
 
   private fun addEmployees() {
@@ -53,15 +49,21 @@ class GameManager(
     running game, and some other class, called during startup, sets up the state using all the
     dependencies necessary for that.
      */
+    val someTilesInRange = mapManager.getBandOfTiles(0,0, 100, 80).filter {
+      it.tile.tileType != "rock" && it.tile.tileType != "water"
+    }.toMutableList()
 
 
     for (name in factsOfTheWorld.npcNames.values) {
-      val someTilesInRange = mapManager.getBandOfTiles(0,0, 50, 3).filter {
-        it.tile.tileType != "rock" && it.tile.tileType != "water"
-      }
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
-      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", spriteKey =  name.replace(" ", "").toLowerCase(), x = randomlySelectedTile.x, y = randomlySelectedTile.y)
+      someTilesInRange.remove(randomlySelectedTile)
+      actorFactory.addNpcAtTileWithAnimation(
+          name = name,
+          type = "orc",
+          spriteKey =  name.replace(" ", "").toLowerCase(),
+          x = randomlySelectedTile.x,
+          y = randomlySelectedTile.y)
     }
   }
 

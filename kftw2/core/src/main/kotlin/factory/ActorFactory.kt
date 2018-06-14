@@ -41,13 +41,13 @@ class ActorFactory(
 
     val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
 
-    val startPositions = mapManager.getTilesInRange(0, 0, 25)
+    val startPositions = mapManager.getTilesInRange(0, 0, 100)
         .filter { tileTypes.contains(it.tile.tileType) }
         .map { Pair(it.x,it.y).tileWorldCenter() }
         .toTypedArray()
 
-//    for (i in 1..20)
-//      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
+    for (i in 1..20)
+      addNpcEntity(factsOfTheWorld.npcNames[i]!!, "townsfolk", startPositions)
   }
 
   fun randomNpcName() : String {
@@ -114,10 +114,17 @@ class ActorFactory(
     val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
     val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
 
-    player.currentX = tileX
-    player.currentY = tileY
+    val someTilesInRange = mapManager.getTilesInRange(tileX,tileY, 20).filter {
+      it.tile.tileType != "rock" && it.tile.tileType != "water"
+    }
 
-    val position = Pair(tileX, tileY).tileWorldCenter()
+    val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+
+
+    player.currentX = randomlySelectedTile.x
+    player.currentY = randomlySelectedTile.y
+
+    val position = Pair(randomlySelectedTile.x, randomlySelectedTile.y).tileWorldCenter()
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())

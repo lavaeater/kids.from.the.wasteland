@@ -1,0 +1,33 @@
+Just some random thoughts on combat.
+
+I like combat. But combat is slow in turn-based games. If the combat is well done,
+it's slow and boring and I don't like slow and boring...
+
+So, weapons and attacks... must be possible to define with just
+a few lines of code - or a human readable definition.
+
+Where do attacks come from? The inventory or what?
+
+I want to go for several things:
+
+1. Fast battles - not too long, because then combat becomes a drudge.
+
+Examples:
+
+The player is "attacked" by or "stumbles upon" a creature in the wild. The creature either
+sees the player as food or wants to discourage the player by attacking. Well, wild animals never
+fight to the death. So, after 1-3 rounds, the battle should be over. Either the player withdraws to
+heal their wounds, or the creature is hurt or scared enough to motivate it to just leave.
+
+The player is attacked by a roving band of one or more bandits.
+
+Bandits want something from the players - or to take the players as slaves. So, being dead or a slave
+is really bad. So running away is always an option.
+
+Bandits should be easily demotivated by injuries etc.
+
+Should combat have effect later, like infections etc?
+
+So, getting hurt should be really bad.
+
+2.
