@@ -259,19 +259,19 @@ class TileManager(val chunkSize:Int = 100) {
          *
          * a. find a tile made of rock where all neigbours are also rock.This is easy!
          */
-
-        var flatTileCollectioN = bigempty.flatten()
-        var tilesLeftToCheck = true
-
-        while(tilesLeftToCheck) {
-            var startTile = flatTileCollectioN.firstOrNull { it.tile.tileType == "rock" && it.tile.shortCode.isOneTerrain() }
-            if(startTile == null) {
-                tilesLeftToCheck = false
-                continue
-            }
-
-            
-        }
+//
+//        var flatTileCollectioN = bigempty.flatten()
+//        var tilesLeftToCheck = true
+//
+//        while(tilesLeftToCheck) {
+//            var startTile = flatTileCollectioN.firstOrNull { it.tile.tileType == "rock" && it.tile.shortCode.isOneTerrain() }
+//            if(startTile == null) {
+//                tilesLeftToCheck = false
+//                continue
+//            }
+//
+//
+//        }
 
 
 
