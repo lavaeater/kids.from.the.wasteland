@@ -334,9 +334,10 @@ class TileManager(val chunkSize:Int = 100) {
                     var deadEndNotFound = true
                     var currentTile = startTile!!
                     val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
-                    var canContinueTunneling = false
+                    var directionFound = false
                     var currentDirection = ""
                     var aCounter = 0
+                    var candidates: Map<String, TileInstance?>
 
                     /*
                     We should only turn left or right, not randomly select north, east, west, south
@@ -344,87 +345,141 @@ class TileManager(val chunkSize:Int = 100) {
                     and so on. This means that from the start tile we can go any of the four directions
                     but from any subsequent tile, we can only go forward, left or right, it's the only relevant choices.
                     So after the first the available directions should always be forward, left and right for the current direction.
-
-
                      */
 
-                    while (deadEndNotFound) {
-
-                        //the current tile needs to be changed into a desert tile! but we do grass instead
-                        //because of how we do this, we should throw away the existing tile at some coordinate
-                        //and replace it with a new one...
-                        desertTile.updateInstance(currentTile) //We need to fix the goddamned short code!
+                    while(deadEndNotFound) {
+                        //The current tile must be made into desert:
+                        desertTile.updateInstance(currentTile)
                         currentRoute.add(currentTile)
-                        Thread.sleep(5)
 
-                        if (!canContinueTunneling) {
-                            currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                            availableDirections.remove(currentDirection)
+                        /*
+                        After that, check what directions are valid for this tile. A direction is valid if it is rock
+                        all around except for the tile
+                        BEHIND it. There must be a neat algorithm for this...
+
+                        The first run, there is no "current direction", we need to check ALL directions!
+                        */
+                        if(currentDirection == "") {
+                            candidates = MapManager.simpleDirections.map {
+                                Pair(it.value, Pair(
+                                    it.key.first + currentTile.x,
+                                    it.key.second + currentTile.y)) }
+                                .map { Pair(it.first, tilesByKey[it.second]) }.toMap()
                         } else {
-                            if (MathUtils.random(1, 100) < 5 + aCounter * 2 && availableDirections.any()) {
-                                aCounter = 0
-                                availableDirections.remove(currentDirection) //Is this madness?
-                                availableDirections.add(currentDirection)
-                                currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                                availableDirections.remove(currentDirection)
-                            }
-                        }
-                        canContinueTunneling = false
-                        while (!canContinueTunneling && availableDirections.any()) {
-                            aCounter++
-                            /*
-												Sometimes, just randomly change direction for no good reason
-												 */
-                            val nCoord = Pair(
-                                currentTile.x + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
-                                currentTile.y + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
-
-                            val forwardCoord = Pair(
-                                nCoord.first + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
-                                nCoord.second + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
-
-                            val candidate = tilesByKey[nCoord]
-                            val forwardTile = tilesByKey[forwardCoord]
-                            val fLeftCoord = Pair(
-                                forwardCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
-                                forwardCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
-                            val fRightCoord = Pair(
-                                forwardCoord.first + MapManager.simpleRight[currentDirection]!!.first,
-                                forwardCoord.second + MapManager.simpleRight[currentDirection]!!.second)
-
-                            val flTile = tilesByKey[fLeftCoord]
-                            val frTile = tilesByKey[fRightCoord]
-
-                            if (candidate != null && forwardTile != null && (flTile != null || frTile != null)) {
-                                if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && (flTile?.isOfType("rock") == true || frTile?.isOfType("rock") == true)) {
-                                    currentTile = candidate
-                                    allTheRocks.remove(currentTile)
-                                    allTheRocks.remove(forwardTile)
-
-                                    rockTile.updateInstance(forwardTile)
-                                    if(flTile != null) {
-                                        rockTile.updateInstance(flTile) //makes them eligeble for new neighbours
-                                        allTheRocks.remove(flTile)
-                                    }
-                                    if(frTile != null) {
-                                        rockTile.updateInstance(frTile)
-                                        allTheRocks.remove(frTile)
-                                    }
-                                    canContinueTunneling = true
-                                    continue
-                                }
-                            }
-
-                            currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                            availableDirections.remove(currentDirection)
+                            candidates =  MapManager.forwardLeftRight[currentDirection]!!.map {
+                                Pair(it, Pair(
+                                    MapManager.simpleDirectionsInverse[it]!!.first + currentTile.x,
+                                    MapManager.simpleDirectionsInverse[it]!!.second + currentTile.y)) }
+                                .map { Pair(it.first, tilesByKey[it.second]) }.toMap()
                         }
 
-                        availableDirections.clear()
-                        availableDirections.addAll(MapManager.forwardLeftRight[currentDirection]!!)
+                        /*
+                        How do we know if a candidate direction is "valid"?
+                        Well, it is valid if IT and both the tiles to the left and right are
+                        rock
+                         */
 
-                        deadEndNotFound = canContinueTunneling
+                        val validCandidates = candidates.filter {
+                            it.value != null &&
+                            it.value?.tile?.tileType == "rock" &&
+                                it.value?.leftAndRightAre(it.key,"rock", tilesByKey)!!
+                        }.filter { it.value != null }
+                            .map { it.key to it.value!! }.toMap()
+
+                        if(validCandidates.any()) {
+                            if(currentDirection == "" || !validCandidates.containsKey(currentDirection)) {
+                                currentDirection = validCandidates.keys.elementAt(MathUtils.random(0, validCandidates.size - 1))
+                            }
+
+                            if(MathUtils.random(1, 100) < 10) {
+                                currentDirection = validCandidates.keys.elementAt(MathUtils.random(0, validCandidates.size - 1))
+                            }
+                            currentTile = validCandidates[currentDirection]!!
+                            allTheRocks.remove(currentTile)
+                            continue
+                        }
+                        deadEndNotFound = false
                     }
                     tunnels.add(currentRoute)
+
+
+//                    while (deadEndNotFound) {
+//
+//                        //the current tile needs to be changed into a desert tile! but we do grass instead
+//                        //because of how we do this, we should throw away the existing tile at some coordinate
+//                        //and replace it with a new one...
+//                        desertTile.updateInstance(currentTile) //We need to fix the goddamned short code!
+//                        currentRoute.add(currentTile)
+//                        Thread.sleep(5)
+//
+//                        if (!directionFound) {
+//                            currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+//                            availableDirections.remove(currentDirection)
+//                        } else {
+//                            if (MathUtils.random(1, 100) < 5 + aCounter * 2 && availableDirections.any()) {
+//                                aCounter = 0
+//                                availableDirections.remove(currentDirection) //Is this madness?
+//                                availableDirections.add(currentDirection)
+//                                currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+//                                availableDirections.remove(currentDirection)
+//                            }
+//                        }
+//                        directionFound = false
+//                        while (!directionFound && availableDirections.any()) {
+//                            aCounter++
+//                            /*
+//												Sometimes, just randomly change direction for no good reason
+//												 */
+//                            val nCoord = Pair(
+//                                currentTile.x + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
+//                                currentTile.y + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
+//
+//                            val forwardCoord = Pair(
+//                                nCoord.first + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
+//                                nCoord.second + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
+//
+//                            val candidate = tilesByKey[nCoord]
+//                            val forwardTile = tilesByKey[forwardCoord]
+//                            val fLeftCoord = Pair(
+//                                forwardCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
+//                                forwardCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
+//                            val fRightCoord = Pair(
+//                                forwardCoord.first + MapManager.simpleRight[currentDirection]!!.first,
+//                                forwardCoord.second + MapManager.simpleRight[currentDirection]!!.second)
+//
+//                            val flTile = tilesByKey[fLeftCoord]
+//                            val frTile = tilesByKey[fRightCoord]
+//
+//                            if (candidate != null && forwardTile != null && (flTile != null || frTile != null)) {
+//                                if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && (flTile?.isOfType("rock") == true || frTile?.isOfType("rock") == true)) {
+//                                    currentTile = candidate
+//                                    allTheRocks.remove(currentTile)
+//                                    allTheRocks.remove(forwardTile)
+//
+//                                    rockTile.updateInstance(forwardTile)
+//                                    if(flTile != null) {
+//                                        rockTile.updateInstance(flTile) //makes them eligeble for new neighbours
+//                                        allTheRocks.remove(flTile)
+//                                    }
+//                                    if(frTile != null) {
+//                                        rockTile.updateInstance(frTile)
+//                                        allTheRocks.remove(frTile)
+//                                    }
+//                                    directionFound = true
+//                                    continue
+//                                }
+//                            }
+//
+//                            currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+//                            availableDirections.remove(currentDirection)
+//                        }
+//
+//                        availableDirections.clear()
+//                        availableDirections.addAll(MapManager.forwardLeftRight[currentDirection]!!)
+//
+//                        deadEndNotFound = directionFound
+//                    }
+
                 }
             }
         }).start()
@@ -641,6 +696,18 @@ class TileManager(val chunkSize:Int = 100) {
         val subType = "center${MathUtils.random.nextInt(3) + 1}"
         return tileFor(priority, tileType, subType, code)
     }
+}
+
+private fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+    var bothAre = true
+    val left = MapManager.simpleLeft[thisDirection]!!
+    val leftKey = Pair(this.x + left.first, this.y + left.second)
+    bothAre = bothAre && tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile.tileType == tileType
+    val right = MapManager.simpleRight[thisDirection]!!
+    val rightKey = Pair(this.x + left.first, this.y + left.second)
+    bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile.tileType == tileType
+
+    return bothAre
 }
 
 private fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
