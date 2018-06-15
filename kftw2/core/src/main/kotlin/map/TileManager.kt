@@ -246,9 +246,9 @@ class TileManager(val chunkSize:Int = 100) {
              * three tiles of rock between them. This is great!
              */
             val rooms = mutableListOf<Room>()
-            for(roomIndex in 0..MathUtils.random(50, 75)) {
-                val width = MathUtils.random(5, 10)
-                val height = MathUtils.random(5, 10)
+            for(roomIndex in 0..MathUtils.random(25, 50)) {
+                val width = MathUtils.random(5, 15)
+                val height = MathUtils.random(5, 15)
                 /*
 								randomly place it for n tries.
 								after n tries, this room fails and we continue
@@ -317,7 +317,7 @@ class TileManager(val chunkSize:Int = 100) {
                     continue
                 }
                 allTheRocks.remove(startTile)
-                if(startTile.allNeighboursAre("rock", bigempty, xBounds.first, yBounds.first)) {
+                if(startTile.noNeighboursAre("desert", tilesByKey)) {
                     val currentRoute = mutableListOf<TileInstance>()
 
                     /*
@@ -382,13 +382,18 @@ class TileManager(val chunkSize:Int = 100) {
                         val validCandidates = candidates.filter {
                             it.value != null &&
                             it.value?.tile?.tileType == "rock" &&
-                                it.value?.leftRightAndForwardAreNot(it.key, setOf("desert"), tilesByKey)!! &&
-                                !it.value?.leftAndRightAre(it.key, "grass", tilesByKey)!!
+                                (it.value?.leftRightAndForwardAre(it.key, "rock", tilesByKey) == true ||
+                                    (it.value?.forwardIs(it.key, "grass", tilesByKey) == true &&
+                                        it.value?.leftAndRightAre(it.key, "rock", tilesByKey) == true) )
                         }.filter { it.value != null }
-                            .map { it.key to it.value!! }.toMap()
+                            .map { it.key to it.value!! }.toMap().toMutableMap()
 
                         if(validCandidates.any()) {
-                            Thread.sleep(20)
+                            for(t in validCandidates) {
+                                grassTile.updateInstance(t.value)
+                                Thread.sleep(15)
+                            }
+                            Thread.sleep(15)
                             grassTile.updateInstance(currentTile)
                             currentRoute.add(currentTile)
 
@@ -397,16 +402,26 @@ class TileManager(val chunkSize:Int = 100) {
                             }
 
                             if(MathUtils.random(1, 100) < 50) {
-                                currentDirection = validCandidates.keys.elementAt(MathUtils.random(0, validCandidates.size - 1))
+                                currentDirection = validCandidates.keys.elementAt(MathUtils.random(0, validCandidates.keys.size - 1))
                             }
                             currentTile = validCandidates[currentDirection]!!
+                            validCandidates.remove(currentDirection)
+                            for(t in validCandidates) {
+                                rockTile.updateInstance(t.value)
+                                Thread.sleep(15)
+                            }
                             allTheRocks.remove(currentTile)
                             continue
                         }
                         deadEndNotFound = false
                     }
-                    if(currentRoute.any()) {
+                    if(currentRoute.count() > 2) {
                         tunnels.add(currentRoute)
+                    } else {
+                        currentRoute.forEach{
+                            Thread.sleep(5)
+                            rockTile.updateInstance(it)
+                        }
                     }
                 }
             }
@@ -632,6 +647,12 @@ class TileManager(val chunkSize:Int = 100) {
     }
 }
 
+private fun TileInstance.forwardIs(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+    val forward = MapManager.simpleForward[thisDirection]!!
+    val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
+    return tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType
+}
+
 private fun TileInstance.leftRightAndForwardAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
     var bothAre = true
     val left = MapManager.simpleLeft[thisDirection]!!
@@ -714,6 +735,15 @@ private fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String,
     bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
 
     return bothAre
+}
+
+private fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
+    var allAreOfType = true
+    for(coord in MapManager.neiborMap.keys) {
+        val key = Pair(this.x + coord.first, this.y + coord.second)
+        allAreOfType = allAreOfType && tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType == tileType
+    }
+    return allAreOfType
 }
 
 private fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
