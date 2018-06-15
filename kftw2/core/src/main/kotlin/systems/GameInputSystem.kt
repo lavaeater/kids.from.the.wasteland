@@ -30,6 +30,8 @@ class GameInputSystem(
 
 	val camera by lazy { Ctx.context.inject<Camera>() as OrthographicCamera}
   var pInput = true
+  var zoomSpeed = 0f
+
   var processInput: Boolean
     get() = this.pInput
     set(value) {
@@ -56,6 +58,8 @@ class GameInputSystem(
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
 
+    camera.zoom += zoomSpeed
+
     ctrlBody?.linearVelocity = vec2(x, y).directionalVelocity(speed)
   }
 
@@ -67,6 +71,7 @@ class GameInputSystem(
   var ctrlId: UUID? = null
   var ctrlBody: Body? = null
 
+
   override fun keyDown(keycode: Int): Boolean {
     if(!processInput) return false
     when (keycode) {
@@ -76,8 +81,8 @@ class GameInputSystem(
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
       Input.Keys.C -> gameState.handleEvent(GameEvents.CombatStarted)//Maybe this code should call some other code, not sending events here? I'll figure it out
 //      Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
-      Input.Keys.U -> camera.zoom+=0.1f
-      Input.Keys.J -> camera.zoom-=0.1f
+      Input.Keys.U -> zoomSpeed = 0.05f
+      Input.Keys.J -> zoomSpeed = -0.05f
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true
@@ -123,6 +128,8 @@ class GameInputSystem(
       Input.Keys.D, Input.Keys.RIGHT -> x = 0f
       Input.Keys.W, Input.Keys.UP -> y = 0f
       Input.Keys.S, Input.Keys.DOWN -> y = 0f
+      Input.Keys.U -> zoomSpeed = 0f
+      Input.Keys.J -> zoomSpeed = 0f
     }
     return true
   }
