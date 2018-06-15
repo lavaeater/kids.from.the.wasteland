@@ -109,22 +109,11 @@ class ActorFactory(
     return Pair(entity, npc)
   }
 
-  fun addHeroEntity() : Entity {
 
-    val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
-    val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
-
-    val someTilesInRange = mapManager.getTilesInRange(tileX,tileY, 20).filter {
-      it.tile.tileType != "rock" && it.tile.tileType != "water"
-    }
-
-    val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
-
-
-    player.currentX = randomlySelectedTile.x
-    player.currentY = randomlySelectedTile.y
-
-    val position = Pair(randomlySelectedTile.x, randomlySelectedTile.y).tileWorldCenter()
+  fun addHeroEntityAt(tileX: Int, tileY: Int) :Entity {
+    player.currentX = tileX
+    player.currentY = tileY
+    val position = Pair(tileX, tileY).tileWorldCenter()
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
@@ -137,6 +126,19 @@ class ActorFactory(
     }
     engine.addEntity(entity)
     return entity
+  }
+
+  fun addHeroEntity() : Entity {
+
+    val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
+    val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
+
+    val someTilesInRange = mapManager.getTilesInRange(tileX,tileY, 20).filter {
+      it.tile.tileType != "rock" && it.tile.tileType != "water"
+    }
+
+    val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
+    return addHeroEntityAt(randomlySelectedTile.x, randomlySelectedTile.y)
   }
 
   fun createPlayerBody(position: Vector2, player: Player) : Body {

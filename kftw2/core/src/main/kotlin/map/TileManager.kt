@@ -3,6 +3,8 @@ package map
 import Assets
 import com.badlogic.gdx.math.MathUtils
 
+
+
 /**
  * The tile manager class could be one
  * entry point for the concept of multiple maps.
@@ -210,13 +212,7 @@ class TileManager(val chunkSize:Int = 100) {
                                     yBounds.elementAt(y))
                         })})
 
-        /*
-        Try making a little thread?
-         */
-
-        //Map big empty to tiles!
-
-        val tiles =             Array(
+        val tiles = Array(
             xBounds.count(),
             { x ->
                 Array(
@@ -230,172 +226,205 @@ class TileManager(val chunkSize:Int = 100) {
                 fixNeighbours(row.value.tile, column.index, row.index, tiles).updateInstance(row.value)
             }
 
-        /**
-         * Now for some action!
-         *
-         * 1. place rooms
+        /*
+        Try making a little thread?
          */
-        val rooms = mutableListOf<Room>()
-        for(roomIndex in 0..MathUtils.random(50, 75)) {
-            val width = MathUtils.random(2, 20)
-            val height = MathUtils.random(2, 20)
+
+        Thread(Runnable {
             /*
-            randomly place it for n tries.
-            after n tries, this room fails and we continue
-            with a new one.
+            This would be very cool
              */
-            var tries = 0
-            var failed = true
-            while (tries < 10 && failed) {
-                val topLeftX = MathUtils.random(0, xBounds.count() - width - 2)
-                val topLeftY = MathUtils.random(0, yBounds.count() - height - 2)
 
-                val leftX =MathUtils.clamp(topLeftX - 1, 0, topLeftX - 1)
-                val leftY = MathUtils.clamp(topLeftY - 1, 0, topLeftY - 1)
 
-                var allRock = true
-                for (x in leftX..leftX + width + 2)
-                    for (y in leftY..leftY + height +2) {
-                        val tileInstance = bigempty[x][y]
-                        if(tileInstance.tile.priority != 3)
-                            allRock = false
-                    }
-                if(allRock) {
-                    failed = false
-                    rooms.add(Room(topLeftX, topLeftY, width, height))
-                    for (x in topLeftX..topLeftX + width)
-                        for (y in topLeftY..topLeftY + height) {
-                            val priority = 1//desert
-                            val tileType = MapManager.terrains[priority]!!
-                            val code = MapManager.shortTerrains[priority]!!
-                            val subType = "center${MathUtils.random.nextInt(3) + 1}"
-                            val tile = tileFor(priority, tileType, subType, code)
-                            //What happens to the old one? eh?
-                            bigempty[x][y] = tile.getInstance(bigempty[x][y].x, bigempty[x][y].y)
+            /**
+             * Now for some action!
+             *
+             * 1. place rooms
+             *
+             * rooms need AT LEAST
+             *
+             * three tiles of rock between them. This is great!
+             */
+            val rooms = mutableListOf<Room>()
+            for(roomIndex in 0..MathUtils.random(50, 75)) {
+                Thread.sleep(50)
+                val width = MathUtils.random(5, 10)
+                val height = MathUtils.random(5, 10)
+                /*
+								randomly place it for n tries.
+								after n tries, this room fails and we continue
+								with a new one.
+								 */
+                var tries = 0
+                var failed = true
+                while (tries < 10 && failed) {
+                    val topLeftX = MathUtils.random(0, xBounds.count() - width - 3)
+                    val topLeftY = MathUtils.random(0, yBounds.count() - height - 3)
+
+                    val leftX =MathUtils.clamp(topLeftX - 2, 0, topLeftX - 2)
+                    val leftY = MathUtils.clamp(topLeftY - 2, 0, topLeftY - 2)
+
+                    var allRock = true
+                    for (x in leftX..leftX + width + 3)
+                        for (y in leftY..leftY + height + 3) {
+                            val tileInstance = bigempty[x][y]
+                            if(tileInstance.tile.priority != 3)
+                                allRock = false
                         }
+                    if(allRock) {
+                        failed = false
+                        rooms.add(Room(topLeftX, topLeftY, width, height))
+                        for (x in topLeftX..topLeftX + width)
+                            for (y in topLeftY..topLeftY + height) {
+                                val priority = 1//desert
+                                val tileType = MapManager.terrains[priority]!!
+                                val code = MapManager.shortTerrains[priority]!!
+                                val subType = "center${MathUtils.random.nextInt(3) + 1}"
+                                val tile = tileFor(priority, tileType, subType, code)
+                                //What happens to the old one? eh?
+                                tile.updateInstance(bigempty[x][y])
+                            }
+                    }
+
+                    tries++
                 }
-
-                tries++
             }
-        }
 
-        /**
-         * 2. make mazes
-         *
-         * How are mazes made?
-         *
-         * a. find a tile made of rock where all neigbours are also rock.This is easy!
-         */
-
-        val flatTileCollectioN = bigempty.flatten()
-        val allTheRocks = flatTileCollectioN.filter { it.tile.tileType == "rock" }.toMutableList()
-        val tilesByKey = flatTileCollectioN.associateBy({Pair(it.x, it.y)}, {it})
-        var tilesLeftToCheck = true
-        val priority = MapManager.terrainPriorities["desert"]!!
-        val desertTile = tileFor(priority, MapManager.terrains[priority]!!, "center1", MapManager.shortTerrains[priority]!!)
-        val tunnels = mutableListOf<MutableList<TileInstance>>()
-
-        while(tilesLeftToCheck) {
-            val startTile = allTheRocks.firstOrNull()
-            if(startTile == null) {
-                tilesLeftToCheck = false
-                continue
-            }
-            allTheRocks.remove(startTile)
-            if(startTile.allNeighboursAre("rock", bigempty, xBounds.first, yBounds.first)) {
-                val currentRoute = mutableListOf<TileInstance>()
-
-                /*
-                Start of a route. Now, I want to keep the routes lying around for some tests
-                and tweaks (and deletions) later.
-                 */
-
-                /*
-            We have a start tile. Choose a random direction and make a maze if that direction is valid.
-
-            What is a valid direction or tile? Well, a valid direction or tile is obviously a tile that is "oneterrain"
-
-            So we just get all the neighbours of a tile and filter out the ones that are all rock. If there is none that actually
-            is all rock, then this maze is done!
+            /**
+             * 2. make mazes
+             *
+             * How are mazes made?
+             *
+             * a. find a tile made of rock where all neigbours are also rock.This is easy!
              */
-                var deadEndNotFound = true
-                var currentTile = startTile!!
-                val triedDirections = mutableListOf<String>()
-                val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
-                var directionFound = false
-                var currentDirection = ""
-                var aCounter = 0
 
-                while (deadEndNotFound) {
+            val flatTileCollectioN = bigempty.flatten()
+            val allTheRocks = flatTileCollectioN.filter { it.tile.tileType == "rock" }.toMutableList()
+            val tilesByKey = flatTileCollectioN.associateBy({Pair(it.x, it.y)}, {it})
+            var tilesLeftToCheck = true
+            val priority = MapManager.terrainPriorities["desert"]!!
+            val desertTile = tileFor(priority, MapManager.terrains[priority]!!, "center1", MapManager.shortTerrains[priority]!!)
+            val tunnels = mutableListOf<MutableList<TileInstance>>()
 
-                    //the current tile needs to be changed into a desert tile! but we do grass instead
-                    //because of how we do this, we should throw away the existing tile at some coordinate
-                    //and replace it with a new one...
-                    desertTile.updateInstance(currentTile) //We need to fix the goddamned short code!
-                    currentRoute.add(currentTile)
+            while(tilesLeftToCheck) {
+                val startTile = allTheRocks.firstOrNull()
+                if(startTile == null) {
+                    tilesLeftToCheck = false
+                    continue
+                }
+                allTheRocks.remove(startTile)
+                if(startTile.allNeighboursAre("rock", bigempty, xBounds.first, yBounds.first)) {
+                    val currentRoute = mutableListOf<TileInstance>()
 
-                    if (!directionFound) {
-                        currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                        availableDirections.remove(currentDirection)
-                    }
-                    directionFound = false
-                    while (!directionFound && availableDirections.any()) {
-                        aCounter++
-                        /*
-                    Sometimes, just randomly change direction for no good reason
+                    /*
+										Start of a route. Now, I want to keep the routes lying around for some tests
+										and tweaks (and deletions) later.
+										 */
+
+                    /*
+								We have a start tile. Choose a random direction and make a maze if that direction is valid.
+
+								What is a valid direction or tile? Well, a valid direction or tile is obviously a tile that is "oneterrain"
+
+								So we just get all the neighbours of a tile and filter out the ones that are all rock. If there is none that actually
+								is all rock, then this maze is done!
+								 */
+                    var deadEndNotFound = true
+                    var currentTile = startTile!!
+                    val triedDirections = mutableListOf<String>()
+                    val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
+                    var directionFound = false
+                    var currentDirection = ""
+                    var aCounter = 0
+
+                    /*
+                    We should only turn left or right, not randomly select north, east, west, south
+                    This means that when we try, we figure out what "left" means for "north" - it means west. For west it's south...
+                    and so on. This means that from the start tile we can go any of the four directions
+                    but from any subsequent tile, we can only go forward, left or right, it's the only relevant choices.
+                    So after the first the available directions should always be forward, left and right for the current direction.
+
+
                      */
-                        if (MathUtils.random(1, 100) < 5 + aCounter * 2) {
-                            aCounter = 0
+
+                    while (deadEndNotFound) {
+
+                        //the current tile needs to be changed into a desert tile! but we do grass instead
+                        //because of how we do this, we should throw away the existing tile at some coordinate
+                        //and replace it with a new one...
+                        desertTile.updateInstance(currentTile) //We need to fix the goddamned short code!
+                        currentRoute.add(currentTile)
+                        Thread.sleep(5)
+
+                        if (!directionFound) {
+
+
+
+
                             currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                        }
-
-                        val nCoord = Pair(
-                            currentTile.x + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
-                            currentTile.y + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
-
-                        val forwardCoord = Pair(
-                            nCoord.first + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
-                            nCoord.second + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
-
-                        val candidate = tilesByKey[nCoord]
-                        val forwardTile = tilesByKey[forwardCoord]
-                        val fLeftCoord = Pair(
-                            forwardCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
-                            forwardCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
-                        val fRightCoord = Pair(
-                            forwardCoord.first + MapManager.simpleRight[currentDirection]!!.first,
-                            forwardCoord.second + MapManager.simpleRight[currentDirection]!!.second)
-
-                        val flTile = tilesByKey[fLeftCoord]
-                        val frTile = tilesByKey[fRightCoord]
-
-                        if (candidate != null && forwardTile != null && flTile != null && frTile != null) {
-                            if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && flTile.isOfType("rock") && frTile.isOfType("rock")) {
-                                currentTile = candidate
-                                allTheRocks.remove(currentTile)
-                                allTheRocks.remove(forwardTile)
-//                                allTheRocks.remove(flTile)
-//                                allTheRocks.remove(frTile)
-                                directionFound = true
-                                continue
+                            availableDirections.remove(currentDirection)
+                        } else {
+                            if (MathUtils.random(1, 100) < 5 + aCounter * 2 && availableDirections.any()) {
+                                aCounter = 0
+                                availableDirections.add(currentDirection) //Is this madness?
+                                currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+                                availableDirections.remove(currentDirection)
                             }
                         }
-                        currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
-                        availableDirections.remove(currentDirection)
+                        directionFound = false
+                        while (!directionFound && availableDirections.any()) {
+                            aCounter++
+                            /*
+												Sometimes, just randomly change direction for no good reason
+												 */
+                            val nCoord = Pair(
+                                currentTile.x + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
+                                currentTile.y + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
+
+                            val forwardCoord = Pair(
+                                nCoord.first + MapManager.simpleDirectionsInverse[currentDirection]!!.first,
+                                nCoord.second + MapManager.simpleDirectionsInverse[currentDirection]!!.second)
+
+                            val candidate = tilesByKey[nCoord]
+                            val forwardTile = tilesByKey[forwardCoord]
+                            val fLeftCoord = Pair(
+                                forwardCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
+                                forwardCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
+                            val fRightCoord = Pair(
+                                forwardCoord.first + MapManager.simpleRight[currentDirection]!!.first,
+                                forwardCoord.second + MapManager.simpleRight[currentDirection]!!.second)
+
+                            val flTile = tilesByKey[fLeftCoord]
+                            val frTile = tilesByKey[fRightCoord]
+
+                            if (candidate != null && forwardTile != null && flTile != null && frTile != null) {
+                                if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && flTile.isOfType("rock") && frTile.isOfType("rock")) {
+                                    currentTile = candidate
+                                    allTheRocks.remove(currentTile)
+                                    allTheRocks.remove(forwardTile)
+//                                allTheRocks.remove(flTile)
+//                                allTheRocks.remove(frTile)
+                                    directionFound = true
+
+                                    //Randomly change direction!
+                                    continue
+                                }
+                            }
+                            currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
+                            availableDirections.remove(currentDirection)
+                        }
+
+                        availableDirections.clear()
+                        availableDirections.addAll(MapManager.forwardLeftRight[currentDirection]!!)
+
+                        deadEndNotFound = directionFound
                     }
-
-                    availableDirections.clear()
-                    availableDirections.addAll(MapManager.simpleDirectionsInverse.keys)
-
-                    deadEndNotFound = directionFound
+                    tunnels.add(currentRoute)
                 }
-                tunnels.add(currentRoute)
             }
-        }
+        }).start()
 
-
-
-
+        //Map big empty to tiles!
 
         /**
          * 3. connect rooms

@@ -75,6 +75,13 @@ class MapManager(
         "south" to Pair(0, 1),
         "west" to Pair(1, 0))
 
+    val forwardLeftRight = mapOf(
+        "north" to setOf("north", "west", "east"),
+        "east" to setOf("east", "north", "south"),
+        "south" to setOf("south", "east", "west"),
+        "west" to setOf("west", "south", "north")
+    )
+
     val simpleLeft = mapOf(
         "north" to Pair(-1, 0),
         "east" to Pair(0, -1),

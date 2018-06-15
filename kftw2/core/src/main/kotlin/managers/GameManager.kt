@@ -35,7 +35,7 @@ class GameManager(
 
   init {
     gameState.addChangeListener(::gameStateChanged)
-    addEmployees()
+    //addEmployees()
     camera.position.x = 0f
     camera.position.y = 0f
 

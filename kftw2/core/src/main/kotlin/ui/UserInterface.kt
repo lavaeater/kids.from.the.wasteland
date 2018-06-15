@@ -188,7 +188,7 @@ class UserInterface(
         stage.actors.removeValue(splashScreen, true)
         gameState.handleEvent(GameEvents.GameResumed)
       }
-    }, 3f)
+    }, 0.5f)
   }
 
 
