@@ -94,6 +94,19 @@ class MapManager(
         "south" to Pair(-1, 0),
         "west" to Pair(0, -1))
 
+    val simpleForward = mapOf(
+        "north" to Pair(0, -1),
+        "east" to Pair(1, 0),
+        "south" to Pair(0, 1),
+        "west" to Pair(-1, 0))
+
+    val infront = mapOf(
+        "north" to setOf("north","northwest", "northeast", "west", "east"),
+        "south" to setOf("south","southeast", "southwest", "west", "east"),
+        "west" to setOf("west","southwest", "northwest", "north", "south"),
+        "east" to setOf("east","northeast", "southeast", "north", "south")
+    )
+
     val terrains = mapOf(
         0 to "water",
         1 to "desert",
@@ -134,6 +147,8 @@ class MapManager(
         Pair(-1, -1) to "southwest",
         Pair(-1, 0) to "west",
         Pair(-1, 1) to "northwest")
+
+    val directions = neiborMap.map { it.value to it.key }.toMap()
 
     val noExtraSprites = hashSetOf<String>()
 
