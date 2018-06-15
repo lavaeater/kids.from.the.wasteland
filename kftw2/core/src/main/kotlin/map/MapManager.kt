@@ -75,6 +75,18 @@ class MapManager(
         "south" to Pair(0, 1),
         "west" to Pair(1, 0))
 
+    val simpleLeft = mapOf(
+        "north" to Pair(-1, 0),
+        "east" to Pair(0, -1),
+        "south" to Pair(1, 0),
+        "west" to Pair(0, 1))
+
+    val simpleRight = mapOf(
+        "north" to Pair(1, 0),
+        "east" to Pair(0, 1),
+        "south" to Pair(-1, 0),
+        "west" to Pair(0, -1))
+
     val terrains = mapOf(
         0 to "water",
         1 to "desert",
