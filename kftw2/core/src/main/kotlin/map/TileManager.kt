@@ -247,7 +247,6 @@ class TileManager(val chunkSize:Int = 100) {
              */
             val rooms = mutableListOf<Room>()
             for(roomIndex in 0..MathUtils.random(50, 75)) {
-                Thread.sleep(50)
                 val width = MathUtils.random(5, 10)
                 val height = MathUtils.random(5, 10)
                 /*
@@ -276,6 +275,7 @@ class TileManager(val chunkSize:Int = 100) {
                         rooms.add(Room(topLeftX, topLeftY, width, height))
                         for (x in topLeftX..topLeftX + width)
                             for (y in topLeftY..topLeftY + height) {
+                                Thread.sleep(1)
                                 val priority = 1//desert
                                 val tileType = MapManager.terrains[priority]!!
                                 val code = MapManager.shortTerrains[priority]!!
@@ -302,8 +302,10 @@ class TileManager(val chunkSize:Int = 100) {
             val allTheRocks = flatTileCollectioN.filter { it.tile.tileType == "rock" }.toMutableList()
             val tilesByKey = flatTileCollectioN.associateBy({Pair(it.x, it.y)}, {it})
             var tilesLeftToCheck = true
-            val priority = MapManager.terrainPriorities["desert"]!!
-            val desertTile = tileFor(priority, MapManager.terrains[priority]!!, "center1", MapManager.shortTerrains[priority]!!)
+            val desertPriority = MapManager.terrainPriorities["desert"]!!
+            val rockPriority = MapManager.terrainPriorities["rock"]!!
+            val desertTile = tileFor(desertPriority, MapManager.terrains[desertPriority]!!, "center1", MapManager.shortTerrains[desertPriority]!!)
+            val rockTile = tileFor(rockPriority, MapManager.terrains[rockPriority]!!, "center2", MapManager.shortTerrains[rockPriority]!!)
             val tunnels = mutableListOf<MutableList<TileInstance>>()
 
             while(tilesLeftToCheck) {
@@ -331,7 +333,6 @@ class TileManager(val chunkSize:Int = 100) {
 								 */
                     var deadEndNotFound = true
                     var currentTile = startTile!!
-                    val triedDirections = mutableListOf<String>()
                     val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
                     var directionFound = false
                     var currentDirection = ""
@@ -357,10 +358,6 @@ class TileManager(val chunkSize:Int = 100) {
                         Thread.sleep(5)
 
                         if (!directionFound) {
-
-
-
-
                             currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
                             availableDirections.remove(currentDirection)
                         } else {
@@ -402,6 +399,11 @@ class TileManager(val chunkSize:Int = 100) {
                                     currentTile = candidate
                                     allTheRocks.remove(currentTile)
                                     allTheRocks.remove(forwardTile)
+
+                                    rockTile.updateInstance(forwardTile)
+                                    rockTile.updateInstance(flTile) //makes them eligeble for new neighbours
+                                    rockTile.updateInstance(frTile)
+
 //                                allTheRocks.remove(flTile)
 //                                allTheRocks.remove(frTile)
                                     directionFound = true
