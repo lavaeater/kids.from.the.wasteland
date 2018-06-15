@@ -257,15 +257,15 @@ class TileManager(val chunkSize:Int = 100) {
                 var tries = 0
                 var failed = true
                 while (tries < 10 && failed) {
-                    val topLeftX = MathUtils.random(0, xBounds.count() - width - 3)
-                    val topLeftY = MathUtils.random(0, yBounds.count() - height - 3)
+                    val topLeftX = MathUtils.random(0, xBounds.count() - width - 4)
+                    val topLeftY = MathUtils.random(0, yBounds.count() - height - 4)
 
-                    val leftX =MathUtils.clamp(topLeftX - 2, 0, topLeftX - 2)
-                    val leftY = MathUtils.clamp(topLeftY - 2, 0, topLeftY - 2)
+                    val leftX =MathUtils.clamp(topLeftX - 3, 0, topLeftX - 3)
+                    val leftY = MathUtils.clamp(topLeftY - 3, 0, topLeftY - 3)
 
                     var allRock = true
-                    for (x in leftX..leftX + width + 3)
-                        for (y in leftY..leftY + height + 3) {
+                    for (x in leftX..leftX + width + 6)
+                        for (y in leftY..leftY + height + 6) {
                             val tileInstance = bigempty[x][y]
                             if(tileInstance.tile.priority != 3)
                                 allRock = false
@@ -334,7 +334,7 @@ class TileManager(val chunkSize:Int = 100) {
                     var deadEndNotFound = true
                     var currentTile = startTile!!
                     val availableDirections = MapManager.simpleDirectionsInverse.keys.toMutableList()
-                    var directionFound = false
+                    var canContinueTunneling = false
                     var currentDirection = ""
                     var aCounter = 0
 
@@ -357,19 +357,20 @@ class TileManager(val chunkSize:Int = 100) {
                         currentRoute.add(currentTile)
                         Thread.sleep(5)
 
-                        if (!directionFound) {
+                        if (!canContinueTunneling) {
                             currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
                             availableDirections.remove(currentDirection)
                         } else {
                             if (MathUtils.random(1, 100) < 5 + aCounter * 2 && availableDirections.any()) {
                                 aCounter = 0
-                                availableDirections.add(currentDirection) //Is this madness?
+                                availableDirections.remove(currentDirection) //Is this madness?
+                                availableDirections.add(currentDirection)
                                 currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
                                 availableDirections.remove(currentDirection)
                             }
                         }
-                        directionFound = false
-                        while (!directionFound && availableDirections.any()) {
+                        canContinueTunneling = false
+                        while (!canContinueTunneling && availableDirections.any()) {
                             aCounter++
                             /*
 												Sometimes, just randomly change direction for no good reason
@@ -394,24 +395,26 @@ class TileManager(val chunkSize:Int = 100) {
                             val flTile = tilesByKey[fLeftCoord]
                             val frTile = tilesByKey[fRightCoord]
 
-                            if (candidate != null && forwardTile != null && flTile != null && frTile != null) {
-                                if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && flTile.isOfType("rock") && frTile.isOfType("rock")) {
+                            if (candidate != null && forwardTile != null && (flTile != null || frTile != null)) {
+                                if (candidate.isOfType("rock") && forwardTile.isOfType("rock") && (flTile?.isOfType("rock") == true || frTile?.isOfType("rock") == true)) {
                                     currentTile = candidate
                                     allTheRocks.remove(currentTile)
                                     allTheRocks.remove(forwardTile)
 
                                     rockTile.updateInstance(forwardTile)
-                                    rockTile.updateInstance(flTile) //makes them eligeble for new neighbours
-                                    rockTile.updateInstance(frTile)
-
-//                                allTheRocks.remove(flTile)
-//                                allTheRocks.remove(frTile)
-                                    directionFound = true
-
-                                    //Randomly change direction!
+                                    if(flTile != null) {
+                                        rockTile.updateInstance(flTile) //makes them eligeble for new neighbours
+                                        allTheRocks.remove(flTile)
+                                    }
+                                    if(frTile != null) {
+                                        rockTile.updateInstance(frTile)
+                                        allTheRocks.remove(frTile)
+                                    }
+                                    canContinueTunneling = true
                                     continue
                                 }
                             }
+
                             currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
                             availableDirections.remove(currentDirection)
                         }
@@ -419,7 +422,7 @@ class TileManager(val chunkSize:Int = 100) {
                         availableDirections.clear()
                         availableDirections.addAll(MapManager.forwardLeftRight[currentDirection]!!)
 
-                        deadEndNotFound = directionFound
+                        deadEndNotFound = canContinueTunneling
                     }
                     tunnels.add(currentRoute)
                 }
