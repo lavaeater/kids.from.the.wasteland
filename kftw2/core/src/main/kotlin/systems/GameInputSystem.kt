@@ -75,9 +75,9 @@ class GameInputSystem(
       Input.Keys.W, Input.Keys.UP -> y = -1f
       Input.Keys.S, Input.Keys.DOWN -> y = 1f
       Input.Keys.C -> gameState.handleEvent(GameEvents.CombatStarted)//Maybe this code should call some other code, not sending events here? I'll figure it out
-      Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
-      Input.Keys.U -> camera.zoom+=0.05f
-      Input.Keys.J -> camera.zoom-=0.05f
+//      Input.Keys.I -> gameState.handleEvent(GameEvents.InventoryToggled)
+      Input.Keys.U -> camera.zoom+=0.1f
+      Input.Keys.J -> camera.zoom-=0.1f
       //Global object or other that manages meetings, encounters and dialogs
     }
     return true

@@ -2,7 +2,6 @@ package map
 
 import Assets
 import com.badlogic.gdx.math.MathUtils
-import com.sun.org.apache.xpath.internal.operations.Bool
 
 /**
  * The tile manager class could be one
@@ -211,6 +210,9 @@ class TileManager(val chunkSize:Int = 100) {
                                     yBounds.elementAt(y))
                         })})
 
+        /*
+        Try making a little thread?
+         */
 
         //Map big empty to tiles!
 
@@ -234,7 +236,7 @@ class TileManager(val chunkSize:Int = 100) {
          * 1. place rooms
          */
         val rooms = mutableListOf<Room>()
-        for(roomIndex in 0..MathUtils.random(150, 200)) {
+        for(roomIndex in 0..MathUtils.random(50, 75)) {
             val width = MathUtils.random(2, 20)
             val height = MathUtils.random(2, 20)
             /*
@@ -291,6 +293,7 @@ class TileManager(val chunkSize:Int = 100) {
         var tilesLeftToCheck = true
         val priority = MapManager.terrainPriorities["desert"]!!
         val desertTile = tileFor(priority, MapManager.terrains[priority]!!, "center1", MapManager.shortTerrains[priority]!!)
+        val tunnels = mutableListOf<MutableList<TileInstance>>()
 
         while(tilesLeftToCheck) {
             val startTile = allTheRocks.firstOrNull()
@@ -300,6 +303,12 @@ class TileManager(val chunkSize:Int = 100) {
             }
             allTheRocks.remove(startTile)
             if(startTile.allNeighboursAre("rock", bigempty, xBounds.first, yBounds.first)) {
+                val currentRoute = mutableListOf<TileInstance>()
+
+                /*
+                Start of a route. Now, I want to keep the routes lying around for some tests
+                and tweaks (and deletions) later.
+                 */
 
                 /*
             We have a start tile. Choose a random direction and make a maze if that direction is valid.
@@ -323,6 +332,7 @@ class TileManager(val chunkSize:Int = 100) {
                     //because of how we do this, we should throw away the existing tile at some coordinate
                     //and replace it with a new one...
                     desertTile.updateInstance(currentTile) //We need to fix the goddamned short code!
+                    currentRoute.add(currentTile)
 
                     if (!directionFound) {
                         currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
@@ -334,7 +344,8 @@ class TileManager(val chunkSize:Int = 100) {
                         /*
                     Sometimes, just randomly change direction for no good reason
                      */
-                        if (MathUtils.random(1, 100) < 25 + aCounter) {
+                        if (MathUtils.random(1, 100) < 5 + aCounter * 2) {
+                            aCounter = 0
                             currentDirection = availableDirections.elementAt(MathUtils.random(0, availableDirections.count() - 1))
                         }
 
@@ -349,11 +360,11 @@ class TileManager(val chunkSize:Int = 100) {
                         val candidate = tilesByKey[nCoord]
                         val forwardTile = tilesByKey[forwardCoord]
                         val fLeftCoord = Pair(
-                            nCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
-                            nCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
+                            forwardCoord.first + MapManager.simpleLeft[currentDirection]!!.first,
+                            forwardCoord.second + MapManager.simpleLeft[currentDirection]!!.second)
                         val fRightCoord = Pair(
-                            nCoord.first + MapManager.simpleRight[currentDirection]!!.first,
-                            nCoord.second + MapManager.simpleRight[currentDirection]!!.second)
+                            forwardCoord.first + MapManager.simpleRight[currentDirection]!!.first,
+                            forwardCoord.second + MapManager.simpleRight[currentDirection]!!.second)
 
                         val flTile = tilesByKey[fLeftCoord]
                         val frTile = tilesByKey[fRightCoord]
@@ -363,8 +374,8 @@ class TileManager(val chunkSize:Int = 100) {
                                 currentTile = candidate
                                 allTheRocks.remove(currentTile)
                                 allTheRocks.remove(forwardTile)
-                                allTheRocks.remove(flTile)
-                                allTheRocks.remove(frTile)
+//                                allTheRocks.remove(flTile)
+//                                allTheRocks.remove(frTile)
                                 directionFound = true
                                 continue
                             }
@@ -378,8 +389,11 @@ class TileManager(val chunkSize:Int = 100) {
 
                     deadEndNotFound = directionFound
                 }
+                tunnels.add(currentRoute)
             }
         }
+
+
 
 
 
@@ -607,6 +621,19 @@ private fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<T
         }
     }
     return allAreOfType
+}
+
+private fun TileInstance.atMostNAreOfType(tileType: String, n:Int, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
+    var count = 0
+    for(coord in MapManager.neiborMap.keys) {
+        val x = this.x + coord.first - offsetX
+        val y = this.y + coord.second - offsetY
+        if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
+            if(tiles[x][y].tile.tileType == tileType)
+                count++
+        }
+    }
+    return count == n
 }
 
 fun TileInstance.isOfType(terrain: String) :Boolean  {
