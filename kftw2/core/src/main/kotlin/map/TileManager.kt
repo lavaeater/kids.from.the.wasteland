@@ -411,18 +411,40 @@ class TileManager(val chunkSize:Int = 100) {
                     }
                 }
             }
-            for(list in tunnels) {
-                for(tile in list) {
-                    Thread.sleep(1)
+
+            /*
+             * 3. connect rooms
+             * how?
+             *
+             * find all rock tiles that neighbour grass and desert
+             */
+            val connectors = flatTileCollectioN.filter { it.tile.tileType == "rock" && it.hasBothAsNeighbours(setOf("grass", "desert"), tilesByKey) }
+
+            var count = 0
+            for (tile in connectors) {
+                if(count.rem(2)==0) {
+                    grassTile.updateInstance(tile)
+                } else {
                     desertTile.updateInstance(tile)
                 }
+                Thread.sleep(5)
+                count++
             }
+
+
+
+
+//            for(list in tunnels) {
+//                for(tile in list) {
+//                    Thread.sleep(1)
+//                    desertTile.updateInstance(tile)
+//                }
+//            }
         }).start()
 
         //Map big empty to tiles!
 
         /**
-         * 3. connect rooms
          * 4. kill dead ends
          * 5. add encounters? how? Not here?
          */
@@ -730,6 +752,21 @@ private fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<
         noAreOfType = noAreOfType && tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
     }
     return noAreOfType
+}
+
+private fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
+
+    var containsCount = 0
+    for(tileType in tileTypes) {
+        var hasAllAsNeighbours = false
+        for(coord in MapManager.neiborMap.keys) {
+            val key = Pair(this.x + coord.first, this.y + coord.second)
+            hasAllAsNeighbours = hasAllAsNeighbours || tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
+        }
+        if(hasAllAsNeighbours)
+            containsCount++
+    }
+    return containsCount == tileTypes.size
 }
 
 private fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
