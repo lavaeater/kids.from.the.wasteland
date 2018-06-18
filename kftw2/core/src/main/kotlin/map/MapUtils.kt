@@ -191,3 +191,185 @@ fun Tile.getExtraSprites() : Array<Sprite> {
     return Assets.codeToExtraTiles[this.shortCode]!!.toTypedArray()
   return emptyArray()
 }
+
+fun TileInstance.forwardIs(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+  val forward = MapManager.simpleForward[thisDirection]!!
+  val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
+  return tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType
+}
+
+fun TileInstance.leftRightAndForwardAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+  var bothAre = true
+  val left = MapManager.simpleLeft[thisDirection]!!
+  val leftKey = Pair(this.x + left.first, this.y + left.second)
+  bothAre = bothAre && tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType
+  val right = MapManager.simpleRight[thisDirection]!!
+  val rightKey = Pair(this.x + right.first, this.y + right.second)
+  bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
+  val forward = MapManager.simpleForward[thisDirection]!!
+  val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
+  bothAre = bothAre && tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType
+
+  return bothAre
+}
+
+fun TileInstance.leftRightAndForwardAreNot(thisDirection:String, tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+  var bothAre = true
+  val left = MapManager.simpleLeft[thisDirection]!!
+  val leftKey = Pair(this.x + left.first, this.y + left.second)
+  bothAre = bothAre && tilesByKey.containsKey(leftKey) && !tileTypes.contains(tilesByKey[leftKey]?.tile?.tileType)
+  val right = MapManager.simpleRight[thisDirection]!!
+  val rightKey = Pair(this.x + right.first, this.y + right.second)
+  bothAre = bothAre && tilesByKey.containsKey(rightKey) && !tileTypes.contains(tilesByKey[rightKey]?.tile?.tileType)
+  val forward = MapManager.simpleForward[thisDirection]!!
+  val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
+  bothAre = bothAre && tilesByKey.containsKey(forwardKey) && !tileTypes.contains(tilesByKey[forwardKey]?.tile?.tileType)
+
+  return bothAre
+}
+
+fun TileInstance.inFrontAreAll(direction: String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
+  val directions = MapManager.infront[direction]!!.map { MapManager.directions[it]!! }
+  var allAre = true
+
+  for(direction in directions) {
+    val currentKey = Pair(this.x + direction.first, this.y + direction.second)
+    allAre = allAre && tilesByKey.containsKey(currentKey) && tilesByKey[currentKey]!!.tile.tileType == tileType
+  }
+  return allAre
+}
+
+fun TileInstance.inFrontAreNone(direction: String, tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
+  val directions = MapManager.infront[direction]!!.map { MapManager.directions[it]!! }
+  var nonAre = true
+
+  for(direction in directions) {
+    val currentKey = Pair(this.x + direction.first, this.y + direction.second)
+    nonAre = nonAre &&  tilesByKey.containsKey(currentKey) && !tileTypes.contains(tilesByKey[currentKey]!!.tile.tileType)
+  }
+  return nonAre
+}
+
+
+fun TileInstance.hasAtLeastTwoLeftRightForward(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+  var count = 0
+
+  val left = MapManager.simpleLeft[thisDirection]!!
+  val leftKey = Pair(this.x + left.first, this.y + left.second)
+
+  if(tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType)
+    count++
+
+  val right = MapManager.simpleRight[thisDirection]!!
+  val rightKey = Pair(this.x + right.first, this.y + right.second)
+
+  if(tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType)
+    count++
+
+  var forward = MapManager.simpleForward[thisDirection]!!
+  var forwardKey = Pair(this.x + forward.first, this.y + forward.second)
+
+  if(tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType)
+    count++
+
+  forwardKey = Pair(forwardKey.first + forward.first, forwardKey.second + forward.second)
+  if(tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType)
+    count++
+
+
+  return count > 2
+}
+
+fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
+  var bothAre = true
+  val left = MapManager.simpleLeft[thisDirection]!!
+  val leftKey = Pair(this.x + left.first, this.y + left.second)
+  bothAre = bothAre && tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType
+  val right = MapManager.simpleRight[thisDirection]!!
+  val rightKey = Pair(this.x + left.first, this.y + left.second)
+  bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
+
+  return bothAre
+}
+
+fun TileInstance.neighbourToIs(direction:String, tileType:String, tilesByKey: Map<Pair<Int, Int>, TileInstance>):Boolean {
+  val key = MapManager.directions[direction]!!
+  val actualKey = Pair(this.x + key.first, this.y + key.first)
+  return tilesByKey[actualKey]?.tile?.tileType == tileType
+}
+
+fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
+  var noAreOfType = false
+  for(coord in MapManager.neiborMap.keys) {
+    val key = Pair(this.x + coord.first, this.y + coord.second)
+    noAreOfType = noAreOfType || (tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType == tileType)
+  }
+  return noAreOfType
+}
+
+fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
+  var noAreOfType = true
+  for(coord in MapManager.neiborMap.keys) {
+    val key = Pair(this.x + coord.first, this.y + coord.second)
+    noAreOfType = noAreOfType && tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
+  }
+  return noAreOfType
+}
+
+fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
+
+  var containsCount = 0
+  for(tileType in tileTypes) {
+    var hasAllAsNeighbours = false
+    for(coord in MapManager.neiborMap.keys) {
+      val key = Pair(this.x + coord.first, this.y + coord.second)
+      hasAllAsNeighbours = hasAllAsNeighbours || tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
+    }
+    if(hasAllAsNeighbours)
+      containsCount++
+  }
+  return containsCount == tileTypes.size
+}
+
+fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
+  var allAreOfType = true
+  for(coord in MapManager.neiborMap.keys) {
+    val x = this.x + coord.first - offsetX
+    val y = this.y + coord.second - offsetY
+    if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
+      allAreOfType = allAreOfType && tiles[x][y].tile.tileType == tileType
+    } else {
+      allAreOfType = false
+    }
+  }
+  return allAreOfType
+}
+
+fun TileInstance.atMostNAreOfType(tileType: String, n:Int, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
+  var count = 0
+  for(coord in MapManager.neiborMap.keys) {
+    val x = this.x + coord.first - offsetX
+    val y = this.y + coord.second - offsetY
+    if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
+      if(tiles[x][y].tile.tileType == tileType)
+        count++
+    }
+  }
+  return count == n
+}
+
+fun TileInstance.isOfType(terrain: String) :Boolean  {
+  return this.tile.tileType.equals(terrain)
+}
+
+fun Room.toggleBlink() {
+  for(t in this.tileInstances) {
+    t.blinking = !t.blinking
+  }
+}
+
+fun List<TileInstance>.blink(blink: Boolean) {
+  for(t in this) {
+    t.blinking = blink
+  }
+}
