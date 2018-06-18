@@ -32,7 +32,6 @@ class ConversationPresenter(
   private val speechBubbleStyle = Label.LabelStyle(Assets.standardFont, Color.BLACK).apply { background = speechBubbleNinePatch }
 
   private val baseWidth = UserInterface.uiWidth / 2
-  private val baseHeight = UserInterface.uiHeight / 3
 
   private lateinit var antagonistSpeechBubble: Label
   private var antagonistRoot: Table

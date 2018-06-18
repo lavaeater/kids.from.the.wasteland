@@ -46,8 +46,6 @@ class MapManager(
 
   var currentlyVisibleTiles: Array<TileInstance>? = null
 
-  //val inverseFogOfWar = mutableSetOf<TileKey>()
-  val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
 
@@ -149,11 +147,8 @@ class MapManager(
         Pair(-1, 1) to "northwest")
 
     val directions = neiborMap.map { it.value to it.key }.toMap()
-
     val noExtraSprites = hashSetOf<String>()
-
     val scale = 80.0f
-
   }
 
   private fun doWeNeedNewVisibleTiles(x: Int, y: Int): Boolean {
@@ -184,7 +179,6 @@ class MapManager(
     return tilesInRange.firstOrNull { it.tile.tileType == tileType }
   }
 
-
   override fun tileForWorldPosition(position: Vector3): Tile {
     return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
@@ -214,13 +208,8 @@ class MapManager(
     return tileManager.getTilesFlat(minX..maxX, minY..maxY).toList()
   }
 
-  //This needs work to... work.
   override fun getVisibleTilesWithFog(x:Int, y:Int, range:Int): Array<TileInstance> {
     val tiles = getVisibleTiles(x, y)
-
-    //first, all of the visible tiles need to be seen. THEN we need to set them to seeing when rendering?
-
-    //WHaat is going on?
     for (tile in tiles) {
       if (isInCircle(tile.x, tile.y, x, y, range)) {
         tile.seeing = true

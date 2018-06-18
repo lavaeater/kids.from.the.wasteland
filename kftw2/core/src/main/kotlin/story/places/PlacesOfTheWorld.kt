@@ -1,6 +1,5 @@
 package story.places
 
-import com.badlogic.gdx.math.MathUtils
 import data.Player
 import factory.ActorFactory
 import injection.Ctx
@@ -10,6 +9,7 @@ import map.IMapManager
 import story.FactsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InternalConversation
+import story.conversation.RouteType
 import story.convo
 
 class PlacesOfTheWorld {
@@ -56,12 +56,43 @@ class PlacesOfTheWorld {
     show some shit for a city. For now, how about we show a little conversation?
      */
     gameState.handleEvent(GameEvents.DialogStarted)
-    conversationManager.startConversation(
-        placeConvo(place),
-        {},
-        true,
-        false)
+
+		when(place.type) {
+			Place.DUNGEON -> enterDungeon(place)
+			Place.TOWN -> enterTown(place)
+		}
   }
+
+	private fun enterDungeon(place: Place) {
+		conversationManager.startConversation(
+				dungeonConvo(place),
+				{},
+				true,
+				false)
+	}
+
+	private fun enterTown(place:Place) {
+		conversationManager.startConversation(
+				placeConvo(place),
+				{},
+				true,
+				false)
+	}
+
+
+	private fun dungeonConvo(place:Place) : InternalConversation {
+		return convo {
+			dungeon()
+			onChoice = { route ->
+				if(route.routeType == RouteType.Continue && route.key == "enter") {
+					/*
+					The user has elected to enter the dungeon. Now send a message about
+					that to the telegram service, perhaps?
+					 */
+
+			}}
+		}
+	}
 
 	private fun placeConvo(place:Place) : InternalConversation {
 		val city_gate = "Återvänd till stadsporten"
@@ -71,8 +102,8 @@ class PlacesOfTheWorld {
 				key = "start"
 				addLine("Du har anlänt till ${place.name}")
 				addLine("Vad vill du göra nu?")
-				positive(topKey, "Jag vill besöka staden")
-				negative("abort", "Jag fortsätta min resa")
+				positiveContinue(topKey, "Jag vill besöka staden")
+				negativeContinue("Abort", "Jag fortsätta min resa")
 			}
 			step {
 				key = topKey
@@ -81,10 +112,10 @@ class PlacesOfTheWorld {
 				addLine("handlare att besöka,")
 				addLine("och en anslagstavla med anslag.")
 				addLine("Vad vill du göra?")
-				neutral("food", "Jag vill äta")
-				neutral("trade", "Jag vill handla")
-				neutral("bulletin", "Jag vill läsa anslagen")
-				negative("start", "Jag vill gå ut ur staden")
+				neutralContinue("food", "Jag vill äta")
+				neutralContinue("trade", "Jag vill handla")
+				neutralContinue("bulletin", "Jag vill läsa anslagen")
+				negativeContinue("start", "Jag vill gå ut ur staden")
 			}
 			bulletin(topKey)
 			trader(topKey)
@@ -94,10 +125,10 @@ class PlacesOfTheWorld {
 				addLine("säljs maten på ett stökigt torg.")
 				addLine("säljs maten på ett stökigt torg.")
 				addLine("Lokala specialiteter blandas med exotisk mat.")
-				neutral("eat_food", "Köp kebab")
-				neutral("eat_food", "Köp djur-på-pinne")
-				neutral("eat_food", "Köp inte-alls-människokött")
-				negative(topKey, city_gate)
+				neutralContinue("eat_food", "Köp kebab")
+				neutralContinue("eat_food", "Köp djur-på-pinne")
+				neutralContinue("eat_food", "Köp inte-alls-människokött")
+				negativeContinue(topKey, city_gate)
 			}
 			step {
 				key = "eat_food"
@@ -105,7 +136,7 @@ class PlacesOfTheWorld {
 				addLine("och mättande.")
 				addLine("Men dess verkliga konsekvenser brukar")
 				addLine("ta ett par dagar.")
-				negative(topKey, city_gate)
+				negativeContinue(topKey, city_gate)
 			}
 		}
 	}
@@ -118,17 +149,17 @@ class PlacesOfTheWorld {
         addLine("Välkommen!")
         addLine("Du är säkert trött sedan resan")
         addLine("- kom in och ta ett glas")
-        positive("entered_house", "Ja tack, gärna, jag är otroligt törstig")
-        abort("abort", "Nej tack, så törstig är jag inte.")
-        rude("abort", "Nej tack, så du är jag inte att jag dricker ditt vatten.")
+        positiveContinue("entered_house", "Ja tack, gärna, jag är otroligt törstig")
+        neutralExit("Abort", "Nej tack, så törstig är jag inte.")
+        rudeExit("Abort", "Nej tack, så dum är jag inte att jag dricker ditt vatten.")
       }
       step {
         key = "entered_house"
         addLine("Du har säkert rest länge och väl.")
         addLine("Ödemarken är inte snäll mot en vandrares fötter.")
         addLine("Här, drick vatten!")
-        positive("is_poisoned", "Ja, gud så törstig jag är!")
-        abort("abort", "Nej, vid närmare eftertanke kom jag nog på att jag måste gå nu!")
+        positiveContinue("is_poisoned", "Ja, gud så törstig jag är!")
+        neutralExit("Abort", "Nej, vid närmare eftertanke kom jag nog på att jag måste gå nu!")
       }
       step {
         key = "is_poisoned"
@@ -139,7 +170,7 @@ class PlacesOfTheWorld {
         addLine("Nej, du kommer bli slö. trött och dum.")
         addLine("Du kommer lyda allt jag säger. Väldigt bra...")
         addLine("...för en slav i gruvan")
-        rude("abort", "FAN ta dig!")
+        rudeExit("Abort", "FAN ta dig!")
       }
     }
   }

@@ -34,6 +34,44 @@ import com.badlogic.gdx.math.MathUtils
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
+class Location(val name:String) {
+    /*
+    A location might be the world map
+    It could be a town or a dungeon as well.
+
+    The internal storage model of each and every one of these must be hidden
+    from the render engine, the world engine, etc.
+
+    So, basically we have map render system. It renders the map.
+
+    Then we have an entity render system - but it renders all the entities in the world,
+    how do we, easily, keep track of all entities that are valid for this particular world
+    right now?
+
+    - They have to be stored in the location. A location at least needs
+    a list of IAgents to keep track of - and perhaps their Entities to be
+    able to switch between them easily.
+
+    A location also keeps track of its maxbounds and keeps everything regarding
+    how it implements things like that under wraps...
+
+    I see, in the near future, that we start using coroutines to render maps etc.
+
+    So, what we need RIGHT NOW is a system for the user to bump into a dungeon. The dungeon will
+    be placed on a rock tile bordering a forest. Easy.
+
+    The user must be presented a choice to enter the dungeon.
+
+    The dungeon must then be generated and the LOCATION needs to be changed.
+
+    So all locations work the exact same. They represent the "context" for the world, so to
+    speak. So, we can surely create a fact that represents this!
+
+
+
+     */
+}
+
 class TileManager(private val chunkSize:Int = 100) {
     private val upperBound = chunkSize - 1
 

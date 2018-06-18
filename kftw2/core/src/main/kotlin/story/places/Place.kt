@@ -17,6 +17,10 @@ package story.places
  * Or are all things containers of rules with consequences etc?
  *
  */
-class Place(val name: String, val stealth: Int = -5) {
+class Place(val name: String, val type: String, val stealth: Int = -5) {
+  companion object {
+    val TOWN ="TOWN"
+    val DUNGEON = "DUNGEON"
+  }
 
 }

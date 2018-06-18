@@ -129,16 +129,18 @@ fun convo(block: InternalConversationBuilder.() -> Unit) = InternalConversationB
 class InternalConversationBuilder : Builder<InternalConversation> {
 	var startingStepKey = "start"
 	val steps = mutableMapOf<String, ConversationStep>()
+	var onChoice: (ConversationRoute)-> Unit = {}
+
 	fun step(block: ConversationStepBuilder.() -> Unit) {
 		val c = ConversationStepBuilder().apply(block).build()
 		steps[c.key] = c
 	}
 
 	override fun build(): InternalConversation {
-		if(!steps.containsKey("abort"))
-			steps["abort"] = ConversationStep("abort", listOf("Tack för pratet"), emptyList())
+		if(!steps.containsKey("Abort"))
+			steps["Abort"] = ConversationStep("Abort", listOf("Tack för pratet"), emptyList())
 
-		return InternalConversation(startingStepKey, steps)
+		return InternalConversation(startingStepKey, steps, onChoice =  onChoice)
 	}
 
 	fun trader(topKey: String) {
@@ -146,36 +148,47 @@ class InternalConversationBuilder : Builder<InternalConversation> {
 			key ="trade"
 			addLine("Goddag, kära kund!")
 			addLine("Vad kan ni vara intresserad av idag, tro?")
-			neutral("weapons", "Jag letar efter vapen")
-			neutral("armor", "Jag behöver skydd")
-			neutral("gadgets", "Vad har du för prylar?")
-			neutral("selling", "Jag har prylar att sälja")
-			negative(topKey, "Sluta handla")
+			neutralContinue("weapons", "Jag letar efter vapen")
+			neutralContinue("armor", "Jag behöver skydd")
+			neutralContinue("gadgets", "Vad har du för prylar?")
+			neutralContinue("selling", "Jag har prylar att sälja")
+			negativeContinue(topKey, "Sluta handla")
 		}
 		//Weapons menu
 		step {
 			key ="weapons"
 			addLine("VAPEN!")
-			negative("trade", "Jag vill köpa något annat")
+			negativeContinue("trade", "Jag vill köpa något annat")
 		}
 		//Armor menu
 		step {
 			key ="armor"
 			addLine("Skydd!")
-			negative("trade", "Jag vill köpa något annat")
+			negativeContinue("trade", "Jag vill köpa något annat")
 		}
 		//Gadget menu
 		step {
 			key ="gadgets"
 			addLine("PRYLAR!")
-			negative("trade", "Jag vill köpa något annat")
+			negativeContinue("trade", "Jag vill köpa något annat")
 		}
 		//Selling menu
 		step {
 			key ="selling"
 			addLine("Jag kan ta en titt på det du har med dig")
 			addLine("och ge dig ett erbjudande.")
-			negative("trade", "Jag vill nog inte sälja något ändå")
+			negativeContinue("trade", "Jag vill nog inte sälja något ändå")
+		}
+	}
+
+	fun dungeon() {
+		step {
+			key ="dungeon"
+			addLine("Du står framför ingången till en bortglömd bas.")
+			addLine("Vad gömmer basen för hemligheter från forntiden?")
+			positiveContinue("enter", "Äventyr! Jag går in!")
+			negativeContinue("enter", "Jag får en dålig känsla av det här... men jag går in")
+			neutralExit("Abort", "Jag vänder")
 		}
 	}
 
@@ -185,29 +198,29 @@ class InternalConversationBuilder : Builder<InternalConversation> {
 			addLine("I alla städer finns det en anslagstavla")
 			addLine("med saker att läsa.")
 			addLine("Vad vill du läsa om?")
-			neutral("local_news", "Lokala nyheter")
-			neutral("world_news", "Nyheter från hela ödemarken")
-			neutral("quests", "Uppdrag och annonser")
-			negative(topKey, "Sluta läsa")
+			neutralContinue("local_news", "Lokala nyheter")
+			neutralContinue("world_news", "Nyheter från hela ödemarken")
+			neutralContinue("quests", "Uppdrag och annonser")
+			negativeContinue(topKey, "Sluta läsa")
 		}
 		//Weapons menu
 		val topText = "Njae, läs något annat"
 		step {
 			key ="local_news"
 			addLine("Nyheter")
-			negative(bulletinKey, topText)
+			negativeContinue(bulletinKey, topText)
 		}
 		//Armor menu
 		step {
 			key ="world_news"
 			addLine("Ödemarksnytt!")
-			negative(bulletinKey, topText)
+			negativeContinue(bulletinKey, topText)
 		}
 		//Gadget menu
 		step {
 			key ="quests"
 			addLine("Dårar och äventyrare sökes!")
-			negative(bulletinKey, topText)
+			negativeContinue(bulletinKey, topText)
 		}
 	}
 }
@@ -221,27 +234,36 @@ class ConversationStepBuilder() : Builder<ConversationStep> {
 		antagonistLines.add(line)
 	}
 
-	fun neutral(key: String, text: String = "Neutral") {
-		//We can have any number of NEUTRAL routes... why? Don't ask
-		conversationRoutes.add(ConversationRoute(key, text, RouteType.neutral))
+	fun neutralContinue(key: String, text: String = "Neutral") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Neutral))
 	}
 
-	fun positive(key: String, text: String ="Ja") {
-		if(!conversationRoutes.any { it.routeType == RouteType.positive })
-			conversationRoutes.add(ConversationRoute(key, text, RouteType.positive))
+	fun positiveContinue(key: String, text: String ="Ja") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Positive))
 	}
 
-	fun negative(key:String, text: String = "Nej") {
-		if(!conversationRoutes.any {it.routeType == RouteType.negative})
-			conversationRoutes.add(ConversationRoute(key, text, RouteType.negative))
+	fun negativeContinue(key:String, text: String = "Nej") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Negative))
 	}
-	fun rude(key:String, text: String = "Far åt helvete!") {
-		if(!conversationRoutes.any {it.routeType == RouteType.rude})
-			conversationRoutes.add(ConversationRoute(key, text, RouteType.rude))
+
+	fun rudeContinue(key:String, text: String = "Far åt helvete!") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Rude))
 	}
-	fun abort(key:String, text: String = "Avsluta") {
-		if(!conversationRoutes.any {it.routeType == RouteType.abort})
-			conversationRoutes.add(ConversationRoute(key, text, RouteType.abort))
+
+	fun neutralExit(key: String, text: String = "Neutral") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Neutral, RouteType.Exit))
+	}
+
+	fun positiveExit(key: String, text: String ="Ja") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Positive, RouteType.Exit))
+	}
+
+	fun negativeExit(key:String, text: String = "Nej") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Negative, RouteType.Exit))
+	}
+
+	fun rudeExit(key:String, text: String = "Far åt helvete!") {
+		conversationRoutes.add(ConversationRoute(key, text, RouteEmotion.Rude, RouteType.Exit))
 	}
 
 	override fun build(): ConversationStep = ConversationStep(key, antagonistLines, conversationRoutes)
