@@ -37,7 +37,7 @@ import com.badlogic.gdx.math.MathUtils
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
-class TileManager(val chunkSize:Int = 100) {
+class TileManager(private val chunkSize:Int = 100) {
     private val upperBound = chunkSize - 1
 
     private val locations = mutableMapOf<String, MutableSet<TileStoreBase>>()
@@ -106,7 +106,7 @@ class TileManager(val chunkSize:Int = 100) {
         val size = columns * rows
         var row = 0
         var column = 0
-        return Array(size, { index ->
+        return Array(size, { _ ->
 
             val x = xBounds.start + column
             val y = yBounds.start + row
@@ -272,7 +272,8 @@ class TileManager(val chunkSize:Int = 100) {
                         }
                     if(allRock) {
                         failed = false
-                        rooms.add(Room(topLeftX, topLeftY, width, height))
+                        val room = Room(topLeftX, topLeftY, width, height)
+                        rooms.add(room)
                         for (x in topLeftX..topLeftX + width)
                             for (y in topLeftY..topLeftY + height) {
                                 Thread.sleep(1)
@@ -283,6 +284,7 @@ class TileManager(val chunkSize:Int = 100) {
                                 val tile = tileFor(priority, tileType, subType, code)
                                 //What happens to the old one? eh?
                                 tile.updateInstance(bigempty[x][y])
+                                room.tileInstances.add(bigempty[x][y])
                             }
                     }
 
@@ -316,6 +318,7 @@ class TileManager(val chunkSize:Int = 100) {
                     tilesLeftToCheck = false
                     continue
                 }
+                startTile.blinking = true
                 allTheRocks.remove(startTile)
                 if(startTile.noNeighboursAre("desert", tilesByKey)) {
                     val currentRoute = mutableListOf<TileInstance>()
@@ -380,11 +383,17 @@ class TileManager(val chunkSize:Int = 100) {
                          */
 
                         val validCandidates = candidates.filter {
-                            it.value != null && it.value!!.tile.tileType == "rock" && it.value!!.leftRightAndForwardAreNot(it.key, setOf("desert", "grass"), tilesByKey)
+                            it.value != null &&
+                                it.value!!.tile.tileType == "rock" &&
+                                it.value!!.leftRightAndForwardAreNot(it.key, setOf("desert", "grass"), tilesByKey)
                         }.map { it.key to it.value!! }.toMap().toMutableMap()
 
                         if(validCandidates.any()) {
                             Thread.sleep(3)
+
+                            for (tile in validCandidates)
+                                tile.value.blinking = true
+
                             grassTile.updateInstance(currentTile)
                             currentRoute.add(currentTile)
 
@@ -396,6 +405,12 @@ class TileManager(val chunkSize:Int = 100) {
                                 currentDirection = validCandidates.keys.elementAt(MathUtils.random(0, validCandidates.keys.size - 1))
                             }
                             currentTile = validCandidates[currentDirection]!!
+
+                            for(c in validCandidates.filter { it.key != currentDirection }.values) {
+                                Thread.sleep(3)
+                                c.blinking = false
+                            }
+
                             allTheRocks.remove(currentTile)
                             continue
                         }
@@ -403,36 +418,88 @@ class TileManager(val chunkSize:Int = 100) {
                     }
                     if(currentRoute.count() > 3) {
                         tunnels.add(currentRoute)
+                      currentRoute.blink(true)
                     } else {
                         currentRoute.forEach{
-                            Thread.sleep(5)
+                            Thread.sleep(3)
+                          currentRoute.blink(false)
                             rockTile.updateInstance(it)
                         }
+                      currentRoute.clear()
                     }
                 }
+              startTile.blinking = false
             }
 
             /*
              * 3. connect rooms
              * how?
              *
-             * find all rock tiles that neighbour grass and desert
+             * Connector tiles are tiles that:
+              *
+              * is made of rock
+              * neighbour rooms
+              * neighbour a route
+             *
+             * do a room at a time
              */
-            val connectors = flatTileCollectioN.filter { it.tile.tileType == "rock" && it.hasBothAsNeighbours(setOf("grass", "desert"), tilesByKey) }
 
-            var count = 0
-            for (tile in connectors) {
-                if(count.rem(2)==0) {
-                    grassTile.updateInstance(tile)
-                } else {
-                    desertTile.updateInstance(tile)
+            for(room in rooms) {
+                //check all surrounding tiles,
+                //except for corners!
+                val conns = mutableListOf<TileInstance>()
+                val topX = room.topLeftX - 1
+                val topY = room.topLeftY - 1 //y is up, right?
+                val width = room.width + 2
+                val height = room.height + 2
+                val bottomY = topY + height
+                val farX = topX + width
+
+                room.toggleBlink()
+
+                for (x in room.topLeftX..room.topLeftX + room.width) {
+                    //y = topY!
+                    if (x > 0 && x < bigempty.size - 1 &&
+                        topY > 0 && topY < bigempty[x].size - 1 &&
+                        bigempty[x][topY].neighbourToIs("north", "grass", tilesByKey))
+                        conns.add(bigempty[x][topY])
+
+                    if (x > 0 && x < bigempty.size - 1 &&
+                        bottomY > 0 && bottomY < bigempty[x].size - 1 &&
+                        bigempty[x][bottomY].neighbourToIs("south", "grass", tilesByKey)) {
+                        conns.add(bigempty[x][bottomY])
+                    }
+                    conns.blink(true)
                 }
-                Thread.sleep(5)
-                count++
+
+                //bottomrow
+                for (y in room.topLeftY..room.topLeftY + room.height) {
+                    if (topX > 0 && topX < bigempty.size - 1 &&
+                        y > 0 && y < bigempty[topX].size - 1 &&
+                        bigempty[topX][y].neighbourToIs("west", "grass", tilesByKey))
+                        conns.add(bigempty[topX][y])
+
+                    if (topX > 0 && topX < bigempty.size - 1 &&
+                        y > 0 && y < bigempty[topX].size - 1 &&
+                        bigempty[farX][y].neighbourToIs("east", "grass", tilesByKey)) {
+                        conns.add(bigempty[farX][y])
+                    }
+                    conns.blink(true)
+                }
+
+                if (conns.any()) {
+                    val selectedTile = conns.elementAt(MathUtils.random(0, conns.size - 1))
+                    conns.remove(selectedTile)
+                    grassTile.updateInstance(selectedTile)
+                    for (t in conns) {
+                        rockTile.updateInstance(t)
+                    }
+                    conns.filter{ it != selectedTile }.blink(false)
+                    conns.clear()
+                }
+
+                room.toggleBlink()
             }
-
-
-
 
 //            for(list in tunnels) {
 //                for(tile in list) {
@@ -691,7 +758,6 @@ private fun TileInstance.leftRightAndForwardAreNot(thisDirection:String, tileTyp
     return bothAre
 }
 
-
 private fun TileInstance.inFrontAreAll(direction: String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
     val directions = MapManager.infront[direction]!!.map { MapManager.directions[it]!! }
     var allAre = true
@@ -701,6 +767,17 @@ private fun TileInstance.inFrontAreAll(direction: String, tileType: String, tile
         allAre = allAre && tilesByKey.containsKey(currentKey) && tilesByKey[currentKey]!!.tile.tileType == tileType
     }
     return allAre
+}
+
+private fun TileInstance.inFrontAreNone(direction: String, tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
+    val directions = MapManager.infront[direction]!!.map { MapManager.directions[it]!! }
+    var nonAre = true
+
+    for(direction in directions) {
+        val currentKey = Pair(this.x + direction.first, this.y + direction.second)
+        nonAre = nonAre &&  tilesByKey.containsKey(currentKey) && !tileTypes.contains(tilesByKey[currentKey]!!.tile.tileType)
+    }
+    return nonAre
 }
 
 
@@ -743,6 +820,21 @@ private fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String,
     bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
 
     return bothAre
+}
+
+private fun TileInstance.neighbourToIs(direction:String, tileType:String, tilesByKey: Map<Pair<Int, Int>, TileInstance>):Boolean {
+    val key = MapManager.directions[direction]!!
+    val actualKey = Pair(this.x + key.first, this.y + key.first)
+    return tilesByKey[actualKey]?.tile?.tileType == tileType
+}
+
+private fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
+    var noAreOfType = false
+    for(coord in MapManager.neiborMap.keys) {
+        val key = Pair(this.x + coord.first, this.y + coord.second)
+        noAreOfType = noAreOfType || (tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType == tileType)
+    }
+    return noAreOfType
 }
 
 private fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
@@ -806,3 +898,15 @@ data class Room(
     val width: Int,
     val height:Int,
     val tileInstances: MutableList<TileInstance> = mutableListOf())
+
+fun Room.toggleBlink() {
+    for(t in this.tileInstances) {
+        t.blinking = !t.blinking
+    }
+}
+
+fun List<TileInstance>.blink(blink: Boolean) {
+    for(t in this) {
+        t.blinking = blink
+    }
+}

@@ -18,8 +18,13 @@ class RenderMapSystem(
     private val mapManager: IMapManager,
     val fogOfWar:Boolean = false) : EntitySystem(0) {
 
+  var blink = true
+  var frameIndex = 0
+
   override fun update(deltaTime: Float) {
     super.update(deltaTime)
+
+
     if(!fogOfWar) {
       val tileX = camera.position.tileX()
       val tileY = camera.position.tileY()
@@ -30,9 +35,20 @@ class RenderMapSystem(
         val tilesToRender = mapManager.getVisibleTiles(tileX, tileY)
 
         for (tileInstance in tilesToRender) {
+          frameIndex++
+          if(frameIndex > 25)
+            blink = !blink
+
+          if(frameIndex > 50)
+            frameIndex = 0
 
           val xPos = (tileInstance.x * 8).toFloat()
           val yPos = (tileInstance.y * 8).toFloat()
+
+          tileInstance.baseSprite.color = Color.WHITE
+          if(tileInstance.blinking && blink) {
+            tileInstance.baseSprite.color = Color.BLACK
+          }
 
           tileInstance.baseSprite.setPosition(xPos, yPos)
           tileInstance.baseSprite.draw(batch)
@@ -40,6 +56,8 @@ class RenderMapSystem(
             extraSprite.setPosition(xPos, yPos)
             extraSprite.draw(batch)
           }
+
+
         }
       }
     } else {

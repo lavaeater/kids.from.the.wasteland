@@ -25,6 +25,7 @@ data class TileInstance(
     var needsHitBox: Boolean = true,
     var seen: Boolean = false,
     var seeing: Boolean = false,
-    var tile: Tile) {
+    var tile: Tile,
+    var blinking:Boolean = false) {
   val fogStatus: TileFog get() =  if(seeing) TileFog.Seeing else if(!seeing && !seen) TileFog.NotSeen else TileFog.Seen
 }
