@@ -9,6 +9,7 @@ class Messages {
     const val StoryCompleted = 1005
     const val NewTile = 1006
     const val PlayerWentToAPlace: Int = 1007
-    val validRange = 1000..1007
+    val validRange = 1000..1008
+    const val PlayerEnteredANewLocation = 1008
   }
 }

@@ -22,5 +22,6 @@ class Facts {
     const val NpcReactionScore = "ReactionScore" //subfact
 	  const val PlayerTileX = "PlayerTileX"
     const val PlayerTileY = "PlayerTileY"
+    const val CurrentLocation = "CurrentLocation"
   }
 }

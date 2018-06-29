@@ -151,6 +151,9 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 
     if(!preferences.contains(Facts.MetNumberOfNpcs))
       stateIntFact(Facts.MetNumberOfNpcs, 0)
+
+    if(!preferences.contains(Facts.CurrentLocation)) //Base location is WorldMap, weirdly enough
+      stateStringFact(Facts.CurrentLocation, "WorldMap")
   }
 
 	private fun storeFacts(facts: Set<IFact<*>>) {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import factory.ActorFactory
 import map.IMapManager
 import story.FactsOfTheWorld
+import story.fact.Facts
 import systems.GameInputSystem
 import systems.RenderCharactersSystem
 import systems.RenderFeatureSystem
@@ -151,5 +152,25 @@ class GameManager(
         system.processInput = true
       }
     }
+  }
+
+  var currentLocation = "WorldMap"
+
+  fun updateLocation() {
+    if(!factsOfTheWorld.contains(Facts.CurrentLocation) || factsOfTheWorld.stringForKey(Facts.CurrentLocation) == "") {
+      factsOfTheWorld.stateStringFact(Facts.CurrentLocation, "WorldMap")
+    }
+    if(currentLocation != factsOfTheWorld.stringForKey(Facts.CurrentLocation)) {
+      currentLocation = factsOfTheWorld.stringForKey(Facts.CurrentLocation)
+      switchToNewLocation(currentLocation)
+    }
+  }
+
+  private fun switchToNewLocation(currentLocation: String) {
+    /*
+    Where to begin? Everything needs to be hidden and frustculled.
+
+    A new location needs to be created or loaded...
+     */
   }
 }

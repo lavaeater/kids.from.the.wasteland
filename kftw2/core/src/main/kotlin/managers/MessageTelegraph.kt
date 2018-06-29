@@ -30,6 +30,7 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
 
   private val storyManager by lazy { Ctx.context.inject<StoryManager>() }
   private val placesOfTheWorld by lazy { Ctx.context.inject<PlacesOfTheWorld>() }
+  private val gameManager by lazy { Ctx.context.inject<GameManager>() }
 
   override fun handleMessage(msg: Telegram): Boolean {
     if(msg.message !in Messages.validRange) throw IllegalArgumentException("Message id ${msg.message} not in valid range ${Messages.validRange}")
@@ -41,13 +42,20 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
       Messages.StoryCompleted -> return true //this method will trigger the "story ended" thingie related to a story... ending. Might not be relevant
       Messages.NewTile -> newTile(msg.extraInfo as Pair<Int, Int>)
       Messages.PlayerWentToAPlace -> wentSomewhere(msg.extraInfo as Place)
+      Messages.PlayerEnteredANewLocation-> entered(msg.extraInfo as String)
     }
     return true
   }
 
+  private fun entered(locationKey: String) {
+    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.InDungeon) //This could be a stack of contexts, that we pop and shit.
+    factsOfTheWorld.stateStringFact(Facts.CurrentLocation, locationKey)
+    gameManager.updateLocation()
+  }
+
   private fun wentSomewhere(place: Place) {
     factsOfTheWorld.stateStringFact(Facts.CurrentPlace, place.name)
-    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.EnteredLocation)
+    factsOfTheWorld.stateStringFact(Facts.Context, Contexts.EnteredPlace)
     placesOfTheWorld.enterPlace(place)
 
   }

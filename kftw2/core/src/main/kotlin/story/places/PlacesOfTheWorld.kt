@@ -1,11 +1,11 @@
 package story.places
 
+import com.badlogic.gdx.ai.msg.MessageDispatcher
 import data.Player
-import factory.ActorFactory
 import injection.Ctx
 import managers.GameEvents
 import managers.GameState
-import map.IMapManager
+import managers.Messages
 import story.FactsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InternalConversation
@@ -17,8 +17,6 @@ class PlacesOfTheWorld {
   val player by lazy { Ctx.context.inject<Player>() }
   private val gameState by lazy { Ctx.context.inject<GameState>() }
   private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
-  private val mapManager by lazy { Ctx.context.inject<IMapManager>() }
-  private val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
   val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 	val cityNames = arrayOf(
 			"Bytarstan",
@@ -88,8 +86,20 @@ class PlacesOfTheWorld {
 					/*
 					The user has elected to enter the dungeon. Now send a message about
 					that to the telegram service, perhaps?
-					 */
 
+					Yes, because that message
+					will ONLY contain the key for the place (place.name or something)
+					and it will use this name to load the location and make the game managers
+					handle everything like putting away entities and stuff like that!
+
+					But stuff like that might need to be contained somehow?
+
+					We'll get there!
+
+					The goal in the future is for the current location to serialize itself
+					to json on to disk, to be reloaded when needed at a later time.
+					 */
+					Ctx.context.inject<MessageDispatcher>().dispatchMessage(Messages.PlayerEnteredANewLocation, place.name)
 			}}
 		}
 	}

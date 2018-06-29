@@ -2,6 +2,9 @@ package map
 
 import Assets
 import com.badlogic.gdx.math.MathUtils
+import injection.Ctx
+import org.omg.PortableInterceptor.LOCATION_FORWARD
+
 /**
  * The tile manager class could be one
  * entry point for the concept of multiple maps.
@@ -34,7 +37,7 @@ import com.badlogic.gdx.math.MathUtils
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
-class Location(val name:String) {
+open class Location(val name:String) {
     /*
     A location might be the world map
     It could be a town or a dungeon as well.
@@ -67,9 +70,17 @@ class Location(val name:String) {
     So all locations work the exact same. They represent the "context" for the world, so to
     speak. So, we can surely create a fact that represents this!
 
-
-
+    The location contains ALL possible sublocations etc for the location. So a location can switch
+    to a sublocation OR it's parent location -> the world map for instance.
      */
+}
+
+open class SubLocation(name: String, val parentLocation: Location = Ctx.context.inject<WorldMapLocation>()) : Location(name) {
+
+}
+
+class WorldMapLocation : Location("WorldMap") {
+
 }
 
 class TileManager(private val chunkSize:Int = 100) {
