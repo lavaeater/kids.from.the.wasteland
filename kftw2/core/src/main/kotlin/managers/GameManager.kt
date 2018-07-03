@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import factory.ActorFactory
-import map.IMapManager
+import map.ILocationManager
 import story.FactsOfTheWorld
 import story.fact.Facts
 import systems.GameInputSystem
@@ -28,7 +28,7 @@ class GameManager(
     actorFactoryProvider: () -> ActorFactory,
     private val messageDispatcher: MessageDispatcher,
     private val ui: IUserInterface,
-    private val mapManager: IMapManager,
+    private val locationManager: ILocationManager,
     private val factsOfTheWorld: FactsOfTheWorld) : Disposable {
 
   private val viewPort = viewPortProvider()
@@ -36,7 +36,7 @@ class GameManager(
 
   init {
     gameState.addChangeListener(::gameStateChanged)
-    //addEmployees()
+    addEmployees()
     camera.position.x = 0f
     camera.position.y = 0f
 
@@ -50,7 +50,7 @@ class GameManager(
     running game, and some other class, called during startup, sets up the state using all the
     dependencies necessary for that.
      */
-    val someTilesInRange = mapManager.getBandOfTiles(0,0, 100, 80).filter {
+    val someTilesInRange = locationManager.getBandOfTiles(0,0, 100, 80).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()
 

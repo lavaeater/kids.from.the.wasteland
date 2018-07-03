@@ -3,8 +3,8 @@ package data
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
-import map.IMapManager
-import map.MapManager
+import map.ILocationManager
+import map.LocationManager
 import map.TileInstance
 
 class EmptyAgent(override val id: String = "Place", override var name: String = "PLace", override var strength: Int =0, override var health: Int = 0, override var intelligence: Int = 0, override var sightRange: Int = 0, override val inventory: MutableList<String> = mutableListOf(), override val skills: MutableMap<String, Int> = mutableMapOf(), override var currentX: Int = 0, override var currentY: Int = 0) :IAgent {
@@ -31,7 +31,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
   var foundY:Int = 0
   val range = 2
 
-  val mapManager = Ctx.context.inject<IMapManager>()
+  val mapManager = Ctx.context.inject<ILocationManager>()
 
   fun log(message: String) {
     brainLog += "$name: $message\n"
@@ -40,7 +40,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
 
   fun lostInterest() {
     state = NpcState.Searching
-    val terrainArr = MapManager.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
+    val terrainArr = LocationManager.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
     val randomIndex = MathUtils.random(0, terrainArr.size - 1)
     desiredTileType = terrainArr[randomIndex]
     tileFound = false

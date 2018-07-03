@@ -16,18 +16,18 @@ import data.NpcType
 import data.Player
 import ktx.math.vec2
 import managers.GameManager
-import map.IMapManager
+import map.ILocationManager
 import map.tileWorldCenter
 import story.FactsOfTheWorld
 import story.fact.Facts
 import story.places.Place
 
 class ActorFactory(
-		private val engine: Engine,
-		private val mapManager: IMapManager,
-		private val bodyManager: BodyFactory,
-		private val player: Player,
-		private val factsOfTheWorld: FactsOfTheWorld) {
+    private val engine: Engine,
+    private val locationManager: ILocationManager,
+    private val bodyManager: BodyFactory,
+    private val player: Player,
+    private val factsOfTheWorld: FactsOfTheWorld) {
 
   val npcTypes = mapOf(
       "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
@@ -41,7 +41,7 @@ class ActorFactory(
 
     val tileTypes = npcTypes["townsfolk"]!!.startingTileTypes
 
-    val startPositions = mapManager.getTilesInRange(0, 0, 100)
+    val startPositions = locationManager.getTilesInRange(0, 0, 100)
         .filter { tileTypes.contains(it.tile.tileType) }
         .map { Pair(it.x,it.y).tileWorldCenter() }
         .toTypedArray()
@@ -133,7 +133,7 @@ class ActorFactory(
     val tileX = factsOfTheWorld.getIntValue(Facts.PlayerTileX)
     val tileY = factsOfTheWorld.getIntValue(Facts.PlayerTileY)
 
-    val someTilesInRange = mapManager.getTilesInRange(tileX,tileY, 20).filter {
+    val someTilesInRange = locationManager.getTilesInRange(tileX,tileY, 20).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }
 

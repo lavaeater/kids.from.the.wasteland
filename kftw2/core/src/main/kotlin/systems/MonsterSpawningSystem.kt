@@ -6,14 +6,14 @@ import com.badlogic.gdx.math.MathUtils
 import components.PlayerComponent
 import components.TransformComponent
 import factory.ActorFactory
-import map.IMapManager
+import map.ILocationManager
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 
 class MonsterSpawningSystem(
 		val areWeTesting:Boolean,
 		private val actorFactory: ActorFactory,
-		private val mapManager: IMapManager) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
+		private val locationManager: ILocationManager) : IntervalIteratingSystem(allOf(PlayerComponent::class).get(), 5f) {
 
   var weHaveSpawned = false
   val transformMpr = mapperFor<TransformComponent>()
@@ -67,7 +67,7 @@ class MonsterSpawningSystem(
 
         // We get a ring of tiles instead of an area
 
-        val someTilesInRange = mapManager.getBandOfTiles(position, 3, 3).filter {
+        val someTilesInRange = locationManager.getBandOfTiles(position, 3, 3).filter {
           it.tile.tileType != "rock" && it.tile.tileType != "water"
         }
 

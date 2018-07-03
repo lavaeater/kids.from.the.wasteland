@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import data.Player
 import factory.ActorFactory
 import injection.Ctx
-import map.IMapManager
+import map.ILocationManager
 import story.conversation.InkConversation
 import story.fact.Contexts
 import story.fact.Facts
@@ -32,7 +32,7 @@ class StoryHelper {
 	companion object {
 		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 		val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
-		val mapManager by lazy { Ctx.context.inject<IMapManager>() }
+		val mapManager by lazy { Ctx.context.inject<ILocationManager>() }
 		val player by lazy { Ctx.context.inject<Player>() }
 
 		val mainStory by lazy {
@@ -45,8 +45,7 @@ class StoryHelper {
 				Inject a factory to create a specific npc at some location in the world.
 
 				 */
-
-					val someTilesInRange = mapManager.getBandOfTiles(0, 0, 5, 3).filter {
+					val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY, 5, 3).filter {
 						it.tile.tileType != "rock" && it.tile.tileType != "water"
 					}
 

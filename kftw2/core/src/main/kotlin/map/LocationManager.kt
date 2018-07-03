@@ -1,7 +1,6 @@
 package map
 
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import data.GameSettings
 import factory.BodyFactory
@@ -12,9 +11,9 @@ import systems.tileX
 import systems.tileY
 import kotlin.math.roundToInt
 
-class MapManager(
+class LocationManager(
     private val bodyManager: BodyFactory,
-    private val tileManager: TileManager) : IMapManager {
+    private val tileManager: TileManager) : ILocationManager {
 
   private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>() }
 
