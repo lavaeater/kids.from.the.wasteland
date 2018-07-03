@@ -164,7 +164,7 @@ class ActorFactory(
 
   fun addFeatureEntity(placeName:String, tileX: Int, tileY: Int): Entity {
     val position = Pair(tileX, tileY).tileWorldCenter()
-    val place = Place(placeName)
+    val place = Place(placeName, Place.TOWN)
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
