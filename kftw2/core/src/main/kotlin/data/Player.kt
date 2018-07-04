@@ -27,15 +27,15 @@ class Player(override val id:String = "Player",
 
   var canSend = true
 
-  override var currentX:Int by Delegates.observable(initialX, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
+  override var tileX:Int by Delegates.observable(initialX, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
     canSend = false //might stop tons of sending...
-    messageDispatcher.dispatchMessage(Messages.NewTile, Pair(currentX, currentY))
+    messageDispatcher.dispatchMessage(Messages.NewTile, Pair(tileX, tileY))
     canSend = true
   }
   })
-  override var currentY:Int by Delegates.observable(initialY, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
+  override var tileY:Int by Delegates.observable(initialY, { _, oldValue, newValue -> if(oldValue != newValue && canSend) {
     canSend = false //might stop tons of sending...
-    messageDispatcher.dispatchMessage(Messages.NewTile, Pair(currentX, currentY))
+    messageDispatcher.dispatchMessage(Messages.NewTile, Pair(tileX, tileY))
     canSend = true
   }
   })

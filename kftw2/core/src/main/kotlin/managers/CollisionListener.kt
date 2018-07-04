@@ -2,7 +2,7 @@ package managers
 
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.physics.box2d.*
-import data.Npc
+import data.Creature
 import data.Player
 import story.places.Place
 
@@ -43,7 +43,7 @@ class CollisionListener(private val messageDispatcher: MessageDispatcher) : Cont
     val ud = dynamicBody.userData
     when (ud) {
       is Player -> evaluatePlayerOnStaticContact(ud, contact)
-      is Npc -> messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, ud)
+      is Creature -> messageDispatcher.dispatchMessage(Messages.CollidedWithImpassibleTerrain, ud)
     }
   }
 
@@ -61,7 +61,7 @@ class CollisionListener(private val messageDispatcher: MessageDispatcher) : Cont
     if (contact.fixtureA.body.type == BodyDef.BodyType.DynamicBody &&
         contact.fixtureB.body.type == BodyDef.BodyType.DynamicBody) {
       if (contact.fixtureA.body.userData is Player || contact.fixtureB.body.userData is Player) {
-        val npc = if (contact.fixtureA.body.userData is Npc) contact.fixtureA.body.userData as Npc else contact.fixtureB.body.userData as Npc
+        val npc = if (contact.fixtureA.body.userData is Creature) contact.fixtureA.body.userData as Creature else contact.fixtureB.body.userData as Creature
         messageDispatcher.dispatchMessage(Messages.PlayerMetSomeone, npc)
       }
       return true

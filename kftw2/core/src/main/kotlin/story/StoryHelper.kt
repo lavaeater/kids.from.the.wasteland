@@ -42,10 +42,10 @@ class StoryHelper {
 				name = storyName
 				initializer = {
 					/*
-				Inject a factory to create a specific npc at some location in the world.
+				Inject a factory to create a specific agent at some location in the world.
 
 				 */
-					val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY, 5, 3).filter {
+					val someTilesInRange = mapManager.getBandOfTiles(player.tileX, player.tileY, 5, 3).filter {
 						it.tile.tileType != "rock" && it.tile.tileType != "water"
 					}
 

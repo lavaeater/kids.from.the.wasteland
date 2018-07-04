@@ -45,8 +45,8 @@ class LocationManager(
 
   var currentlyVisibleTiles: Array<TileInstance>? = null
 
-  override var currentX = 0
-  override var currentY = 0
+  private var currentX = 0
+  private var currentY = 0
 
   companion object {
     val weirdDirections = mapOf(
@@ -176,10 +176,6 @@ class LocationManager(
   override fun findTileOfTypeInRange(x: Int, y: Int, tileType: String, range: Int): TileInstance? {
     val tilesInRange = getTilesInRange(x, y, range)
     return tilesInRange.firstOrNull { it.tile.tileType == tileType }
-  }
-
-  override fun tileForWorldPosition(position: Vector3): Tile {
-    return tileManager.getTile(position.tileX(), position.tileY()).tile
   }
 
   override fun getVisibleTiles(x: Int, y: Int): Array<TileInstance> {

@@ -6,23 +6,34 @@ import injection.Ctx
 import map.ILocationManager
 import map.LocationManager
 import map.TileInstance
+import systems.toTile
 
-class EmptyAgent(override val id: String = "Place", override var name: String = "PLace", override var strength: Int =0, override var health: Int = 0, override var intelligence: Int = 0, override var sightRange: Int = 0, override val inventory: MutableList<String> = mutableListOf(), override val skills: MutableMap<String, Int> = mutableMapOf(), override var currentX: Int = 0, override var currentY: Int = 0) :IAgent {
+class EmptyAgent(override val id: String = "Place", override var name: String = "PLace", override var strength: Int =0, override var health: Int = 0, override var intelligence: Int = 0, override var sightRange: Int = 0, override val inventory: MutableList<String> = mutableListOf(), override val skills: MutableMap<String, Int> = mutableMapOf(), override var tileX: Int = 0, override var tileY: Int = 0, override var worldX: Float, override var worldY: Float, override val tileKey: Pair<Int, Int>, override var speed: Int, override var attack: Int, override var attackString: String) :IAgent {
 }
 
-class Npc(override val id: String, override var name: String = "Joshua",
-          val npcType: NpcType,
-          override var strength: Int = npcType.strength,
-          override var health: Int = npcType.health,
-          var speed: Int = npcType.speed,
-          var attack: Int = npcType.attack,
-          var attackString: String = npcType.attackString,
-          override val skills: MutableMap<String, Int> = npcType.skills.toMutableMap(),
-          override var intelligence: Int = npcType.intelligence,
-          override val inventory: MutableList<String> = npcType.inventory,
-          override var sightRange: Int = npcType.sightRange,
-          override var currentX: Int = 0,
-          override var currentY: Int = 0) : IAgent {
+class Creature(override val id: String,
+               override var name: String = "Joshua",
+               val creatureType: CreatureType,
+               override var strength: Int = creatureType.strength,
+               override var health: Int = creatureType.health,
+               override var speed: Int = creatureType.speed,
+               override var attack: Int = creatureType.attack,
+               override var attackString: String = creatureType.attackString,
+               override val skills: MutableMap<String, Int> = creatureType.skills.toMutableMap(),
+               override var intelligence: Int = creatureType.intelligence,
+               override val inventory: MutableList<String> = creatureType.inventory,
+               override var sightRange: Int = creatureType.sightRange,
+               override var worldX: Float,
+               override var worldY: Float) : IAgent {
+  override var tileX: Int
+    get() = worldX.toTile()
+    set(value) {}
+  override var tileY: Int
+    get() = worldY.toTile()
+    set(value) {}
+  override val tileKey: Pair<Int, Int>
+    get() = Pair(tileX, tileY)
+
   var brainLog = ""
   var state = NpcState.Idle
   var desiredTileType = "grass"
@@ -59,9 +70,9 @@ class Npc(override val id: String, override var name: String = "Joshua",
     //A little goeey, but what's the best way?
     if (state == NpcState.Scavenging) return true // already scavening, early exit
 
-    if (mapManager.getTileAt(currentX,currentY).tileType == desiredTileType) {
+    if (mapManager.getTileAt(tileX,tileY).tileType == desiredTileType) {
       state = NpcState.Scavenging
-      log("Jag letar mat vid ${currentX}:${currentY} nu.")
+      log("Jag letar mat vid ${tileX}:${tileY} nu.")
       return true
     }
     return false
@@ -70,7 +81,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
   var targetTile: TileInstance? = null
 
   fun wander(): Boolean {
-    if (state == NpcState.Wandering && currentX == foundX && currentY == foundY) {
+    if (state == NpcState.Wandering && tileX == foundX && tileY == foundY) {
       state = NpcState.Idle
       return false
     }
@@ -79,7 +90,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
       return false //I am NOT doing this right, I realize. I have to read more
 
     if (state != NpcState.Wandering) {
-      val possibleTargets = mapManager.getRingOfTiles(currentX, currentY, 5).toTypedArray()
+      val possibleTargets = mapManager.getRingOfTiles(tileX, tileY, 5).toTypedArray()
       if(!possibleTargets.any()) return false
       targetTile = possibleTargets[MathUtils.random(0, possibleTargets.size - 1)]
       targetTile?.let {
@@ -98,7 +109,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
     if (state != NpcState.WalkingTo)
       state = NpcState.WalkingTo
 
-    if (currentX == foundX && currentY == foundY) {
+    if (tileX == foundX && tileY == foundY) {
       log("Jag är framme vid ${foundX}${foundY} nu.")
       tileFound = false
       state = NpcState.Idle //Need more states?
@@ -112,7 +123,7 @@ class Npc(override val id: String, override var name: String = "Joshua",
 
     log("Jag försöker hitta $desiredTileType nu!")
     state = NpcState.Searching
-    targetTile =  mapManager.findTileOfTypeInRange(currentX, currentY, desiredTileType, range)
+    targetTile =  mapManager.findTileOfTypeInRange(tileX, tileY, desiredTileType, range)
     tileFound = targetTile != null
 
     return targetTile != null

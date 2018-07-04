@@ -29,9 +29,9 @@ class MonsterSpawningSystem(
 
   override fun processEntity(entity: Entity) {
     /*
-    For every type of tile within some radius from the player, for every 10 seconds, there is some chance of a creature being spawned.
+    For every type of tile within some radius from the player, for every 10 seconds, there is some chance of a agent being spawned.
 
-    The creature will have some sort of behavior tree and it will perhaps be dangerous.
+    The agent will have some sort of behavior tree and it will perhaps be dangerous.
 
     Some creatures can use stealth, etc.
 
@@ -88,7 +88,7 @@ class MonsterSpawningSystem(
         //The towndude we start with doesn't need to care about the terrain or nothin!
 
         /*
-        We need some kind of structure for the probability of a certain type of npc to be instantiated.
+        We need some kind of structure for the probability of a certain type of agent to be instantiated.
 
         In the actor factory, obviously.
 

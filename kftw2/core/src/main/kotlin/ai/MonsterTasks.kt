@@ -3,7 +3,7 @@ package com.lavaeater.kftw.ai
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 import components.TransformComponent
-import data.Npc
+import data.Creature
 import data.Player
 import data.rollAgainstAgent
 import injection.Ctx
@@ -11,11 +11,11 @@ import map.isInRange
 import ktx.ashley.mapperFor
 
 /*
-This task shall contain it's own stuff, and just direct the npc somewhere, the
-npc shouldn't have to have a million specific methods, we should use the
+This task shall contain it's own stuff, and just direct the agent somewhere, the
+agent shouldn't have to have a million specific methods, we should use the
 framework around to get stuff done.
 
-In this case, the npc should have some kind of food preference, a "type", sort of like
+In this case, the agent should have some kind of food preference, a "type", sort of like
 will it eat anything or what?
  */
 
@@ -36,21 +36,21 @@ They might employ different strategies (see strategy pattern) for accomplishing.
  */
 
 /*
-This task can be used for an npc to periodically check if there is a target nearby -
+This task can be used for an agent to periodically check if there is a target nearby -
 but what is a target? For now, the only interesting target is the PLAYER
  */
-class CheckForPlayer : LeafTask<Npc>() {
+class CheckForPlayer : LeafTask<Creature>() {
   val player = Ctx.context.inject<Player>()
   val transMpr = mapperFor<TransformComponent>()
   override fun execute(): Status {
     val npc = `object`
 
-    if(Pair(npc.currentX, npc.currentY).isInRange(player.currentX, player.currentY, npc.sightRange)) {
+    if(Pair(npc.tileX, npc.tileY).isInRange(player.tileX, player.tileY, npc.sightRange)) {
       //Try to find the player
       if(npc.rollAgainstAgent(player, "tracking")) {
         npc.tileFound = true
-        npc.foundX = player.currentX
-        npc.foundY   = player.currentY
+        npc.foundX = player.tileX
+        npc.foundY   = player.tileY
         return Task.Status.SUCCEEDED
       }
     }
@@ -58,7 +58,7 @@ class CheckForPlayer : LeafTask<Npc>() {
     return Task.Status.FAILED
   }
 
-  override fun copyTo(task: Task<Npc>?): Task<Npc> {
+  override fun copyTo(task: Task<Creature>?): Task<Creature> {
     return task!!
   }
 }

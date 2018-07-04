@@ -2,6 +2,7 @@ package map
 
 import Assets
 import com.badlogic.gdx.math.MathUtils
+import data.IWorldlyThing
 import injection.Ctx
 
 /**
@@ -38,6 +39,30 @@ import injection.Ctx
  */
 open class Location(val name:String) {
     /*
+    A location manages its own entities, it just has to.
+
+    Or is that retarded?
+
+    Yes, to tight of a coupling, a location does not handle the location's entities,
+    the location **manager** handles the entities, the location must CONTAINT the entities.
+
+    Everything must be some kind of meta representation of itself.
+
+    So, an entity - henceforth called "ACTOR" for lack of a better word... no, AGENT
+
+    We need to categorize things that can "exist" in a location.
+
+    What can exist in a location?
+
+    Well,
+
+    PEOPLE
+    MONSTERS
+    THINGS / ITEMS
+    LOCATIONS
+
+    A location should be describable in text that is human readable
+
     A location might be the world map
     It could be a town or a dungeon as well.
 
@@ -72,6 +97,8 @@ open class Location(val name:String) {
     The location contains ALL possible sublocations etc for the location. So a location can switch
     to a sublocation OR it's parent location -> the world map for instance.
      */
+
+    val things = mutableMapOf<String, IWorldlyThing>()
 }
 
 open class SubLocation(name: String, val parentLocation: Location = Ctx.context.inject<WorldMapLocation>()) : Location(name) {

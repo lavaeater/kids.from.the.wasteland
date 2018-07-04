@@ -3,9 +3,9 @@ package com.lavaeater.kftw.ai
 import com.badlogic.gdx.ai.btree.LeafTask
 import com.badlogic.gdx.ai.btree.Task
 import com.badlogic.gdx.math.MathUtils
-import data.Npc
+import data.Creature
 
-class Scavenge : LeafTask<Npc>() {
+class Scavenge : LeafTask<Creature>() {
     override fun execute(): Status {
       val npc = `object`
       if(npc.scavenge()) {
@@ -15,13 +15,13 @@ class Scavenge : LeafTask<Npc>() {
       return Task.Status.FAILED
     }
 
-    override fun copyTo(task: Task<Npc>?): Task<Npc> {
+    override fun copyTo(task: Task<Creature>?): Task<Creature> {
       return task!!
     }
 }
 
-class LostInterest : LeafTask<Npc>() {
-  override fun copyTo(task: Task<Npc>?): Task<Npc> {
+class LostInterest : LeafTask<Creature>() {
+  override fun copyTo(task: Task<Creature>?): Task<Creature> {
     return task!!
   }
 
@@ -38,21 +38,21 @@ class LostInterest : LeafTask<Npc>() {
 
 }
 
-class Wander : LeafTask<Npc>() {
+class Wander : LeafTask<Creature>() {
   override fun execute(): Status {
     val npc = `object`
     if(npc.wander())
-        return Status.SUCCEEDED //As long as the npc is wandering, we keep wandering. The npccontrol will find a tile and when there, will change to idle and then we fail!
+        return Status.SUCCEEDED //As long as the agent is wandering, we keep wandering. The npccontrol will find a tile and when there, will change to idle and then we fail!
     return Status.FAILED
   }
 
-  override fun copyTo(task: Task<Npc>?): Task<Npc> {
+  override fun copyTo(task: Task<Creature>?): Task<Creature> {
     return task!!
   }
 
 }
 
-class WalkTo : LeafTask<Npc>() {
+class WalkTo : LeafTask<Creature>() {
   override fun execute(): Status {
     val npc = `object`
     if(npc.walkTo())
@@ -60,13 +60,13 @@ class WalkTo : LeafTask<Npc>() {
     return Status.FAILED
   }
 
-  override fun copyTo(task: Task<Npc>?): Task<Npc> {
+  override fun copyTo(task: Task<Creature>?): Task<Creature> {
     return task!!
   }
 
 }
 
-class FindTile: LeafTask<Npc>() {
+class FindTile: LeafTask<Creature>() {
   override fun execute(): Status {
     val npc = `object`
     if(npc.findTile())
@@ -74,7 +74,7 @@ class FindTile: LeafTask<Npc>() {
     return Task.Status.FAILED
   }
 
-  override fun copyTo(task: Task<Npc>?): Task<Npc> {
+  override fun copyTo(task: Task<Creature>?): Task<Creature> {
     return task!!
   }
 }

@@ -1,6 +1,6 @@
 package story
 
-import data.Npc
+import data.Creature
 import data.Player
 import factory.ActorFactory
 import injection.Ctx
@@ -211,8 +211,8 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 
 		val player = Ctx.context.inject<Player>()
 
-		stateIntFact(Facts.PlayerTileX, player.currentX)
-		stateIntFact(Facts.PlayerTileY, player.currentY)
+		stateIntFact(Facts.PlayerTileX, player.tileX)
+		stateIntFact(Facts.PlayerTileY, player.tileY)
 
 		preferences.flush()
 	}
@@ -226,7 +226,7 @@ class FactsOfTheWorld(private val preferences: com.badlogic.gdx.Preferences, cle
 		}
 	}
 
-	fun getCurrentNpc(): Npc? {
+	fun getCurrentNpc(): Creature? {
 		val npcId = getStringFact(Facts.CurrentNpc).value
 		return ActorFactory.npcByKeys[npcId]
 	}

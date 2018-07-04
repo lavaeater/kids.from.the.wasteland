@@ -3,8 +3,7 @@ package systems
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.gdx.math.MathUtils
-import components.NpcComponent
-import components.PlayerComponent
+import components.CreatureComponent
 import components.TransformComponent
 import components.VisibleComponent
 import data.Player
@@ -16,27 +15,27 @@ import ktx.ashley.mapperFor
 import ktx.ashley.remove
 
 class PlayerEntityDiscoverySystem() :
-    IntervalIteratingSystem(allOf(TransformComponent::class, NpcComponent::class).get(),0.25f,1) {
+    IntervalIteratingSystem(allOf(TransformComponent::class, CreatureComponent::class).get(),0.25f,1) {
 
   val transMpr = mapperFor<TransformComponent>()
-  val npcMpr = mapperFor<NpcComponent>()
+  val npcMpr = mapperFor<CreatureComponent>()
   val visibilityMapper = mapperFor<VisibleComponent>()
 
   val player by lazy { Ctx.context.inject<Player>()}
   override fun processEntity(entity: Entity) {
 
-    val playerPos = Pair(player.currentX, player.currentY)
+    val playerPos = Pair(player.tileX, player.tileY)
     val npcPos = transMpr[entity].position.toTile()
 
     if(npcPos.isInRange(playerPos, player.sightRange)) {
       if(!entity.has(visibilityMapper)) {
         val playerSkill = player.skills["tracking"]!!
-        val npc = npcMpr[entity].npc
+        val npc = npcMpr[entity].creature
         val npcSkill = npc.skills["stealth"]!!
 
         //How do we do discovery roll? Player skill - enemy counter skill, if under => success
         if (skillRoll(playerSkill, npcSkill)) {
-          //The player sees the npc, it should now be rendered!
+          //The player sees the agent, it should now be rendered!
           entity.add(VisibleComponent())
         }
       }

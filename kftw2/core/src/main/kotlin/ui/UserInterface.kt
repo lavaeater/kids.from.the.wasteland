@@ -45,9 +45,9 @@ class UserInterface(
     * repetitive
     It should be fun but dangerous? Does that make sense?
     How about combat basically always having the option of quitting?
-    This goes for everyone, npc:s as well as players. Running away makes
+    This goes for everyone, agent:s as well as players. Running away makes
     you drop something but you live to fight another day.
-    Npc:s that attack the player but realize they should run away, they
+    Creature:s that attack the player but realize they should run away, they
     add some fear to their behaviour regarding the player, which is a cool
     concept.
 
@@ -59,7 +59,7 @@ class UserInterface(
     actually performed. If not, the player might be able to block the actual attack but not
     perform a counter. Yay!
 
-    So, if an action is "defense first", the player / npc waits for the other persons attack, which
+    So, if an action is "defense first", the player / agent waits for the other persons attack, which
     affects initiative and stuff. This is cool.
 
     Apart from that, do the JRP article thingie...

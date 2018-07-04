@@ -37,7 +37,7 @@ class PlacesOfTheWorld {
 			)
 
   init {
-    val someTilesInRange = mapManager.getBandOfTiles(player.currentX, player.currentY,
+    val someTilesInRange = mapManager.getBandOfTiles(player.tileX, player.tileY,
         20, 7).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()

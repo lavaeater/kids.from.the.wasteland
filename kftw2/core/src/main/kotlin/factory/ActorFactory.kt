@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import components.*
 import data.IAgent
-import data.Npc
-import data.NpcType
+import data.Creature
+import data.CreatureType
 import data.Player
 import ktx.math.vec2
 import managers.GameManager
@@ -30,10 +30,10 @@ class ActorFactory(
     private val factsOfTheWorld: FactsOfTheWorld) {
 
   val npcTypes = mapOf(
-      "townsfolk" to NpcType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
-      "sneakypanther" to NpcType("sneakypanther",6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
-      "snake" to NpcType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
-      "orc" to NpcType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
+      "townsfolk" to CreatureType("townsfolk", 4, 8, 2, 1,3, 3, "lunges"),
+      "sneakypanther" to CreatureType("sneakypanther",6, 10, 4, 3, 2, 3, "leaps and bites", startingTileTypes =  setOf("grass")),
+      "snake" to CreatureType("snake",2, 2, 5, 5, 1, 2, "bites with venom", startingTileTypes =  setOf("desert")),
+      "orc" to CreatureType("orc",4, 6, 2, 4, 3,  6,"swings a club", startingTileTypes =  setOf("desert", "grass"), skills = mapOf("stealth" to 25, "tracking" to 85)))
 
 
 
@@ -67,18 +67,28 @@ class ActorFactory(
 
   }
 
-  fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
-    val npc = Npc(getNpcId(name), name, npcTypes[type]!!)
+  fun entityForCreature(creature: Creature) :Entity {
+    return engine.createEntity().apply {
+      add(PositionComponent(creature))
+      add(AiComponent(creature.getBehaviorTree()))
+      add(CreatureComponent(creature))
+    }
 
-    npcByKeys[npc.id] = npc
+  }
+
+  fun addNpcEntityAt(name: String = randomNpcName(), type: String = randomNpcType(), position: Vector2): Entity {
+    val creature = Creature(getNpcId(name), name, npcTypes[type]!!)
+
+    npcByKeys[creature.id] = creature
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
-      add(AiComponent(npc.getBehaviorTree()))
-      add(NpcComponent(npc))
-      add(AgentComponent(npc))
+      add(AiComponent(creature.getBehaviorTree()))
+      add(CreatureComponent(creature))
+      add(AgentComponent(creature))
+      add(VisibleComponent())
       add(CharacterSpriteComponent("townsfolk"))
-      add(Box2dBodyComponent(createNpcBody(position, npc)))
+      add(Box2dBodyComponent(createNpcBody(position, creature)))
     }
     engine.addEntity(entity)
     return entity
@@ -93,13 +103,13 @@ class ActorFactory(
   fun addNpcAtTileWithAnimation(name: String = randomNpcName(), id: String = getNpcId(name), type: String, spriteKey:String ="", x:Int, y:Int) : Pair<Entity, IAgent> {
 
     val position = Pair(x,y).tileWorldCenter()
-    val npc = Npc(id, name, npcTypes[type]!!)
+    val npc = Creature(id, name, npcTypes[type]!!)
     npcByKeys[npc.id] = npc
 
     val entity = engine.createEntity().apply {
       add(TransformComponent())
       add(AiComponent(npc.getBehaviorTree()))
-      add(NpcComponent(npc))
+      add(CreatureComponent(npc))
       add(AgentComponent(npc))
       add(VisibleComponent())
       add(CharacterSpriteComponent(spriteKey, true))
@@ -111,8 +121,8 @@ class ActorFactory(
 
 
   fun addHeroEntityAt(tileX: Int, tileY: Int) :Entity {
-    player.currentX = tileX
-    player.currentY = tileY
+    player.tileX = tileX
+    player.tileY = tileY
     val position = Pair(tileX, tileY).tileWorldCenter()
 
     val entity = engine.createEntity().apply {
@@ -145,9 +155,9 @@ class ActorFactory(
     return bodyManager.createBody(2f, 4f, 15f, position, BodyDef.BodyType.DynamicBody).apply { userData = player }
   }
 
-  fun createNpcBody(position: Vector2, npc: Npc) : Body {
+  fun createNpcBody(position: Vector2, creature: Creature) : Body {
     return bodyManager.createBody(2f, 2.5f, 15f, position, BodyDef.BodyType.DynamicBody)
-        .apply { userData = npc }
+        .apply { userData = creature }
   }
 
   fun createFeatureBody(x:Int, y:Int, place: Place) : Body {
@@ -177,7 +187,7 @@ class ActorFactory(
   }
 
   companion object {
-    val npcByKeys = mutableMapOf<String, Npc>()
+    val npcByKeys = mutableMapOf<String, Creature>()
     var npcIds: Int = 0
     fun getNextNpcId():Int {
       return npcIds++
@@ -189,9 +199,9 @@ class ActorFactory(
   }
 }
 
-fun Npc.getBehaviorTree() : BehaviorTree<Npc> {
+fun Creature.getBehaviorTree() : BehaviorTree<Creature> {
 
-  val reader = if(this.npcType.name == "orc") Assets.readerForTree("orc.tree") else Assets.readerForTree("townfolk.tree")
-  val parser = BehaviorTreeParser<Npc>(BehaviorTreeParser.DEBUG_NONE)
+  val reader = if(this.creatureType.name == "orc") Assets.readerForTree("orc.tree") else Assets.readerForTree("townfolk.tree")
+  val parser = BehaviorTreeParser<Creature>(BehaviorTreeParser.DEBUG_NONE)
   return parser.parse(reader, this)
 }

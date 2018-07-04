@@ -4,24 +4,24 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
-import data.Npc
+import data.Creature
 import data.NpcState
 import components.Box2dBodyComponent
-import components.NpcComponent
+import components.CreatureComponent
 import map.tileWorldCenter
 import ktx.ashley.allOf
 import ktx.ashley.mapperFor
 import ktx.math.*
 
 class NpcControlSystem : IteratingSystem(allOf(
-    NpcComponent::class,
+    CreatureComponent::class,
     Box2dBodyComponent::class).get(),10) {
 
-  val npcMpr = mapperFor<NpcComponent>()
+  val npcMpr = mapperFor<CreatureComponent>()
   val bodyMpr = mapperFor<Box2dBodyComponent>()
 
   override fun processEntity(entity: Entity, deltaTime:Float) {
-    val npc = npcMpr[entity].npc
+    val npc = npcMpr[entity].creature
     val body = bodyMpr[entity]!!.body
     when(npc.state) {
       NpcState.Idle -> return
@@ -32,8 +32,8 @@ class NpcControlSystem : IteratingSystem(allOf(
     }
 
     npc.apply {
-      currentX = body.position.tileX()
-      currentY = body.position.tileY()
+      tileX = body.position.tileX()
+      tileY = body.position.tileY()
     }
   }
 
@@ -41,9 +41,9 @@ class NpcControlSystem : IteratingSystem(allOf(
       moveFromTo(Pair(x,y).tileWorldCenter(),body)
   }
 
-  private fun comeWalkWithMe(npc: Npc, body: Body) {
-    //The Npc manages its own state, preferrably?
-    moveFromTo(Pair(npc.foundX, npc.foundY).tileWorldCenter(), body)
+  private fun comeWalkWithMe(creature: Creature, body: Body) {
+    //The Creature manages its own state, preferrably?
+    moveFromTo(Pair(creature.foundX, creature.foundY).tileWorldCenter(), body)
   }
 
   private fun moveFromTo(desiredPos: Vector2, body: Body) {

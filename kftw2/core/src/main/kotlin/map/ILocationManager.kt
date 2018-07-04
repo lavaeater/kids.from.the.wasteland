@@ -13,6 +13,4 @@ interface ILocationManager {
   fun getBandOfTiles(tilePos: Pair<Int,Int>, range:Int, width: Int = 1): List<TileInstance>
   fun getBandOfTiles(x:Int, y:Int, range: Int, width: Int = 1): List<TileInstance>
   fun getVisibleTiles(x: Int, y: Int): Array<TileInstance>
-  val currentX:Int
-  val currentY:Int
 }

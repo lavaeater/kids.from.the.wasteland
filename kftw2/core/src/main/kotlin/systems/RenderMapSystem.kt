@@ -98,6 +98,10 @@ class RenderMapSystem(
   }
 }
 
+fun Float.toTile(factor: Int = GameManager.TILE_SIZE): Int {
+  return (this / factor).roundToInt()
+}
+
 fun Vector2.tileX(factor: Int = GameManager.TILE_SIZE): Int {
   return (this.x / factor).roundToInt()
 }

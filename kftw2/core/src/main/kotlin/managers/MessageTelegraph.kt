@@ -3,7 +3,7 @@ package managers
 import com.badlogic.gdx.ai.msg.MessageDispatcher
 import com.badlogic.gdx.ai.msg.Telegram
 import com.badlogic.gdx.ai.msg.Telegraph
-import data.Npc
+import data.Creature
 import injection.Ctx
 import story.FactsOfTheWorld
 import story.StoryManager
@@ -35,8 +35,8 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
   override fun handleMessage(msg: Telegram): Boolean {
     if(msg.message !in Messages.validRange) throw IllegalArgumentException("Message id ${msg.message} not in valid range ${Messages.validRange}")
     when(msg.message) {
-      Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Npc)
-      Messages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Npc) //we send the npc, the player is always available
+      Messages.CollidedWithImpassibleTerrain -> return npcCollidedWithImpassibleTerrain(msg.extraInfo as Creature)
+      Messages.PlayerMetSomeone -> return playerEncounteredNpc(msg.extraInfo as Creature) //we send the agent, the player is always available
       Messages.EncounterOver -> encounterOver()
       Messages.FactsUpdated -> checkTheWorld() //this method will trigger all stories to check if their rules have passed, for instance
       Messages.StoryCompleted -> return true //this method will trigger the "story ended" thingie related to a story... ending. Might not be relevant
@@ -101,7 +101,7 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
     messageDispatcher.dispatchMessage(Messages.FactsUpdated)
   }
 
-  private fun playerEncounteredNpc(npc: Npc): Boolean {
+  private fun playerEncounteredNpc(creature: Creature): Boolean {
 
     /*
     This method shall set some facts.
@@ -110,14 +110,14 @@ class MessageTelegraph (private val factsOfTheWorld: FactsOfTheWorld): Telegraph
     Game state will be updated by the dialog manager, I believe. - it has a reference to the state manager
      */
     factsOfTheWorld.stateStringFact(Facts.Context, Contexts.MetNpc)
-    factsOfTheWorld.stateStringFact(Facts.CurrentNpc, npc.id)
-    factsOfTheWorld.stateStringFact(Facts.CurrentNpcName, npc.name)
+    factsOfTheWorld.stateStringFact(Facts.CurrentNpc, creature.id)
+    factsOfTheWorld.stateStringFact(Facts.CurrentNpcName, creature.name)
     messageDispatcher.dispatchMessage(Messages.FactsUpdated)
     return true
   }
 
-  private fun npcCollidedWithImpassibleTerrain(npc: Npc) : Boolean {
-    npc.lostInterest()
+  private fun npcCollidedWithImpassibleTerrain(creature: Creature) : Boolean {
+    creature.lostInterest()
     return true
   }
 }

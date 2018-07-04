@@ -17,8 +17,8 @@ class WorldFactsSystem : IntervalIteratingSystem(
 
   override fun processEntity(entity: Entity) {
     agentMpr[entity].agent.apply {
-      currentX = transMpr[entity].position.tileX()
-      currentY = transMpr[entity].position.tileY()
+      tileX = transMpr[entity].position.tileX()
+      tileY = transMpr[entity].position.tileY()
     }
   }
 }

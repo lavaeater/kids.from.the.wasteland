@@ -9,7 +9,6 @@ import injection.Ctx
 import ktx.ashley.allOf
 import ktx.ashley.has
 import ktx.ashley.mapperFor
-import ktx.ashley.remove
 import map.isInRange
 
 class FeatureDiscoverySystem() :
@@ -23,7 +22,7 @@ class FeatureDiscoverySystem() :
 
   override fun processEntity(entity: Entity) {
 
-    val playerPos = Pair(player.currentX, player.currentY)
+    val playerPos = Pair(player.tileX, player.tileY)
     val featurePos = transMpr[entity].position.toTile()
 
     if(featurePos.isInRange(playerPos, player.sightRange)) {
@@ -32,7 +31,7 @@ class FeatureDiscoverySystem() :
         val featureSkill = featureMapper[entity].place.stealth
         //How do we do discovery roll? Player skill - enemy counter skill, if under => success
         if (skillRoll(playerSkill, featureSkill)) {
-          //The player sees the npc, it should now be rendered!
+          //The player sees the agent, it should now be rendered!
           entity.add(VisibleComponent())
         }
       }

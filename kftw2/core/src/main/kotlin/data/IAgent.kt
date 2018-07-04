@@ -2,8 +2,25 @@ package data
 
 import com.badlogic.gdx.math.MathUtils
 
-interface IAgent {
+interface IWorldlyThing {
   val id: String
+  var worldX: Float
+  var worldY: Float
+  var tileX: Int
+  var tileY: Int
+  val tileKey: Pair<Int,Int>
+}
+
+interface IPlace : IWorldlyThing {
+  /*
+  A place in the world, can be entrance to a LOCATION
+
+  Can this be loot? Maybe? Add more shit later?
+   */
+  var name: String
+}
+
+interface IAgent: IWorldlyThing {
   var name: String
   var strength: Int
   var health: Int
@@ -11,8 +28,9 @@ interface IAgent {
   var sightRange: Int
   val inventory: MutableList<String>
   val skills: MutableMap<String, Int>
-  var currentX: Int
-  var currentY: Int
+  var speed: Int
+  var attack: Int
+  var attackString: String
 }
 
 fun IAgent.rollAgainstAgent(antagonist: IAgent, skill:String) : Boolean {

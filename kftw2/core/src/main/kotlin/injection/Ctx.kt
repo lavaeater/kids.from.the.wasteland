@@ -51,12 +51,12 @@ class Ctx {
 				addSystem(RenderFeatureSystem(context.inject()))
 			  addSystem(AiSystem())
 			  addSystem(PhysicsSystem(context.inject()))
-			  addSystem(PhysicsDebugSystem(
-						context.inject(),
-						context.inject()))
+//			  addSystem(PhysicsDebugSystem(
+//						context.inject(),
+//						context.inject()))
 			  addSystem(WorldFactsSystem())
 				addSystem(FollowCameraSystem(context.inject()))
-				addSystem(PlayerEntityDiscoverySystem())
+//				addSystem(PlayerEntityDiscoverySystem())
 				addSystem(FeatureDiscoverySystem())
 			}
 	  }
