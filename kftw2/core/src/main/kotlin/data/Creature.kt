@@ -8,7 +8,24 @@ import map.LocationManager
 import map.TileInstance
 import systems.toTile
 
-class EmptyAgent(override val id: String = "Place", override var name: String = "PLace", override var strength: Int =0, override var health: Int = 0, override var intelligence: Int = 0, override var sightRange: Int = 0, override val inventory: MutableList<String> = mutableListOf(), override val skills: MutableMap<String, Int> = mutableMapOf(), override var tileX: Int = 0, override var tileY: Int = 0, override var worldX: Float, override var worldY: Float, override val tileKey: Pair<Int, Int>, override var speed: Int, override var attack: Int, override var attackString: String) :IAgent {
+class EmptyAgent(
+    override val id: String = "Place",
+    override var name: String = "PLace",
+    override var strength: Int =0,
+    override var health: Int = 0,
+    override var intelligence: Int = 0,
+    override var sightRange: Int = 0,
+    override val inventory: MutableList<String> = mutableListOf(),
+    override val skills: MutableMap<String, Int> = mutableMapOf(),
+    override var tileX: Int = 0,
+    override var tileY: Int = 0,
+    override var worldX: Float = 0f,
+    override var worldY: Float = 0f,
+    override val tileKey: Pair<Int, Int> = Pair(0,0),
+    override var speed: Int = 10,
+    override var attack: Int = 10,
+    override var attackString: String = "slams"
+) :IAgent {
 }
 
 class Creature(override val id: String,
@@ -23,8 +40,8 @@ class Creature(override val id: String,
                override var intelligence: Int = creatureType.intelligence,
                override val inventory: MutableList<String> = creatureType.inventory,
                override var sightRange: Int = creatureType.sightRange,
-               override var worldX: Float,
-               override var worldY: Float) : IAgent {
+               override var worldX: Float = 0f,
+               override var worldY: Float = 0f) : IAgent {
   override var tileX: Int
     get() = worldX.toTile()
     set(value) {}
