@@ -2,7 +2,6 @@ package map
 
 import Assets
 import com.badlogic.gdx.math.MathUtils
-import data.IWorldlyThing
 import injection.Ctx
 
 /**
@@ -97,8 +96,6 @@ open class Location(val name:String) {
     The location contains ALL possible sublocations etc for the location. So a location can switch
     to a sublocation OR it's parent location -> the world map for instance.
      */
-
-    val things = mutableMapOf<String, IWorldlyThing>()
 }
 
 open class SubLocation(name: String, val parentLocation: Location = Ctx.context.inject<WorldMapLocation>()) : Location(name) {
@@ -164,11 +161,6 @@ class TileManager(private val chunkSize:Int = 100) {
         return store.getTile(x, y)
     }
 
-    private fun putTile(x: Int, y: Int, tile: TileInstance) {
-        val store = getTileStore(x, y)
-        store.putTile(x, y, tile)
-    }
-
     fun getTilesFlat(xBounds: IntRange, yBounds: IntRange) : Array<TileInstance> {
 
         lateinit var currentTile: TileInstance
@@ -178,7 +170,7 @@ class TileManager(private val chunkSize:Int = 100) {
         val size = columns * rows
         var row = 0
         var column = 0
-        return Array(size, { _ ->
+        return Array(size) { _ ->
 
             val x = xBounds.start + column
             val y = yBounds.start + row
@@ -200,7 +192,7 @@ class TileManager(private val chunkSize:Int = 100) {
             }
 
             return@Array currentTile
-        })
+        }
     }
 
     private fun getOrNull(x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile? {
@@ -283,28 +275,30 @@ class TileManager(private val chunkSize:Int = 100) {
 
         val bigempty =
             Array(
-                xBounds.count(),
-                { x ->
-                    Array(
-                        yBounds.count(),
-                        { y ->
-                            tileFor(3,
-                                LocationManager.terrains[3]!!,
-                            "center${MathUtils.random.nextInt(3) + 1}",
-                                LocationManager.shortTerrains[3]!!)
-                                .getInstance(
-                                    xBounds.elementAt(x),
-                                    yBounds.elementAt(y))
-                        })})
+                xBounds.count()
+            ) { x ->
+                Array(
+                    yBounds.count()
+                ) { y ->
+                    tileFor(3,
+                        LocationManager.terrains[3]!!,
+                        "center${MathUtils.random.nextInt(3) + 1}",
+                        LocationManager.shortTerrains[3]!!)
+                        .getInstance(
+                            xBounds.elementAt(x),
+                            yBounds.elementAt(y))
+                }
+            }
 
         val tiles = Array(
-            xBounds.count(),
-            { x ->
-                Array(
-                    yBounds.count(),
-                    { y ->
-                        bigempty[x][y].tile
-                    })})
+            xBounds.count()
+        ) { x ->
+            Array(
+                yBounds.count()
+            ) { y ->
+                bigempty[x][y].tile
+            }
+        }
 
         for (column in bigempty.withIndex())
             for(row in column.value.withIndex()) {
@@ -616,19 +610,20 @@ class TileManager(private val chunkSize:Int = 100) {
 
         val bigempty =
             Array(
-                xBounds.count(),
-                { x ->
-                    Array(
-                        yBounds.count(),
-                        { y ->
-                            tileFor(1,
-                                LocationManager.terrains[1]!!,
-                                "center${MathUtils.random.nextInt(3) + 1}",
-                                LocationManager.shortTerrains[1]!!)
-                                .getInstance(
-                                    xBounds.elementAt(x),
-                                    yBounds.elementAt(y))
-                        })})
+                xBounds.count()
+            ) { x ->
+                Array(
+                    yBounds.count()
+                ) { y ->
+                    tileFor(1,
+                        LocationManager.terrains[1]!!,
+                        "center${MathUtils.random.nextInt(3) + 1}",
+                        LocationManager.shortTerrains[1]!!)
+                        .getInstance(
+                            xBounds.elementAt(x),
+                            yBounds.elementAt(y))
+                }
+            }
 
         /**
          * Now for some action!
@@ -692,13 +687,14 @@ class TileManager(private val chunkSize:Int = 100) {
 
     private fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
         val tiles = Array(
-            xBounds.count(),
-            { x ->
-                Array(yBounds.count(),
-                    { y ->
-                        generateTile(
-                            xBounds.elementAt(x),
-                            yBounds.elementAt(y)) }) })
+            xBounds.count()
+        ) { x ->
+            Array(yBounds.count()
+            ) { y ->
+                generateTile(
+                    xBounds.elementAt(x),
+                    yBounds.elementAt(y)) }
+        }
 
         /*
         The extra sprite functionality must be adressed here, I guess? How do we manage
@@ -718,16 +714,16 @@ class TileManager(private val chunkSize:Int = 100) {
                 tiles[x][y] = tempTile
             }
 
-        return Array(xBounds.count(),
-            { column ->
-                Array(yBounds.count(),
-                    { row ->
-                        tiles[column][row]
-                            .getInstance(
-                                xBounds.elementAt(column),
-                                yBounds.elementAt(row))
-                    })
-            })
+        return Array(xBounds.count()
+        ) { column ->
+            Array(yBounds.count()
+            ) { row ->
+                tiles[column][row]
+                    .getInstance(
+                        xBounds.elementAt(column),
+                        yBounds.elementAt(row))
+            }
+        }
     }
 
     private fun getDirectionFromIndex(index: Int): String {
