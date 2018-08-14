@@ -669,19 +669,6 @@ class TileManager(private val chunkSize:Int = 100) {
                 tries++
             }
         }
-        //Try to place it by getting the tiles that are within the same bounds
-
-//        for(x in xBounds.withIndex())
-//            for(y in yBounds.withIndex()) {
-//
-//            }
-        /**
-         * 2. make mazes
-         * 3. connect rooms
-         * 4. kill dead ends
-         * 5. add encounters? how? Not here?
-         */
-
         return bigempty
     }
 
