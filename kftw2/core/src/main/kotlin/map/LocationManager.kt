@@ -11,6 +11,22 @@ import systems.tileX
 import systems.tileY
 import kotlin.math.roundToInt
 
+data class TerrainType(val priority: Int, val name: String) //We must be able to define new terraintypes
+
+// Always contains basic list of terrains, for now... for testing the serialization to a file or something
+// I guess?
+data class TerrainTypes(val terrainTypes: MutableSet<TerrainType> = mutableSetOf(
+    TerrainType(10, "water"),
+    TerrainType(20, "desert"),
+    TerrainType(30, "grass"),
+    TerrainType(40, "rock")
+))
+val terrains = mapOf(
+    0 to "water",
+    1 to "desert",
+    2 to "grass",
+    3 to "rock")
+
 class LocationManager(
     private val bodyManager: BodyFactory,
     private val tileManager: TileManager) : ILocationManager {

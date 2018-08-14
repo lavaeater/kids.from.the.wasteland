@@ -14,7 +14,9 @@ import ktx.style.skin
 import ktx.style.textButton
 import java.io.Reader
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-
+import map.TerrainType
+import map.TerrainTypes
+import squidpony.squidgrid.mapping.Terrain
 
 
 /**
@@ -24,14 +26,32 @@ object Assets : Disposable {
   lateinit var gameSettings: GameSettings
   lateinit var am: AssetManager
   private val atlases by lazy {
-    mapOf(
-        "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
-        "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
-        "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
-        "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
-        "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
-        "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
-        "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+    terrainTypes.map { it.name to TextureAtlas(Gdx.files.internal("tiles/${it.name}/${it.name}.txp"))}.toMap()
+//    mapOf(
+//        "darkdirt" to TextureAtlas(Gdx.files.internal("tiles/darkdirt/darkdirt.txp")),
+//        "darkgrass" to TextureAtlas(Gdx.files.internal("tiles/darkgrass/darkgrass.txp")),
+//        "desert" to TextureAtlas(Gdx.files.internal("tiles/desert/desert.txp")),
+//        "dirt" to TextureAtlas(Gdx.files.internal("tiles/dirt/dirt.txp")),
+//        "grass" to TextureAtlas(Gdx.files.internal("tiles/grass/grass.txp")),
+//        "rock" to TextureAtlas(Gdx.files.internal("tiles/rock/rock.txp")),
+//        "water" to TextureAtlas(Gdx.files.internal("tiles/water/water.txp")))
+  }
+
+  val terrainTypes by lazy {
+    loadTerrain()
+  }
+
+  private fun loadTerrain(): Set<TerrainType> {
+    val terrain = Gdx.files.internal("terrain/tiletypes.txt")
+    val file = terrain.readString()
+    val lines = file.split("\r\n")
+    val types = lines.map { parseTerrain(it)}
+    return types.toSet()
+  }
+
+  private fun parseTerrain(line:String):TerrainType {
+    val ar = line.split(" ")
+    return TerrainType(ar.first().toInt(), ar.last())
   }
 
   private val characters by lazy {
