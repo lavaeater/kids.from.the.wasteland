@@ -2,7 +2,6 @@ package map
 
 import Assets
 import com.badlogic.gdx.math.MathUtils
-import injection.Ctx
 
 /**
  * The tile manager class could be one
@@ -36,14 +35,14 @@ import injection.Ctx
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
-open class Location(val name:String) {
+open class Location(val name:String, val parentLocation: Location? = null, val subLocations: MutableSet<Location> = mutableSetOf()) {
     /*
     A location manages its own entities, it just has to.
 
     Or is that retarded?
 
     Yes, to tight of a coupling, a location does not handle the location's entities,
-    the location **manager** handles the entities, the location must CONTAINT the entities.
+    the location **manager** handles the entities, the location must CONTAIN the entities.
 
     Everything must be some kind of meta representation of itself.
 
@@ -98,12 +97,8 @@ open class Location(val name:String) {
      */
 }
 
-open class SubLocation(name: String, val parentLocation: Location = Ctx.context.inject<WorldMapLocation>()) : Location(name) {
-
-}
-
-class WorldMapLocation : Location("WorldMap") {
-
+interface TileGenerator {
+    fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>>
 }
 
 class TileManager(private val chunkSize:Int = 100) {

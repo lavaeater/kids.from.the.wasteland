@@ -8,6 +8,10 @@ enum class TileFog {
   Seeing
 }
 
+data class MapTile(
+    val code: String,
+    val seen: Boolean = false)
+
 data class Tile(
     val priority : Int,
     val tileType:String,
