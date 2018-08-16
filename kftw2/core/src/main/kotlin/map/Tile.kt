@@ -8,6 +8,21 @@ enum class TileFog {
   Seeing
 }
 
+/**
+ * Why another tile class? Well, to serialize
+ * the maps, we need some extra data for our serialization except the data in the
+ * Tile class. Some refactoring might be in place later...
+ *
+ * Should perhaps the Persisted tile contain features and stuff?
+ *
+ * I dunno...
+ *
+ * Should maps have layers, per se?
+ *
+ * I dunno.
+ *
+ * Later for that one...
+ */
 data class PersistedTile(val priority : Int,
                          val tileType:String,
                          val subType: String,

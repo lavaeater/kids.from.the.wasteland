@@ -95,6 +95,28 @@ open class Location(val name:String, val parentLocation: Location? = null, val s
     The location contains ALL possible sublocations etc for the location. So a location can switch
     to a sublocation OR it's parent location -> the world map for instance.
      */
+
+
+    /*
+    Maybe we should consider a slight rewrite.
+
+    Instead of redoing everything from scratch, lets do a new implementation of the
+    map, its locations and entitities etc.
+
+    Could that be workable? Do we have the necessary energy for it?
+
+    So instead of having tile and tileinstance etc we do new classes for that...
+     */
+
+    //A location MIGHT have a map!
+
+    val tileMap: TileMap? = null
+    val hasMap: Boolean get() = tileMap != null
+}
+
+//A tilemap is a new implementation of the tileManager class!
+class TileMap(private val chunkSize: Int = 64) {
+
 }
 
 interface TileGenerator {
