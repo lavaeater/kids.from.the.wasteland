@@ -8,11 +8,22 @@ enum class TileFog {
   Seeing
 }
 
-data class MapTile(
-    val code: String,
-    val seen: Boolean = false)
+data class PersistedTile(val priority : Int,
+                         val tileType:String,
+                         val subType: String,
+                         val code :String = "",
+                         val shortCode : String = "",
+                         val seen:Boolean)
 
-data class Tile(
+fun TileInstance.persist() : PersistedTile {
+  return PersistedTile(tile.priority, tile.tileType, tile.subType, tile.code, tile.shortCode, seen)
+}
+
+fun PersistedTile.tile() : Tile {
+  return Tile(priority, tileType, subType, code, shortCode, false)
+}
+
+data class Tile (
     val priority : Int,
     val tileType:String,
     val subType: String,
