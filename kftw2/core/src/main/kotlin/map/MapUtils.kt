@@ -49,7 +49,7 @@ fun String.isOneTerrain() : Boolean {
 //  val charArray = this.tile.shortCode.toCharArray()
 //  val thisType = charArray[0]
 //  val typeNorth = charArray[1]
-//  if(LocationManager.shortTerrainPriority[typeNorth]!! > LocationManager.shortTerrainPriority[thisType]!!) {
+//  if(MapService.shortTerrainPriority[typeNorth]!! > MapService.shortTerrainPriority[thisType]!!) {
 //
 //  }
 //
@@ -193,20 +193,20 @@ fun Tile.getExtraSprites() : Array<Sprite> {
 }
 
 fun TileInstance.forwardIs(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
-  val forward = LocationManager.simpleForward[thisDirection]!!
+  val forward = MapService.simpleForward[thisDirection]!!
   val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
   return tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType
 }
 
 fun TileInstance.leftRightAndForwardAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
   var bothAre = true
-  val left = LocationManager.simpleLeft[thisDirection]!!
+  val left = MapService.simpleLeft[thisDirection]!!
   val leftKey = Pair(this.x + left.first, this.y + left.second)
   bothAre = bothAre && tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType
-  val right = LocationManager.simpleRight[thisDirection]!!
+  val right = MapService.simpleRight[thisDirection]!!
   val rightKey = Pair(this.x + right.first, this.y + right.second)
   bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
-  val forward = LocationManager.simpleForward[thisDirection]!!
+  val forward = MapService.simpleForward[thisDirection]!!
   val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
   bothAre = bothAre && tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType
 
@@ -215,13 +215,13 @@ fun TileInstance.leftRightAndForwardAre(thisDirection:String, tileType: String, 
 
 fun TileInstance.leftRightAndForwardAreNot(thisDirection:String, tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
   var bothAre = true
-  val left = LocationManager.simpleLeft[thisDirection]!!
+  val left = MapService.simpleLeft[thisDirection]!!
   val leftKey = Pair(this.x + left.first, this.y + left.second)
   bothAre = bothAre && tilesByKey.containsKey(leftKey) && !tileTypes.contains(tilesByKey[leftKey]?.tile?.tileType)
-  val right = LocationManager.simpleRight[thisDirection]!!
+  val right = MapService.simpleRight[thisDirection]!!
   val rightKey = Pair(this.x + right.first, this.y + right.second)
   bothAre = bothAre && tilesByKey.containsKey(rightKey) && !tileTypes.contains(tilesByKey[rightKey]?.tile?.tileType)
-  val forward = LocationManager.simpleForward[thisDirection]!!
+  val forward = MapService.simpleForward[thisDirection]!!
   val forwardKey = Pair(this.x + forward.first, this.y + forward.second)
   bothAre = bothAre && tilesByKey.containsKey(forwardKey) && !tileTypes.contains(tilesByKey[forwardKey]?.tile?.tileType)
 
@@ -229,7 +229,7 @@ fun TileInstance.leftRightAndForwardAreNot(thisDirection:String, tileTypes: Set<
 }
 
 fun TileInstance.inFrontAreAll(direction: String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
-  val directions = LocationManager.infront[direction]!!.map { LocationManager.directions[it]!! }
+  val directions = MapService.infront[direction]!!.map { MapService.directions[it]!! }
   var allAre = true
 
   for(direction in directions) {
@@ -240,7 +240,7 @@ fun TileInstance.inFrontAreAll(direction: String, tileType: String, tilesByKey: 
 }
 
 fun TileInstance.inFrontAreNone(direction: String, tileTypes: Set<String>, tilesByKey: Map<Pair<Int, Int>, TileInstance>) : Boolean {
-  val directions = LocationManager.infront[direction]!!.map { LocationManager.directions[it]!! }
+  val directions = MapService.infront[direction]!!.map { MapService.directions[it]!! }
   var nonAre = true
 
   for(direction in directions) {
@@ -254,19 +254,19 @@ fun TileInstance.inFrontAreNone(direction: String, tileTypes: Set<String>, tiles
 fun TileInstance.hasAtLeastTwoLeftRightForward(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
   var count = 0
 
-  val left = LocationManager.simpleLeft[thisDirection]!!
+  val left = MapService.simpleLeft[thisDirection]!!
   val leftKey = Pair(this.x + left.first, this.y + left.second)
 
   if(tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType)
     count++
 
-  val right = LocationManager.simpleRight[thisDirection]!!
+  val right = MapService.simpleRight[thisDirection]!!
   val rightKey = Pair(this.x + right.first, this.y + right.second)
 
   if(tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType)
     count++
 
-  var forward = LocationManager.simpleForward[thisDirection]!!
+  var forward = MapService.simpleForward[thisDirection]!!
   var forwardKey = Pair(this.x + forward.first, this.y + forward.second)
 
   if(tilesByKey.containsKey(forwardKey) && tilesByKey[forwardKey]?.tile?.tileType == tileType)
@@ -282,10 +282,10 @@ fun TileInstance.hasAtLeastTwoLeftRightForward(thisDirection:String, tileType: S
 
 fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>): Boolean {
   var bothAre = true
-  val left = LocationManager.simpleLeft[thisDirection]!!
+  val left = MapService.simpleLeft[thisDirection]!!
   val leftKey = Pair(this.x + left.first, this.y + left.second)
   bothAre = bothAre && tilesByKey.containsKey(leftKey) && tilesByKey[leftKey]?.tile?.tileType == tileType
-  val right = LocationManager.simpleRight[thisDirection]!!
+  val right = MapService.simpleRight[thisDirection]!!
   val rightKey = Pair(this.x + left.first, this.y + left.second)
   bothAre = bothAre && tilesByKey.containsKey(rightKey) && tilesByKey[rightKey]?.tile?.tileType == tileType
 
@@ -293,14 +293,14 @@ fun TileInstance.leftAndRightAre(thisDirection:String, tileType: String, tilesBy
 }
 
 fun TileInstance.neighbourToIs(direction:String, tileType:String, tilesByKey: Map<Pair<Int, Int>, TileInstance>):Boolean {
-  val key = LocationManager.directions[direction]!!
+  val key = MapService.directions[direction]!!
   val actualKey = Pair(this.x + key.first, this.y + key.first)
   return tilesByKey[actualKey]?.tile?.tileType == tileType
 }
 
 fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
   var noAreOfType = false
-  for(coord in LocationManager.neiborMap.keys) {
+  for(coord in MapService.neiborMap.keys) {
     val key = Pair(this.x + coord.first, this.y + coord.second)
     noAreOfType = noAreOfType || (tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType == tileType)
   }
@@ -309,7 +309,7 @@ fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<In
 
 fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
   var noAreOfType = true
-  for(coord in LocationManager.neiborMap.keys) {
+  for(coord in MapService.neiborMap.keys) {
     val key = Pair(this.x + coord.first, this.y + coord.second)
     noAreOfType = noAreOfType && tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
   }
@@ -321,7 +321,7 @@ fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pai
   var containsCount = 0
   for(tileType in tileTypes) {
     var hasAllAsNeighbours = false
-    for(coord in LocationManager.neiborMap.keys) {
+    for(coord in MapService.neiborMap.keys) {
       val key = Pair(this.x + coord.first, this.y + coord.second)
       hasAllAsNeighbours = hasAllAsNeighbours || tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
     }
@@ -333,7 +333,7 @@ fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pai
 
 fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
   var allAreOfType = true
-  for(coord in LocationManager.neiborMap.keys) {
+  for(coord in MapService.neiborMap.keys) {
     val x = this.x + coord.first - offsetX
     val y = this.y + coord.second - offsetY
     if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
@@ -347,7 +347,7 @@ fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInsta
 
 fun TileInstance.atMostNAreOfType(tileType: String, n:Int, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
   var count = 0
-  for(coord in LocationManager.neiborMap.keys) {
+  for(coord in MapService.neiborMap.keys) {
     val x = this.x + coord.first - offsetX
     val y = this.y + coord.second - offsetY
     if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {

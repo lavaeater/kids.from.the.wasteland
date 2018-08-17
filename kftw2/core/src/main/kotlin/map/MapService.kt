@@ -27,9 +27,18 @@ val terrains = mapOf(
     2 to "grass",
     3 to "rock")
 
-class LocationManager(
+//This class needs to be a couple of extra layers...
+/**
+ * Using a location, this
+ * service can find tiles in that location, if needed.
+ * It takes in a tileManager now - but should probably have
+ * a LocationManager, when we rename that. The locationmanager
+ * keeps track of the current location etc, and provides
+ * methods to access the tiles associated with tthat particular location
+ */
+class MapService(
     private val bodyManager: BodyFactory,
-    private val tileManager: TileManager) : ILocationManager {
+    private val tileManager: TileManager) : IMapService {
 
   private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>() }
 

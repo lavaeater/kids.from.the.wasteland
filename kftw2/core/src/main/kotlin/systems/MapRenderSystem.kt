@@ -8,14 +8,14 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import ktx.app.use
 import managers.GameManager
-import map.ILocationManager
+import map.IMapService
 import map.TileFog
 import kotlin.math.roundToInt
 
-class RenderMapSystem(
+class MapRenderSystem(
     private val batch: Batch,
     private val camera: Camera,
-    private val locationManager: ILocationManager,
+    private val mapService: IMapService,
     val fogOfWar:Boolean = false) : EntitySystem(0) {
 
   var blink = true
@@ -32,7 +32,7 @@ class RenderMapSystem(
       batch.projectionMatrix = camera.combined
       batch.use {
 
-        val tilesToRender = locationManager.getVisibleTiles(tileX, tileY)
+        val tilesToRender = mapService.getVisibleTiles(tileX, tileY)
 
         for (tileInstance in tilesToRender) {
           frameIndex++
@@ -72,7 +72,7 @@ class RenderMapSystem(
     batch.projectionMatrix = camera.combined
     batch.use {
 
-      for(tile in locationManager.getVisibleTilesWithFog(tileX, tileY, 8)) {
+      for(tile in mapService.getVisibleTilesWithFog(tileX, tileY, 8)) {
 
         val xPos = tile.x * 8f
         val yPos = tile.y * 8f

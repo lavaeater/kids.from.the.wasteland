@@ -8,7 +8,7 @@ import injection.Ctx
 import managers.GameEvents
 import managers.GameState
 import managers.Messages
-import map.ILocationManager
+import map.IMapService
 import story.FactsOfTheWorld
 import story.conversation.ConversationManager
 import story.conversation.InternalConversation
@@ -21,7 +21,7 @@ class PlacesOfTheWorld {
   private val gameState by lazy { Ctx.context.inject<GameState>() }
   private val conversationManager by lazy { Ctx.context.inject<ConversationManager>() }
   val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
-	val mapManager by lazy { Ctx.context.inject<ILocationManager>() }
+	val mapManager by lazy { Ctx.context.inject<IMapService>() }
 	val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
 	val cityNames = arrayOf(
 			"Bytarstan",

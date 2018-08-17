@@ -2,7 +2,7 @@ package map
 
 import com.badlogic.gdx.math.Vector3
 
-interface ILocationManager {
+interface IMapService {
   fun getVisibleTilesWithFog(x:Int, y:Int, range:Int): Array<TileInstance>
   fun getVisibleTiles(position: Vector3): Array<TileInstance>
 //  fun tileForWorldPosition(position: Vector3): Tile

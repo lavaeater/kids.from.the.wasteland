@@ -9,13 +9,13 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import factory.ActorFactory
-import map.ILocationManager
+import map.IMapService
 import story.FactsOfTheWorld
 import story.fact.Facts
 import systems.GameInputSystem
 import systems.RenderCharactersSystem
 import systems.RenderFeatureSystem
-import systems.RenderMapSystem
+import systems.MapRenderSystem
 import ui.IUserInterface
 import kotlin.math.roundToInt
 
@@ -28,7 +28,7 @@ class GameManager(
     actorFactoryProvider: () -> ActorFactory,
     private val messageDispatcher: MessageDispatcher,
     private val ui: IUserInterface,
-    private val locationManager: ILocationManager,
+    private val mapService: IMapService,
     private val factsOfTheWorld: FactsOfTheWorld) : Disposable {
 
   private val viewPort = viewPortProvider()
@@ -50,7 +50,7 @@ class GameManager(
     running game, and some other class, called during startup, sets up the state using all the
     dependencies necessary for that.
      */
-    val someTilesInRange = locationManager.getBandOfTiles(0,0, 100, 80).filter {
+    val someTilesInRange = mapService.getBandOfTiles(0,0, 100, 80).filter {
       it.tile.tileType != "rock" && it.tile.tileType != "water"
     }.toMutableList()
 
@@ -130,7 +130,7 @@ class GameManager(
   private fun stopTheWorld() {
     for (system in engine.systems.filter {
       it !is RenderCharactersSystem &&
-          it !is RenderMapSystem &&
+          it !is MapRenderSystem &&
           it !is RenderFeatureSystem }) {
       system.setProcessing(false)
       if (system is GameInputSystem) {

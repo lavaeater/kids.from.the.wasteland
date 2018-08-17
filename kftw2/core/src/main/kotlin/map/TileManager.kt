@@ -35,7 +35,9 @@ import com.badlogic.gdx.math.MathUtils
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
-open class Location(val name:String, val parentLocation: Location? = null, val subLocations: MutableSet<Location> = mutableSetOf()) {
+open class Location(val name:String,
+                    val parentLocation: Location? = null,
+                    val subLocations: MutableSet<Location> = mutableSetOf()) {
     /*
     A location manages its own entities, it just has to.
 
@@ -114,9 +116,38 @@ open class Location(val name:String, val parentLocation: Location? = null, val s
     val hasMap: Boolean get() = tileMap != null
 }
 
-//A tilemap is a new implementation of the tileManager class!
-class TileMap(private val chunkSize: Int = 64) {
+/**
+ * A tilemap is a class that keeps track of the tiles associated with a particular
+ * location. It can load and save itself... no, that is managed by some persistence
+ * service.
+ *
+ * As parameters it takes a chunksize, defining the size of the store chunks for this particular
+ * map. There is really not that many reasons to change that value, though.
+ *
+ * A cool refactoring - a map should start with having 0,0 in the actual middle of that chunk, ie
+ * on 31,31 - so that a smaller location only needs ONE chunk. This is probably trivial to fix.
+ */
+class TileMap(private val chunkSize: Int = 64,
+              private val tileGenerator: TileGenerator) {
 
+    private val upperBound = chunkSize - 1
+
+    private val tileStore = mutableSetOf<TileStoreBase>()
+    private var currentAlgorithm : (xBounds: IntRange, yBounds: IntRange)-> Array<Array<TileInstance>>
+
+    init {
+        currentLocation = "worldmap"
+        currentTileStores = mutableSetOf()
+        locations[currentLocation] = currentTileStores
+        locationAlgorithms[currentLocation] = ::generateTilesForRange
+        currentAlgorithm = locationAlgorithms[currentLocation]!!
+    }
+}
+
+class UsedTiles {
+    companion object {
+        val usedTiles = mutableMapOf<String, Tile>()
+    }
 }
 
 interface TileGenerator {
@@ -232,11 +263,11 @@ class TileManager(private val chunkSize:Int = 100) {
         var needsNeighbours = false
 
 
-        LocationManager.neiborMap.keys.forEach { (offX, offY) ->
+        MapService.neiborMap.keys.forEach { (offX, offY) ->
             var code = "b"
             val t = getOrNull(x + offX, y + offY, tiles)
             if (t != null) {
-                code = LocationManager.shortTerrains[t.priority]!!
+                code = MapService.shortTerrains[t.priority]!!
             } else {
                 needsNeighbours = true
             }
@@ -298,9 +329,9 @@ class TileManager(private val chunkSize:Int = 100) {
                     yBounds.count()
                 ) { y ->
                     tileFor(3,
-                        LocationManager.terrains[3]!!,
+                        MapService.terrains[3]!!,
                         "center${MathUtils.random.nextInt(3) + 1}",
-                        LocationManager.shortTerrains[3]!!)
+                        MapService.shortTerrains[3]!!)
                         .getInstance(
                             xBounds.elementAt(x),
                             yBounds.elementAt(y))
@@ -374,8 +405,8 @@ class TileManager(private val chunkSize:Int = 100) {
                             for (y in topLeftY..topLeftY + height) {
                                 Thread.sleep(1)
                                 val priority = 1//desert
-                                val tileType = LocationManager.terrains[priority]!!
-                                val code = LocationManager.shortTerrains[priority]!!
+                                val tileType = MapService.terrains[priority]!!
+                                val code = MapService.shortTerrains[priority]!!
                                 val subType = "center${MathUtils.random.nextInt(3) + 1}"
                                 val tile = tileFor(priority, tileType, subType, code)
                                 //What happens to the old one? eh?
@@ -400,11 +431,11 @@ class TileManager(private val chunkSize:Int = 100) {
             val allTheRocks = flatTileCollectioN.filter { it.tile.tileType == "rock" }.toMutableList()
             val tilesByKey = flatTileCollectioN.associateBy({Pair(it.x, it.y)}, {it})
             var tilesLeftToCheck = true
-            val desertPriority = LocationManager.terrainPriorities["desert"]!!
-            val grassPriority = LocationManager.terrainPriorities["grass"]!!
-            val rockPriority = LocationManager.terrainPriorities["rock"]!!
-            val grassTile = tileFor(desertPriority, LocationManager.terrains[grassPriority]!!, "center1", LocationManager.shortTerrains[grassPriority]!!)
-            val rockTile = tileFor(rockPriority, LocationManager.terrains[rockPriority]!!, "center2", LocationManager.shortTerrains[rockPriority]!!)
+            val desertPriority = MapService.terrainPriorities["desert"]!!
+            val grassPriority = MapService.terrainPriorities["grass"]!!
+            val rockPriority = MapService.terrainPriorities["rock"]!!
+            val grassTile = tileFor(desertPriority, MapService.terrains[grassPriority]!!, "center1", MapService.shortTerrains[grassPriority]!!)
+            val rockTile = tileFor(rockPriority, MapService.terrains[rockPriority]!!, "center2", MapService.shortTerrains[rockPriority]!!)
             val tunnels = mutableListOf<MutableList<TileInstance>>()
 
             while(tilesLeftToCheck) {
@@ -455,16 +486,16 @@ class TileManager(private val chunkSize:Int = 100) {
                         The first run, there is no "current direction", we need to check ALL directions!
                         */
                         if(currentDirection == "") {
-                            candidates = LocationManager.simpleDirections.map {
+                            candidates = MapService.simpleDirections.map {
                                 Pair(it.value, Pair(
                                     it.key.first + currentTile.x,
                                     it.key.second + currentTile.y)) }
                                 .map { Pair(it.first, tilesByKey[it.second]) }.toMap()
                         } else {
-                            candidates =  LocationManager.forwardLeftRight[currentDirection]!!.map {
+                            candidates =  MapService.forwardLeftRight[currentDirection]!!.map {
                                 Pair(it, Pair(
-                                    LocationManager.simpleDirectionsInverse[it]!!.first + currentTile.x,
-                                    LocationManager.simpleDirectionsInverse[it]!!.second + currentTile.y)) }
+                                    MapService.simpleDirectionsInverse[it]!!.first + currentTile.x,
+                                    MapService.simpleDirectionsInverse[it]!!.second + currentTile.y)) }
                                 .map { Pair(it.first, tilesByKey[it.second]) }.toMap()
                         }
 
@@ -633,9 +664,9 @@ class TileManager(private val chunkSize:Int = 100) {
                     yBounds.count()
                 ) { y ->
                     tileFor(1,
-                        LocationManager.terrains[1]!!,
+                        MapService.terrains[1]!!,
                         "center${MathUtils.random.nextInt(3) + 1}",
-                        LocationManager.shortTerrains[1]!!)
+                        MapService.shortTerrains[1]!!)
                         .getInstance(
                             xBounds.elementAt(x),
                             yBounds.elementAt(y))
@@ -674,8 +705,8 @@ class TileManager(private val chunkSize:Int = 100) {
                     for (x in topLeftX..topLeftX + width)
                         for (y in topLeftY..topLeftY + height) {
                             val priority = 3//desert
-                            val tileType = LocationManager.terrains[priority]!!
-                            val code = LocationManager.shortTerrains[priority]!!
+                            val tileType = MapService.terrains[priority]!!
+                            val code = MapService.shortTerrains[priority]!!
                             val subType = "center${MathUtils.random.nextInt(3) + 1}"
                             val tile = tileFor(priority, tileType, subType, code)
                             //What happens to the old one? eh?
@@ -742,33 +773,33 @@ class TileManager(private val chunkSize:Int = 100) {
 
     private fun addEdgeSpritesForTile(shortCode: String, priority: Int) {
 
-        if (!LocationManager.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
+        if (!MapService.noExtraSprites.contains(shortCode) && !Assets.codeToExtraTiles.containsKey(shortCode)) {
             val tileC = shortCode.toCharArray()[0]
             val actualShortCode = shortCode.substring(1..4) //leave out the tile itself.
             val extraSprites = mutableListOf<Pair<String, String>>()
             val extraSpritesToRemove = mutableListOf<Pair<String, String>>()
 
             for ((index, code) in actualShortCode.withIndex()) {
-                if (code != 'b' && tileC != code && LocationManager.shortTerrainPriority[code]!! > priority) {
-                    if (extraSprites.any { it.first == LocationManager.shortLongTerrains[code]!! }) {
+                if (code != 'b' && tileC != code && MapService.shortTerrainPriority[code]!! > priority) {
+                    if (extraSprites.any { it.first == MapService.shortLongTerrains[code]!! }) {
                         //Evaluate for diffs etc
-                        for (extraSprite in extraSprites.filter { it.first == LocationManager.shortLongTerrains[code]!! }) {
+                        for (extraSprite in extraSprites.filter { it.first == MapService.shortLongTerrains[code]!! }) {
 
                             /*
                       This type of tile exists, it might actually be relevant to
                       remove the existing one in favor of this one!
                        */
-                            if (LocationManager.weirdDirections.containsKey("${getDirectionFromIndex(index)}${extraSprite.second}")) {
+                            if (MapService.weirdDirections.containsKey("${getDirectionFromIndex(index)}${extraSprite.second}")) {
                                 //Modify existing one, making it weird!
                                 extraSpritesToRemove.add(extraSprite)
-                                extraSprites.add(Pair(extraSprite.first, LocationManager.weirdDirections["${getDirectionFromIndex(index)}${extraSprite.second}"]!!))
+                                extraSprites.add(Pair(extraSprite.first, MapService.weirdDirections["${getDirectionFromIndex(index)}${extraSprite.second}"]!!))
                             } else {
-                                extraSprites.add(Pair(LocationManager.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
+                                extraSprites.add(Pair(MapService.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
                             }
                         }
                     } else {
                         //just add
-                        extraSprites.add(Pair(LocationManager.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
+                        extraSprites.add(Pair(MapService.shortLongTerrains[code]!!, getDirectionFromIndex(index)))
                     }
                 }
             }
@@ -779,7 +810,7 @@ class TileManager(private val chunkSize:Int = 100) {
             if (extraSprites.any())
                 Assets.codeToExtraTiles[shortCode] = extraSprites.map { Assets.tileSprites[it.first]!![it.second]!! }
             else
-                LocationManager.noExtraSprites.add(shortCode)
+                MapService.noExtraSprites.add(shortCode)
         }
     }
 
@@ -792,12 +823,12 @@ class TileManager(private val chunkSize:Int = 100) {
     }
 
     private fun generateTile(x: Int, y: Int): Tile {
-        val nX = x / LocationManager.scale
-        val nY = y / LocationManager.scale
+        val nX = x / MapService.scale
+        val nY = y / MapService.scale
 
         val priority = getTilePriorityFromNoise(nX, nY, x, y)
-        val tileType = LocationManager.terrains[priority]!!
-        val code = LocationManager.shortTerrains[priority]!!
+        val tileType = MapService.terrains[priority]!!
+        val code = MapService.shortTerrains[priority]!!
         val subType = "center${MathUtils.random.nextInt(3) + 1}"
         return tileFor(priority, tileType, subType, code)
     }

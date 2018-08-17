@@ -19,8 +19,8 @@ import factory.BodyFactory
 import ktx.box2d.createWorld
 import ktx.inject.Context
 import managers.*
-import map.ILocationManager
-import map.LocationManager
+import map.IMapService
+import map.MapService
 import map.TileManager
 import story.FactsOfTheWorld
 import story.RulesOfTheWorld
@@ -42,7 +42,7 @@ class Ctx {
 					  inputProcessor = context.inject(),
 					  gameState = context.inject()))
 			  addSystem(NpcControlSystem())
-			  addSystem(RenderMapSystem(
+			  addSystem(MapRenderSystem(
 					  context.inject(),
 					  context.inject(),
 					  context.inject(),
@@ -102,7 +102,7 @@ class Ctx {
 		      setContactListener(CollisionListener(this@register.inject()))
 	      })
         bindSingleton(BodyFactory(this.inject()))
-        bindSingleton<ILocationManager>(LocationManager(
+        bindSingleton<IMapService>(MapService(
 						this.inject(),
 						this.inject()))
 

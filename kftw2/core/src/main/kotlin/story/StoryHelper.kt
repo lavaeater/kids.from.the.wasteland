@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import data.Player
 import factory.ActorFactory
 import injection.Ctx
-import map.ILocationManager
+import map.IMapService
 import story.conversation.InkConversation
 import story.fact.Contexts
 import story.fact.Facts
@@ -32,7 +32,7 @@ class StoryHelper {
 	companion object {
 		val factsOfTheWorld by lazy { Ctx.context.inject<FactsOfTheWorld>() }
 		val actorFactory by lazy { Ctx.context.inject<ActorFactory>() }
-		val mapManager by lazy { Ctx.context.inject<ILocationManager>() }
+		val mapManager by lazy { Ctx.context.inject<IMapService>() }
 		val player by lazy { Ctx.context.inject<Player>() }
 
 		val mainStory by lazy {

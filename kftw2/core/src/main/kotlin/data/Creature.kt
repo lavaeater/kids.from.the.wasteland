@@ -3,8 +3,8 @@ package data
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
-import map.ILocationManager
-import map.LocationManager
+import map.IMapService
+import map.MapService
 import map.TileInstance
 import systems.toTile
 
@@ -59,7 +59,7 @@ class Creature(override val id: String,
   var foundY:Int = 0
   val range = 2
 
-  val mapManager = Ctx.context.inject<ILocationManager>()
+  val mapManager = Ctx.context.inject<IMapService>()
 
   fun log(message: String) {
     brainLog += "$name: $message\n"
@@ -68,7 +68,7 @@ class Creature(override val id: String,
 
   fun lostInterest() {
     state = NpcState.Searching
-    val terrainArr = LocationManager.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
+    val terrainArr = MapService.terrains.filterValues { it != desiredTileType && it != "rock" && it != "water" }.values.toTypedArray()
     val randomIndex = MathUtils.random(0, terrainArr.size - 1)
     desiredTileType = terrainArr[randomIndex]
     tileFound = false
