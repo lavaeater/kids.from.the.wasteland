@@ -14,5 +14,13 @@ class UsedTiles {
         fun get(code: String): Tile {
             return tiles[code]!!
         }
+
+        fun tileFor(priority: Int, tileType: String, subType: String, code: String) :Tile {
+            val tileCode = "$priority$tileType$subType$code$code${true}" //Only temporary, actually
+            if(!tileExists(tileCode))
+                put(tileCode, Tile(priority, tileType, subType, code, code))
+
+            return get(tileCode)
+        }
     }
 }

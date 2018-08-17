@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Circle
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.lavaeater.kftw.util.SimplexNoise
 import injection.Ctx
 import ktx.math.vec3
 import managers.GameManager
+import util.SimplexNoise
 import kotlin.math.absoluteValue
 
 fun String.toShortCode() : String {
@@ -77,6 +77,10 @@ class DirectionPos {
 
 fun Int.getMinMax(range:Int) : Pair<Int, Int> {
     return Pair(this - range, this + range)
+}
+
+fun getNoiseValue(x:Float, y:Float): Int {
+  return (getNoiseNotAbs(x, y, 1.0, 0.5, 0.25) * 100).toInt()
 }
 
 fun getTilePriorityFromNoise(x: Float, y: Float, tileX:Int, tileY:Int): Int {
