@@ -160,7 +160,7 @@ class MapService(
         'g' to "grass",
         'r' to "rock")
 
-    val neiborMap = mapOf(
+    val neighbourMap = mapOf(
         Pair(0, 1) to "north",
         Pair(1, 1) to "northeast",
         Pair(1, 0) to "east",
@@ -170,7 +170,7 @@ class MapService(
         Pair(-1, 0) to "west",
         Pair(-1, 1) to "northwest")
 
-    val directions = neiborMap.map { it.value to it.key }.toMap()
+    val directions = neighbourMap.map { it.value to it.key }.toMap()
     val noExtraSprites = hashSetOf<String>()
     val scale = 80.0f
   }

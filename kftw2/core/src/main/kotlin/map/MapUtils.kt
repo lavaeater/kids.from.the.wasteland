@@ -300,7 +300,7 @@ fun TileInstance.neighbourToIs(direction:String, tileType:String, tilesByKey: Ma
 
 fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
   var noAreOfType = false
-  for(coord in MapService.neiborMap.keys) {
+  for(coord in MapService.neighbourMap.keys) {
     val key = Pair(this.x + coord.first, this.y + coord.second)
     noAreOfType = noAreOfType || (tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType == tileType)
   }
@@ -309,7 +309,7 @@ fun TileInstance.atLEastOneNeighbourIs(tileType: String, tilesByKey: Map<Pair<In
 
 fun TileInstance.noNeighboursAre(tileType: String, tilesByKey: Map<Pair<Int, Int>, TileInstance>) :Boolean {
   var noAreOfType = true
-  for(coord in MapService.neiborMap.keys) {
+  for(coord in MapService.neighbourMap.keys) {
     val key = Pair(this.x + coord.first, this.y + coord.second)
     noAreOfType = noAreOfType && tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
   }
@@ -321,7 +321,7 @@ fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pai
   var containsCount = 0
   for(tileType in tileTypes) {
     var hasAllAsNeighbours = false
-    for(coord in MapService.neiborMap.keys) {
+    for(coord in MapService.neighbourMap.keys) {
       val key = Pair(this.x + coord.first, this.y + coord.second)
       hasAllAsNeighbours = hasAllAsNeighbours || tilesByKey.containsKey(key) && tilesByKey[key]!!.tile.tileType != tileType
     }
@@ -333,7 +333,7 @@ fun TileInstance.hasBothAsNeighbours(tileTypes: Set<String>, tilesByKey: Map<Pai
 
 fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
   var allAreOfType = true
-  for(coord in MapService.neiborMap.keys) {
+  for(coord in MapService.neighbourMap.keys) {
     val x = this.x + coord.first - offsetX
     val y = this.y + coord.second - offsetY
     if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
@@ -347,7 +347,7 @@ fun TileInstance.allNeighboursAre(tileType: String, tiles: Array<Array<TileInsta
 
 fun TileInstance.atMostNAreOfType(tileType: String, n:Int, tiles: Array<Array<TileInstance>>, offsetX : Int, offsetY:Int) : Boolean {
   var count = 0
-  for(coord in MapService.neiborMap.keys) {
+  for(coord in MapService.neighbourMap.keys) {
     val x = this.x + coord.first - offsetX
     val y = this.y + coord.second - offsetY
     if(x < tiles.size - 1 && x > 0 && y < tiles[x].size - 1 && y > 0) {
