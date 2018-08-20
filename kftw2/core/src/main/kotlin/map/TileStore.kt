@@ -26,9 +26,13 @@ abstract class TileStoreBase(val lowerBoundX: Int, val columns: Int, val lowerBo
     override fun getYIndex(y: Int): Int {
         return y - offsetY
     }
+
+    abstract val allTiles : Array<TileInstance>
 }
 
 class TileStore(lowerBoundX: Int, columns: Int, lowerBoundY: Int, rows: Int, val tiles: Array<Array<TileInstance>>) : TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
+
+    override val allTiles: Array<TileInstance> get() = emptyArray<TileInstance>()
 
     override fun getTile(x: Int, y: Int): TileInstance {
         val xIndex = getXIndex(x)
@@ -48,14 +52,13 @@ class FlatTileStore(lowerBoundX: Int,
                     columns: Int,
                     lowerBoundY: Int,
                     rows: Int,
-                    tiles: Array<Array<TileInstance>>) :
+                    tiles: Array<TileInstance>) :
     TileStoreBase(lowerBoundX, columns, lowerBoundY, rows) {
     val size = columns * rows
-    val flatTiles = Array(size, {
-        val column = it.rem(columns)
-        val row = it / columns
-        return@Array tiles[column][row]
-    })
+    val flatTiles = tiles
+
+    override val allTiles: Array<TileInstance>
+        get() = flatTiles
 
     override fun getTile(x: Int, y: Int): TileInstance {
         val xIndex = getXIndex(x)

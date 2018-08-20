@@ -13,7 +13,7 @@ import Assets
  * A cool refactoring - a map should start with having 0,0 in the actual middle of that chunk, ie
  * on 31,31 - so that a smaller location only needs ONE chunk. This is probably trivial to fix.
  */
-class TileMap(private val chunkSize: Int = 64,
+class TileMap(val chunkSize: Int = 64,
               private val tileGenerator: TileGenerator) {
 
     private val upperBound = chunkSize - 1
@@ -32,20 +32,35 @@ class TileMap(private val chunkSize: Int = 64,
         return getTileStoreLowerBounds(lowerBoundX, lowerBoundY)
     }
 
+    /**
+     *
+     */
+    fun loadStores(stores: List<TileStoreBase>) {
+        tileStores.clear()
+        tileStores.addAll(stores)
+    }
+
+    fun getStores() : List<TileStoreBase> {
+        return tileStores.toList()
+    }
+
     private fun getTileStoreLowerBounds(lX: Int, lY: Int): ITileStore {
         var store = tileStores.firstOrNull {
             lX in it.xBounds &&
                 lY in it.yBounds
         }
         if (store == null) {
-            store = FlatTileStore(
+            store =
+                FlatTileStore(
 		            lX,
 		            chunkSize,
 		            lY,
 		            chunkSize,
 		            tileGenerator.generateTilesForRange(
 				            lX..(lX + upperBound),
-				            lY..(lY + upperBound)))
+				            lY..(lY + upperBound))
+                    .toFlatArray())
+
             tileStores.add(store)
         }
         return store

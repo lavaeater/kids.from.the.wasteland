@@ -1,5 +1,8 @@
 package map
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
+
 /**
  * The tile manager class could be one
  * entry point for the concept of multiple maps.
@@ -32,6 +35,120 @@ package map
  * "dungeon_1" to mutableSetOf<TileStoreBase>
  *   and so on.
  */
+
+interface IStorage<T> {
+    fun store(name:String, storeThis: T)
+    fun load(name: String) : T
+}
+
+class LocationStorage : IStorage<Location> {
+
+    fun getFileName(name:String):String {
+        return "location_$name.txt"
+    }
+
+    override fun store(name: String, storeThis: Location) {
+        /*
+        What to do with the name?
+
+        Well, save that shit!
+         */
+
+        val fileName = getFileName(name)
+        //Can we save?
+        if(Gdx.files.isLocalStorageAvailable) {
+            if(Gdx.files.local(fileName).exists()) {
+                Gdx.files.local(fileName).delete()
+            }
+
+            val handle = Gdx.files.local(fileName)
+            //always overwrite...
+
+            //First, write info pertaining to the Location, basic shit.
+            //Then, check if it actually has a map.
+            //If a map exists, create sections for every tilestore in the map, sort of...
+
+            handle.writeLine("name:${storeThis.name}")
+            handle.writeLine("hasmap:${storeThis.hasMap}")
+            if(storeThis.hasMap) {
+                val map = storeThis.tileMap!!
+                handle.writeLine("beginmap")
+                handle.writeLine("chunksize:${map.chunkSize}")
+
+                val stores = map.getStores()
+
+                for (store in stores)
+                    writeStore(store, handle)
+                handle.writeLine("endmap")
+            }
+        }
+    }
+
+    fun writeStore(tileStore: TileStoreBase, handle: FileHandle) {
+        handle.writeLine("beginstore")
+        handle.writeLine("x:${tileStore.lowerBoundX}")
+        handle.writeLine("y:${tileStore.lowerBoundY}")
+        var column = 0
+        for (tile in tileStore.allTiles) {
+            if(column == tileStore.columns ) {
+                column = 0
+                handle.writeString(System.lineSeparator(), true)
+            } else if(column != 0) {
+                handle.writeString(",", true)
+            }
+            handle.writeString("${tile.toPersistence()}", true)
+            column++
+        }
+        handle.writeLine("endstore")
+    }
+
+    override fun load(name: String): Location {
+        val fileName = getFileName(name)
+        val location = Location(name)
+        if(Gdx.files.isLocalStorageAvailable) {
+            if(Gdx.files.local(fileName).exists()) {
+                val lines = Gdx.files.local(fileName).readString().split(System.lineSeparator())
+                if(name == lines.getValueForKey("name")) {
+                    //Lets check if this location has a map!
+                    if(lines.getValueForKey("hasmap").toBoolean()) {
+                        val mapLines = lines.getLinesBetweenKeys("beginmap", "endmap")
+                        if(mapLines.any()) {
+                            val chunkSize = mapLines.getValueForKey("chunksize").toInt()
+                            val linesPerStore = chunkSize + 2 //two extra lines for start and end
+                            val numberOfStores = mapLines.size / chunkSize
+                            for(i in 1..numberOfStores) {
+                            }
+                        }
+
+
+                    }
+                }
+                }
+            }
+        return location
+    }
+}
+
+fun List<String>.getValueAt(index:Int) : String {
+    return this[index].substringAfter(":")
+}
+
+fun List<String>.getValueForKey(key:String) : String {
+    return this.first { it.contains("$key")}.substringAfter(":")
+}
+
+fun List<String>.getLinesBetweenKeys(startKey:String, stopKey:String, startIndex: Int = 0) : List<String> {
+    val subList = this.subList(startIndex, this.lastIndex)
+    val startIndex = subList.indexOfFirst { it.contains(startKey) }
+    val stopIndex = subList.indexOfFirst { it.contains(stopKey) }
+    return subList.subList(startIndex + 1, stopIndex - 1)
+}
+
+
+fun FileHandle.writeLine(line:String) {
+    this.writeString("line${System.lineSeparator()}", true)
+}
+
 open class Location(val name:String,
                     val parentLocation: Location? = null,
                     val subLocations: MutableSet<Location> = mutableSetOf()) {

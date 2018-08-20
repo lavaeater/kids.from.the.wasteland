@@ -34,6 +34,10 @@ fun TileInstance.persist() : PersistedTile {
   return PersistedTile(tile.priority, tile.tileType, tile.subType, tile.code, tile.shortCode, seen)
 }
 
+fun TileInstance.toPersistence() : String {
+  return "${tile.code}|$x|$y|${tile.priority}|${tile.tileType}|${tile.subType}|${tile.shortCode}|${seen}"
+}
+
 fun PersistedTile.tile() : Tile {
   return Tile(priority, tileType, subType, code, shortCode, false)
 }

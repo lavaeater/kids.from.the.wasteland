@@ -47,7 +47,7 @@ class TileManager(private val chunkSize:Int = 100) {
                 chunkSize,
                 lY,
                 chunkSize,
-                currentAlgorithm(lX..(lX + upperBound), lY..(lY + upperBound)))
+                currentAlgorithm(lX..(lX + upperBound), lY..(lY + upperBound)).toFlatArray())
             currentTileStores.add(store)
         }
         return store

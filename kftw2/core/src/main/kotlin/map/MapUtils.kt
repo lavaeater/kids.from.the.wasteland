@@ -377,3 +377,17 @@ fun List<TileInstance>.blink(blink: Boolean) {
     t.blinking = blink
   }
 }
+
+fun Array<Array<TileInstance>>.toFlatArray() : Array<TileInstance> {
+  if(this.isEmpty() || this.first().isEmpty()) return emptyArray()
+
+  val columns = this.size
+  val rows = this.first().size
+
+  val size = rows * columns
+  return Array(size) {
+    val column = it.rem(columns)
+    val row = it / columns
+    return@Array this[column][row]
+  }
+}
