@@ -196,3 +196,7 @@ class StoryHelper {
 		}
 	}
 }
+
+infix fun Story.add(story: Story) {
+
+}
