@@ -3,7 +3,6 @@ package map
 import Assets
 import com.badlogic.gdx.math.MathUtils
 import injection.Ctx
-import org.omg.PortableInterceptor.LOCATION_FORWARD
 
 /**
  * The tile manager class could be one
@@ -152,7 +151,7 @@ class TileManager(private val chunkSize:Int = 100) {
         val size = columns * rows
         var row = 0
         var column = 0
-        return Array(size, { _ ->
+        return Array(size) { _ ->
 
             val x = xBounds.start + column
             val y = yBounds.start + row
@@ -174,7 +173,7 @@ class TileManager(private val chunkSize:Int = 100) {
             }
 
             return@Array currentTile
-        })
+        }
     }
 
     private fun getOrNull(x: Int, y: Int, tiles: Array<Array<Tile>>? = null): Tile? {
@@ -257,28 +256,30 @@ class TileManager(private val chunkSize:Int = 100) {
 
         val bigempty =
             Array(
-                xBounds.count(),
-                { x ->
-                    Array(
-                        yBounds.count(),
-                        { y ->
-                            tileFor(3,
-                                MapManager.terrains[3]!!,
-                            "center${MathUtils.random.nextInt(3) + 1}",
-                                MapManager.shortTerrains[3]!!)
-                                .getInstance(
-                                    xBounds.elementAt(x),
-                                    yBounds.elementAt(y))
-                        })})
+                xBounds.count()
+            ) { x ->
+                Array(
+                    yBounds.count()
+                ) { y ->
+                    tileFor(3,
+                        MapManager.terrains[3]!!,
+                        "center${MathUtils.random.nextInt(3) + 1}",
+                        MapManager.shortTerrains[3]!!)
+                        .getInstance(
+                            xBounds.elementAt(x),
+                            yBounds.elementAt(y))
+                }
+            }
 
         val tiles = Array(
-            xBounds.count(),
-            { x ->
-                Array(
-                    yBounds.count(),
-                    { y ->
-                        bigempty[x][y].tile
-                    })})
+            xBounds.count()
+        ) { x ->
+            Array(
+                yBounds.count()
+            ) { y ->
+                bigempty[x][y].tile
+            }
+        }
 
         for (column in bigempty.withIndex())
             for(row in column.value.withIndex()) {
@@ -590,19 +591,20 @@ class TileManager(private val chunkSize:Int = 100) {
 
         val bigempty =
             Array(
-                xBounds.count(),
-                { x ->
-                    Array(
-                        yBounds.count(),
-                        { y ->
-                            tileFor(1,
-                                MapManager.terrains[1]!!,
-                                "center${MathUtils.random.nextInt(3) + 1}",
-                                MapManager.shortTerrains[1]!!)
-                                .getInstance(
-                                    xBounds.elementAt(x),
-                                    yBounds.elementAt(y))
-                        })})
+                xBounds.count()
+            ) { x ->
+                Array(
+                    yBounds.count()
+                ) { y ->
+                    tileFor(1,
+                        MapManager.terrains[1]!!,
+                        "center${MathUtils.random.nextInt(3) + 1}",
+                        MapManager.shortTerrains[1]!!)
+                        .getInstance(
+                            xBounds.elementAt(x),
+                            yBounds.elementAt(y))
+                }
+            }
 
         /**
          * Now for some action!
@@ -648,12 +650,6 @@ class TileManager(private val chunkSize:Int = 100) {
                 tries++
             }
         }
-        //Try to place it by getting the tiles that are within the same bounds
-
-//        for(x in xBounds.withIndex())
-//            for(y in yBounds.withIndex()) {
-//
-//            }
         /**
          * 2. make mazes
          * 3. connect rooms
@@ -666,13 +662,14 @@ class TileManager(private val chunkSize:Int = 100) {
 
     private fun generateTilesForRange(xBounds: IntRange, yBounds: IntRange): Array<Array<TileInstance>> {
         val tiles = Array(
-            xBounds.count(),
-            { x ->
-                Array(yBounds.count(),
-                    { y ->
-                        generateTile(
-                            xBounds.elementAt(x),
-                            yBounds.elementAt(y)) }) })
+            xBounds.count()
+        ) { x ->
+            Array(yBounds.count()
+            ) { y ->
+                generateTile(
+                    xBounds.elementAt(x),
+                    yBounds.elementAt(y)) }
+        }
 
         /*
         The extra sprite functionality must be adressed here, I guess? How do we manage
