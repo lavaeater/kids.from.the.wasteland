@@ -16,25 +16,61 @@ abstract class Node<T>(val blackBoard:T) : INode {
   }
 }
 
-abstract class LeafNode<T>(blackBoard: T):Node<T>(blackBoard)
+class ActionNode<T>(blackBoard: T, val action: ()-> NodeStatus):Node<T>(blackBoard) {
+  override fun run(): NodeStatus {
+    return action()
+  }
+}
 
 abstract class CompositeNode<T>(blackBoard: T, val children: List<INode>) : Node<T>(blackBoard)
 
 abstract class DecoratorNode<T>(blackBoard: T, val child: INode):Node<T>(blackBoard)
 
-class Sequence<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(blackBoard, children) {
-  var currentIndex = 0;
-
+class InverterNode<T>(blackBoard: T, child: INode):DecoratorNode<T>(blackBoard, child) {
   override fun run(): NodeStatus {
-    if( currentIndex in 0 until children.size) {
-      currentIndex++ //increment AFTER execution!
+    val status = child.run()
+    when(status){
+      NodeStatus.SUCCESS -> return NodeStatus.FAILURE
+      NodeStatus.FAILURE -> return NodeStatus.SUCCESS
+      else -> return status
     }
-    return NodeStatus.RUNNING
+  }
+}
+
+class BehaviorTree<T>(blackBoard: T, val rootNode: INode): Node<T>(blackBoard) {
+  override fun init() {
+    super.init()
+  }
+
+  /**
+   *
+   */
+  override fun run(): NodeStatus {
+    return rootNode.run()
+  }
+}
+
+class Sequence<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(blackBoard, children) {
+  override fun run(): NodeStatus {
+    //Run all children in sequence until one fails... but what if one is running? Figure out later...
+
+    for (child in children) {
+      val status = child.run()
+      if(status != NodeStatus.SUCCESS)
+        return status
+    }
+    return NodeStatus.SUCCESS
   }
 }
 
 class Selector<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(blackBoard, children) {
   override fun run(): NodeStatus {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    for (child in children) {
+      val status = child.run()
+      if(status != NodeStatus.FAILURE)
+        return status
+    }
+
+    return NodeStatus.FAILURE
   }
 }
