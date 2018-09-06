@@ -1,5 +1,7 @@
 package com.lavaeater.kftw.behaviortree
 
+import util.Builder
+
 enum class NodeStatus {
   FAILURE,
   SUCCESS,
@@ -11,22 +13,22 @@ interface INode {
   fun run(): NodeStatus
 }
 
-abstract class Node<T>(val blackBoard:T) : INode {
+abstract class Node(val name: String) : INode {
   override fun init() {
   }
 }
 
-class ActionNode<T>(blackBoard: T, val action: ()-> NodeStatus):Node<T>(blackBoard) {
+class ActionNode<T>(name:String, val blackBoard: T, val action: (blackBoard:T)-> NodeStatus):Node(name) {
   override fun run(): NodeStatus {
-    return action()
+    return action(blackBoard)
   }
 }
 
-abstract class CompositeNode<T>(blackBoard: T, val children: List<INode>) : Node<T>(blackBoard)
+abstract class CompositeNode(name:String, val children: List<INode>) : Node(name)
 
-abstract class DecoratorNode<T>(blackBoard: T, val child: INode):Node<T>(blackBoard)
+abstract class DecoratorNode(name:String, val child: INode):Node(name)
 
-class InverterNode<T>(blackBoard: T, child: INode):DecoratorNode<T>(blackBoard, child) {
+class InverterNode(name:String, child: INode):DecoratorNode(name, child) {
   override fun run(): NodeStatus {
     val status = child.run()
     when(status){
@@ -37,20 +39,22 @@ class InverterNode<T>(blackBoard: T, child: INode):DecoratorNode<T>(blackBoard, 
   }
 }
 
-class BehaviorTree<T>(blackBoard: T, val rootNode: INode): Node<T>(blackBoard) {
-  override fun init() {
-    super.init()
-  }
-
+class BehaviorTree<T>(val name:String, val interval:Long = -1L, val rootNode: INode) {
+  var accruedTime = 0L
+  val useInterval get() = interval != -1L
   /**
    *
    */
-  override fun run(): NodeStatus {
-    return rootNode.run()
+  fun tick(delta: Long) {
+    accruedTime += delta
+    if((useInterval && accruedTime > interval) || (!useInterval)) {
+      rootNode.run() //Ignore result?
+      accruedTime = 0L
+    }
   }
 }
 
-class Sequence<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(blackBoard, children) {
+class Sequence(name:String, children: List<INode>) : CompositeNode(name, children) {
   override fun run(): NodeStatus {
     //Run all children in sequence until one fails... but what if one is running? Figure out later...
 
@@ -63,7 +67,7 @@ class Sequence<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(black
   }
 }
 
-class Selector<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(blackBoard, children) {
+class Selector(name:String, children: List<INode>) : CompositeNode(name, children) {
   override fun run(): NodeStatus {
     for (child in children) {
       val status = child.run()
@@ -73,4 +77,93 @@ class Selector<T>(blackBoard: T, children: List<INode>) : CompositeNode<T>(black
 
     return NodeStatus.FAILURE
   }
+}
+
+class BehaviorTreeBuilder<T:Any>:Builder<BehaviorTree<T>> {
+  var name: String = ""
+  var interval: Long = -1
+  lateinit var rootNode : INode
+
+  override fun build(): BehaviorTree<T>  = BehaviorTree<T>(name, interval, rootNode)
+}
+
+class SelectorBuilder<T: Any> : Builder<Selector> {
+  var name: String = ""
+  private val children = mutableListOf<INode>()
+
+  fun addSequence(block: Builder<Sequence>.() -> Unit) = children.addSequence<T>(block)
+  fun addSelector(block: Builder<Selector>.() -> Unit) = children.addSelector<T>(block)
+  fun addInverter(block: Builder<InverterNode>.() -> Unit) = children.addInverter<T>(block)
+  fun addAction(blackboard:T, block: Builder<ActionNode<T>>.() -> Unit) = children.addAction(block)
+
+  override fun build(): Selector = Selector(name, children)
+}
+
+class SequenceBuilder<T: Any> : Builder<Sequence> {
+  var name: String = ""
+  private val children = mutableListOf<INode>()
+
+  fun addSequence(block: Builder<Sequence>.() -> Unit) = children.addSequence<T>(block)
+  fun addSelector(block: Builder<Selector>.() -> Unit) = children.addSelector<T>(block)
+  fun addInverter(block: Builder<InverterNode>.() -> Unit) = children.addInverter<T>(block)
+  fun addAction(blackboard:T, block: Builder<ActionNode<T>>.() -> Unit) = children.addAction(block)
+
+  override fun build(): Sequence = Sequence(name, children)
+}
+
+class ActionBuilder<T:Any>() : Builder<ActionNode<T>> {
+  var name: String = ""
+  lateinit var blackBoard: T
+  lateinit var action : (blackBoard:T) -> NodeStatus
+
+  override fun build(): ActionNode<T> = ActionNode(name, blackBoard, action)
+}
+
+class InverterBuilder<T: Any> : Builder<InverterNode> {
+  var name: String = ""
+  lateinit private var child : INode
+
+  fun sequence(block: Builder<Sequence>.() -> Unit) {
+    child = SequenceBuilder<T>()
+        .apply(block)
+        .build()
+  }
+
+  fun selector(block: Builder<Selector>.() -> Unit) {
+    child = SelectorBuilder<T>()
+        .apply(block)
+        .build()
+  }
+
+  fun action(blackBoard:T, block: Builder<ActionNode<T>>.() -> Unit) {
+    child = ActionBuilder<T>()
+        .apply(block)
+        .build()
+  }
+
+  override fun build(): InverterNode = InverterNode(name, child)
+}
+
+fun <T: Any> MutableList<INode>.addSequence(block: Builder<Sequence>.() -> Unit) {
+  this.add(SequenceBuilder<T>()
+          .apply(block)
+          .build())
+}
+
+fun <T: Any> MutableList<INode>.addSelector(block: Builder<Selector>.() -> Unit) {
+  this.add(SelectorBuilder<T>()
+      .apply(block)
+      .build())
+}
+
+fun <T: Any> MutableList<INode>.addInverter(block: Builder<InverterNode>.() -> Unit) {
+  this.add(InverterBuilder<T>()
+      .apply(block)
+      .build())
+}
+
+fun <T:Any> MutableList<INode>.addAction(block: Builder<ActionNode<T>>.() -> Unit) {
+  this.add(ActionBuilder<T>()
+      .apply(block)
+      .build())
 }

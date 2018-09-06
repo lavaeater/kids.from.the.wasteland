@@ -8,6 +8,7 @@ import story.conversation.*
 import story.fact.IFact
 import story.rule.Criterion
 import story.rule.Rule
+import util.Builder
 
 class ConsequenceBuilder: Builder<Consequence> {
 	var apply: () -> Unit = {}
@@ -33,10 +34,6 @@ class ConversationConsequenceBuilder : Builder<ConversationConsequence> {
 	}
 }
 
-interface Builder<out T> {
-	fun build(): T
-}
-
 class StoryBuilder: Builder<Story> {
 	var name = ""
 	var initializer : () -> Unit = {}
@@ -54,7 +51,7 @@ class StoryBuilder: Builder<Story> {
 	override fun build() : Story = Story(name, rules, consequence, initializer)
 }
 
-class CriteriaBuilder:Builder<Criterion> {
+class CriteriaBuilder: Builder<Criterion> {
 	var key = ""
 	private var matcher: (IFact<*>) -> Boolean = { false }
 	/*
@@ -67,7 +64,7 @@ class CriteriaBuilder:Builder<Criterion> {
 
 }
 
-class RuleBuilder:Builder<Rule> {
+class RuleBuilder: Builder<Rule> {
 	var name = ""
 	private val criteria = mutableSetOf<Criterion>()
 	var consequence: Consequence? = null

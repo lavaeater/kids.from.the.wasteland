@@ -69,35 +69,52 @@ class BehaviorTests {
 	}
 
 	@Test
-	fun getArea_returnsCorrectValues() {
-		val dungeon = Dungeon(100,100)
+	fun setArea_isCorrect() {
+		val dungeon = Dungeon(10,10)
 
 		println(dungeon)
 
-		dungeon.setArea(1, 1, 10, 10, 1)
+		dungeon.setArea(1, 1, 5, 5, 1)
+
+		println()
+		println(dungeon)
+	}
+
+	@Test
+	fun getArea_returnsCorrectValues() {
+		val dungeon = Dungeon(10,10)
+
+		println(dungeon)
+
+		dungeon.setArea(1, 1, 5, 5, 1)
 
 		println()
 		println(dungeon)
 
-		val area = dungeon.getArea(1, 1, 10, 10)
+		val area = dungeon.getArea(1, 1, 5, 5)
 
-		assertEquals(100, area.size)
+		println(area.prettyPrint(5))
+
+		assertEquals(25, area.size)
 		assertTrue { area.all { it == 1 } }
 	}
 }
 
-class Dungeon(val height:Int, val width: Int) {
+data class Room(val x:Int, val y:Int, val width: Int, val height: Int) //maybe not necessary
+
+data class Dungeon(val height:Int, val width: Int) {
 	val mapStorage = IntArray(height * width) { 0 } //init all zero array for dungeon
 	val yBounds = 0 until height
 	val xBounds = 0 until width
 
 	fun getArea(x:Int, y:Int, w:Int, h: Int) : IntArray {
 		//check bounds?
+		var startIndex = indexFor(x, y) //Hmm...
 
-
-		val startIndex = indexFor(x, y) //Hmm...
-		val endIndex = startIndex + w*h
-		return mapStorage.sliceArray(startIndex until endIndex)
+		return IntArray(w*h) {
+			var currentIndex = startIndex + it / w
+			mapStorage[currentIndex]
+		}
 	}
 
 	fun indexFor(x: Int, y: Int):Int {
@@ -122,17 +139,16 @@ class Dungeon(val height:Int, val width: Int) {
 	fun setArea(x: Int, y: Int, w: Int, h: Int, value: Int) {
 		if (!isAreaInBounds(x,y,w,h)) throw IndexOutOfBoundsException()
 
-		val startIndex = indexFor(x,y)
+		var startIndex = indexFor(x,y)
 		//then loop over h rows and set w to value! Otherwise wrong...
 
 		for(row in 0 until h) {
-			
+			for(column in 0 until w) {
+				val currentIndex = startIndex + column
+				mapStorage[currentIndex] = value
+			}
+			startIndex += width
 		}
-
-
-		val endIndex = startIndex + w * h
-		for (index in startIndex until endIndex)
-			mapStorage[index] = value
 	}
 
 	fun isAreaOfType(x: Int, y: Int, w: Int, h: Int, type: Int) : Boolean {
