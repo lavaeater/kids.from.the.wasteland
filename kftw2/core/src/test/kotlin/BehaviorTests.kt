@@ -220,6 +220,46 @@ class BehaviorTests {
 	}
 
 	@Test
+	fun bt_selector_first_success_is_run() {
+		//Arrange
+		var data = 0
+		val bt = behaviorTree<Int> {
+			name = "tree"
+			selectorRoot {
+				name = "selector"
+				addAction {
+					name = "fail"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.FAILURE } //Not this one
+				}
+				addAction {
+					name = "success"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.SUCCESS
+					} //this one
+				}
+				addAction {
+					name = "fail2"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.SUCCESS
+					}
+				}
+			}
+		}
+		//Act
+		bt.tick(1L)
+		//Assert
+		assertTrue { bt.LastStatus == NodeStatus.SUCCESS }
+		assertEquals(2, data)
+	}
+
+	@Test
 	fun treeTesting() {
 		val sideRange = 25..100
 		var dungeonCreated = false
