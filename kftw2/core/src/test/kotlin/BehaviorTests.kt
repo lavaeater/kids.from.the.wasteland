@@ -232,7 +232,7 @@ class BehaviorTests {
 					blackBoard = data
 					action = {
 						data++
-						NodeStatus.FAILURE } //Not this one
+						NodeStatus.FAILURE } //Won't stop here
 				}
 				addAction {
 					name = "success"
@@ -240,7 +240,7 @@ class BehaviorTests {
 					action = {
 						data++
 						NodeStatus.SUCCESS
-					} //this one
+					} //Won't continue to next one
 				}
 				addAction {
 					name = "fail2"
@@ -258,6 +258,8 @@ class BehaviorTests {
 		assertTrue { bt.LastStatus == NodeStatus.SUCCESS }
 		assertEquals(2, data)
 	}
+
+
 
 	@Test
 	fun treeTesting() {
@@ -343,6 +345,22 @@ class BehaviorTests {
 	}
 }
 
+class DungeonBuilder {
+	/*
+	Just a bag of data and methods to help with building a
+	dungeon using a behavior tree
+	 */
+
+	var dungeon = Dungeon(1,1)
+	val dungeonInitialized :Boolean get() = dungeon.width != 1 && dungeon.height != 1
+
+	fun initializeDungeon(sideRange: IntRange = 10..100) {
+		if(!dungeonInitialized)
+			dungeon = Dungeon(
+					MathUtils.random(sideRange.start, sideRange.endInclusive),
+					MathUtils.random(sideRange.start, sideRange.endInclusive))
+	}
+}
 
 
 data class Room(val x:Int, val y:Int, val width: Int, val height: Int) //maybe not necessary
