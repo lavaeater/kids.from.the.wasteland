@@ -104,6 +104,28 @@ class BehaviorTests {
 	}
 
 	@Test
+	fun bt_inverter_inverts() {
+
+		//Arrange
+		val bt = behaviorTree<Int> {
+			name = "test"
+			inverterRoot {
+				name = "always succeeds"
+				addAction {
+					name = "fail"
+					blackBoard = 0
+					action = { NodeStatus.FAILURE}
+				}
+			}
+		}
+		//Act
+		bt.tick(1L) //We don't use intervals in tests so...
+
+		//Assert
+		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+	}
+
+	@Test
 	fun bt_tick_interval_works() {
 		//Arrange
 		var data = 0
@@ -130,7 +152,7 @@ class BehaviorTests {
 	}
 
 	@Test
-	fun bt_sequence() {
+	fun bt_sequence_succeeds_lastStatus_success() {
 		//Arrange
 		var data = 0
 		val bt = behaviorTree<Int> {
@@ -145,24 +167,56 @@ class BehaviorTests {
 						NodeStatus.SUCCESS
 					}
 				}
-			}
-			actionRoot {
-				name = "always succeeds"
-				blackBoard = data
-				action = { NodeStatus.SUCCESS }
+				addAction {
+					name = "wut"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.SUCCESS
+					}
+				}
 			}
 		}
 		//Act
-		bt.tick(2L) //We don't use intervals in tests so...
+		bt.tick(1L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.NONE, bt.LastStatus)
-
-		bt.tick(2L)
 		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+		assertEquals(2, data)
+	}
 
-		bt.tick(1L)
-		assertEquals(NodeStatus.NONE, bt.LastStatus)
+	@Test
+	fun bt_sequence_fails_lastStatus_fail() {
+		//Arrange
+		var data = 0
+		val bt = behaviorTree<Int> {
+			name = "test"
+			sequenceRoot {
+				name = "sequence"
+				addAction {
+					name = "wut"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.FAILURE
+					}
+				}
+				addAction {
+					name = "wut"
+					blackBoard = data
+					action = {
+						data++
+						NodeStatus.SUCCESS
+					}
+				}
+			}
+		}
+		//Act
+		bt.tick(1L) //We don't use intervals in tests so...
+
+		//Assert
+		assertEquals(NodeStatus.FAILURE, bt.LastStatus)
+		assertEquals(1, data)
 	}
 
 	@Test
