@@ -3,6 +3,7 @@ package com.lavaeater.kftw.behaviortree
 import util.Builder
 
 enum class NodeStatus {
+  NONE,
   FAILURE,
   SUCCESS,
   RUNNING
@@ -39,18 +40,23 @@ class InverterNode(name:String, child: INode):DecoratorNode(name, child) {
   }
 }
 
-class BehaviorTree<T>(val name:String, val interval:Long = -1L, val rootNode: INode) {
-  var accruedTime = 0L
-  val useInterval get() = interval != -1L
+class BehaviorTree(val name:String, private val interval:Long = -1L, private val rootNode: INode) {
+  private var accruedTime = 0L
+  private val useInterval get() = interval != -1L
+  private var lastStatus = NodeStatus.NONE
+  val LastStatus : NodeStatus get() = lastStatus
   /**
    *
    */
-  fun tick(delta: Long) {
+  fun tick(delta: Long) : NodeStatus {
     accruedTime += delta
     if((useInterval && accruedTime > interval) || (!useInterval)) {
-      rootNode.run() //Ignore result?
       accruedTime = 0L
+      lastStatus = rootNode.run() //Ignore result?
+    } else {
+      lastStatus = NodeStatus.NONE
     }
+    return NodeStatus.RUNNING
   }
 }
 
@@ -79,18 +85,30 @@ class Selector(name:String, children: List<INode>) : CompositeNode(name, childre
   }
 }
 
-fun <T: Any> behaviorTree(block: BehaviorTreeBuilder<T>.() -> Unit) : BehaviorTree<T> = BehaviorTreeBuilder<T>().apply { block }.build()
-fun <T: Any> sequence(block: SequenceBuilder<T>.() -> Unit): Sequence = SequenceBuilder<T>().apply { block }.build()
-fun <T: Any> selector(block: SelectorBuilder<T>.() -> Unit): Selector= SelectorBuilder<T>().apply { block }.build()
-fun <T: Any> action(block: ActionBuilder<T>.() -> Unit): ActionNode<T> = ActionBuilder<T>().apply { block }.build()
-fun <T: Any> invert(block: InverterBuilder<T>.() -> Unit): InverterNode = InverterBuilder<T>().apply { block }.build()
+fun <T: Any> behaviorTree(block: BehaviorTreeBuilder<T>.() -> Unit) : BehaviorTree = BehaviorTreeBuilder<T>().apply { block() }.build()
+fun <T: Any> sequence(block: SequenceBuilder<T>.() -> Unit): Sequence = SequenceBuilder<T>().apply { block() }.build()
+fun <T: Any> selector(block: SelectorBuilder<T>.() -> Unit): Selector= SelectorBuilder<T>().apply { block() }.build()
+fun <T: Any> action(block: ActionBuilder<T>.() -> Unit): ActionNode<T> = ActionBuilder<T>().apply { block() }.build()
+fun <T: Any> invert(block: InverterBuilder<T>.() -> Unit): InverterNode = InverterBuilder<T>().apply { block() }.build()
 
-class BehaviorTreeBuilder<T:Any>:Builder<BehaviorTree<T>> {
+class BehaviorTreeBuilder<T:Any>:Builder<BehaviorTree> {
   var name: String = ""
   var interval: Long = -1
   lateinit var rootNode : INode
 
-  override fun build(): BehaviorTree<T>  = BehaviorTree(name, interval, rootNode)
+  fun sequenceRoot(block: SequenceBuilder<T>.() -> Unit) {
+    rootNode = sequence(block)
+  }
+  fun selectorRoot(block: SelectorBuilder<T>.() -> Unit) {
+    rootNode = selector(block)
+  }
+  fun inverterRoot(block: InverterBuilder<T>.() -> Unit) {
+    rootNode = invert(block)
+  }
+  fun actionRoot(block: ActionBuilder<T>.() -> Unit) {
+    rootNode = action(block)
+  }
+  override fun build(): BehaviorTree  = BehaviorTree(name, interval, rootNode)
 }
 
 class SelectorBuilder<T: Any> : Builder<Selector> {
@@ -140,6 +158,6 @@ fun <T: Any> MutableList<INode>.addSequence(block: SequenceBuilder<T>.() -> Unit
 
 fun <T: Any> MutableList<INode>.addSelector(block: SelectorBuilder<T>.() -> Unit) = selector(block)
 
-fun <T: Any> MutableList<INode>.addInverter(block: InverterBuilder<T>.() -> Unit) = invert<T> { block }
+fun <T: Any> MutableList<INode>.addInverter(block: InverterBuilder<T>.() -> Unit) = invert(block)
 
-fun <T:Any> MutableList<INode>.addAction(block: ActionBuilder<T>.() -> Unit) = action<T> { block }
+fun <T:Any> MutableList<INode>.addAction(block: ActionBuilder<T>.() -> Unit) = action(block)
