@@ -79,22 +79,28 @@ class Selector(name:String, children: List<INode>) : CompositeNode(name, childre
   }
 }
 
+fun <T: Any> behaviorTree(block: BehaviorTreeBuilder<T>.() -> Unit) : BehaviorTree<T> = BehaviorTreeBuilder<T>().apply { block }.build()
+fun <T: Any> sequence(block: SequenceBuilder<T>.() -> Unit): Sequence = SequenceBuilder<T>().apply { block }.build()
+fun <T: Any> selector(block: SelectorBuilder<T>.() -> Unit): Selector= SelectorBuilder<T>().apply { block }.build()
+fun <T: Any> action(block: ActionBuilder<T>.() -> Unit): ActionNode<T> = ActionBuilder<T>().apply { block }.build()
+fun <T: Any> invert(block: InverterBuilder<T>.() -> Unit): InverterNode = InverterBuilder<T>().apply { block }.build()
+
 class BehaviorTreeBuilder<T:Any>:Builder<BehaviorTree<T>> {
   var name: String = ""
   var interval: Long = -1
   lateinit var rootNode : INode
 
-  override fun build(): BehaviorTree<T>  = BehaviorTree<T>(name, interval, rootNode)
+  override fun build(): BehaviorTree<T>  = BehaviorTree(name, interval, rootNode)
 }
 
 class SelectorBuilder<T: Any> : Builder<Selector> {
   var name: String = ""
   private val children = mutableListOf<INode>()
 
-  fun addSequence(block: Builder<Sequence>.() -> Unit) = children.addSequence<T>(block)
-  fun addSelector(block: Builder<Selector>.() -> Unit) = children.addSelector<T>(block)
-  fun addInverter(block: Builder<InverterNode>.() -> Unit) = children.addInverter<T>(block)
-  fun addAction(blackboard:T, block: Builder<ActionNode<T>>.() -> Unit) = children.addAction(block)
+  fun addSequence(block: SequenceBuilder<T>.() -> Unit) = children.addSequence(block)
+  fun addSelector(block: SelectorBuilder<T>.() -> Unit) = children.addSelector(block)
+  fun addInverter(block: InverterBuilder<T>.() -> Unit) = children.addInverter(block)
+  fun addAction(block: ActionBuilder<T>.() -> Unit) = children.addAction(block)
 
   override fun build(): Selector = Selector(name, children)
 }
@@ -103,10 +109,10 @@ class SequenceBuilder<T: Any> : Builder<Sequence> {
   var name: String = ""
   private val children = mutableListOf<INode>()
 
-  fun addSequence(block: Builder<Sequence>.() -> Unit) = children.addSequence<T>(block)
-  fun addSelector(block: Builder<Selector>.() -> Unit) = children.addSelector<T>(block)
-  fun addInverter(block: Builder<InverterNode>.() -> Unit) = children.addInverter<T>(block)
-  fun addAction(blackboard:T, block: Builder<ActionNode<T>>.() -> Unit) = children.addAction(block)
+  fun addSequence(block: SequenceBuilder<T>.() -> Unit) = children.addSequence(block)
+  fun addSelector(block: SelectorBuilder<T>.() -> Unit) = children.addSelector(block)
+  fun addInverter(block: InverterBuilder<T>.() -> Unit) = children.addInverter(block)
+  fun addAction(block: ActionBuilder<T>.() -> Unit) = children.addAction(block)
 
   override fun build(): Sequence = Sequence(name, children)
 }
@@ -123,47 +129,17 @@ class InverterBuilder<T: Any> : Builder<InverterNode> {
   var name: String = ""
   lateinit private var child : INode
 
-  fun sequence(block: Builder<Sequence>.() -> Unit) {
-    child = SequenceBuilder<T>()
-        .apply(block)
-        .build()
-  }
-
-  fun selector(block: Builder<Selector>.() -> Unit) {
-    child = SelectorBuilder<T>()
-        .apply(block)
-        .build()
-  }
-
-  fun action(blackBoard:T, block: Builder<ActionNode<T>>.() -> Unit) {
-    child = ActionBuilder<T>()
-        .apply(block)
-        .build()
-  }
+  fun addSequence(block: SequenceBuilder<T>.() -> Unit) = sequence(block)
+  fun addSelector(block: SelectorBuilder<T>.() -> Unit) = selector(block)
+  fun addAction(block: ActionBuilder<T>.() -> Unit) = action(block)
 
   override fun build(): InverterNode = InverterNode(name, child)
 }
 
-fun <T: Any> MutableList<INode>.addSequence(block: Builder<Sequence>.() -> Unit) {
-  this.add(SequenceBuilder<T>()
-          .apply(block)
-          .build())
-}
+fun <T: Any> MutableList<INode>.addSequence(block: SequenceBuilder<T>.() -> Unit) = sequence(block)
 
-fun <T: Any> MutableList<INode>.addSelector(block: Builder<Selector>.() -> Unit) {
-  this.add(SelectorBuilder<T>()
-      .apply(block)
-      .build())
-}
+fun <T: Any> MutableList<INode>.addSelector(block: SelectorBuilder<T>.() -> Unit) = selector(block)
 
-fun <T: Any> MutableList<INode>.addInverter(block: Builder<InverterNode>.() -> Unit) {
-  this.add(InverterBuilder<T>()
-      .apply(block)
-      .build())
-}
+fun <T: Any> MutableList<INode>.addInverter(block: InverterBuilder<T>.() -> Unit) = invert<T> { block }
 
-fun <T:Any> MutableList<INode>.addAction(block: Builder<ActionNode<T>>.() -> Unit) {
-  this.add(ActionBuilder<T>()
-      .apply(block)
-      .build())
-}
+fun <T:Any> MutableList<INode>.addAction(block: ActionBuilder<T>.() -> Unit) = action<T> { block }

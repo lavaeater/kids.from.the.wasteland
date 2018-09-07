@@ -1,4 +1,6 @@
 
+import com.badlogic.gdx.math.MathUtils
+import com.lavaeater.kftw.behaviortree.*
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -78,6 +80,37 @@ class BehaviorTests {
 
 		println()
 		println(dungeon)
+	}
+
+	@Test
+	fun treeTesting() {
+		val side = 10
+		val dungeon = Dungeon(side, side)
+		val bt = behaviorTree<Dungeon> {
+			name = "root"
+			rootNode = sequence<Dungeon> {
+				name = "builddungeon"
+					addSelector {
+						name = "putrooms"
+						addAction {
+							name = "put a room"
+							blackBoard = dungeon
+							action = {
+								val width = MathUtils.random(2,5)
+								val height= MathUtils.random(2,5)
+								val x = MathUtils.random(0, side - 1 - width)
+								val y = MathUtils.random(0, side - 1 - height)
+								if(it.isAreaOfType(x, y, width, height, 0)) {
+									it.setArea(x, y, width, height, 1)
+									NodeStatus.SUCCESS
+								} else {
+									NodeStatus.FAILURE
+								}
+							}
+					}
+				}
+			}
+		}
 	}
 
 	@Test
