@@ -43,8 +43,7 @@ class InverterNode(name:String, child: INode):DecoratorNode(name, child) {
 class BehaviorTree(val name:String, private val interval:Long = -1L, private val rootNode: INode) {
   private var accruedTime = 0L
   private val useInterval get() = interval != -1L
-  private var lastStatus = NodeStatus.NONE
-  val LastStatus : NodeStatus get() = lastStatus
+  var lastStatus = NodeStatus.NONE
   /**
    *
    */
@@ -52,9 +51,9 @@ class BehaviorTree(val name:String, private val interval:Long = -1L, private val
     accruedTime += delta
     if((useInterval && accruedTime > interval) || (!useInterval)) {
       accruedTime = 0L
-      lastStatus = rootNode.run() //Ignore result?
+      this.lastStatus = rootNode.run() //Ignore result?
     } else {
-      lastStatus = NodeStatus.NONE
+      this.lastStatus = NodeStatus.NONE
     }
     return NodeStatus.RUNNING
   }

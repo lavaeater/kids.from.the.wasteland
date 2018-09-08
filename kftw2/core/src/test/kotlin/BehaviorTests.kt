@@ -100,7 +100,7 @@ class BehaviorTests {
 		bt.tick(1L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
 	}
 
 	@Test
@@ -122,7 +122,7 @@ class BehaviorTests {
 		bt.tick(1L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
 	}
 
 	@Test
@@ -142,13 +142,13 @@ class BehaviorTests {
 		bt.tick(2L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.NONE, bt.LastStatus)
+		assertEquals(NodeStatus.NONE, bt.lastStatus)
 
 		bt.tick(2L)
-		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
 
 		bt.tick(1L)
-		assertEquals(NodeStatus.NONE, bt.LastStatus)
+		assertEquals(NodeStatus.NONE, bt.lastStatus)
 	}
 
 	@Test
@@ -181,7 +181,7 @@ class BehaviorTests {
 		bt.tick(1L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.SUCCESS, bt.LastStatus)
+		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
 		assertEquals(2, data)
 	}
 
@@ -215,7 +215,7 @@ class BehaviorTests {
 		bt.tick(1L) //We don't use intervals in tests so...
 
 		//Assert
-		assertEquals(NodeStatus.FAILURE, bt.LastStatus)
+		assertEquals(NodeStatus.FAILURE, bt.lastStatus)
 		assertEquals(1, data)
 	}
 
@@ -255,8 +255,50 @@ class BehaviorTests {
 		//Act
 		bt.tick(1L)
 		//Assert
-		assertTrue { bt.LastStatus == NodeStatus.SUCCESS }
+		assertTrue { bt.lastStatus == NodeStatus.SUCCESS }
 		assertEquals(2, data)
+	}
+
+	@Test
+	fun dungeonBuilder_dungeonInitializedOnlyOnce() {
+		//arrange
+		val dungeonBuilder = DungeonBuilder()
+		val bt = behaviorTree<DungeonBuilder> {
+			name = "dungeonBuilder"
+			selectorRoot {
+				name = "rootselector"
+				addAction {
+					name = "create dungeon, run once"
+					blackBoard = dungeonBuilder
+					action = {
+						if(it.dungeonInitialized)
+							NodeStatus.FAILURE
+						else {
+							it.initializeDungeon(15..50)
+							NodeStatus.SUCCESS
+						}
+					}
+				}
+				addSequence {
+					name = "add a bunch of rooms"
+					addAction {
+						it.
+					}
+				}
+			}
+		}
+
+		//act
+		//assert
+		bt.tick(1L) //This creates a random dungeon
+		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
+
+		//act
+		//assert
+		bt.tick(1L)
+		assertEquals(NodeStatus.FAILURE, bt.lastStatus)
+
+		println(dungeonBuilder.dungeon)
 	}
 
 
@@ -396,7 +438,7 @@ data class Dungeon(val height:Int, val width: Int) {
 	}
 
 	override fun toString(): String {
-    return mapStorage.prettyPrint(width)
+    return "width: $width, height: $height" + System.lineSeparator() + mapStorage.prettyPrint(width)
 	}
 
 	/**
