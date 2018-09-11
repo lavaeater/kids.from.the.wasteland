@@ -84,6 +84,49 @@ class BehaviorTests {
 	}
 
 	@Test
+	fun canWe_returnsTrue() {
+		val dungeon = Dungeon(10,10)
+
+		//In the above example, a room with 2,2,6,6 should fit.
+
+		println(dungeon)
+
+		val canWe = dungeon.canWePlaceRoom(Room(2,2,6,6))
+
+		assertTrue { canWe }
+	}
+
+	@Test
+	fun canWe_returnsFalse() {
+		val dungeon = Dungeon(24,24)
+
+
+		val roomFit = Room(2,2,6,6)
+
+		val roomDoesNotFit = Room(8,2,5,5)
+		val roomDoesNotFit2 = Room(2,8,5,5)
+
+		val canWe = dungeon.canWePlaceRoom(roomFit)
+
+		assertTrue { canWe }
+
+		dungeon.placeRoom(roomFit)
+
+		val room2 = dungeon.canWePlaceRoom(roomDoesNotFit)
+
+		val room3 = dungeon.canWePlaceRoom(roomDoesNotFit2)
+
+		dungeon.placeRoom(roomDoesNotFit)
+
+		dungeon.placeRoom(roomDoesNotFit2)
+
+		println(dungeon)
+
+		assertFalse { room2 }
+		assertFalse { room3 }
+	}
+
+	@Test
 	fun bt_tick_lastStatus_SUCCESS() {
 
 		//Arrange
@@ -263,7 +306,9 @@ class BehaviorTests {
 	fun dungeonBuilder_dungeonInitializedOnlyOnce() {
 		//arrange
 		val dungeonBuilder = DungeonBuilder()
-		val bt = behaviorTree<DungeonBuilder> {
+
+
+				val bt = behaviorTree<DungeonBuilder> {
 			name = "dungeonBuilder"
 			selectorRoot {
 				name = "rootselector"
@@ -274,7 +319,7 @@ class BehaviorTests {
 						if(it.dungeonInitialized)
 							NodeStatus.FAILURE
 						else {
-							it.initializeDungeon(15..50)
+							it.initializeDungeon(50..100)
 							NodeStatus.SUCCESS
 						}
 					}
@@ -301,99 +346,22 @@ class BehaviorTests {
 						name = "place a room"
 						blackBoard = dungeonBuilder
 						action = {
+							if(it.needsRoom)
+								it.createRandomRoom()
 
-							it.dungeon.tryToPlaceRoom()
+							it.tryToPlaceRoom(it.currentRoom)
 							NodeStatus.SUCCESS
-						}
-					}
-					addAction {
-						name = "check status and update counters"
-						blackBoard = dungeonBuilder
-						action = {
-
 						}
 					}
 				}
 			}
 		}
 
-		//act
-		//assert
-		bt.tick(1L) //This creates a random dungeon
-		assertEquals(NodeStatus.SUCCESS, bt.lastStatus)
-
-		//act
-		//assert
-		bt.tick(1L)
-		assertEquals(NodeStatus.FAILURE, bt.lastStatus)
+		while (bt.lastStatus != NodeStatus.FAILURE) {
+			bt.tick(1L)
+		}
 
 		println(dungeonBuilder.dungeon)
-	}
-
-
-
-	@Test
-	fun treeTesting() {
-		val sideRange = 25..100
-		var dungeonCreated = false
-
-		val minNumberOfRooms = 3
-		val numberOfRooms = minNumberOfRooms..MathUtils.random(4, 15)
-		val roomSize = 2..5
-		val triesPerRoom = 5
-		var currentRoomTries = 0
-		var currentRoomIndex = minNumberOfRooms - 1
-		var currentRoom = Room(0, 0, 1, 1)
-		var dungeon = Dungeon(1,1)
-
-
-
-
-//		val bt = behaviorTree<Dungeon> {
-//			name = "root"
-//			rootNode = selector<Dungeon> {
-//				name = "builddungeon"
-//					addSequence {
-//						name = "create dungeon"
-//						addAction {
-//							action = { if(dungeonCreated) NodeStatus.FAILURE else  {
-//								dungeon = Dungeon(MathUtils.random(sideRange.start, sideRange.endInclusive),
-//										MathUtils.random(sideRange.start, sideRange.endInclusive))
-//								NodeStatus.SUCCESS
-//							}}
-//						}
-//					}
-//					addSequence {
-//						name = "putrooms"
-//						addAction {
-//							name = "put a room"
-//							blackBoard = dungeon
-//							action = {
-//								if(currentRoomTries == 0) {
-//									val width = MathUtils.random(2, 5)
-//									val height = MathUtils.random(2, 5)
-//
-//									val x = MathUtils.random(0, side - 1 - width)
-//									val y = MathUtils.random(0, side - 1 - height)
-//
-//									currentRoom = Room(x, y, width, height)
-//								}
-//
-//								if(it.tryToPlaceRoom(currentRoom)) {
-//									NodeStatus.SUCCESS
-//								} else if(currentRoomTries < triesPerRoom) {
-//									currentRoomTries++
-//										NodeStatus.RUNNING
-//								} else {
-//									currentRoomTries = 0
-//									NodeStatus.FAILURE
-//
-//								}
-//							}
-//					}
-//				}
-//			}
-//		}
 	}
 
 	@Test
@@ -432,26 +400,52 @@ class DungeonBuilder {
 	 */
 
 	var dungeon = Dungeon(1,1)
-	val numberOfRoomsRange = 3..15
-	val numberOfRooms = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
+	private val numberOfRoomsRange = 25..50
+	var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
 
-	val roomSizeRange = 2..5
-	val triesPerRoom = 5
+	val roomSizeRange = 4..8
+	val triesPerRoom = 10
 
 	var currentRoom = Room(0,0,0,0)
 
 	fun createRandomRoom() {
-		currentRoom = Room()
+		//1. Create width and height for room
+		val width = MathUtils.random(roomSizeRange.start, roomSizeRange.endInclusive)
+		val height = MathUtils.random(roomSizeRange.start, roomSizeRange.endInclusive)
+		//2. Find reasonable bounds for x and y:
+		val x = MathUtils.random(1, dungeon.width - 1 - width)
+		val y = MathUtils.random(1, dungeon.height - 1 - height)
+
+		currentRoom = Room(x,y, width, height)
 	}
 
-	val dungeonInitialized :Boolean get() = dungeon.width != 1 && dungeon.height != 1
-	var roomPlacingDone = false
+	fun resetRoom() {
+		currentRoom = Room(0,0,0,0)
+	}
+
+	val dungeonInitialized get() = dungeon.width != 1 && dungeon.height != 1
+	val needsRoom get() = (currentRoom.width == 0 && currentRoom.height == 0) || currentRoomTries >= triesPerRoom
+
+	val roomPlacingDone get() = numberOfRoomsLeftToPlace == 0
 
 	fun initializeDungeon(sideRange: IntRange = 10..100) {
 		if(!dungeonInitialized) {
 			dungeon = Dungeon(
 					MathUtils.random(sideRange.start, sideRange.endInclusive),
 					MathUtils.random(sideRange.start, sideRange.endInclusive))
+		}
+	}
+
+	private var currentRoomTries = 0
+
+	fun tryToPlaceRoom(room: Room) {
+		currentRoomTries++
+		if(dungeon.tryToPlaceRoom(room)) {
+			resetRoom()
+			currentRoomTries = 0
+			numberOfRoomsLeftToPlace--
+		} else if(currentRoomTries >= triesPerRoom){
+			numberOfRoomsLeftToPlace--
 		}
 	}
 }
@@ -527,8 +521,15 @@ data class Dungeon(val height:Int, val width: Int) {
 		return getArea(x,y, w, h).all { it == type }
 	}
 
-	fun canWePlaceRoom(room: Room) : Boolean {
-		return isAreaOfType(room.x, room.y, room.width, room.height, 1)
+	fun canWePlaceRoom(room: Room, spacing: Int = 2) : Boolean {
+		//Spacing is the number of space OUTSIDE a room that we want
+
+		val x = room.x - spacing
+		val y = room.y - spacing
+		val w = room.width + 2 * spacing
+		val h = room.height + 2 * spacing
+
+		return (x > -1 && y > -1) && isAreaOfType(x,y,w, h, 0)
 	}
 
 	fun isAreaInBounds(x: Int, y: Int, w: Int, h: Int): Boolean {
