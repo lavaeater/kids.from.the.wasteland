@@ -280,9 +280,38 @@ class BehaviorTests {
 					}
 				}
 				addSequence {
+					/*
+					WHen does this sequence fail?
+
+					Well, it fails when it finally is
+					DONE with adding rooms, this means that some criteria
+					are fulfilled. So the FIRST action checks this condition!
+					 */
 					name = "add a bunch of rooms"
 					addAction {
-						it.
+						name = "check status"
+						blackBoard = dungeonBuilder
+						action = {
+							if(it.roomPlacingDone) NodeStatus.FAILURE else {
+								NodeStatus.SUCCESS
+							}
+						}
+					}
+					addAction {
+						name = "place a room"
+						blackBoard = dungeonBuilder
+						action = {
+
+							it.dungeon.tryToPlaceRoom()
+							NodeStatus.SUCCESS
+						}
+					}
+					addAction {
+						name = "check status and update counters"
+						blackBoard = dungeonBuilder
+						action = {
+
+						}
 					}
 				}
 			}
@@ -391,16 +420,39 @@ class DungeonBuilder {
 	/*
 	Just a bag of data and methods to help with building a
 	dungeon using a behavior tree
+
+	Lets just make all this params part of the object from the start,
+	no need to put them in the constructor just yet.
+
+		var currentRoomTries = 0
+		var currentRoomIndex = minNumberOfRooms - 1
+		var currentRoom = Room(0, 0, 1, 1)
+		var dungeon = Dungeon(1,1)
+
 	 */
 
 	var dungeon = Dungeon(1,1)
+	val numberOfRoomsRange = 3..15
+	val numberOfRooms = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
+
+	val roomSizeRange = 2..5
+	val triesPerRoom = 5
+
+	var currentRoom = Room(0,0,0,0)
+
+	fun createRandomRoom() {
+		currentRoom = Room()
+	}
+
 	val dungeonInitialized :Boolean get() = dungeon.width != 1 && dungeon.height != 1
+	var roomPlacingDone = false
 
 	fun initializeDungeon(sideRange: IntRange = 10..100) {
-		if(!dungeonInitialized)
+		if(!dungeonInitialized) {
 			dungeon = Dungeon(
 					MathUtils.random(sideRange.start, sideRange.endInclusive),
 					MathUtils.random(sideRange.start, sideRange.endInclusive))
+		}
 	}
 }
 
