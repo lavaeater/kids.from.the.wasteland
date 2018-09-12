@@ -8,6 +8,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class BehaviorTests {
@@ -40,12 +41,52 @@ class BehaviorTests {
 	}
 
 	@Test
+	fun indexFor_isCorrect() {
+		/*
+		We have issues with the indexfor methods etc.
+
+		They need robust tests.
+		 */
+		val dungeon = Dungeon(10,10)
+		//Indexes are easy here!
+		var x = 0
+		var y = 0
+
+
+	}
+
+	@Test
 	fun inBounds_IsCorrect() {
 		val dungeon = Dungeon(10,10)
-		assertTrue { dungeon.isAreaInBounds(2,2,4,4) }
+
 		assertTrue { dungeon.isAreaInBounds(0,0,10,10) }
 		assertFalse{ dungeon.isAreaInBounds(0,0,11,11) }
-		assertFalse{ dungeon.isAreaInBounds(-1,-1,5,5) }
+		assertFalse{ dungeon.isAreaInBounds(-1,-1,12,12) }
+	}
+
+	@Test
+	fun inBoundsTrue_getAreaWorks() {
+		val dungeon = Dungeon(4,4)
+
+		assertEquals(0, dungeon.xBounds.start)
+		assertEquals(3, dungeon.xBounds.endInclusive)
+		assertNotEquals(4, dungeon.xBounds.endInclusive)
+
+		assertEquals(0, dungeon.yBounds.start)
+		assertEquals(3, dungeon.xBounds.endInclusive)
+		assertNotEquals(4, dungeon.xBounds.endInclusive)
+
+		assertFalse { dungeon.isAreaInBounds(0,0,5,5) }
+
+		assertFalse { dungeon.canWePlaceRoom(Room(0,0,5,5)) }
+		assertTrue { dungeon.canWePlaceRoom(Room(0,0,4,4),0) }
+		assertFalse { dungeon.canWePlaceRoom(Room(1,1,3,3),1) }
+		assertTrue { dungeon.canWePlaceRoom(Room(1,1,2,2),1) }
+
+		assertTrue { dungeon.tryToPlaceRoom(Room(0,0,4,4), 1, 0) }
+
+		println(dungeon)
+
 	}
 
 	@Test
@@ -106,10 +147,9 @@ class BehaviorTests {
 		area = dungeon.getArea(x,y,w,h)
 		println(area.prettyPrint(w))
 
-//		area = dungeon.getArea(0,0,100,100)
-//		println(area.prettyPrint(100))
-//		println(dungeon)
-
+		area = dungeon.getArea(0,0,100,100)
+		println(area.prettyPrint(100))
+		println(dungeon)
 	}
 
 	@Test
@@ -384,7 +424,7 @@ class BehaviorTests {
 	}
 
 	@Test
-	fun dungeonBuilder_dungeonInitializedOnlyOnce() {
+	fun dungeonBuilder_buildADungeon() {
 		//arrange
 		val dungeonBuilder = DungeonBuilder()
 
@@ -481,11 +521,11 @@ class DungeonBuilder {
 	 */
 
 	var dungeon = Dungeon(1,1)
-	private val numberOfRoomsRange = 25..50
+	private val numberOfRoomsRange = 25..100
 	var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
 
-	val roomSizeRange = 4..8
-	val triesPerRoom = 10
+	val roomSizeRange = 5..20
+	val triesPerRoom = 20
 
 	var currentRoom = Room(0,0,0,0)
 
@@ -519,9 +559,9 @@ class DungeonBuilder {
 
 	private var currentRoomTries = 0
 
-	fun tryToPlaceRoom(room: Room) {
+	fun tryToPlaceRoom(room: Room, code: Int = 1, spacing: Int = 4) {
 		currentRoomTries++
-		if(dungeon.tryToPlaceRoom(room)) {
+		if(dungeon.tryToPlaceRoom(room, code, spacing)) {
 			resetRoom()
 			currentRoomTries = 0
 			numberOfRoomsLeftToPlace--
@@ -534,7 +574,7 @@ class DungeonBuilder {
 
 data class Room(val x:Int, val y:Int, val width: Int, val height: Int) //maybe not necessary
 
-data class Dungeon(val height:Int, val width: Int) {
+data class Dungeon(val width: Int, val height: Int) {
 	val mapStorage = IntArray(height * width) { 0 } //init all zero array for dungeon
 	val yBounds = 0 until height
 	val xBounds = 0 until width
@@ -565,9 +605,8 @@ data class Dungeon(val height:Int, val width: Int) {
 		 */
 
 		return IntArray(w*h) {
-			val currentX = x + it / w
+			val currentX = x + it / (w -1)
 			val currentY = y + it % w
-
 
 			getValue(currentX, currentY)
 		}
@@ -585,7 +624,8 @@ data class Dungeon(val height:Int, val width: Int) {
 	}
 
 	fun getValue(x: Int, y: Int) : Int {
-		return mapStorage[indexFor(x, y)]
+		val index = indexFor(x,y)
+		return mapStorage[index]
 	}
 
 	override fun toString(): String {
@@ -595,8 +635,8 @@ data class Dungeon(val height:Int, val width: Int) {
 	/**
 	 * returns true if we place it
 	 */
-	fun tryToPlaceRoom(room:Room, code:Int = 1):Boolean {
-		return if(canWePlaceRoom(room)) {
+	fun tryToPlaceRoom(room:Room, code:Int = 1, spacing: Int = 2):Boolean {
+		return if(canWePlaceRoom(room, spacing)) {
 			placeRoom(room, code)
 			true
 		}
@@ -635,7 +675,7 @@ data class Dungeon(val height:Int, val width: Int) {
 		val w = room.width + 2 * spacing
 		val h = room.height + 2 * spacing
 
-		return (x > -1 && y > -1) && isAreaOfType(x,y,w, h, 0)
+		return isAreaInBounds(x, y, w, h) && isAreaOfType(x,y,w, h, 0)
 	}
 
 	fun isAreaInBounds(x: Int, y: Int, w: Int, h: Int): Boolean {
