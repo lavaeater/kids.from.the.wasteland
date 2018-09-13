@@ -476,6 +476,7 @@ class BehaviorTests {
 								it.createRandomRoom()
 
 							it.tryToPlaceRoom(it.currentRoom)
+
 							NodeStatus.SUCCESS
 						}
 					}
@@ -526,11 +527,11 @@ class DungeonBuilder {
 	 */
 
 	var dungeon = Dungeon(1,1)
-	private val numberOfRoomsRange = 25..100
+	private val numberOfRoomsRange = 50..100
 	private var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
 
-	private val roomSizeRange = 5..20
-	private val triesPerRoom = 20
+	private val roomSizeRange = 3..10
+	private val triesPerRoom = 50
 
 	var currentRoom = Room(0,0,0,0)
 
@@ -566,12 +567,15 @@ class DungeonBuilder {
 
 	fun tryToPlaceRoom(room: Room, code: Int = 1, spacing: Int = 4) {
 		currentRoomTries++
-		if(dungeon.tryToPlaceRoom(room, code, spacing)) {
-			resetRoom()
-			currentRoomTries = 0
-			numberOfRoomsLeftToPlace--
-		} else if(currentRoomTries >= triesPerRoom){
-			numberOfRoomsLeftToPlace--
+		when {
+			dungeon.tryToPlaceRoom(room, code, spacing) -> {
+				resetRoom()
+				currentRoomTries = 0
+				numberOfRoomsLeftToPlace--
+			}
+			currentRoomTries >= triesPerRoom -> numberOfRoomsLeftToPlace--
+			else -> //Move the current room
+				currentRoom = currentRoom.copy(x = MathUtils.random(1, dungeon.width - 1 - currentRoom.width), y = MathUtils.random(1, dungeon.height - 1 - currentRoom.height))
 		}
 	}
 }
