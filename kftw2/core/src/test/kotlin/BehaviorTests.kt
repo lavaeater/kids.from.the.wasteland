@@ -428,6 +428,26 @@ class BehaviorTests {
 		assertEquals(2, data)
 	}
 
+
+	@Test
+	fun getArea_returnsCorrectValues() {
+		val dungeon = Dungeon(10,10)
+
+		println(dungeon)
+
+		dungeon.setArea(1, 1, 5, 5, 1)
+
+		println()
+		println(dungeon)
+
+		val area = dungeon.getArea(1, 1, 5, 5)
+
+		println(area.prettyPrint(5))
+
+		assertEquals(25, area.size)
+		assertTrue { area.all { it == 1 } }
+	}
+
 	@Test
 	fun dungeonBuilder_buildADungeon() {
 		//arrange
@@ -481,10 +501,12 @@ class BehaviorTests {
 						}
 					}
 				}
-				addSequence {
-					name = "add Corridors"
-
-				}
+//				addSequence {
+//					name = "carve corridors"
+//					addAction {
+//						name = "find rock"
+//					}
+//				}
 			}
 		}
 
@@ -493,25 +515,6 @@ class BehaviorTests {
 		}
 
 		println(dungeonBuilder.dungeon)
-	}
-
-	@Test
-	fun getArea_returnsCorrectValues() {
-		val dungeon = Dungeon(10,10)
-
-		println(dungeon)
-
-		dungeon.setArea(1, 1, 5, 5, 1)
-
-		println()
-		println(dungeon)
-
-		val area = dungeon.getArea(1, 1, 5, 5)
-
-		println(area.prettyPrint(5))
-
-		assertEquals(25, area.size)
-		assertTrue { area.all { it == 1 } }
 	}
 }
 
@@ -530,12 +533,12 @@ class DungeonBuilder {
 
 	 */
 
-	var dungeon = Dungeon(1,1)
+	var dungeon = DungeonOfTiles(1,1)
 	private val numberOfRoomsRange = 50..100
 	private var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
 
 	private val roomSizeRange = 3..10
-	private val triesPerRoom = 50
+	private val triesPerRoom = 20
 
 	var currentRoom = Room(0,0,0,0)
 
@@ -555,42 +558,63 @@ class DungeonBuilder {
 	}
 
 	val dungeonInitialized get() = dungeon.width != 1 && dungeon.height != 1
-	val needsRoom get() = (currentRoom.width == 0 && currentRoom.height == 0) || currentRoomTries >= triesPerRoom
+	val needsRoom get() = (currentRoom.width == 0 && currentRoom.height == 0) || currentRoomTries > triesPerRoom
 
 	val roomPlacingDone get() = numberOfRoomsLeftToPlace == 0
 
 	fun initializeDungeon(sideRange: IntRange = 10..100) {
 		if(!dungeonInitialized) {
-			dungeon = Dungeon(
+			dungeon = DungeonOfTiles(
 					MathUtils.random(sideRange.start, sideRange.endInclusive),
 					MathUtils.random(sideRange.start, sideRange.endInclusive))
 		}
 	}
 
 	private var currentRoomTries = 0
+	private var totalTries = 0
 
-	fun tryToPlaceRoom(room: Room, code: Int = 1, spacing: Int = 4) {
+	fun tryToPlaceRoom(room: Room, code: Int = 1, spacing: Int = 3) {
 		currentRoomTries++
-		when {
-			dungeon.tryToPlaceRoom(room, code, spacing) -> {
-				resetRoom()
-				currentRoomTries = 0
-				numberOfRoomsLeftToPlace--
-			}
-			currentRoomTries >= triesPerRoom -> numberOfRoomsLeftToPlace--
-			else -> //Move the current room
-				currentRoom = currentRoom.copy(x = MathUtils.random(1, dungeon.width - 1 - currentRoom.width), y = MathUtils.random(1, dungeon.height - 1 - currentRoom.height))
+		totalTries++
+
+		if(currentRoomTries > triesPerRoom || dungeon.tryToPlaceRoom(room, code, spacing)) {
+			resetRoom()
+			currentRoomTries = 0
+			numberOfRoomsLeftToPlace--
+		} else {
+			currentRoom = currentRoom.copy(x = MathUtils.random(spacing, dungeon.width - spacing - currentRoom.width), y = MathUtils.random(spacing, dungeon.height - spacing - currentRoom.height))
 		}
 	}
 }
 
 
-data class Room(val x:Int, val y:Int, val width: Int, val height: Int) //maybe not necessary
+data class Room(val x:Int, val y:Int, val width: Int, val height: Int) {
+	val xBounds = x until x + width
+	val yBounds = y until y + width
+}
 
-data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = false) {
-	val mapStorage = IntArray(height * width) { if(counterFlag) it else 0 } //init all zero array for dungeon
+data class DungeonTile(val x: Int = 0, val y: Int = 0, var type: Int = -1)
+
+data class DungeonOfTiles(var width: Int, val height: Int) {
 	val yBounds = 0 until height
 	val xBounds = 0 until width
+	private val rooms = mutableSetOf<Room>() //Rooms caan't be the same so...
+	val defaultTile = DungeonTile()
+	val mapStorage = Array<DungeonTile>(height * width) {
+		defaultTile
+	}
+
+	init {
+	  //Init the dungeon properly...
+		for(x in xBounds)
+			for(y in yBounds) {
+				mapStorage[indexFor(x, y)] = DungeonTile(x, y, 0)
+			}
+	}
+
+	fun indexFor(x: Int, y: Int):Int {
+		return y * width + x
+	}
 
 	fun getArea(xPos:Int, yPos:Int, w:Int, h: Int) : IntArray {
 		val area = IntArray(w * h) {0}
@@ -604,8 +628,140 @@ data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = 
 		return area
 	}
 
+	fun setValue(x: Int, y: Int, value: Int) {
+		mapStorage[indexFor(x,y)].type = value
+	}
+
+	fun getValue(x: Int, y: Int) : Int {
+		val index = indexFor(x,y)
+		return mapStorage[index].type
+	}
+
+	/**
+	 * returns true if we place it
+	 */
+	fun tryToPlaceRoom(room:Room, code:Int = 1, spacing: Int = 2):Boolean {
+		return if(canWePlaceRoom(room, spacing)) {
+			placeRoom(room, code)
+			true
+		}
+		else false
+	}
+
+	fun placeRoom(room:Room, code: Int = 1) {
+		rooms.add(room)
+		setArea(room.x, room.y, room.width, room.height, code)
+	}
+
+	fun setArea(x: Int, y: Int, w: Int, h: Int, value: Int) {
+		if (!isAreaInBounds(x,y,w,h)) throw IndexOutOfBoundsException()
+
+		var startIndex = indexFor(x,y)
+		//then loop over h rows and set w to value! Otherwise wrong...
+
+		for(row in 0 until h) {
+			for(column in 0 until w) {
+				val currentIndex = startIndex + column
+				mapStorage[currentIndex].type = value
+			}
+			startIndex += width
+		}
+	}
+
+	private fun isAreaOfType(x: Int, y: Int, w: Int, h: Int, type: Int) : Boolean {
+		val area = getArea(x,y, w, h)
+		return area.all { it == type }
+	}
+
+	fun canWePlaceRoom(room: Room, spacing: Int = 2) : Boolean {
+		//Spacing is the number of space OUTSIDE a room that we want
+
+		val x = room.x - spacing
+		val y = room.y - spacing
+		val w = room.width + 2 * spacing
+		val h = room.height + 2 * spacing
+
+		return isAreaInBounds(x, y, w, h) && isAreaOfType(x,y,w, h, 0)
+	}
+
+	fun isAreaInBounds(x: Int, y: Int, w: Int, h: Int): Boolean {
+		return x in xBounds && y in yBounds && x + w - 1 in xBounds && y + h - 1 in yBounds
+	}
+
+	override fun toString(): String {
+		return "width: $width, height: $height" + System.lineSeparator() + mapStorage.map { it.type }.toIntArray().prettyPrint(width)
+	}
+
+	fun listAllCoordinatesOfType(type:Int = 0) : Array<Pair<Int, Int>> {
+		return mapStorage.filter { it.type == type }.map { Pair(it.x, it.y) }.toTypedArray()
+	}
+
+	fun isTileAndNeighboursOfType(x: Int, y: Int, type: Int): Boolean {
+		val coordinates = DirectionManager.transformCoordinates(x,y)
+		return if(isAreaInBounds(coordinates.first().first, coordinates.first().second, 3,3)) {
+			coordinates.map { mapStorage[indexFor(it.first,it.second)].type}.all { it == type }
+		}
+		else
+			false
+	}
+}
+
+enum class CD {
+	Northwest,
+	North,
+	Northeast,
+	West,
+	Center,
+	East,
+	Southwest,
+	South,
+	Southeast
+}
+
+class DirectionManager {
+	companion object {
+		val dirs = Array<Pair<Int,Int>>(9) {
+			when(it) {
+				0 -> Pair(-1,-1)
+				1 -> Pair(0,-1)
+				2 -> Pair(1,-1)
+				3 -> Pair(-1,0)
+				4 -> Pair(0,0)
+				5 -> Pair(1,0)
+				6 -> Pair(-1,1)
+				7 -> Pair(0,1)
+				8 -> Pair(1,1)
+				else -> Pair(100,100)
+			}
+		}
+
+		fun transformCoordinates(x: Int, y: Int) : Array<Pair<Int, Int>> {
+			return dirs.map { Pair(it.first + x, it.second + y) }.toTypedArray()
+		}
+	}
+
+}
+
+
+data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = false) {
+	val mapStorage = IntArray(height * width) { if(counterFlag) it else 0 } //init all zero array for dungeon
+	val yBounds = 0 until height
+	val xBounds = 0 until width
+
 	fun indexFor(x: Int, y: Int):Int {
 		return y * width + x
+	}
+
+	fun getArea(xPos:Int, yPos:Int, w:Int, h: Int) : IntArray {
+		val area = IntArray(w * h) {0}
+		var index = 0
+		for(x in xPos until xPos + w)
+			for(y in yPos until yPos + h) {
+				area[index] = getValue(x,y)
+				index++
+			}
+
+		return area
 	}
 
 	fun setValue(x: Int, y: Int, value: Int) {
@@ -632,7 +788,10 @@ data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = 
 		else false
 	}
 
+	private val rooms = mutableSetOf<Room>() //Rooms caan't be the same so...
+
 	fun placeRoom(room:Room, code: Int = 1) {
+		rooms.add(room)
 		setArea(room.x, room.y, room.width, room.height, code)
 	}
 
