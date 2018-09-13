@@ -481,6 +481,10 @@ class BehaviorTests {
 						}
 					}
 				}
+				addSequence {
+					name = "add Corridors"
+
+				}
 			}
 		}
 

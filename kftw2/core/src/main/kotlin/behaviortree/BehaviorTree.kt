@@ -14,7 +14,7 @@ interface INode {
   fun run(): NodeStatus
 }
 
-abstract class Node(val name: String) : INode {
+abstract class Node(val name: String, val doc: String = "") : INode {
   override fun init() {
   }
 }
