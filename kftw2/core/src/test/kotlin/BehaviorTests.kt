@@ -29,6 +29,12 @@ class BehaviorTests {
 	}
 
 	@Test
+	fun countersAndIndexes() {
+		val dungeon = Dungeon(5, 5, true)
+		println(dungeon)
+	}
+
+	@Test
 	fun createDungeon() {
 		val dungeon = Dungeon(100, 100)
 //		println(dungeon)
@@ -42,17 +48,16 @@ class BehaviorTests {
 
 	@Test
 	fun indexFor_isCorrect() {
-		/*
-		We have issues with the indexfor methods etc.
 
-		They need robust tests.
-		 */
-		val dungeon = Dungeon(10,10)
-		//Indexes are easy here!
-		var x = 0
-		var y = 0
+		val posX = 1
+		val posY = 1
 
+		val dungeon = Dungeon(4,4)
 
+		val startIndex = posY * dungeon.width + posX
+		val dungeonIndex = dungeon.indexFor(posX, posY)
+
+		assertEquals(startIndex, dungeonIndex)
 	}
 
 	@Test
@@ -185,7 +190,7 @@ class BehaviorTests {
 		var roomToPlace = Room(0,0,4,4)
 
 
-		var canWe = dungeon.canWePlaceRoom(roomToPlace)
+		val canWe = dungeon.canWePlaceRoom(roomToPlace)
 
 		assertFalse { canWe }
 
@@ -213,7 +218,7 @@ class BehaviorTests {
 
 		assertTrue { dungeon.tryToPlaceRoom(roomToPlace) }
 
-		var area = dungeon.getArea(roomToPlace.x - 2, roomToPlace.y - 2, roomToPlace.width + 4, roomToPlace.height + 4)
+		val area = dungeon.getArea(roomToPlace.x - 2, roomToPlace.y - 2, roomToPlace.width + 4, roomToPlace.height + 4)
 
 		println(area.prettyPrint(roomToPlace.width + 4))
 
@@ -251,7 +256,7 @@ class BehaviorTests {
 	fun bt_tick_lastStatus_SUCCESS() {
 
 		//Arrange
-		var data = 0
+		val data = 0
 		val bt = behaviorTree<Int> {
 			name = "test"
 			actionRoot {
@@ -292,7 +297,7 @@ class BehaviorTests {
 	@Test
 	fun bt_tick_interval_works() {
 		//Arrange
-		var data = 0
+		val data = 0
 		val bt = behaviorTree<Int> {
 			name = "test"
 			interval = 3L
@@ -522,10 +527,10 @@ class DungeonBuilder {
 
 	var dungeon = Dungeon(1,1)
 	private val numberOfRoomsRange = 25..100
-	var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
+	private var numberOfRoomsLeftToPlace = MathUtils.random(numberOfRoomsRange.start, numberOfRoomsRange.endInclusive)
 
-	val roomSizeRange = 5..20
-	val triesPerRoom = 20
+	private val roomSizeRange = 5..20
+	private val triesPerRoom = 20
 
 	var currentRoom = Room(0,0,0,0)
 
@@ -540,7 +545,7 @@ class DungeonBuilder {
 		currentRoom = Room(x,y, width, height)
 	}
 
-	fun resetRoom() {
+	private fun resetRoom() {
 		currentRoom = Room(0,0,0,0)
 	}
 
@@ -574,48 +579,24 @@ class DungeonBuilder {
 
 data class Room(val x:Int, val y:Int, val width: Int, val height: Int) //maybe not necessary
 
-data class Dungeon(val width: Int, val height: Int) {
-	val mapStorage = IntArray(height * width) { 0 } //init all zero array for dungeon
+data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = false) {
+	val mapStorage = IntArray(height * width) { if(counterFlag) it else 0 } //init all zero array for dungeon
 	val yBounds = 0 until height
 	val xBounds = 0 until width
 
-	fun getArea(x:Int, y:Int, w:Int, h: Int) : IntArray {
-		//check bounds?
+	fun getArea(xPos:Int, yPos:Int, w:Int, h: Int) : IntArray {
+		val area = IntArray(w * h) {0}
+		var index = 0
+		for(x in xPos until xPos + w)
+			for(y in yPos until yPos + h) {
+				area[index] = getValue(x,y)
+				index++
+			}
 
-		/*
-		This is so dumb. I am dumb.
-
-		Every coordinate in the area we want correspond to an index of the larger map
-
-		So... x = 2, y = 0 => startIndex 2
-		x = 2, y = 1 =>
-
-		NO, every index in the RESULTING array corresponds to a
-		coordinate in the actual dungeon.
-
-		So, if x = 2 and y = 2 then
-
-		i = 0 => 2,2
-		i = 1 => 3,2
-
-		and so on until i > w. if w = 4
-
-		i = 5 => 2,3
-
-		 */
-
-		return IntArray(w*h) {
-			val currentX = x + it / (w -1)
-			val currentY = y + it % w
-
-			getValue(currentX, currentY)
-		}
+		return area
 	}
 
 	fun indexFor(x: Int, y: Int):Int {
-
-		//Start index is... every row is y * width big. DAng, that's it.
-
 		return y * width + x
 	}
 
@@ -662,7 +643,7 @@ data class Dungeon(val width: Int, val height: Int) {
 		}
 	}
 
-	fun isAreaOfType(x: Int, y: Int, w: Int, h: Int, type: Int) : Boolean {
+	private fun isAreaOfType(x: Int, y: Int, w: Int, h: Int, type: Int) : Boolean {
 		val area = getArea(x,y, w, h)
 		return area.all { it == type }
 	}
@@ -690,7 +671,7 @@ fun IntArray.prettyPrint(width:Int) : String {
     if(tile.index % width == 0)
       sb.append(System.lineSeparator())
 
-    sb.append(tile.value)
+    sb.append(tile.value.toString(2))
   }
   return sb.toString()
 }
