@@ -501,12 +501,16 @@ class BehaviorTests {
 						}
 					}
 				}
-//				addSequence {
-//					name = "carve corridors"
-//					addAction {
-//						name = "find rock"
-//					}
-//				}
+				addSequence {
+					name = "carve corridors"
+					addAction {
+						name = "check if we are done"
+						blackBoard = dungeonBuilder
+						action = {
+							if(dungeonBuilder.mazeDone) NodeStatus.FAILURE else NodeStatus.SUCCESS
+						}
+					}
+				}
 			}
 		}
 
@@ -572,6 +576,7 @@ class DungeonBuilder {
 
 	private var currentRoomTries = 0
 	private var totalTries = 0
+	var mazeDone = false
 
 	fun tryToPlaceRoom(room: Room, code: Int = 1, spacing: Int = 3) {
 		currentRoomTries++
