@@ -21,67 +21,75 @@ class GraphTests {
 }
 
 interface Graph {
-	fun removeProperty(node: Node, property: String)
-	fun addOrUpdateProperty(node:Node, property:String, value:Any)
-	fun removeLabel(node: Node, label:String)
-	fun addLabel(node:Node, label:String)
-	fun addNode(node:Node)
-	fun removeNode(node:Node)
+	fun removeProperty(node: INode, property: String)
+	fun addOrUpdateProperty(node:INode, property:String, value:Any)
+	fun removeLabel(node: INode, label:String)
+	fun addLabel(node:INode, label:String)
+	fun addNode(node:INode)
+	fun removeNode(node:INode)
 	fun removeNode(id: Int)
-	fun addRelation(from:Node, to:Node, relation: String)
-	fun removeRelation(from:Node, to: Node, relation: String)
+	fun addRelation(from:INode, to:INode, relation: String)
+	fun removeRelation(from:INode, to: INode, relation: String)
 }
+
+
 
 class GraphEngine : Graph {
 	var nodeIdCounter = 0;
-	val nodes = mutableMapOf<Int,Node>()
-	val labels = mutableMapOf<String, MutableSet<Node>>()
-	val properties = mutableMapOf<String, MutableSet<Pair<Node, Any>>>()
-	val relationsToNodes = mutableMapOf<String, MutableSet<Pair<Node,Node>>>()
+	val nodes = mutableMapOf<Int,INode>()
+	val labels = mutableMapOf<String, MutableSet<INode>>()
+	val properties = mutableMapOf<String, MutableSet<Pair<INode, Any>>>()
 
-	override fun removeProperty(node: Node, property: String) {
+	val relations = mutableSetOf<IRelation>()
+
+	override fun removeProperty(node: INode, property: String) {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
-	override fun addOrUpdateProperty(node: Node, property: String, value: Any) {
+	override fun addOrUpdateProperty(node: INode, property: String, value: Any) {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
-	override fun removeLabel(node: Node, label: String) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun removeLabel(node: INode, label: String) {
+		labels.safeRemove(label, node)
 	}
 
-	override fun addLabel(node: Node, label: String) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	override fun addLabel(node: INode, label: String) {
+		labels.safeAdd(label, node)
+	}
+
+	override fun addRelation(from: INode, to: INode, relation: String) {
+		relations.add(Relation(from, to, relation))
+	}
+
+	override fun removeRelation(from: INode, to: INode, relation: String) {
+		val relationToRemove = relations.firstOrNull { it.from == from && it.to == to && it.name == relation }
+		if(relationToRemove != null)
+			removeRelation(relationToRemove)
 	}
 
 
-	override fun addRelation(from: Node, to: Node, relation: String) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-	override fun removeRelation(from: Node, to: Node, relation: String) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-	}
-
-
-	override fun addNode(node: Node) {
+	override fun addNode(node: INode) {
 		nodes[node.id] = node
-
 	}
 
-	override fun removeNode(node: Node) {
+	override fun removeNode(node: INode) {
 		removeNode(node.id)
 		removeAllLabels(node)
 		removeAllRelations(node)
 		removeAllProperties(node)
 	}
 
-	private fun removeAllRelations(node: Node) {
-		for(relation in node.relations)
+	private fun removeAllRelations(node: INode) {
+		for(relation in relations.filter { it.from == node || it.to == node })
+			removeRelation(relation)
 	}
 
-	private fun removeAllLabels(node: Node) {
+	private fun removeRelation(relation: IRelation) {
+		relations.remove(relation)
+	}
+
+	private fun removeAllLabels(node: INode) {
 		val ls = labels.filter { it.value.contains(node) }.keys
 		for (label in ls)
 			removeLabel(node, label)
@@ -92,19 +100,21 @@ class GraphEngine : Graph {
 	}
 }
 
-interface Node {
-	val id: Int
-	val labels: MutableSet<String>
-	val properties: MutableSet<Prop>
-	val relations: MutableMap<String, MutableSet<Node>>
+private fun MutableMap<String, MutableSet<INode>>.safeRemove(label: String, node: INode) {
+
 }
 
-interface Relation {
+interface INode {
 	val id: Int
-	val from: Node
-	val to: Node
-	val label: Label
 }
+
+interface IRelation {
+	val from: INode
+	val to: INode
+	val name: String
+}
+
+data class Relation(override val from: INode, override val to: INode, override val name: String) : IRelation
 
 interface Label {
 	val value: String
@@ -114,13 +124,19 @@ interface Prop {
 	val key: String
 }
 
-interface Property<T: Any> : Prop {
+interface IProperty<T: Any> : Prop {
 	override val key: String
 	var value: T
 }
 
-interface NumberProperty<T: Number> : Property<T>
+fun MutableMap<String, MutableSet<INode>>.safeAdd(key:String, node: INode) {
+	if(!this.containsKey(key))
+		this[key] = mutableSetOf()
+	this[key]!!.add(node)
+}
 
-data class StringProperty(override val key: String, override var value: String) : Property<String>
-data class BooleanProperty(override val key: String, override var value: Boolean): Property<Boolean>
+interface NumberProperty<T: Number> : IProperty<T>
+
+data class StringProperty(override val key: String, override var value: String) : IProperty<String>
+data class BooleanProperty(override val key: String, override var value: Boolean): IProperty<Boolean>
 data class IntegerProperty(override val key: String, override var value: Integer): NumberProperty<Integer>
