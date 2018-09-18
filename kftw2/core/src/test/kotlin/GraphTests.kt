@@ -37,7 +37,7 @@ class GraphEngine : Graph {
 	val nodes = mutableMapOf<Int,Node>()
 	val labels = mutableMapOf<String, MutableSet<Node>>()
 	val properties = mutableMapOf<String, MutableSet<Pair<Node, Any>>>()
-	val relations = mutableMapOf<String, MutableSet<Pair<Node,Node>>>()
+	val relationsToNodes = mutableMapOf<String, MutableSet<Pair<Node,Node>>>()
 
 	override fun removeProperty(node: Node, property: String) {
 		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -77,6 +77,10 @@ class GraphEngine : Graph {
 		removeAllProperties(node)
 	}
 
+	private fun removeAllRelations(node: Node) {
+		for(relation in node.relations)
+	}
+
 	private fun removeAllLabels(node: Node) {
 		val ls = labels.filter { it.value.contains(node) }.keys
 		for (label in ls)
@@ -92,6 +96,7 @@ interface Node {
 	val id: Int
 	val labels: MutableSet<String>
 	val properties: MutableSet<Prop>
+	val relations: MutableMap<String, MutableSet<Node>>
 }
 
 interface Relation {
