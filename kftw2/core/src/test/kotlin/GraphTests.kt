@@ -20,34 +20,30 @@ class GraphTests {
 	}
 }
 
-interface IGraph {
+interface Graph {
 
 }
 
-interface INode {
+interface Node {
 	val id: Int
-	val nodes
+	val labels: MutableSet<Label>
 }
 
-interface IRelation {
+interface Relation {
 	val id: Int
 }
 
-interface ILabel {
+interface Label {
 	val value: String
 }
 
-interface IProperty<T> {
+interface Property<T> {
 	val key: String
 	var value: T
 }
 
-interface INumberProperty<T: Number> : IProperty<T>
+interface NumberProperty<T: Number> : Property<T>
 
-abstract class Property<T> : IProperty<T>
-
-abstract class NumberProperty<T: Number> : INumberProperty<T>
-
-data class StringProperty(override val key: String, override var value: String) : Property<String>()
-data class BooleanProperty(override val key: String, override var value: Boolean): Property<Boolean>()
-data class IntegerProperty(override val key: String, override var value: Integer): NumberProperty<Integer>()
+data class StringProperty(override val key: String, override var value: String) : Property<String>
+data class BooleanProperty(override val key: String, override var value: Boolean): Property<Boolean>
+data class IntegerProperty(override val key: String, override var value: Integer): NumberProperty<Integer>
