@@ -76,7 +76,7 @@ class GraphTests {
 		This should be done with the internal modifier on the Node, obviously
 		 */
 
-		val numberOfAdditionalNodes = 1000000
+		val numberOfAdditionalNodes = 10000
 		val maxNumberOfRelationsPerNode = 100
 
 		val otherNodes = mutableListOf<INode>()
