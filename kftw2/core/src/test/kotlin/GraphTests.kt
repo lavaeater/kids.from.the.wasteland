@@ -1,3 +1,4 @@
+import com.sun.xml.internal.fastinfoset.util.StringArray
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -25,17 +26,24 @@ class GraphTests {
 
 		Relations will have properties, later.
 		 */
-		val playerNode = graphEngine.addNode()
-		val npcNode = graphEngine.addNode()
-		for (i in 0..10) {
-			//add one hundred nodes with weird relations... or 200?
+		val playerNode = graphEngine.newNode()
+		val npcNode = graphEngine.newNode()
+		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
+		val otherNodes = mutableMapOf<INode, INode>()
+		for(i in 0..10)
+			otherNodes.put(graphEngine.newNode(), graphEngine.newNode())
 
+		val relations = arrayOf("has seen", "hates", "killed", "loves", "wants to find")
 
+		var index = 0
+
+		for((first, second) in otherNodes) {
+				graphEngine.addRelation(first, second, relations[index % 5])
+				graphEngine.addRelation(second, first, relations[(index + 1) % 5])
+			index++
 		}
 
-		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
-
-
+		
 	}
 
 	@Before
@@ -52,7 +60,7 @@ interface Graph {
 	fun addOrUpdateProperty(node:INode, property:String, value:Any)
 	fun removeLabel(node: INode, label:String)
 	fun addLabel(node:INode, label:String)
-	fun addNode() : INode
+	fun newNode() : INode
 	fun removeNode(node:INode)
 	fun removeNode(id: Int)
 	fun addRelation(from:INode, to:INode, relation: String)
@@ -104,7 +112,7 @@ class GraphEngine : Graph {
 	}
 
 
-	override fun addNode() : INode {
+	override fun newNode() : INode {
 		val node = Node(consumeNextId())
 		nodes[node.id] = node
 		return node
