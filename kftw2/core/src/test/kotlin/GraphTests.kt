@@ -1,14 +1,41 @@
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
+import kotlin.test.Test
 
 class GraphTests {
-
 	companion object {
+
+		val graphEngine = GraphEngine()
+
 		@JvmStatic
 		@BeforeClass
 		fun beforeClass() {
+
 		}
+	}
+
+	@Test
+	fun addAndFindRelations() {
+		/*
+		What can we do, what can we do?
+
+		All relations are directional, so adding a "has met" relation means
+		we have to add it to both parties... or? Can we have different types?
+
+		Relations will have properties, later.
+		 */
+		val playerNode = graphEngine.addNode()
+		val npcNode = graphEngine.addNode()
+		for (i in 0..10) {
+			//add one hundred nodes with weird relations... or 200?
+
+
+		}
+
+		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
+
+
 	}
 
 	@Before
@@ -25,22 +52,32 @@ interface Graph {
 	fun addOrUpdateProperty(node:INode, property:String, value:Any)
 	fun removeLabel(node: INode, label:String)
 	fun addLabel(node:INode, label:String)
-	fun addNode(node:INode)
+	fun addNode() : INode
 	fun removeNode(node:INode)
 	fun removeNode(id: Int)
 	fun addRelation(from:INode, to:INode, relation: String)
+	fun addBiDirectionalRelation(first:INode, second:INode, relation: String)
 	fun removeRelation(from:INode, to: INode, relation: String)
 }
 
 
 
 class GraphEngine : Graph {
-	var nodeIdCounter = 0;
+	override fun addBiDirectionalRelation(first: INode, second: INode, relation: String) {
+		addRelation(first, second, relation)
+		addRelation(second, first, relation)
+	}
+
+	var idCounter = 0;
 	val nodes = mutableMapOf<Int,INode>()
 	val labels = mutableMapOf<String, MutableSet<INode>>()
 	//val properties = mutableMapOf<String, MutableSet<Pair<INode, Any>>>()
 
 	val relations = mutableSetOf<IRelation>()
+
+	fun consumeNextId() : Int {
+		return idCounter++;
+	}
 
 	override fun removeProperty(node: INode, property: String) {
 	}
@@ -67,8 +104,10 @@ class GraphEngine : Graph {
 	}
 
 
-	override fun addNode(node: INode) {
+	override fun addNode() : INode {
+		val node = Node(consumeNextId())
 		nodes[node.id] = node
+		return node
 	}
 
 	override fun removeNode(node: INode) {
@@ -113,6 +152,7 @@ interface IRelation {
 }
 
 data class Relation(override val from: INode, override val to: INode, override val name: String) : IRelation
+data class Node(override val id: Int) :INode
 
 interface Label {
 	val value: String
