@@ -1,7 +1,9 @@
 
+import com.badlogic.gdx.math.MathUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
+import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -74,26 +76,57 @@ class GraphTests {
 		This should be done with the internal modifier on the Node, obviously
 		 */
 
-		val playerNode = graphEngine.newNode()
-		val npcNode = graphEngine.newNode()
-		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
-		val otherNodes = mutableMapOf<INode, INode>()
-		for(i in 0..10)
-			otherNodes.put(graphEngine.newNode(), graphEngine.newNode())
+		val numberOfAdditionalNodes = 1000000
+		val maxNumberOfRelationsPerNode = 100
 
-		val relations = arrayOf("has seen", "hates", "killed", "loves", "wants to find")
+		val otherNodes = mutableListOf<INode>()
+		for(i in 0..numberOfAdditionalNodes) {
+			val node = graphEngine.newNode("agent")
+			otherNodes.add(node)
+			if(i % 2 ==0) {
+				graphEngine.addLabel(node, "vip")
+			} else {
+				graphEngine.addLabel(node, "npc")
+			}
+			if(i % 100 == 0) {
+				graphEngine.addLabel(node, "player")
+			}
+		}
+		val relations = arrayOf("has met", "hates", "killed", "loves", "wants to find")
 
 		var index = 0
 
-		for((first, second) in otherNodes) {
-			graphEngine.addRelation(first, second, relations[index % 5])
-			graphEngine.addRelation(second, first, relations[(index + 1) % 5])
-			index++
+		for((i, node) in otherNodes.withIndex()) {
+			for(j in 0..MathUtils.random(5, maxNumberOfRelationsPerNode)) {
+				var targetIndex = MathUtils.random(0, numberOfAdditionalNodes - 1)
+				if(targetIndex == i)
+					targetIndex++
+
+				val targetNode = otherNodes[targetIndex]
+
+				graphEngine.addRelation(node, targetNode, relations[index % relations.size])
+				graphEngine.addRelation(targetNode, node, relations[(index + 1) % relations.size])
+				index++
+			}
 		}
 
-		//Add some labels and use for a query?
+		println("numberOfNodes: $numberOfAdditionalNodes")
 
+		//Test algo 2 and measure
+		var time = measureTimeMillis {
+			val nodeResult = graphEngine.find(listOf("player", "agent"), listOf("npc", "agent"), listOf("has met"), false)
 
+			println("number of nodes found ${nodeResult.count()} when finding nodes with at least one label.")
+		}
+		println("elapsed time: $time")
+
+		time = measureTimeMillis {
+			val nodeResult = graphEngine.find(listOf("player", "agent"), listOf("npc", "agent"), listOf("has met"), true)
+
+			println("number of nodes when searching for nodes with ALL labels: ${nodeResult.count()}")
+		}
+
+		println("elapsed time: $time")
 	}
 
 	@Before
@@ -118,13 +151,24 @@ interface Graph {
 	fun addRelation(from:INode, to:INode, relation: String)
 	fun addBiDirectionalRelation(first:INode, second:INode, relation: String)
 	fun removeRelation(from:INode, to: INode, relation: String)
+	fun find(sourceLabels: Collection<String>, targetLabels: Collection<String>, rs: Collection<String>, distinct: Boolean): Sequence<INode>
 }
 
 class GraphEngine : Graph {
+	override fun find(sourceLabels: Collection<String>, targetLabels: Collection<String>, rs: Collection<String>, all: Boolean): Sequence<INode> {
+		return if(all) {
+			relations.filter { it.from.labels.containsAll(sourceLabels) && it.to.labels.containsAll(targetLabels) && rs.contains(it.name) }.map { it.from }.distinctBy { it.id }.asSequence()
+		} else {
+			relations.filter { it.from.labels.intersect(sourceLabels).any() && it.to.labels.intersect(targetLabels).any() && rs.contains(it.name) }.map { it.from }.distinctBy { it.id }.asSequence()
+		}
+	}
+
 	override fun newNode(vararg labels: String): INode {
 		val node = newNode()
 		for (label in labels)
 			addLabel(node, label)
+
+		return node
 	}
 
 	override fun relatedNodes(node: INode, relation: String): Sequence<INode> {
