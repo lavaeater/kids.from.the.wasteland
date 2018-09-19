@@ -38,16 +38,14 @@ class GraphEngine : Graph {
 	var nodeIdCounter = 0;
 	val nodes = mutableMapOf<Int,INode>()
 	val labels = mutableMapOf<String, MutableSet<INode>>()
-	val properties = mutableMapOf<String, MutableSet<Pair<INode, Any>>>()
+	//val properties = mutableMapOf<String, MutableSet<Pair<INode, Any>>>()
 
 	val relations = mutableSetOf<IRelation>()
 
 	override fun removeProperty(node: INode, property: String) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
 	override fun addOrUpdateProperty(node: INode, property: String, value: Any) {
-		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 	}
 
 	override fun removeLabel(node: INode, label: String) {
@@ -77,7 +75,9 @@ class GraphEngine : Graph {
 		removeNode(node.id)
 		removeAllLabels(node)
 		removeAllRelations(node)
-		removeAllProperties(node)
+	}
+
+	private fun removeAllProperties(node: INode) {
 	}
 
 	private fun removeAllRelations(node: INode) {
@@ -100,9 +100,7 @@ class GraphEngine : Graph {
 	}
 }
 
-private fun MutableMap<String, MutableSet<INode>>.safeRemove(label: String, node: INode) {
 
-}
 
 interface INode {
 	val id: Int
@@ -129,10 +127,15 @@ interface IProperty<T: Any> : Prop {
 	var value: T
 }
 
-fun MutableMap<String, MutableSet<INode>>.safeAdd(key:String, node: INode) {
+fun <K,V>MutableMap<K, MutableSet<V>>.safeAdd(key:K, value: V) {
 	if(!this.containsKey(key))
 		this[key] = mutableSetOf()
-	this[key]!!.add(node)
+	this[key]!!.add(value)
+}
+
+fun <K,V>MutableMap<K, MutableSet<V>>.safeRemove(key: K, value: V) {
+	if(this.containsKey(key))
+		this[key]!!.remove(value)
 }
 
 interface NumberProperty<T: Number> : IProperty<T>
