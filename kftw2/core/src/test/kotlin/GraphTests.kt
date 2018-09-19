@@ -52,6 +52,50 @@ class GraphTests {
 		assertEquals(1, hasMet.count())
 	}
 
+	@Test
+	fun labelTest() {
+
+		/*
+
+		What "are" labels?
+
+		In neo4j, labels are "types", so a node can have one or more labels
+		for categorization or type management. So labels are just some text.
+
+		So... how do we manage labels in the graphengine?
+
+		Well, one might imagine that a node object has a list of its labels
+		but also that the graphengine maintains a map of labels => nodes so that we can
+		quickly find these nodes for a query. This might be an unnecessary pre-optimization
+		so we can just start by having the nodes maintain their list.
+
+		But how do we limit the addition-ability for the labels on node instances?
+
+		This should be done with the internal modifier on the Node, obviously
+		 */
+
+		val playerNode = graphEngine.newNode()
+		val npcNode = graphEngine.newNode()
+		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
+		val otherNodes = mutableMapOf<INode, INode>()
+		for(i in 0..10)
+			otherNodes.put(graphEngine.newNode(), graphEngine.newNode())
+
+		val relations = arrayOf("has seen", "hates", "killed", "loves", "wants to find")
+
+		var index = 0
+
+		for((first, second) in otherNodes) {
+			graphEngine.addRelation(first, second, relations[index % 5])
+			graphEngine.addRelation(second, first, relations[(index + 1) % 5])
+			index++
+		}
+
+		//Add some labels and use for a query?
+
+
+	}
+
 	@Before
 	fun before() {
 	}
@@ -68,6 +112,7 @@ interface Graph {
 	fun removeLabel(node: INode, label:String)
 	fun addLabel(node:INode, label:String)
 	fun newNode() : INode
+	fun newNode(vararg labels: String) : INode
 	fun removeNode(node:INode)
 	fun removeNode(id: Int)
 	fun addRelation(from:INode, to:INode, relation: String)
@@ -76,6 +121,12 @@ interface Graph {
 }
 
 class GraphEngine : Graph {
+	override fun newNode(vararg labels: String): INode {
+		val node = newNode()
+		for (label in labels)
+			addLabel(node, label)
+	}
+
 	override fun relatedNodes(node: INode, relation: String): Sequence<INode> {
 		return relations.filter { it.name == relation && it.from == node }.map { it.to }.asSequence()
 	}
@@ -104,10 +155,12 @@ class GraphEngine : Graph {
 
 	override fun removeLabel(node: INode, label: String) {
 		labels.safeRemove(label, node)
+		node.removeLabel(label)
 	}
 
 	override fun addLabel(node: INode, label: String) {
 		labels.safeAdd(label, node)
+		node.addLabel(label)
 	}
 
 	override fun addRelation(from: INode, to: INode, relation: String) {
@@ -146,8 +199,7 @@ class GraphEngine : Graph {
 	}
 
 	private fun removeAllLabels(node: INode) {
-		val ls = labels.filter { it.value.contains(node) }.keys
-		for (label in ls)
+		for (label in node.labels)
 			removeLabel(node, label)
 	}
 
@@ -160,6 +212,9 @@ class GraphEngine : Graph {
 
 interface INode {
 	val id: Int
+	val labels: Set<String>
+	fun addLabel(label:String)
+	fun removeLabel(label:String)
 }
 
 interface IRelation {
@@ -169,7 +224,19 @@ interface IRelation {
 }
 
 data class Relation(override val from: INode, override val to: INode, override val name: String) : IRelation
-data class Node(override val id: Int) :INode
+data class Node(override val id: Int) :INode {
+	val internalLabels = mutableSetOf<String>()
+	override val labels: Set<String>
+		get() = internalLabels
+
+	override fun addLabel(label: String) {
+		internalLabels.add(label)
+	}
+
+	override fun removeLabel(label: String) {
+		internalLabels.remove(label)
+	}
+}
 
 interface Label {
 	val value: String
