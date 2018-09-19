@@ -1,8 +1,11 @@
-import com.sun.xml.internal.fastinfoset.util.StringArray
+
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GraphTests {
 	companion object {
@@ -43,7 +46,10 @@ class GraphTests {
 			index++
 		}
 
-		
+		val hasMet = graphEngine.relatedNodes(playerNode, "has met")
+		assertTrue { hasMet.contains(npcNode) }
+		assertFalse { hasMet.contains(playerNode) }
+		assertEquals(1, hasMet.count())
 	}
 
 	@Before
@@ -56,6 +62,7 @@ class GraphTests {
 }
 
 interface Graph {
+	fun relatedNodes(node:INode, relation:String) : Sequence<INode>
 	fun removeProperty(node: INode, property: String)
 	fun addOrUpdateProperty(node:INode, property:String, value:Any)
 	fun removeLabel(node: INode, label:String)
@@ -68,20 +75,22 @@ interface Graph {
 	fun removeRelation(from:INode, to: INode, relation: String)
 }
 
-
-
 class GraphEngine : Graph {
+	override fun relatedNodes(node: INode, relation: String): Sequence<INode> {
+		return relations.filter { it.name == relation && it.from == node }.map { it.to }.asSequence()
+	}
+
 	override fun addBiDirectionalRelation(first: INode, second: INode, relation: String) {
 		addRelation(first, second, relation)
 		addRelation(second, first, relation)
 	}
 
-	var idCounter = 0;
-	val nodes = mutableMapOf<Int,INode>()
-	val labels = mutableMapOf<String, MutableSet<INode>>()
+	private var idCounter = 0;
+	private val nodes = mutableMapOf<Int,INode>()
+	private val labels = mutableMapOf<String, MutableSet<INode>>()
 	//val properties = mutableMapOf<String, MutableSet<Pair<INode, Any>>>()
 
-	val relations = mutableSetOf<IRelation>()
+	private val relations = mutableSetOf<IRelation>()
 
 	fun consumeNextId() : Int {
 		return idCounter++;
