@@ -1,7 +1,7 @@
 
 import com.badlogic.gdx.math.MathUtils
-import graph.GraphEngine
-import graph.INode
+import graph.GorphEngine
+import graph.INorde
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -11,10 +11,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class GraphTests {
+class GorphTests {
 	companion object {
 
-		val graphEngine = GraphEngine()
+		val graphEngine = GorphEngine()
 
 		@JvmStatic
 		@BeforeClass
@@ -36,7 +36,7 @@ class GraphTests {
 		val playerNode = graphEngine.newNode()
 		val npcNode = graphEngine.newNode()
 		graphEngine.addBiDirectionalRelation(playerNode, npcNode, "has met")
-		val otherNodes = mutableMapOf<INode, INode>()
+		val otherNodes = mutableMapOf<INorde, INorde>()
 		for(i in 0..10)
 			otherNodes.put(graphEngine.newNode(), graphEngine.newNode())
 
@@ -75,13 +75,13 @@ class GraphTests {
 
 		But how do we limit the addition-ability for the labels on node instances?
 
-		This should be done with the internal modifier on the graph.Node, obviously
+		This should be done with the internal modifier on the graph.Norde, obviously
 		 */
 
 		val numberOfAdditionalNodes = 1000000
 		val maxNumberOfRelationsPerNode = 100
 
-		val otherNodes = mutableListOf<INode>()
+		val otherNodes = mutableListOf<INorde>()
 		for(i in 0..numberOfAdditionalNodes) {
 			val node = graphEngine.newNode("agent")
 			otherNodes.add(node)
