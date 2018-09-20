@@ -46,6 +46,8 @@ abstract class TypedPropertyValue<T> {
 	abstract var value: T
 }
 
+data class GenericPropertyValue<T>(override var value:T):TypedPropertyValue<T>()
+
 data class StringValue(override var value: String) : TypedPropertyValue<String>()
 data class IntValue(override var value: Int) : TypedPropertyValue<Int>()
 data class BoolValue(override var value: Boolean) : TypedPropertyValue<Boolean>()
