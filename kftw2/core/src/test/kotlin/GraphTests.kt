@@ -1,14 +1,34 @@
 
 import graph.Coordinate
 import graph.Graph
-import graph.Node
 import graph.TypedNode
 import org.junit.BeforeClass
+import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GraphTests {
 	companion object {
+		val dirs = mapOf(
+				"north" to Pair(0,1),
+				"northeast" to Pair(1,1),
+				"east" to Pair(1,0),
+				"southeast" to Pair(1,-1),
+				"south" to Pair(0,-1),
+				"southwest" to Pair(-1,-1),
+				"west" to Pair(-1,0),
+				"northwest" to Pair(-1,1))
+
+		val dirs2 = mapOf(
+				"north" 		to 	"south"  ,
+				"northeast" to 	"southwest"  ,
+				"east" 			to 	"west"  ,
+				"southeast" to 	"northwest" ,
+				"south" 		to 	"north" ,
+				"southwest" to 	"northeast",
+				"west" 			to 	"east" ,
+				"northwest" to 	"southeast")
+
 		@JvmStatic
 		@BeforeClass
 		fun beforeClass() {
@@ -18,36 +38,72 @@ class GraphTests {
 
 	@Test
 	fun graphAsMap() {
-		val graph = createGrid(20, 20)
+		val side = 200
+		val graph = createGrid(side,side)
 
-		assertEquals(400, graph.nodes.count())
-		println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint())
+//		assertEquals(40000, graph.nodes.count())
+		println("time elapsed = ${measureTimeMillis {println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint(0, side - 1))}}")
+	}
+
+	fun startAtCenter(width: Int = 8, height: Int = 8) {
+		val g = Graph(mapOf("width" to 100, "height" to height))
+		val maxDistance = 10
+
+
+		val node = TypedNode<Coordinate>(Coordinate(0,0))
+
+		generate(g, node, maxDistance, 0)
+	}
+
+	fun generate(graph: Graph, node: TypedNode<Coordinate>, maxDistance:Int, distance: Int = 0) {
+		if(distance < maxDistance) {
+			for ((direction, offset) in dirs) {
+				if (node.neighbour(direction) == null) {
+					val n = TypedNode(Coordinate(node.data.x + offset.first, node.data.y + offset.second))
+					node.addRelation(direction, n)
+					n.addRelation(dirs2[direction]!!, node)
+				}
+			}
+		}
 	}
 
 	fun createGrid(width: Int = 8, height: Int = 8) : Graph {
 		val g = Graph(mapOf("width" to width, "height" to height))
 
-		val nodes = mutableListOf<TypedNode<Coordinate>>()
+		val nodes = mutableMapOf<Coordinate, TypedNode<Coordinate>>()
+
+		println("Created grid in: ${measureTimeMillis {
 
 		for(x in 0 until width)
 			for(y in 0 until height) {
 				val node = TypedNode(Coordinate(x,y))
-				nodes.add(node)
+				nodes[node.data] = node
 				g.addNode(node)
 			}
-
-		for(node in nodes) {
-			for(xOff in -1..1)
-				for (yOff in -1..1)
-				{
-					val x = node.data.x + xOff
-					val y = node.data.y + yOff
-					val relatedNode = nodes.firstOrNull { it.data.x == x && it.data.y == y}
-					if(relatedNode != null && relatedNode != node) {
-						node.addRelation(getRelationKey(xOff, yOff), relatedNode)
-					}
-				}
 		}
+		}")
+
+
+		println("Fixed neighbours in: ${measureTimeMillis {
+
+			for ((coordinate, node) in nodes)
+				for (xOff in -1..1)
+					for (yOff in -1..1) {
+						if (xOff != 0 || yOff != 0) {
+							val x = coordinate.x + xOff
+							val y = coordinate.y + yOff
+							val tc = nodes.keys.firstOrNull { it.x == x && it.y == y }
+							if (tc != null) {
+								val relatedNode = nodes[tc]
+									if(relatedNode != null) {
+								node.addRelation(getRelationKey(xOff, yOff), relatedNode)
+							}
+							}
+						}
+					}
+
+		}
+		}")
 
 		return g
 	}
@@ -67,7 +123,7 @@ class GraphTests {
 	}
 }
 
-fun Collection<TypedNode<Coordinate>>.prettyPrint() :String {
+fun Collection<TypedNode<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :String {
 	//1. find top left coordinate
 	/*
 	We know the dimensions
@@ -77,17 +133,17 @@ fun Collection<TypedNode<Coordinate>>.prettyPrint() :String {
 	not have a neighbour to the east, then just down from the first one!
 	 */
 	val sb = StringBuilder()
-	val minX = this.map { it.data.x }.min()!!
-	val maxY = this.map { it.data.y }.max()!!
-	var topLeft: TypedNode<Coordinate>? = this.first { it.data.x == minX && it.data.y == maxY }
+//	val minX = this.map { it.data.x }.min()!!
+//	val maxY = this.map { it.data.y }.max()!!
+	var topLeft: TypedNode<Coordinate>? = this.first { it.data.x == firstX && it.data.y == firstY}
 
 	var currentNode : TypedNode<Coordinate>? = topLeft
 
 	while (currentNode != null) {
 		sb.append(currentNode.data.type)
-		currentNode = currentNode.neigbours("east").firstOrNull() as TypedNode<Coordinate>?
+		currentNode = currentNode.neighbour("east") as TypedNode<Coordinate>?
 		if(currentNode == null) {
-			currentNode = topLeft?.neigbours("south")?.firstOrNull() as TypedNode<Coordinate>?
+			currentNode = topLeft?.neighbour("south") as TypedNode<Coordinate>?
 			topLeft = currentNode
 			sb.appendln()
 		}
@@ -96,4 +152,18 @@ fun Collection<TypedNode<Coordinate>>.prettyPrint() :String {
 	return sb.toString()
 
 	//2. What do we know of the height and width of the graph?
+}
+
+/*
+For speed, we must work at some kind of depth or something...
+
+So we start at 0,0
+
+We traverse a collection of possible neighbours. For every direction
+we create a relation. For every created related node, we must create a relation back
+or it goes kaboom.
+ */
+
+fun addSomeNodes() {
+
 }

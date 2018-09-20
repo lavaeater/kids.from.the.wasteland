@@ -60,8 +60,12 @@ open class Node {
 		relations[name]!!.add(relatedNode)
 	}
 
-	fun neigbours(relationToFind:String) : Sequence<Node> {
+	fun neighbours(relationToFind:String) : Sequence<Node> {
 		return if(relations.containsKey(relationToFind)) relations[relationToFind]!!.asSequence() else emptySequence()
+	}
+
+	fun neighbour(relationToFind: String) : Node? {
+		return relations[relationToFind]?.firstOrNull()
 	}
 
 	fun neighbours(relationsToFind: Collection<String>) : Sequence<Node> {
