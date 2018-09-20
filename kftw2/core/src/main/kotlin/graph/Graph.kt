@@ -1,7 +1,7 @@
 package graph
 
 class Graph {
-	private val nodes = mutableSetOf<Node>()
+	val nodes = mutableSetOf<Node>()
 	private val labels = mutableMapOf<String, MutableSet<Node>>()
 	private val properties = mutableMapOf<String, Pair<Node, PropertyValue>>()
 
@@ -19,8 +19,15 @@ class Graph {
 }
 
 
-data class Node(val name: String) {
+open class Node {
 	private val relations = mutableMapOf<String, MutableSet<Node>>()
+
+	fun addRelation(name:String, relatedNode: Node) {
+		if(!relations.containsKey(name))
+			relations[name] = mutableSetOf()
+
+		relations[name]!!.add(relatedNode)
+	}
 
 	fun neigbours(relationToFind:String) : Sequence<Node> {
 		return if(relations.containsKey(relationToFind)) relations[relationToFind]!!.asSequence() else emptySequence()
@@ -31,6 +38,8 @@ data class Node(val name: String) {
 	}
 }
 
+data class TypedNode<T>(val data: T) : Node()
+
 abstract class PropertyValue
 
 abstract class TypedPropertyValue<T> {
@@ -40,3 +49,5 @@ abstract class TypedPropertyValue<T> {
 data class StringValue(override var value: String) : TypedPropertyValue<String>()
 data class IntValue(override var value: Int) : TypedPropertyValue<Int>()
 data class BoolValue(override var value: Boolean) : TypedPropertyValue<Boolean>()
+
+data class Coordinate(val x: Int, val y: Int)
