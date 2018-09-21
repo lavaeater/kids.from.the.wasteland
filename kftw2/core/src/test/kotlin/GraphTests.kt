@@ -1,7 +1,6 @@
 
 import graph.Coordinate
-import graph.Graph
-import graph.TypedNode
+import graph.Node
 import org.junit.BeforeClass
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
@@ -37,12 +36,10 @@ class GraphTests {
 
 	@Test
 	fun graphAsMap() {
-		for(side in 50..1000 step 100) {
-			val graph = createGrid(side, side)
+		for(side in 10..20 step 5) {
+      println("Creating grid / map with $side x $side nodes (${side*side})")
 
-			println("Creating grid / map with $side x $side nodes (${side*side})")
-
-			var nodes: Array<Array<TypedNode<Coordinate>>>? = null
+			var nodes: Array<Array<Node<Coordinate>>>? = null
 			val nodeCreationTime = measureTimeMillis { nodes = getNodes(side, side) }
 
 			println("Created all nodes in $nodeCreationTime")
@@ -51,11 +48,11 @@ class GraphTests {
 
 			println("Fixed neighbours in $fixNTime")
 
-			println("time elapsed = ${measureTimeMillis { println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint(0, side - 1)) }}")
+//			println("time elapsed = ${measureTimeMillis { println(nodes!!.flatten().prettyPrint(0, side - 1)) }}")
 		}
 	}
 
-	private fun fixNeighbours(nodes: Array<Array<TypedNode<Coordinate>>>) {
+	private fun fixNeighbours(nodes: Array<Array<Node<Coordinate>>>) {
 		val maxX = nodes.lastIndex
 		val maxY = maxX //Symmetric
 		for((x, rows) in nodes.withIndex())
@@ -74,81 +71,12 @@ class GraphTests {
 			}
 	}
 
-	fun startAtCenter(width: Int = 8, height: Int = 8) {
-
-		/*
-		Always start in a corner and imagine a small robot traversing the graph.
-		 */
-		val g = Graph(mapOf("width" to 100, "height" to height))
-		val maxDistance = 10
-
-
-		val node = TypedNode<Coordinate>(Coordinate(0,0))
-
-		generate(g, node, maxDistance, 0)
-	}
-
-	fun generate(graph: Graph, node: TypedNode<Coordinate>, maxDistance:Int, distance: Int = 0) {
-		if(distance < maxDistance) {
-			for ((direction, offset) in dirs) {
-				if (node.neighbour(direction) == null) {
-					val n = TypedNode(Coordinate(node.data.x + offset.first, node.data.y + offset.second))
-					node.addRelation(direction, n)
-					n.addRelation(dirs2[direction]!!, node)
-				}
+	fun getNodes(width: Int, height: Int) : Array<Array<Node<Coordinate>>> {
+		return Array<Array<Node<Coordinate>>>(width) { x ->
+			Array<Node<Coordinate>>(height) { y ->
+				Node(Coordinate(x, y))
 			}
 		}
-	}
-
-	fun getNodes(width: Int, height: Int) : Array<Array<TypedNode<Coordinate>>> {
-		return Array<Array<TypedNode<Coordinate>>>(width) { x ->
-			Array<TypedNode<Coordinate>>(height) { y ->
-				TypedNode(Coordinate(x, y))
-			}
-		}
-	}
-
-	fun createGrid(width: Int = 8, height: Int = 8) : Graph {
-		val g = Graph(mapOf("width" to width, "height" to height))
-
-		val nodes = mutableMapOf<Coordinate, TypedNode<Coordinate>>()
-
-		println("Created grid in: ${measureTimeMillis {
-
-
-
-		for(x in 0 until width)
-			for(y in 0 until height) {
-				val node = TypedNode(Coordinate(x,y))
-				nodes[node.data] = node
-				g.addNode(node)
-			}
-		}
-		}")
-
-
-		println("Fixed neighbours in: ${measureTimeMillis {
-
-			for ((coordinate, node) in nodes)
-				for (xOff in -1..1)
-					for (yOff in -1..1) {
-						if (xOff != 0 || yOff != 0) {
-							val x = coordinate.x + xOff
-							val y = coordinate.y + yOff
-							val tc = nodes.keys.firstOrNull { it.x == x && it.y == y }
-							if (tc != null) {
-								val relatedNode = nodes[tc]
-									if(relatedNode != null) {
-								node.addRelation(getRelationKey(xOff, yOff), relatedNode)
-							}
-							}
-						}
-					}
-
-		}
-		}")
-
-		return g
 	}
 
 	fun getRelationKey(xOff: Int, yOff: Int): String {
@@ -166,7 +94,7 @@ class GraphTests {
 	}
 }
 
-fun Collection<TypedNode<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :String {
+fun Collection<Node<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :String {
 	//1. find top left coordinate
 	/*
 	We know the dimensions
@@ -178,15 +106,15 @@ fun Collection<TypedNode<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :Strin
 	val sb = StringBuilder()
 //	val minX = this.map { it.data.x }.min()!!
 //	val maxY = this.map { it.data.y }.max()!!
-	var topLeft: TypedNode<Coordinate>? = this.first { it.data.x == firstX && it.data.y == firstY}
+	var topLeft: Node<Coordinate>? = this.first { it.data.x == firstX && it.data.y == firstY}
 
-	var currentNode : TypedNode<Coordinate>? = topLeft
+	var currentNode : Node<Coordinate>? = topLeft
 
 	while (currentNode != null) {
 		sb.append(currentNode.data.type)
-		currentNode = currentNode.neighbour("east") as TypedNode<Coordinate>?
+		currentNode = currentNode.neighbour("east")
 		if(currentNode == null) {
-			currentNode = topLeft?.neighbour("south") as TypedNode<Coordinate>?
+			currentNode = topLeft?.neighbour("south")
 			topLeft = currentNode
 			sb.appendln()
 		}
