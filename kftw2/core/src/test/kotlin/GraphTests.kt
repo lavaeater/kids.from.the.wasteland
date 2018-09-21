@@ -38,14 +38,40 @@ class GraphTests {
 
 	@Test
 	fun graphAsMap() {
-		val side = 200
+		val side = 20
 		val graph = createGrid(side,side)
+
+		val nodes = getNodes(side, side)
+
+		fixNeighbours(nodes)
 
 //		assertEquals(40000, graph.nodes.count())
 		println("time elapsed = ${measureTimeMillis {println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint(0, side - 1))}}")
 	}
 
+	private fun fixNeighbours(nodes: Array<Array<TypedNode<Coordinate>>>) {
+		val maxX = nodes.lastIndex
+		val maxY = maxX //Symmetric
+		for((x, rows) in nodes.withIndex())
+			for((y, node) in rows.withIndex()) {
+				for((direction, offset) in dirs) {
+					if(!node.hasRelation(direction)) {
+						val tX = x + offset.first
+						val tY = y + offset.second
+						if(tX > 0 && tX < maxX && tY > 0 && tY < maxY) {
+							val tNode = nodes[tX]!![tY]!!
+							
+						}
+					}
+				}
+			}
+	}
+
 	fun startAtCenter(width: Int = 8, height: Int = 8) {
+
+		/*
+		Always start in a corner and imagine a small robot traversing the graph.
+		 */
 		val g = Graph(mapOf("width" to 100, "height" to height))
 		val maxDistance = 10
 
@@ -67,12 +93,22 @@ class GraphTests {
 		}
 	}
 
+	fun getNodes(width: Int, height: Int) : Array<Array<TypedNode<Coordinate>>> {
+		return Array<Array<TypedNode<Coordinate>>>(width) { x ->
+			Array<TypedNode<Coordinate>>(height) { y ->
+				TypedNode(Coordinate(x, y))
+			}
+		}
+	}
+
 	fun createGrid(width: Int = 8, height: Int = 8) : Graph {
 		val g = Graph(mapOf("width" to width, "height" to height))
 
 		val nodes = mutableMapOf<Coordinate, TypedNode<Coordinate>>()
 
 		println("Created grid in: ${measureTimeMillis {
+
+
 
 		for(x in 0 until width)
 			for(y in 0 until height) {

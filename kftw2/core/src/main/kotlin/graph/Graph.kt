@@ -52,6 +52,7 @@ class Graph(val graphProperties: Map<String, Any>) {
 
 open class Node {
 	private val relations = mutableMapOf<String, MutableSet<Node>>()
+	val allNeighbours: Iterable<Node> get() = relations.map { it.value }.flatten()
 
 	fun addRelation(name:String, relatedNode: Node) {
 		if(!relations.containsKey(name))
@@ -70,6 +71,10 @@ open class Node {
 
 	fun neighbours(relationsToFind: Collection<String>) : Sequence<Node> {
 		return relations.filterKeys { relationsToFind.contains(it) }.flatMap { it.value }.asSequence()
+	}
+
+	fun hasRelation(relation: String): Boolean {
+		return relations.containsKey(relation)
 	}
 }
 
