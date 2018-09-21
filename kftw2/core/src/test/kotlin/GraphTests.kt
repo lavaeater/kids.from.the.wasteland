@@ -5,7 +5,6 @@ import graph.TypedNode
 import org.junit.BeforeClass
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class GraphTests {
 	companion object {
@@ -38,15 +37,22 @@ class GraphTests {
 
 	@Test
 	fun graphAsMap() {
-		val side = 20
-		val graph = createGrid(side,side)
+		for(side in 50..1000 step 100) {
+			val graph = createGrid(side, side)
 
-		val nodes = getNodes(side, side)
+			println("Creating grid / map with $side x $side nodes (${side*side})")
 
-		fixNeighbours(nodes)
+			var nodes: Array<Array<TypedNode<Coordinate>>>? = null
+			val nodeCreationTime = measureTimeMillis { nodes = getNodes(side, side) }
 
-//		assertEquals(40000, graph.nodes.count())
-		println("time elapsed = ${measureTimeMillis {println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint(0, side - 1))}}")
+			println("Created all nodes in $nodeCreationTime")
+
+			val fixNTime = measureTimeMillis { fixNeighbours(nodes!!) }
+
+			println("Fixed neighbours in $fixNTime")
+
+			println("time elapsed = ${measureTimeMillis { println(graph.nodes.map { it as TypedNode<Coordinate> }.prettyPrint(0, side - 1)) }}")
+		}
 	}
 
 	private fun fixNeighbours(nodes: Array<Array<TypedNode<Coordinate>>>) {
@@ -58,9 +64,10 @@ class GraphTests {
 					if(!node.hasRelation(direction)) {
 						val tX = x + offset.first
 						val tY = y + offset.second
-						if(tX > 0 && tX < maxX && tY > 0 && tY < maxY) {
+						if(tX in 0..maxX && tY in 0..maxY) {
 							val tNode = nodes[tX]!![tY]!!
-							
+							node.addRelation(direction, tNode)
+							tNode.addRelation(dirs2[direction]!!, node)
 						}
 					}
 				}
