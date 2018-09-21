@@ -35,21 +35,21 @@ class GraphTests {
 	}
 
 	@Test
-	fun graphAsMap() {
-		for(side in 10..20 step 5) {
-      println("Creating grid / map with $side x $side nodes (${side*side})")
+	fun graphPerformance() {
+		val side = 1000
+		println("Creating grid / map with $side x $side nodes (${side * side})")
 
-			var nodes: Array<Array<Node<Coordinate>>>? = null
-			val nodeCreationTime = measureTimeMillis { nodes = getNodes(side, side) }
+		var nodes: Array<Array<Node<Coordinate>>>? = null
+		val nodeCreationTime = measureTimeMillis { nodes = getNodes(side, side) }
 
-			println("Created all nodes in $nodeCreationTime")
+		println("Created all nodes in $nodeCreationTime")
 
-			val fixNTime = measureTimeMillis { fixNeighbours(nodes!!) }
+		val fixNTime = measureTimeMillis { fixNeighbours(nodes!!) }
 
-			println("Fixed neighbours in $fixNTime")
+		println("Fixed neighbours in $fixNTime")
 
-//			println("time elapsed = ${measureTimeMillis { println(nodes!!.flatten().prettyPrint(0, side - 1)) }}")
-		}
+		println("time elapsed = ${measureTimeMillis { println(nodes!!.flatten().prettyPrint(0, side - 1)) }}")
+
 	}
 
 	private fun fixNeighbours(nodes: Array<Array<Node<Coordinate>>>) {
