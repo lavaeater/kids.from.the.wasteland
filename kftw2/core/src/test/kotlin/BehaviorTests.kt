@@ -711,7 +711,7 @@ data class DungeonOfTiles(var width: Int, val height: Int) {
 	}
 }
 
-enum class CD {
+enum class CompassDirections {
 	Northwest,
 	North,
 	Northeast,
@@ -746,7 +746,6 @@ class DirectionManager {
 	}
 
 }
-
 
 data class Dungeon(val width: Int, val height: Int, val counterFlag : Boolean = false) {
 	val mapStorage = IntArray(height * width) { if(counterFlag) it else 0 } //init all zero array for dungeon
