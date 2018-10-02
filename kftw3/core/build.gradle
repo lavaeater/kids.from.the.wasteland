@@ -25,5 +25,10 @@ dependencies {
   compile "com.sudoplay.joise:joise:$joiseVersion"
   compile "io.github.libktx:ktx-async:$ktxAsyncVersion"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+
+  testImplementation 'junit:junit:4.12'
+  testImplementation 'org.mockito:mockito-core:2.10.0'
+  testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
 }
         

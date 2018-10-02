@@ -4,7 +4,7 @@ package core.lwjgl3
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
-import core.KidsFromTheWasteland
+import KidsFromTheWasteland
 
 /** Launches the desktop (LWJGL3) application. */
 fun main(args: Array<String>) {
