@@ -1,12 +1,12 @@
 package graph
 
-class Graph<T>(val graphProperties: Map<String, Any>) {
-	val nodes = mutableSetOf<Node<T>>()
-	private val labels = mutableMapOf<String, MutableSet<Node<T>>>()
+class Graph<T, R>(val graphProperties: Map<String, Any>) {
+	val nodes = mutableSetOf<Node<T, R>>()
+	private val labels = mutableMapOf<String, MutableSet<Node<T, R>>>()
 	//PropertyMap just contains all properties that actually HAVE a property, not their values.
-	val propertyMap = mutableMapOf<String, MutableSet<Node<T>>>()
+	val propertyMap = mutableMapOf<String, MutableSet<Node<T, R>>>()
 
-	fun addProperty(node: Node<T>, property: Property<Any>) {
+	fun addProperty(node: Node<T, R>, property: Property<Any>) {
 		if(!propertyMap.containsKey(property.name))
 			propertyMap[property.name] = mutableSetOf()
 
@@ -14,72 +14,72 @@ class Graph<T>(val graphProperties: Map<String, Any>) {
 		node.addProperty(property)
 	}
 
-	fun removeProperty(node: Node<T>, property: Property<Any>) {
+	fun removeProperty(node: Node<T, R>, property: Property<Any>) {
 		if(propertyMap.containsKey(property.name))
 			propertyMap[property.name]!!.remove(node)
 		node.removeProperty(property)
 	}
 
-	fun addLabel(label:String, node:Node<T>) {
+	fun addLabel(label:String, node:Node<T, R>) {
 		if(!labels.containsKey(label))
 			labels[label] = mutableSetOf()
 
 		labels[label]!!.add(node)
 	}
 
-	fun removeLabel(label:String, node:Node<T>) {
+	fun removeLabel(label:String, node:Node<T, R>) {
 		if(!labels.containsKey(label)) return
 
 		labels[label]!!.remove(node)
 	}
 
-	fun addNode(node: Node<T>) {
+	fun addNode(node: Node<T, R>) {
 		nodes.add(node)
 	}
 
-	fun addNodes(vararg node:Node<T>) {
+	fun addNodes(vararg node:Node<T, R>) {
 		nodes.addAll(node)
 	}
 
-	fun removeNodes(vararg node:Node<T>) {
+	fun removeNodes(vararg node:Node<T, R>) {
 
 		//Shit, this is more complex...
 	}
 
-	fun thatHaveProperties(nodes: Collection<Node<T>>, vararg propertiesToFind:String): Sequence<Node<T>> {
+	fun thatHaveProperties(nodes: Collection<Node<T, R>>, vararg propertiesToFind:String): Sequence<Node<T, R>> {
 		return propertyMap.filterKeys { propertiesToFind.contains(it) }.flatMap { it.value }.asSequence()
 	}
 
-	fun withLabels(nodes: Collection<Node<T>>, vararg labelsToFind: String):Sequence<Node<T>> {
+	fun withLabels(nodes: Collection<Node<T, R>>, vararg labelsToFind: String):Sequence<Node<T, R>> {
 		return labels.filterKeys { labelsToFind.contains(it) }.flatMap { it.value }.intersect(nodes).asSequence()
 	}
 }
 
 
-data class Node<T>(val data: T) {
-	private val relations = mutableMapOf<String, MutableSet<Node<T>>>()
-	val allNeighbours: Iterable<Node<T>> get() = relations.map { it.value }.flatten()
+data class Node<T, R>(val data: T) {
+	private val relations = mutableMapOf<R, MutableSet<Node<T, R>>>()
+	val allNeighbours: Iterable<Node<T, R>> get() = relations.map { it.value }.flatten()
 
-	fun addRelation(name:String, relatedNode: Node<T>) {
-		if(!relations.containsKey(name))
-			relations[name] = mutableSetOf()
+	fun addRelation(relation:R, relatedNode: Node<T, R>) {
+		if(!relations.containsKey(relation))
+			relations[relation] = mutableSetOf()
 
-		relations[name]!!.add(relatedNode)
+		relations[relation]!!.add(relatedNode)
 	}
 
-	fun neighbours(relationToFind:String) : Sequence<Node<T>> {
+	fun neighbours(relationToFind:R) : Sequence<Node<T, R>> {
 		return if(relations.containsKey(relationToFind)) relations[relationToFind]!!.asSequence() else emptySequence()
 	}
 
-	fun neighbour(relationToFind: String) : Node<T>? {
+	fun neighbour(relationToFind: R) : Node<T, R>? {
 		return relations[relationToFind]?.firstOrNull()
 	}
 
-	fun neighbours(relationsToFind: Collection<String>) : Sequence<Node<T>> {
+	fun neighbours(relationsToFind: Collection<R>) : Sequence<Node<T, R>> {
 		return relations.filterKeys { relationsToFind.contains(it) }.flatMap { it.value }.asSequence()
 	}
 
-	fun hasRelation(relation: String): Boolean {
+	fun hasRelation(relation: R): Boolean {
 		return relations.containsKey(relation)
 	}
 

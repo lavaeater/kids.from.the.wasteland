@@ -39,7 +39,7 @@ class GraphTests {
 		val side = 1000
 		println("Creating grid / map with $side x $side nodes (${side * side})")
 
-		var nodes: Array<Array<Node<Coordinate>>>? = null
+		var nodes: Array<Array<Node<Coordinate, String>>>? = null
 		val nodeCreationTime = measureTimeMillis { nodes = getNodes(side, side) }
 
 		println("Created all nodes in $nodeCreationTime")
@@ -52,7 +52,7 @@ class GraphTests {
 
 	}
 
-	private fun fixNeighbours(nodes: Array<Array<Node<Coordinate>>>) {
+	private fun fixNeighbours(nodes: Array<Array<Node<Coordinate, String>>>) {
 		val maxX = nodes.lastIndex
 		val maxY = maxX //Symmetric
 		for((x, rows) in nodes.withIndex())
@@ -71,9 +71,9 @@ class GraphTests {
 			}
 	}
 
-	fun getNodes(width: Int, height: Int) : Array<Array<Node<Coordinate>>> {
-		return Array<Array<Node<Coordinate>>>(width) { x ->
-			Array<Node<Coordinate>>(height) { y ->
+	fun getNodes(width: Int, height: Int) : Array<Array<Node<Coordinate, String>>> {
+		return Array<Array<Node<Coordinate, String>>>(width) { x ->
+			Array<Node<Coordinate, String>>(height) { y ->
 				Node(Coordinate(x, y))
 			}
 		}
@@ -94,7 +94,7 @@ class GraphTests {
 	}
 }
 
-fun Collection<Node<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :String {
+fun Collection<Node<Coordinate, String>>.prettyPrint(firstX:Int, firstY:Int) :String {
 	//1. find top left coordinate
 	/*
 	We know the dimensions
@@ -106,9 +106,9 @@ fun Collection<Node<Coordinate>>.prettyPrint(firstX:Int, firstY:Int) :String {
 	val sb = StringBuilder()
 //	val minX = this.map { it.data.x }.min()!!
 //	val maxY = this.map { it.data.y }.max()!!
-	var topLeft: Node<Coordinate>? = this.first { it.data.x == firstX && it.data.y == firstY}
+	var topLeft: Node<Coordinate, String>? = this.first { it.data.x == firstX && it.data.y == firstY}
 
-	var currentNode : Node<Coordinate>? = topLeft
+	var currentNode : Node<Coordinate, String>? = topLeft
 
 	while (currentNode != null) {
 		sb.append(currentNode.data.type)
