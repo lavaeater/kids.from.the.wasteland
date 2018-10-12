@@ -56,6 +56,29 @@ class SealedRelationGraphTest {
 }
 
 object MapStuff {
+  val neighbourRelations: Map<CompassDirection, MapRelations.Neighbour>
+  get() = mapOf(
+      CompassDirection.NORTH      to MapRelations.Neighbour(CompassDirection.NORTH),
+      CompassDirection.NORTHEAST  to MapRelations.Neighbour(CompassDirection.NORTHEAST),
+      CompassDirection.EAST       to MapRelations.Neighbour(CompassDirection.EAST),
+      CompassDirection.SOUTHEAST  to MapRelations.Neighbour(CompassDirection.SOUTHEAST),
+      CompassDirection.SOUTH      to MapRelations.Neighbour(CompassDirection.SOUTH),
+      CompassDirection.SOUTHWEST  to MapRelations.Neighbour(CompassDirection.SOUTHWEST),
+      CompassDirection.WEST       to MapRelations.Neighbour(CompassDirection.WEST),
+      CompassDirection.NORTHWEST  to MapRelations.Neighbour(CompassDirection.NORTHWEST)
+  )
+
+  val portalRelations: Map<CompassDirection, MapRelations.Portal>
+    get() = mapOf(
+        CompassDirection.NORTH      to MapRelations.Portal(CompassDirection.NORTH),
+        CompassDirection.NORTHEAST  to MapRelations.Portal(CompassDirection.NORTHEAST),
+        CompassDirection.EAST       to MapRelations.Portal(CompassDirection.EAST),
+        CompassDirection.SOUTHEAST  to MapRelations.Portal(CompassDirection.SOUTHEAST),
+        CompassDirection.SOUTH      to MapRelations.Portal(CompassDirection.SOUTH),
+        CompassDirection.SOUTHWEST  to MapRelations.Portal(CompassDirection.SOUTHWEST),
+        CompassDirection.WEST       to MapRelations.Portal(CompassDirection.WEST),
+        CompassDirection.NORTHWEST  to MapRelations.Portal(CompassDirection.NORTHWEST)
+    )
   val dirs: Map<CompassDirection, Pair<Int, Int>>
     get() = mapOf(
         CompassDirection.NORTH      to Pair(0,1),
@@ -97,6 +120,7 @@ object MapBuilder {
     for((x, rows) in nodes.withIndex())
       for((y, node) in rows.withIndex()) {
         for((direction, offset) in MapStuff.dirs) {
+
           if(!node.hasRelation(direction)) {
             val tX = x + offset.first
             val tY = y + offset.second
