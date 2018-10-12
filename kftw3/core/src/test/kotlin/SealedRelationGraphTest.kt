@@ -33,8 +33,8 @@ enum class CompassDirection {
 }
 
 sealed class MapRelations {
-  data class Neighbour(val toThe: CompassDirection)
-  data class Portal(val toThe: CompassDirection)
+  data class Neighbour(val toThe: CompassDirection) : MapRelations()
+  data class Portal(val toThe: CompassDirection) : MapRelations()
 }
 
 class SealedRelationGraphTest {
@@ -120,14 +120,14 @@ object MapBuilder {
     for((x, rows) in nodes.withIndex())
       for((y, node) in rows.withIndex()) {
         for((direction, offset) in MapStuff.dirs) {
-
-          if(!node.hasRelation(direction)) {
+          val relation = MapStuff.neighbourRelations[direction]!!
+          if(!node.hasRelation(relation)) {
             val tX = x + offset.first
             val tY = y + offset.second
             if(tX in 0..maxX && tY in 0..maxY) {
               val tNode = nodes[tX]!![tY]!!
-              node.addRelation(direction, tNode)
-              tNode.addRelation(dirs2[direction]!!, node)
+              node.addRelation(relation, tNode)
+              tNode.addRelation(MapStuff.neighbourRelations[MapStuff.opposites[direction]!!]!!, node)
             }
           }
         }
