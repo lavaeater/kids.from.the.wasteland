@@ -70,7 +70,12 @@ class SealedRelationGraphTest {
 
 fun MutableMap<Coordinate, Node<Coordinate, MapRelations>>.getNode(x: Int, y: Int, type: Int = 0): Node<Coordinate, MapRelations> {
   val coordinate = getCoord(x,y,type)
-  
+  var node = this[coordinate]
+  if(node == null) {
+    node = Node(coordinate)
+    this[coordinate] = node
+  }
+  return node
 }
 
 fun getCoord(x: Int, y: Int, type: Int = 0) : Coordinate {
