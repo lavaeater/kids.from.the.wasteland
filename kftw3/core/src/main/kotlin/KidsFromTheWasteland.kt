@@ -1,13 +1,33 @@
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import graph.Coordinate
+import graph.Graph
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.graphics.use
+import world.MapBuilder
+import world.MapRelations
 
 class FirstScreen : KtxScreen {
     private val image = Texture("ktx-logo.png")
     private val batch = SpriteBatch()
+
+    override fun show() {
+        super.show()
+
+        //1. First, create graph
+        val worldGraph = MapBuilder.createWorld()
+        //2. Serialize to JSON
+        val mapper = jacksonObjectMapper()
+        val writer = mapper.writerWithDefaultPrettyPrinter()
+        val data = writer.writeValueAsString(worldGraph)
+
+        //3. read?
+
+        val readWorld = mapper.readValue(data, Graph::class.java)
+    }
 
     override fun render(delta: Float) {
         clearScreen(0.8f, 0.8f, 0.8f)

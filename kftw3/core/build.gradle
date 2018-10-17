@@ -25,6 +25,7 @@ dependencies {
   compile "com.sudoplay.joise:joise:$joiseVersion"
   compile "io.github.libktx:ktx-async:$ktxAsyncVersion"
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+  compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
   testImplementation 'junit:junit:4.12'
   testImplementation 'org.mockito:mockito-core:2.10.0'

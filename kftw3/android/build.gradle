@@ -35,7 +35,7 @@ android {
   defaultConfig {
     applicationId 'core'
     minSdkVersion 14
-    targetSdkVersion 23
+    targetSdkVersion 26
   }
 }
 
