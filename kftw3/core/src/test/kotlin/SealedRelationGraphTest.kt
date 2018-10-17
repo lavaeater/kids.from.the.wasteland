@@ -1,7 +1,7 @@
 import graph.Coordinate
+import graph.Graph
 import graph.Node
 import org.junit.BeforeClass
-import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 
 /*
@@ -39,6 +39,18 @@ enum class CardinalDirection {
   WEST
 }
 
+enum class Anchor {
+  TOP,
+  TOPRIGHT,
+  RIGHT,
+  BOTTOMRIGHT,
+  BOTTOM,
+  BOTTOMLEFT,
+  LEFT,
+  TOPLEFT,
+  CENTER
+}
+
 sealed class MapRelations {
   data class Neighbour(val toThe: CompassDirection) : MapRelations()
   data class Portal(val toThe: CompassDirection) : MapRelations()
@@ -68,6 +80,7 @@ class SealedRelationGraphTest {
     val xMax = 2
     val yMin = 0
     val yMax = 2
+    val graph = Graph<Coordinate, MapRelations>(mapOf())
 
     /*
     We shall traverse the bounds of the x-y-max and for every node create or find neighbours etc.
@@ -80,6 +93,23 @@ class SealedRelationGraphTest {
         We know what relations we ACTUALLY need etc... make another map-map of
         compassdirections on the form "eastern" -> "northeast", "east", "southeast". Fucking-ah
          */
+
+        val node = nodes.getNode(x,y)
+        /*
+        What relations do we need?
+         */
+        val anchor = if(x == xMin && y == yMin) Anchor.BOTTOMLEFT else
+          if(x == xMax && y == yMax) Anchor.TOPRIGHT else
+            if(x == xMin && y == yMax) Anchor.TOPLEFT else
+              if(x == xMax && y == yMin) Anchor.BOTTOMRIGHT else
+                if(x == xMin && y != yMin && y != yMax) Anchor.LEFT else
+                  if(x == xMax && y != yMin && y != yMax) Anchor.RIGHT else
+                    if(y == yMin && x != xMin && x != xMax) Anchor.BOTTOM else
+                      if(y == yMax && x != xMin && x != xMax) Anchor.TOP else
+                        Anchor.CENTER
+
+        val neededRelations = mutableSetOf<CompassDirection>()
+
       }
   }
 }
@@ -156,6 +186,32 @@ object MapStuff {
         CompassDirection.WEST       	to 	CompassDirection.EAST,
         CompassDirection.NORTHWEST   to 	CompassDirection.SOUTHEAST)
 
+  fun anchorToCompassDirections(anchor: Anchor): Set<CompassDirection> {
+    when(anchor) {
+      Anchor.CENTER -> return CompassDirection.values().toSet()
+      Anchor.BOTTOMLEFT -> return setOf(
+          CompassDirection.NORTH,
+          CompassDirection.NORTHEAST,
+          CompassDirection.EAST)
+      Anchor.LEFT -> return setOf(
+          CompassDirection.NORTH,
+          CompassDirection.NORTHEAST,
+          CompassDirection.EAST,
+          CompassDirection.SOUTHEAST,
+          CompassDirection.SOUTH)
+      Anchor.TOPLEFT -> return setOf(
+          CompassDirection.EAST,
+          CompassDirection.SOUTHEAST,
+          CompassDirection.SOUTH)
+      Anchor.TOP -> return setOf(
+          CompassDirection.EAST,
+          CompassDirection.SOUTHEAST,
+          CompassDirection.SOUTH,
+          CompassDirection.SOUTHWEST,
+          CompassDirection.WEST)
+    }
+  }
+
   val cardinalDirections: Map<CardinalDirection, Set<CompassDirection>>
   get() = mapOf(
       CardinalDirection.NORTH to setOf(
@@ -165,7 +221,15 @@ object MapStuff {
       CardinalDirection.EAST to setOf(
           CompassDirection.NORTHEAST,
           CompassDirection.EAST,
-          CompassDirection.SOUTHEAST)
+          CompassDirection.SOUTHEAST),
+      CardinalDirection.SOUTH to setOf(
+          CompassDirection.SOUTHEAST,
+          CompassDirection.SOUTH,
+          CompassDirection.SOUTHWEST),
+      CardinalDirection.WEST to setOf(
+          CompassDirection.SOUTHWEST,
+          CompassDirection.WEST,
+          CompassDirection.NORTHWEST)
   )
 }
 
