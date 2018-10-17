@@ -209,6 +209,26 @@ object MapStuff {
           CompassDirection.SOUTH,
           CompassDirection.SOUTHWEST,
           CompassDirection.WEST)
+      Anchor.TOPRIGHT -> return setOf(
+          CompassDirection.SOUTH,
+          CompassDirection.SOUTHWEST,
+          CompassDirection.WEST)
+      Anchor.RIGHT -> return setOf(
+          CompassDirection.SOUTH,
+          CompassDirection.SOUTHWEST,
+          CompassDirection.WEST,
+          CompassDirection.NORTHWEST,
+          CompassDirection.NORTH)
+      Anchor.BOTTOMRIGHT -> return setOf(
+          CompassDirection.WEST,
+          CompassDirection.NORTHWEST,
+          CompassDirection.NORTH)
+      Anchor.BOTTOM -> return setOf(
+          CompassDirection.WEST,
+          CompassDirection.NORTHWEST,
+          CompassDirection.NORTH,
+          CompassDirection.NORTHEAST,
+          CompassDirection.EAST)
     }
   }
 
