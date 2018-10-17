@@ -2,6 +2,7 @@ import graph.Coordinate
 import graph.Graph
 import graph.Node
 import org.junit.BeforeClass
+import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 
 /*
@@ -71,9 +72,9 @@ class SealedRelationGraphTest {
   fun worldGraph() {
     val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelations>>()
     val xMin = 0
-    val xMax = 2
+    val xMax = 99
     val yMin = 0
-    val yMax = 2
+    val yMax = 99
     val graph = Graph<Coordinate, MapRelations>(mapOf())
 
     /*
@@ -88,7 +89,9 @@ class SealedRelationGraphTest {
         compassdirections on the form "eastern" -> "northeast", "east", "southeast". Fucking-ah
          */
 
-        val node = nodes.getNode(x,y)
+        val res = measureAndReturn { nodes.getNode(x,y) }
+        val node = res.first
+        println("GetNode: ${res.second} milliseconds")
         /*
         What relations do we need?
          */
@@ -115,6 +118,12 @@ class SealedRelationGraphTest {
      */
     nodes.forEach { graph.addNode(it.value) }
   }
+}
+
+inline fun <R> measureAndReturn(block: () -> R): Pair<R, Long> {
+  val start = System.currentTimeMillis()
+  val result = block()
+  return result to (System.currentTimeMillis() - start)
 }
 
 fun getAnchor(x: Int, y: Int, xMin: Int, xMax: Int, yMin:Int, yMax: Int) : Anchor {
