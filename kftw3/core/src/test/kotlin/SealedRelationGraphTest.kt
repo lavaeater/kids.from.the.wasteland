@@ -56,16 +56,40 @@ class SealedRelationGraphTest {
 
   @Test
   fun worldGraph() {
-    val nodes = mapOf<Coordinate, Node<Coordinate, MapRelations>>()
+    val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelations>>()
     val xMin = 0
     val xMax = 2
     val yMin = 0
     val yMax = 2
-    
+
+    /*
+    We shall traverse the bounds of the x-y-max and for every node create or find neighbours etc.
+     */
   }
 }
 
+fun MutableMap<Coordinate, Node<Coordinate, MapRelations>>.getNode(x: Int, y: Int, type: Int = 0): Node<Coordinate, MapRelations> {
+  val coordinate = getCoord(x,y,type)
+  
+}
+
+fun getCoord(x: Int, y: Int, type: Int = 0) : Coordinate {
+  return MapStuff.coordinateCache.getCoord(x,y,type)
+}
+
+fun MutableSet<Coordinate>.getCoord(x: Int, y: Int, type: Int = 0) : Coordinate {
+  var coordinate = this.firstOrNull { it.x == x && it.y == y && it.type == type  }
+  if(coordinate == null) {
+    coordinate = Coordinate(x,y, type)
+    this.add(coordinate)
+  }
+  return coordinate
+}
+
 object MapStuff {
+
+  val coordinateCache = mutableSetOf<Coordinate>()
+
   val neighbourRelations: Map<CompassDirection, MapRelations.Neighbour>
   get() = mapOf(
       CompassDirection.NORTH      to MapRelations.Neighbour(CompassDirection.NORTH),
