@@ -32,6 +32,13 @@ enum class CompassDirection {
   NORTHWEST
 }
 
+enum class CardinalDirection {
+  NORTH,
+  EAST,
+  SOUTH,
+  WEST
+}
+
 sealed class MapRelations {
   data class Neighbour(val toThe: CompassDirection) : MapRelations()
   data class Portal(val toThe: CompassDirection) : MapRelations()
@@ -65,6 +72,15 @@ class SealedRelationGraphTest {
     /*
     We shall traverse the bounds of the x-y-max and for every node create or find neighbours etc.
      */
+    for(x in xMin..xMax)
+      for(y in yMin..yMax) {
+        /*
+        All hail satan!
+
+        We know what relations we ACTUALLY need etc... make another map-map of
+        compassdirections on the form "eastern" -> "northeast", "east", "southeast". Fucking-ah
+         */
+      }
   }
 }
 
@@ -139,6 +155,18 @@ object MapStuff {
         CompassDirection.SOUTHWEST   to 	CompassDirection.NORTHEAST,
         CompassDirection.WEST       	to 	CompassDirection.EAST,
         CompassDirection.NORTHWEST   to 	CompassDirection.SOUTHEAST)
+
+  val cardinalDirections: Map<CardinalDirection, Set<CompassDirection>>
+  get() = mapOf(
+      CardinalDirection.NORTH to setOf(
+          CompassDirection.NORTHWEST,
+          CompassDirection.NORTH,
+          CompassDirection.NORTHEAST),
+      CardinalDirection.EAST to setOf(
+          CompassDirection.NORTHEAST,
+          CompassDirection.EAST,
+          CompassDirection.SOUTHEAST)
+  )
 }
 
 object MapBuilder {
