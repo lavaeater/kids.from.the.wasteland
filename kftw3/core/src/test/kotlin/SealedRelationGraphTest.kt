@@ -68,21 +68,6 @@ class SealedRelationGraphTest {
   }
 
   @Test
-  fun worldMap_Creation() {
-
-    val nodeMap = mapOf<Coordinate, Node<Coordinate, MapRelations>>()
-    var currentColumn = 0
-    var currentRow = 0
-
-    val xMin = 0
-    val yMin = 0
-    val xMax = 2
-    val yMax = 2
-    
-
-  }
-
-  @Test
   fun worldGraph() {
     val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelations>>()
     val xMin = 0
@@ -107,20 +92,40 @@ class SealedRelationGraphTest {
         /*
         What relations do we need?
          */
-        val anchor = if(x == xMin && y == yMin) Anchor.BOTTOMLEFT else
-          if(x == xMax && y == yMax) Anchor.TOPRIGHT else
-            if(x == xMin && y == yMax) Anchor.TOPLEFT else
-              if(x == xMax && y == yMin) Anchor.BOTTOMRIGHT else
-                if(x == xMin && y != yMin && y != yMax) Anchor.LEFT else
-                  if(x == xMax && y != yMin && y != yMax) Anchor.RIGHT else
-                    if(y == yMin && x != xMin && x != xMax) Anchor.BOTTOM else
-                      if(y == yMax && x != xMin && x != xMax) Anchor.TOP else
-                        Anchor.CENTER
+        val anchor = getAnchor(x, y, xMin, xMax, yMin, yMax)
 
-        val neededRelations = mutableSetOf<CompassDirection>()
+        val neededRelations = MapStuff.getCompassDirectionsFor(anchor).map { MapStuff.neighbourRelations[it]!! }
+        for (relation in neededRelations) {
+          if(!node.hasRelation(relation)) {
+            val direction = MapStuff.dirs[relation.toThe]!!
+            val relatedNode = nodes.getNode(x + direction.first, y + direction.second)
+            node.addRelation(relation, relatedNode)
 
+            relatedNode.addRelation(MapStuff.neighbourRelations[MapStuff.opposites[relation.toThe]!!]!!, node)
+          }
+        }
       }
+
+    /*
+    Hail Satan!
+
+    When that is done, we shall be done - the code written, the code done
+
+    We should have a list of 9, no more, no less, nodes.
+     */
+    nodes.forEach { graph.addNode(it.value) }
   }
+}
+
+fun getAnchor(x: Int, y: Int, xMin: Int, xMax: Int, yMin:Int, yMax: Int) : Anchor {
+  return if(x == xMin && y == yMin) Anchor.BOTTOMLEFT else
+    if(x == xMax && y == yMax) Anchor.TOPRIGHT else
+    if(x == xMin && y == yMax) Anchor.TOPLEFT else
+    if(x == xMax && y == yMin) Anchor.BOTTOMRIGHT else
+    if(x == xMin && y != yMin && y != yMax) Anchor.LEFT else
+    if(x == xMax && y != yMin && y != yMax) Anchor.RIGHT else
+    if(y == yMin && x != xMin && x != xMax) Anchor.BOTTOM else
+    if(y == yMax && x != xMin && x != xMax) Anchor.TOP else Anchor.CENTER
 }
 
 fun MutableMap<Coordinate, Node<Coordinate, MapRelations>>.getNode(x: Int, y: Int, type: Int = 0): Node<Coordinate, MapRelations> {
@@ -195,7 +200,7 @@ object MapStuff {
         CompassDirection.WEST       	to 	CompassDirection.EAST,
         CompassDirection.NORTHWEST   to 	CompassDirection.SOUTHEAST)
 
-  fun anchorToCompassDirections(anchor: Anchor): Set<CompassDirection> {
+  fun getCompassDirectionsFor(anchor: Anchor): Set<CompassDirection> {
     when(anchor) {
       Anchor.CENTER -> return CompassDirection.values().toSet()
       Anchor.BOTTOMLEFT -> return setOf(
