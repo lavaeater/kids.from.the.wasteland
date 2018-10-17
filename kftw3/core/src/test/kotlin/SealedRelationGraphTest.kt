@@ -53,6 +53,16 @@ class SealedRelationGraphTest {
 
 
   }
+
+  @Test
+  fun worldGraph() {
+    val nodes = mapOf<Coordinate, Node<Coordinate, MapRelations>>()
+    val xMin = 0
+    val xMax = 2
+    val yMin = 0
+    val yMax = 2
+    
+  }
 }
 
 object MapStuff {
