@@ -38,38 +38,34 @@ enum class Anchor {
 }
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-sealed class MapRelations {
+sealed class MapRelation {
   var id = UUID.randomUUID()
-  data class Neighbour(val toThe: CompassDirection) : MapRelations()
-  data class Portal(val toThe: CompassDirection) : MapRelations()
+  data class Neighbour(val toThe: CompassDirection) : MapRelation()
+  data class Portal(val toThe: CompassDirection) : MapRelation()
 }
 
 
 object MapStuff {
   val coordinateCache = mutableSetOf<Coordinate>()
 
-  val neighbourRelations: Map<CompassDirection, MapRelations.Neighbour>
+  val neighbourRelation: Map<CompassDirection, MapRelation.Neighbour>
     get() = mapOf(
-        CompassDirection.NORTH      to MapRelations.Neighbour(CompassDirection.NORTH),
-        CompassDirection.NORTHEAST  to MapRelations.Neighbour(CompassDirection.NORTHEAST),
-        CompassDirection.EAST       to MapRelations.Neighbour(CompassDirection.EAST),
-        CompassDirection.SOUTHEAST  to MapRelations.Neighbour(CompassDirection.SOUTHEAST),
-        CompassDirection.SOUTH      to MapRelations.Neighbour(CompassDirection.SOUTH),
-        CompassDirection.SOUTHWEST  to MapRelations.Neighbour(CompassDirection.SOUTHWEST),
-        CompassDirection.WEST       to MapRelations.Neighbour(CompassDirection.WEST),
-        CompassDirection.NORTHWEST  to MapRelations.Neighbour(CompassDirection.NORTHWEST)
+        CompassDirection.NORTH      to MapRelation.Neighbour(CompassDirection.NORTH),
+        CompassDirection.NORTHEAST  to MapRelation.Neighbour(CompassDirection.NORTHEAST),
+        CompassDirection.EAST       to MapRelation.Neighbour(CompassDirection.EAST),
+        CompassDirection.SOUTHEAST  to MapRelation.Neighbour(CompassDirection.SOUTHEAST),
+        CompassDirection.SOUTH      to MapRelation.Neighbour(CompassDirection.SOUTH),
+        CompassDirection.SOUTHWEST  to MapRelation.Neighbour(CompassDirection.SOUTHWEST),
+        CompassDirection.WEST       to MapRelation.Neighbour(CompassDirection.WEST),
+        CompassDirection.NORTHWEST  to MapRelation.Neighbour(CompassDirection.NORTHWEST)
     )
 
-  val portalRelations: Map<CompassDirection, MapRelations.Portal>
+  val portalRelation: Map<CompassDirection, MapRelation.Portal>
     get() = mapOf(
-        CompassDirection.NORTH      to MapRelations.Portal(CompassDirection.NORTH),
-        CompassDirection.NORTHEAST  to MapRelations.Portal(CompassDirection.NORTHEAST),
-        CompassDirection.EAST       to MapRelations.Portal(CompassDirection.EAST),
-        CompassDirection.SOUTHEAST  to MapRelations.Portal(CompassDirection.SOUTHEAST),
-        CompassDirection.SOUTH      to MapRelations.Portal(CompassDirection.SOUTH),
-        CompassDirection.SOUTHWEST  to MapRelations.Portal(CompassDirection.SOUTHWEST),
-        CompassDirection.WEST       to MapRelations.Portal(CompassDirection.WEST),
-        CompassDirection.NORTHWEST  to MapRelations.Portal(CompassDirection.NORTHWEST)
+        CompassDirection.NORTH      to MapRelation.Portal(CompassDirection.NORTH),
+        CompassDirection.EAST       to MapRelation.Portal(CompassDirection.EAST),
+        CompassDirection.SOUTH      to MapRelation.Portal(CompassDirection.SOUTH),
+        CompassDirection.WEST       to MapRelation.Portal(CompassDirection.WEST)
     )
   val dirs: Map<CompassDirection, Pair<Int, Int>>
     get() = mapOf(
@@ -173,7 +169,7 @@ fun getAnchor(x: Int, y: Int, xMin: Int, xMax: Int, yMin:Int, yMax: Int) : Ancho
                 if(y == yMax && x != xMin && x != xMax) Anchor.TOP else Anchor.CENTER
 }
 
-fun MutableMap<Coordinate, Node<Coordinate, MapRelations>>.getNode(x: Int, y: Int, type: Int = 0): Node<Coordinate, MapRelations> {
+fun MutableMap<Coordinate, Node<Coordinate, MapRelation>>.getNode(x: Int, y: Int, type: Int = 0): Node<Coordinate, MapRelation> {
   val coordinate = getCoord(x,y,type)
   var node = this[coordinate]
   if(node == null) {
@@ -198,13 +194,13 @@ fun MutableSet<Coordinate>.getCoord(x: Int, y: Int, type: Int = 0) : Coordinate 
 
 
 object MapBuilder {
-  fun createWorld(xOffset: Int = 0, yOffset: Int = 0, width: Int = 10, height: Int = 10) : Graph<Coordinate, MapRelations> {
-    val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelations>>()
+  fun createWorld(xOffset: Int = 0, yOffset: Int = 0, width: Int = 10, height: Int = 10) : Graph<Coordinate, MapRelation> {
+    val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelation>>()
     val xMin = xOffset
     val xMax = xOffset + width - 1
     val yMin = yOffset
     val yMax = yOffset + height - 1
-    val graph = Graph<Coordinate, MapRelations>(mapOf())
+    val graph = Graph<Coordinate, MapRelation>(mapOf())
 
     /*
     We shall traverse the bounds of the x-y-max and for every node create or find neighbours etc.
@@ -224,14 +220,14 @@ object MapBuilder {
          */
         val anchor = getAnchor(x, y, xMin, xMax, yMin, yMax)
 
-        val neededRelations = MapStuff.getCompassDirectionsFor(anchor).map { MapStuff.neighbourRelations[it]!! }
+        val neededRelations = MapStuff.getCompassDirectionsFor(anchor).map { MapStuff.neighbourRelation[it]!! }
         for (relation in neededRelations) {
           if(!node.hasRelation(relation)) {
             val direction = MapStuff.dirs[relation.toThe]!!
             val relatedNode = nodes.getNode(x + direction.first, y + direction.second)
             node.addRelation(relation, relatedNode)
 
-            relatedNode.addRelation(MapStuff.neighbourRelations[MapStuff.opposites[relation.toThe]!!]!!, node)
+            relatedNode.addRelation(MapStuff.neighbourRelation[MapStuff.opposites[relation.toThe]!!]!!, node)
           }
         }
       }
