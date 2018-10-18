@@ -17,6 +17,7 @@ class FirstScreen : KtxScreen {
         super.show()
 
         val worldGraph = MapBuilder.createWorld(0,0,3,3)
+        MapBuilder.addPortals(worldGraph)
         //2. Serialize to JSON
         val mapper = jacksonObjectMapper()
         val writer = mapper.writerWithDefaultPrettyPrinter()

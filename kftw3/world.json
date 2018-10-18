@@ -1,7 +1,7 @@
 {
   "graphProperties" : { },
   "nodes" : [ {
-    "id" : "79fe8fa6-ce70-4c44-bcc5-3f2e8ff2f034",
+    "id" : "5e150b94-96e4-402b-a704-f1dbdf6a2af2",
     "data" : {
       "x" : 0,
       "y" : 0,
@@ -9,118 +9,142 @@
     },
     "relations" : {
       "Neighbour(toThe=NORTH)" : [ {
-        "id" : "002c35d3-a41e-4f51-91a8-857730f7e89c",
+        "id" : "8110b239-2a0c-499a-9b66-23994fecb5f0",
         "data" : {
           "x" : 0,
           "y" : 1,
           "type" : 0
         },
         "relations" : {
-          "Neighbour(toThe=SOUTH)" : [ "79fe8fa6-ce70-4c44-bcc5-3f2e8ff2f034" ],
+          "Neighbour(toThe=SOUTH)" : [ "5e150b94-96e4-402b-a704-f1dbdf6a2af2" ],
           "Neighbour(toThe=NORTH)" : [ {
-            "id" : "f6254d89-ba5b-44fb-8aeb-de88ff2be45a",
+            "id" : "d418d5f0-96dd-4567-8dde-e4a4af768de2",
             "data" : {
               "x" : 0,
               "y" : 2,
               "type" : 0
             },
             "relations" : {
-              "Neighbour(toThe=SOUTH)" : [ "002c35d3-a41e-4f51-91a8-857730f7e89c" ],
+              "Neighbour(toThe=SOUTH)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
               "Neighbour(toThe=EAST)" : [ {
-                "id" : "49394041-d50c-4e40-819a-b5d76b545949",
+                "id" : "d29358e4-1e55-4bc8-bb90-01a986fe871e",
                 "data" : {
                   "x" : 1,
                   "y" : 2,
                   "type" : 0
                 },
                 "relations" : {
-                  "Neighbour(toThe=SOUTHWEST)" : [ "002c35d3-a41e-4f51-91a8-857730f7e89c" ],
-                  "Neighbour(toThe=WEST)" : [ "f6254d89-ba5b-44fb-8aeb-de88ff2be45a" ],
+                  "Neighbour(toThe=SOUTHWEST)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+                  "Neighbour(toThe=WEST)" : [ "d418d5f0-96dd-4567-8dde-e4a4af768de2" ],
                   "Neighbour(toThe=SOUTH)" : [ {
-                    "id" : "d191879f-fe24-4179-b30d-2a258e411095",
+                    "id" : "56470ffb-705b-48fa-8a4b-bfd7ab1a965b",
                     "data" : {
                       "x" : 1,
                       "y" : 1,
                       "type" : 0
                     },
                     "relations" : {
-                      "Neighbour(toThe=SOUTHWEST)" : [ "79fe8fa6-ce70-4c44-bcc5-3f2e8ff2f034" ],
-                      "Neighbour(toThe=WEST)" : [ "002c35d3-a41e-4f51-91a8-857730f7e89c" ],
-                      "Neighbour(toThe=NORTHWEST)" : [ "f6254d89-ba5b-44fb-8aeb-de88ff2be45a" ],
+                      "Neighbour(toThe=SOUTHWEST)" : [ "5e150b94-96e4-402b-a704-f1dbdf6a2af2" ],
+                      "Neighbour(toThe=WEST)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+                      "Neighbour(toThe=NORTHWEST)" : [ "d418d5f0-96dd-4567-8dde-e4a4af768de2" ],
                       "Neighbour(toThe=SOUTH)" : [ {
-                        "id" : "619ff837-bd32-48c3-a326-e66c61324df7",
+                        "id" : "7223575d-921a-4386-840d-b0d201bc07db",
                         "data" : {
                           "x" : 1,
                           "y" : 0,
                           "type" : 0
                         },
                         "relations" : {
-                          "Neighbour(toThe=WEST)" : [ "79fe8fa6-ce70-4c44-bcc5-3f2e8ff2f034" ],
-                          "Neighbour(toThe=NORTHWEST)" : [ "002c35d3-a41e-4f51-91a8-857730f7e89c" ],
-                          "Neighbour(toThe=NORTH)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
+                          "Neighbour(toThe=WEST)" : [ "5e150b94-96e4-402b-a704-f1dbdf6a2af2" ],
+                          "Neighbour(toThe=NORTHWEST)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+                          "Neighbour(toThe=NORTH)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
                           "Neighbour(toThe=NORTHEAST)" : [ {
-                            "id" : "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b",
+                            "id" : "451b4eea-39fb-42e1-ba45-e24f3881b097",
                             "data" : {
                               "x" : 2,
                               "y" : 1,
                               "type" : 0
                             },
                             "relations" : {
-                              "Neighbour(toThe=SOUTHWEST)" : [ "619ff837-bd32-48c3-a326-e66c61324df7" ],
-                              "Neighbour(toThe=WEST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
-                              "Neighbour(toThe=NORTHWEST)" : [ "49394041-d50c-4e40-819a-b5d76b545949" ],
+                              "Neighbour(toThe=SOUTHWEST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ],
+                              "Neighbour(toThe=WEST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+                              "Neighbour(toThe=NORTHWEST)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
                               "Neighbour(toThe=SOUTH)" : [ {
-                                "id" : "5cc5d62f-66a3-42a1-8a2e-1e28b0851f15",
+                                "id" : "5e550fc4-4be9-4e58-b1fe-117472a5e4d3",
                                 "data" : {
                                   "x" : 2,
                                   "y" : 0,
                                   "type" : 0
                                 },
                                 "relations" : {
-                                  "Neighbour(toThe=WEST)" : [ "619ff837-bd32-48c3-a326-e66c61324df7" ],
-                                  "Neighbour(toThe=NORTHWEST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
-                                  "Neighbour(toThe=NORTH)" : [ "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b" ]
+                                  "Neighbour(toThe=WEST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ],
+                                  "Neighbour(toThe=NORTHWEST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+                                  "Neighbour(toThe=NORTH)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ],
+                                  "Portal(toThe=NORTH)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+                                  "Portal(toThe=WEST)" : [ {
+                                    "id" : "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db",
+                                    "data" : {
+                                      "x" : 2,
+                                      "y" : 2,
+                                      "type" : 0
+                                    },
+                                    "relations" : {
+                                      "Neighbour(toThe=SOUTHWEST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+                                      "Neighbour(toThe=WEST)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+                                      "Neighbour(toThe=SOUTH)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ],
+                                      "Portal(toThe=SOUTH)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+                                      "Portal(toThe=WEST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ]
+                                    }
+                                  } ]
                                 }
                               } ],
-                              "Neighbour(toThe=NORTH)" : [ {
-                                "id" : "4c6d0581-63f1-4335-9cc3-00cf33dfd64f",
-                                "data" : {
-                                  "x" : 2,
-                                  "y" : 2,
-                                  "type" : 0
-                                },
-                                "relations" : {
-                                  "Neighbour(toThe=SOUTHWEST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
-                                  "Neighbour(toThe=WEST)" : [ "49394041-d50c-4e40-819a-b5d76b545949" ],
-                                  "Neighbour(toThe=SOUTH)" : [ "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b" ]
-                                }
-                              } ]
+                              "Neighbour(toThe=NORTH)" : [ "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db" ],
+                              "Portal(toThe=NORTH)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+                              "Portal(toThe=SOUTH)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+                              "Portal(toThe=WEST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ]
                             }
                           } ],
-                          "Neighbour(toThe=EAST)" : [ "5cc5d62f-66a3-42a1-8a2e-1e28b0851f15" ]
+                          "Neighbour(toThe=EAST)" : [ "5e550fc4-4be9-4e58-b1fe-117472a5e4d3" ],
+                          "Portal(toThe=NORTH)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+                          "Portal(toThe=EAST)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+                          "Portal(toThe=WEST)" : [ "5e550fc4-4be9-4e58-b1fe-117472a5e4d3" ]
                         }
                       } ],
-                      "Neighbour(toThe=NORTH)" : [ "49394041-d50c-4e40-819a-b5d76b545949" ],
-                      "Neighbour(toThe=NORTHEAST)" : [ "4c6d0581-63f1-4335-9cc3-00cf33dfd64f" ],
-                      "Neighbour(toThe=EAST)" : [ "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b" ],
-                      "Neighbour(toThe=SOUTHEAST)" : [ "5cc5d62f-66a3-42a1-8a2e-1e28b0851f15" ]
+                      "Neighbour(toThe=NORTH)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+                      "Neighbour(toThe=NORTHEAST)" : [ "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db" ],
+                      "Neighbour(toThe=EAST)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ],
+                      "Neighbour(toThe=SOUTHEAST)" : [ "5e550fc4-4be9-4e58-b1fe-117472a5e4d3" ],
+                      "Portal(toThe=NORTH)" : [ "d418d5f0-96dd-4567-8dde-e4a4af768de2" ],
+                      "Portal(toThe=EAST)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+                      "Portal(toThe=SOUTH)" : [ "5e150b94-96e4-402b-a704-f1dbdf6a2af2" ],
+                      "Portal(toThe=WEST)" : [ "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db" ]
                     }
                   } ],
-                  "Neighbour(toThe=EAST)" : [ "4c6d0581-63f1-4335-9cc3-00cf33dfd64f" ],
-                  "Neighbour(toThe=SOUTHEAST)" : [ "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b" ]
+                  "Neighbour(toThe=EAST)" : [ "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db" ],
+                  "Neighbour(toThe=SOUTHEAST)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ],
+                  "Portal(toThe=EAST)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ],
+                  "Portal(toThe=SOUTH)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ],
+                  "Portal(toThe=WEST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ]
                 }
               } ],
-              "Neighbour(toThe=SOUTHEAST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ]
+              "Neighbour(toThe=SOUTHEAST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+              "Portal(toThe=EAST)" : [ "8110b239-2a0c-499a-9b66-23994fecb5f0" ],
+              "Portal(toThe=SOUTH)" : [ "5e150b94-96e4-402b-a704-f1dbdf6a2af2" ]
             }
           } ],
-          "Neighbour(toThe=NORTHEAST)" : [ "49394041-d50c-4e40-819a-b5d76b545949" ],
-          "Neighbour(toThe=EAST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
-          "Neighbour(toThe=SOUTHEAST)" : [ "619ff837-bd32-48c3-a326-e66c61324df7" ]
+          "Neighbour(toThe=NORTHEAST)" : [ "d29358e4-1e55-4bc8-bb90-01a986fe871e" ],
+          "Neighbour(toThe=EAST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+          "Neighbour(toThe=SOUTHEAST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ],
+          "Portal(toThe=NORTH)" : [ "5e550fc4-4be9-4e58-b1fe-117472a5e4d3" ],
+          "Portal(toThe=EAST)" : [ "d418d5f0-96dd-4567-8dde-e4a4af768de2" ],
+          "Portal(toThe=SOUTH)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ]
         }
       } ],
-      "Neighbour(toThe=NORTHEAST)" : [ "d191879f-fe24-4179-b30d-2a258e411095" ],
-      "Neighbour(toThe=EAST)" : [ "619ff837-bd32-48c3-a326-e66c61324df7" ]
+      "Neighbour(toThe=NORTHEAST)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+      "Neighbour(toThe=EAST)" : [ "7223575d-921a-4386-840d-b0d201bc07db" ],
+      "Portal(toThe=NORTH)" : [ "56470ffb-705b-48fa-8a4b-bfd7ab1a965b" ],
+      "Portal(toThe=EAST)" : [ "451b4eea-39fb-42e1-ba45-e24f3881b097" ]
     }
-  }, "002c35d3-a41e-4f51-91a8-857730f7e89c", "d191879f-fe24-4179-b30d-2a258e411095", "619ff837-bd32-48c3-a326-e66c61324df7", "f6254d89-ba5b-44fb-8aeb-de88ff2be45a", "49394041-d50c-4e40-819a-b5d76b545949", "9e72e9ba-ed48-41a2-9dfd-6ff11ca3719b", "5cc5d62f-66a3-42a1-8a2e-1e28b0851f15", "4c6d0581-63f1-4335-9cc3-00cf33dfd64f" ],
+  }, "8110b239-2a0c-499a-9b66-23994fecb5f0", "56470ffb-705b-48fa-8a4b-bfd7ab1a965b", "7223575d-921a-4386-840d-b0d201bc07db", "d418d5f0-96dd-4567-8dde-e4a4af768de2", "d29358e4-1e55-4bc8-bb90-01a986fe871e", "451b4eea-39fb-42e1-ba45-e24f3881b097", "5e550fc4-4be9-4e58-b1fe-117472a5e4d3", "eae94b4a-aa7e-47b0-85d8-9b4d8fea17db" ],
   "propertyMap" : { }
 }

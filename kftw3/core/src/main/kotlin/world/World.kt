@@ -1,5 +1,6 @@
 package world
 
+import com.badlogic.gdx.math.MathUtils
 import com.fasterxml.jackson.annotation.JsonIdentityInfo
 import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import graph.Coordinate
@@ -194,6 +195,45 @@ fun MutableSet<Coordinate>.getCoord(x: Int, y: Int, type: Int = 0) : Coordinate 
 
 
 object MapBuilder {
+
+	fun addPortals(graph: Graph<Coordinate, MapRelation>) {
+		val outMap = mutableMapOf<CompassDirection, MutableSet<Node<Coordinate, MapRelation>>>()
+		outMap[CompassDirection.NORTH] = mutableSetOf()
+		outMap[CompassDirection.EAST] = mutableSetOf()
+		outMap[CompassDirection.SOUTH] = mutableSetOf()
+		outMap[CompassDirection.WEST] = mutableSetOf()
+
+		val inMap = mutableMapOf<CompassDirection, MutableSet<Node<Coordinate, MapRelation>>>()
+		inMap[CompassDirection.NORTH] = mutableSetOf()
+		inMap[CompassDirection.EAST] = mutableSetOf()
+		inMap[CompassDirection.SOUTH] = mutableSetOf()
+		inMap[CompassDirection.WEST] = mutableSetOf()
+
+		for(node in graph.nodes) {
+			for((direction, outNodes) in outMap)
+				if(node.hasRelation(MapStuff.neighbourRelation[direction]!!)) {
+					outNodes.add(node)
+					inMap[direction]!!.add(node)
+				}
+		}
+
+		for ((direction, outNodes) in outMap) {
+			//We don't need to remove the outNodes, we loop over all of them!
+			for (outNode in outNodes) {
+				//Select a direction at random!
+				val targetDirections = inMap.filter { it.value.any() }.map { it.key }
+				val targetDirection = targetDirections.elementAt(MathUtils.random(0, targetDirections.count() - 1))
+
+				val possibleTargets = inMap[targetDirection]!!.filter { it != outNode }
+
+				val targetNode = possibleTargets.elementAt(MathUtils.random(0, possibleTargets.count() - 1))
+
+				outNode.addRelation(MapStuff.portalRelation[direction]!!, targetNode)
+				inMap[targetDirection]!!.remove(targetNode)
+			}
+		}
+	}
+
   fun createWorld(xOffset: Int = 0, yOffset: Int = 0, width: Int = 10, height: Int = 10) : Graph<Coordinate, MapRelation> {
     val nodes = mutableMapOf<Coordinate, Node<Coordinate, MapRelation>>()
     val xMin = xOffset
