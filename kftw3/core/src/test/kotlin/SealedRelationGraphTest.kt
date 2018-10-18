@@ -4,7 +4,6 @@ import graph.Graph
 import graph.Node
 import org.junit.BeforeClass
 import world.*
-import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 
 /*
@@ -88,7 +87,7 @@ class SealedRelationGraphTest {
   @Test
   fun serializationTest() {
     //1. First, create graph
-    val worldGraph = MapBuilder.createWorld(0,0,10,10)
+    val worldGraph = MapBuilder.createWorld(0,0,3,3)
     //2. Serialize to JSON
     val mapper = jacksonObjectMapper()
     val writer = mapper.writerWithDefaultPrettyPrinter()

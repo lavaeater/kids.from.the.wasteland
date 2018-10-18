@@ -1,3 +1,4 @@
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -17,16 +18,21 @@ class FirstScreen : KtxScreen {
     override fun show() {
         super.show()
 
-        //1. First, create graph
-        val worldGraph = MapBuilder.createWorld()
+        val worldGraph = MapBuilder.createWorld(0,0,3,3)
         //2. Serialize to JSON
         val mapper = jacksonObjectMapper()
         val writer = mapper.writerWithDefaultPrettyPrinter()
         val data = writer.writeValueAsString(worldGraph)
+        //3. Write to file
+        val file = Gdx.files.local("world.json")
+        file.writeString(data, false)
 
+        val readfile = Gdx.files.local("world.json")
+
+        val readData = readfile.readString()
         //3. read?
 
-        val readWorld = mapper.readValue(data, Graph::class.java)
+        val readWorld = mapper.readValue(readData, Graph::class.java)
     }
 
     override fun render(delta: Float) {

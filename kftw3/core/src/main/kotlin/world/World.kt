@@ -1,8 +1,11 @@
 package world
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
 import graph.Coordinate
 import graph.Graph
 import graph.Node
+import java.util.UUID
 
 enum class CompassDirection {
   NORTH,
@@ -34,14 +37,15 @@ enum class Anchor {
   CENTER
 }
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 sealed class MapRelations {
+  var id = UUID.randomUUID()
   data class Neighbour(val toThe: CompassDirection) : MapRelations()
   data class Portal(val toThe: CompassDirection) : MapRelations()
 }
 
 
 object MapStuff {
-
   val coordinateCache = mutableSetOf<Coordinate>()
 
   val neighbourRelations: Map<CompassDirection, MapRelations.Neighbour>

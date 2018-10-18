@@ -1,5 +1,9 @@
 package graph
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import java.util.*
+
 class Graph<T, R>(val graphProperties: Map<String, Any>) {
 	val nodes = mutableSetOf<Node<T, R>>()
 	private val labels = mutableMapOf<String, MutableSet<Node<T, R>>>()
@@ -55,10 +59,11 @@ class Graph<T, R>(val graphProperties: Map<String, Any>) {
 	}
 }
 
-
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 data class Node<T, R>(val data: T) {
-	private val relations = mutableMapOf<R, MutableSet<Node<T, R>>>()
-	val allNeighbours: Iterable<Node<T, R>> get() = relations.map { it.value }.flatten()
+	var id = UUID.randomUUID()
+	var relations = mutableMapOf<R, MutableSet<Node<T, R>>>()
+	//@Json	val allNeighbours: Iterable<Node<T, R>> get() = relations.map { it.value }.flatten()
 
 	fun addRelation(relation:R, relatedNode: Node<T, R>) {
 		if(!relations.containsKey(relation))
@@ -94,7 +99,9 @@ data class Node<T, R>(val data: T) {
 	}
 }
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
 abstract class Property<T> {
+	var id = UUID.randomUUID()
 	abstract val name: String
 	abstract var value: T
 }
