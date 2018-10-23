@@ -1,0 +1,18 @@
+=Combat Engine=
+This fucking wordwraps because VS Code is fucking retarded.
+
+I imagine some kind of flow where we start in some kind of state. Then something happens.
+
+What is this thing? Well, it could be "combat starts", but not all involved in the combat might have realized this, if we for instance are in some kind of ambush situation.
+
+So, things happen when "combat starts", for sure, the start is actually something, obviously. But it might not be something for all actors in the actual combat. 
+
+Well, I imagine there is some kind of event thing happening. So we start with "combat starting" as some general kind of state. The user, not having picked an action, does so. But an action isn't really an action, it's more of a "state" that the user puts his team members into. So, actors have some kind of ongoing "action" or state, that they can be "in" or be "doing".
+
+So, no actors know what other actors know. They are all their own independent entities. Telling someone else what you know is an action AND every action has some kind of chance of being detected. So, the user selects what to do and then if something happens that there might be some reason to react to, the combat pauses and the user can do new stuff - but everything takes time!
+
+So, we have TWO actors, A and B.
+
+At the start of combat, they face each other, so we need for everyone to have a field of view and some perception attribute. It is quite conceivable that a dull creature has really poor eyesight / and or smell (it's all a combo, I guess? or split up? Aaah.).
+
+We start everything with an action-less perception throw to see if they even see each other. Someone has to have noticed the other to begin with - if the player is ambushed and he / she doesn't notice it all starts with an attack.
