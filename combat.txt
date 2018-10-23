@@ -16,3 +16,11 @@ So, we have TWO actors, A and B.
 At the start of combat, they face each other, so we need for everyone to have a field of view and some perception attribute. It is quite conceivable that a dull creature has really poor eyesight / and or smell (it's all a combo, I guess? or split up? Aaah.).
 
 We start everything with an action-less perception throw to see if they even see each other. Someone has to have noticed the other to begin with - if the player is ambushed and he / she doesn't notice it all starts with an attack.
+
+So, players can react to things that happen, if they can notice that they in fact do happen. This is like a fog of war of sorts.
+
+What kind of prototypical implementation can we imagine for this then?
+
+Should we or should we not use the messaging system in libgdx?
+
+We obviously start with our own message queueuueueue
