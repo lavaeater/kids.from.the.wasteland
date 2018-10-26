@@ -2,13 +2,25 @@
 import com.badlogic.gdx.utils.Queue
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ParcelTests {
 
+	@Test
+	fun parcel_addComponent_hasComponent() {
+		//arrange
+		val p = Parcel()
+		val c = BroadCastContent()
+
+		//act
+		p.addContent(c)
+
+		//assert
+		assertTrue { p.hasContent<BroadCastContent>() }
+	}
 }
 
 class QueueTests {
-
 	@Test
 	fun postParcel_QueueContainsOneParcel() {
 		//Arrange
@@ -39,21 +51,38 @@ class QueueTests {
 
 class Parcel {
 	val contents = mutableSetOf<ParcelContent>()
+
+	fun addContent(c: ParcelContent) {
+		contents.add(c)
+	}
+
 	inline fun <reified T: ParcelContent> getContent(): T? {
 		return contents.firstOrNull { it is T} as T?
 	}
+
+	inline fun <reified T: ParcelContent> hasContent(): Boolean {
+		return contents.firstOrNull { it is T } != null
+	}
 }
+
+class BroadCastContent: ParcelContent()
 
 abstract class ParcelContent
 
-abstract class ParcelContentReceiver<T: ParcelContent> {
-
+abstract class ParcelProcessor {
+	abstract fun processParcel(p: Parcel)
 }
+
+abstract class GenericParcelProcessor<T: ParcelContent>: ParcelProcessor()
 
 class ParcelCentral(initialSize: Int = 10) {
 	val q = Queue<Parcel>(initialSize)
 
 	fun postParcel(p: Parcel) {
 		q.addLast(p)
+	}
+
+	fun addProcessor(processor: ParcelProcessor) {
+
 	}
 }
