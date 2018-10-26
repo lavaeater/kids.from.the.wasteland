@@ -3,6 +3,10 @@ import com.badlogic.gdx.utils.Queue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+class ParcelTests {
+
+}
+
 class QueueTests {
 
 	@Test
@@ -34,6 +38,15 @@ class QueueTests {
 }
 
 class Parcel {
+	val contents = mutableSetOf<ParcelContent>()
+	inline fun <reified T: ParcelContent> getContent(): T? {
+		return contents.firstOrNull { it is T} as T?
+	}
+}
+
+abstract class ParcelContent
+
+abstract class ParcelContentReceiver<T: ParcelContent> {
 
 }
 
