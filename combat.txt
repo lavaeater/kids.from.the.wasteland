@@ -24,3 +24,10 @@ What kind of prototypical implementation can we imagine for this then?
 Should we or should we not use the messaging system in libgdx?
 
 We obviously start with our own message queueuueueue
+
+
+Parcels as bags of components
+
+Messages shouldn't need to be tightly defined. The same limitation befalling our entitites should not befall our messages if not need be. Mind you, our parcels do NOT need to be process all of them every frame, just one every update.
+
+So we will have a system in libgdx that pulls any available message and gets the parcel handlers for any relevant components and just goes to town!
