@@ -1,5 +1,6 @@
 
 import com.badlogic.gdx.utils.Queue
+import kotlin.reflect.KClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -10,13 +11,30 @@ class ParcelTests {
 	fun parcel_addComponent_hasComponent() {
 		//arrange
 		val p = Parcel()
-		val c = BroadCastContent()
+		val c = BroadCastPayload()
 
 		//act
-		p.addContent(c)
+		p.addPayload(c)
 
 		//assert
-		assertTrue { p.hasContent<BroadCastContent>() }
+		assertTrue { p.hasPayload<BroadCastPayload>() }
+	}
+
+	@Test
+	fun parcel_addTwoComponents_hasBothComponent() {
+		//arrange
+		val p = Parcel()
+		val c = BroadCastPayload()
+		val e = EventPayload()
+
+		//act
+		p.addPayload(c)
+		p.addPayload(e)
+
+
+		//assert
+		assertTrue { p.hasPayload<BroadCastPayload>() }
+		assertTrue { p.hasPayloadType(e::class) }
 	}
 }
 
@@ -50,39 +68,58 @@ class QueueTests {
 }
 
 class Parcel {
-	val contents = mutableSetOf<ParcelContent>()
+	val payloads = mutableSetOf<ParcelPayload>()
+	private val payLoadClasses = mutableSetOf<KClass<out ParcelPayload>>()
 
-	fun addContent(c: ParcelContent) {
-		contents.add(c)
+	fun addPayload(c: ParcelPayload) {
+		payloads.add(c)
+		payLoadClasses.add(c::class)
 	}
 
-	inline fun <reified T: ParcelContent> getContent(): T? {
-		return contents.firstOrNull { it is T} as T?
+	inline fun <reified T: ParcelPayload> getContent(): T? {
+		return payloads.firstOrNull { it is T} as T?
 	}
 
-	inline fun <reified T: ParcelContent> hasContent(): Boolean {
-		return contents.firstOrNull { it is T } != null
+	inline fun <reified T: ParcelPayload> hasPayload(): Boolean {
+		return payloads.firstOrNull { it is T } != null
+	}
+
+	fun hasPayloadType(t: KClass<out ParcelPayload>): Boolean {
+		return payLoadClasses.contains(t)
 	}
 }
 
-class BroadCastContent: ParcelContent()
+class BroadCastPayload: ParcelPayload()
+class EventPayload: ParcelPayload()
 
-abstract class ParcelContent
+abstract class ParcelPayload
 
-abstract class ParcelProcessor {
+abstract class ParcelProcessor(private val forPayloadsOfType: Collection<KClass<ParcelPayload>>, val priority: Int = 0){
+
+	fun canProcessParcel(p: Parcel) : Boolean {
+		return forPayloadsOfType.all { p.hasPayloadType(it) }
+	}
+
 	abstract fun processParcel(p: Parcel)
 }
 
-abstract class GenericParcelProcessor<T: ParcelContent>: ParcelProcessor()
-
 class ParcelCentral(initialSize: Int = 10) {
 	val q = Queue<Parcel>(initialSize)
+	private val processors = mutableSetOf<ParcelProcessor>()
 
 	fun postParcel(p: Parcel) {
 		q.addLast(p)
 	}
 
-	fun addProcessor(processor: ParcelProcessor) {
+	fun processNextParcel() {
+		val parcel = q.removeFirst()
+		processors
+				.filter { it.canProcessParcel(parcel) }
+				.sortedBy { it.priority }
+				.forEach { it.processParcel(parcel) }
+	}
 
+	fun addProcessor(processor: ParcelProcessor) {
+		processors.add(processor)
 	}
 }
