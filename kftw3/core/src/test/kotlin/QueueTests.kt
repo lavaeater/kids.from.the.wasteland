@@ -94,13 +94,41 @@ class EventPayload: ParcelPayload()
 
 abstract class ParcelPayload
 
-abstract class ParcelProcessor(private val forPayloadsOfType: Collection<KClass<ParcelPayload>>, val priority: Int = 0){
+abstract class ParcelProcessor(private val forPayloadsOfType: List<KClass<*>>, val priority: Int = 0){
+	/*
+	How will we keep track of listeners?
+
+	That's the most intereseting part of this conundrum.
+
+	I actually just thought up some intriguing concept for how to send and receive
+	messages, but how will we decide what "entities" receive which messages?
+
+	The point would be that entities have "capabilities" that somehow correspond to
+	different types of payloads.
+
+	We must back to the drawing board and add our different entities to the mix, to the
+	sketch of this entire system. Nice.
+
+	I can imagine that a processParcel-method also might take all entities? Or a filtered
+	list of entities that are interested in that type of payload? Or?
+
+	We need a more comprehensive list of what we want this engine to dooo...
+	 */
 
 	fun canProcessParcel(p: Parcel) : Boolean {
-		return forPayloadsOfType.all { p.hasPayloadType(it) }
+		return forPayloadsOfType.all { p.hasPayloadType(it as KClass<ParcelPayload>) }
 	}
 
 	abstract fun processParcel(p: Parcel)
+}
+
+class AttentionProcessor:ParcelProcessor(listOf(EventPayload::class)) {
+
+
+
+	override fun processParcel(p: Parcel) {
+		TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+	}
 }
 
 class ParcelCentral(initialSize: Int = 10) {
