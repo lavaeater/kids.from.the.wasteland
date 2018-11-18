@@ -20,7 +20,7 @@ Change later so we can use the full power of ktest
 
  */
 
-open class StatsTests {
+class StatsTests {
 
   open class GivenOneCombattant {
     val statValue = 6f
@@ -51,8 +51,16 @@ open class StatsTests {
       assertEquals(fastStat(11f), combatStats)
     }
   }
+}
 
+class SkillResolutionTests {
+  @Test
+  fun randomTesting() {
+    val iterations = 100
+    for (i in 1..100) {
 
+    }
+  }
 }
 
 fun sumCombatStats(vararg stats: Stats, precision: Int = 1) : Stats {
