@@ -21,9 +21,17 @@ class StatCalculatorTests {
 
   @Test
   fun given_one_combattant_sum_is_same() {
-    val stat = Stats(5,5,5,5,5,5)
+    val stat = Stats(5f,5f,5f,5f,5f,5f)
 
-    val combatStats =
+    var combatStats = sumOfStats(stat)
+
+    println("One person has: $combatStats")
+
+
+    combatStats = sumOfStats(stat,stat,stat)
+
+    println("Three people has: $combatStats")
+
   }
 }
 
@@ -31,12 +39,13 @@ fun sumOfStats(vararg stats: Stats) : Stats {
   /*
   Formula... is...
    */
-  val returnStat = Stats()
+  var returnStat = Stats()
 
   for ((n, stat) in stats.withIndex()) {
-    val factor = 1 / (n+ 1)
-
+    val factor = 1f / (n+ 1f)
+    returnStat += stat.factor(factor)
   }
+  return returnStat
 }
 
 operator fun Stats.plus(b:Stats):Stats{
