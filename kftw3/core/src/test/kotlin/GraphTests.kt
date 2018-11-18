@@ -36,7 +36,7 @@ class GraphTests {
 
 	@Test
 	fun graphPerformance() {
-		val side = 1000
+		val side = 10
 		println("Creating grid / map with $side x $side nodes (${side * side})")
 
 		var nodes: Array<Array<Node<Coordinate, String>>>? = null

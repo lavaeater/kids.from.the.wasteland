@@ -1,4 +1,7 @@
+import kotlin.math.pow
+import kotlin.math.round
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /*
 Use Peters excellent pattern for testing!
@@ -13,39 +16,65 @@ Bonus calcs
 
 Effect resolution
 
-
+Change later so we can use the full power of ktest
 
  */
 
-class StatCalculatorTests {
+open class StatsTests {
 
-  @Test
-  fun given_one_combattant_sum_is_same() {
-    val stat = Stats(5f,5f,5f,5f,5f,5f)
+  open class GivenOneCombattant {
+    val statValue = 6f
+    val c1 = fastStat(statValue)
+    @Test
+    fun CombatStatsAreEqual() {
 
-    var combatStats = sumOfStats(stat)
-
-    println("One person has: $combatStats")
-
-
-    combatStats = sumOfStats(stat,stat,stat)
-
-    println("Three people has: $combatStats")
-
+      val combatStats = sumCombatStats(c1)
+      assertEquals(c1, combatStats, "When one combattant, stats should be equal")
+    }
   }
+
+  open class GivenTwoCombattants:GivenOneCombattant() {
+    val c2 = fastStat(statValue)
+
+    @Test
+    fun CombatStatsShouldBeNine() {
+      val combatStats = sumCombatStats(c1, c2)
+      assertEquals(fastStat(9f), combatStats)
+    }
+  }
+
+  class GivenThreeCombattants: GivenTwoCombattants() {
+    val c3 = fastStat(statValue)
+    @Test
+    fun CombatStatsShouldBeEleven() {
+      val combatStats = sumCombatStats(c1, c2, c3)
+      assertEquals(fastStat(11f), combatStats)
+    }
+  }
+
+
 }
 
-fun sumOfStats(vararg stats: Stats) : Stats {
+fun sumCombatStats(vararg stats: Stats, precision: Int = 1) : Stats {
   /*
   Formula... is...
    */
   var returnStat = Stats()
 
   for ((n, stat) in stats.withIndex()) {
-    val factor = 1f / (n+ 1f)
+    val factor = (1f / (n+ 1f))
     returnStat += stat.factor(factor)
   }
   return returnStat
+}
+
+/**
+ * @param precision the number of decimals to round to. Default is one decimal
+ * @return returns the value rounded to precision decimals
+ */
+fun Float.roundTo(precision: Int = 1) : Float {
+  val f = 10f.pow(precision)
+  return round(this * f) / f
 }
 
 operator fun Stats.plus(b:Stats):Stats{
@@ -86,16 +115,16 @@ operator fun Stats.div(b: Stats) : Stats {
 }
 
 fun Stats.factor(factor: Float): Stats {
-  return this * statFactor(factor)
+  return this * fastStat(factor)
 }
 
-fun statFactor(factor: Float):Stats = Stats(
-    factor,
-    factor,
-    factor,
-    factor,
-    factor,
-    factor
+fun fastStat(value: Float):Stats = Stats(
+    value,
+    value,
+    value,
+    value,
+    value,
+    value
 )
 
 data class Stats(
