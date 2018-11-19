@@ -43,27 +43,23 @@ UltraWin
  */
 
 enum class CombatEvent {
-  UltraFail,
   MajorFail,
   Fail,
-  Neutral,
-  Succeed,
-  MajorSucceed,
-  UltraSucceed
-
+  Success,
+  MajorSuccess,
 }
 
+/**
+ * There's just to many states here. We're
+ * building a prototype, damnit!
+ *
+ * These basically reflect the morale of the team? Kinda?
+ */
 enum class CombatState {
   Ambushed,
-  Routed,
-  PushedBack,
   Controlled,
   Neutral,
   Disciplined,
-  Controlling,
-  Dominating,
-  Crushing,
-  Ambushing,
   Defeated,
   Victorious,
   Disengaged
@@ -73,14 +69,10 @@ class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
   val stateMachine: StateMachine<CombatState, CombatEvent>
       = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
     state(CombatState.Ambushed) {
-      edge(CombatEvent.UltraSucceed, CombatState.Disciplined) {}
-      edge(CombatEvent.MajorSucceed, CombatState.Neutral) {}
-      edge(CombatEvent.Succeed, CombatState.Controlled) {}
-      edge(CombatEvent.Neutral, CombatState.PushedBack) {}
-      edge(CombatEvent.Fail, CombatState.Routed) {}
+      edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
+      edge(CombatEvent.Success, CombatState.Controlled) {}
+      edge(CombatEvent.Fail, CombatState.Ambushed) {}
       edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
-      edge(CombatEvent.UltraFail, CombatState.Defeated) {}
-    }
   }
 }
 
