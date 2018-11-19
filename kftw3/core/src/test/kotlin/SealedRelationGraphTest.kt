@@ -148,7 +148,9 @@ class SealedRelationGraphTest {
 
         val possibleTargets = inMap[targetDirection]!!.filter { it != outNode }
 
-        val targetNode = possibleTargets.elementAt(MathUtils.random(0, possibleTargets.count() - 1))
+        var targetIndex = MathUtils.random(0, possibleTargets.count() - 1)
+        targetIndex = if(targetIndex < 0) 0 else targetIndex
+        val targetNode = possibleTargets.elementAt(targetIndex)
 
         outNode.addRelation(MapStuff.portalRelation[direction]!!, targetNode)
         inMap[targetDirection]!!.remove(targetNode)
