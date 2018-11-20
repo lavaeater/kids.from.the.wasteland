@@ -50,6 +50,14 @@ Could we make a list of moves, states and events that could work with that?
 
  */
 
+enum class SkillOutcomes {
+	CriticalFailure, //Natural 1
+	Failure, //Not over skill
+	Success, //Over skill
+	MajorSuccess, //High bonus value
+	UltraSuccess //Natural 20 or more, high bonus
+}
+
 enum class CombatEvent {
   MajorFail, //Critical failure, basically, no good mate.
   Fail, //Normal failure
@@ -146,6 +154,18 @@ data class CombatMove(val name: String, val validStates: Set<CombatState> = setO
 		CombatState.Neutral,
 		CombatState.Overwhelmed,
 		CombatState.Controlled))
+
+
+
+data class CombatMoveAdvanced(
+		val name: String,
+		val states: Set<String> = setOf()) {
+
+}
+
+object Combat {
+	val states = setOf("")
+}
 
 class CombatMoves {
 	val combatMoves = mutableSetOf<CombatMove>()
