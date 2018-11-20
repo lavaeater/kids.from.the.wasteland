@@ -66,13 +66,19 @@ enum class CombatState {
 }
 
 class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
-  val stateMachine: StateMachine<CombatState, CombatEvent>
-      = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
+  val stateMachine: StateMachine<CombatState, CombatEvent> = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
     state(CombatState.Ambushed) {
       edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
       edge(CombatEvent.Success, CombatState.Controlled) {}
       edge(CombatEvent.Fail, CombatState.Ambushed) {}
       edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
+    }
+    state(CombatState.Controlled) {
+      edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
+      edge(CombatEvent.Success, CombatState.Controlled) {}
+      edge(CombatEvent.Fail, CombatState.Ambushed) {}
+      edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
+    }
   }
 }
 
