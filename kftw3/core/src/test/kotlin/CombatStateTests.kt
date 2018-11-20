@@ -56,24 +56,48 @@ enum class CombatEvent {
  * These basically reflect the morale of the team? Kinda?
  */
 enum class CombatState {
-  Ambushed,
-  Controlled,
-  Neutral,
-  Disciplined,
-  Defeated,
-  Victorious,
-  Disengaged
+	Defeated, //Negative
+  Ambushed, //Negative
+  Controlled, //Negative
+  Neutral, //Neutral
+  Disciplined, //Positive
+  Victorious,  //Positive
+  Disengaged //Neutral
 }
 
 class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
   val stateMachine: StateMachine<CombatState, CombatEvent>
       = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
-    state(CombatState.Ambushed) {
-      edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-      edge(CombatEvent.Success, CombatState.Controlled) {}
-      edge(CombatEvent.Fail, CombatState.Ambushed) {}
-      edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
-  }
+	  /*
+	  When ambushed, a major succes is getting your team into a neutral
+	  state. Failure means you are defeated. For now.
+	   */
+	  state(CombatState.Ambushed) {
+      edge(CombatEvent.MajorSuccess, CombatState.Controlled) {}
+      edge(CombatEvent.Success, CombatState.Ambushed) {}
+      edge(CombatEvent.Fail, CombatState.Defeated) {}
+      edge(CombatEvent.MajorFail, CombatState.Defeated) {}}
+	  /*
+	  If you are controlled, this means you are pushed back,
+	  movement is hard to do because of firing ways, the opposing
+	  team has their sights on you. You might be in some kind of cover
+	  but your initiative is very limited.
+	   */
+	  state(CombatState.Controlled) {
+		  edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
+		  edge(CombatEvent.Success, CombatState.Controlled) {}
+		  edge(CombatEvent.Fail, CombatState.Ambushed) {}
+		  edge(CombatEvent.MajorFail, CombatState.Defeated) {}}
+	  /*
+	  The neutral state represents a team being able to do
+	  pretty much anything and not having an advantage nor a
+	  disadvantage.
+	   */
+	  state(CombatState.Neutral) {
+		  edge(CombatEvent.MajorSuccess, CombatState.Disciplined) {}
+		  edge(CombatEvent.Success, CombatState.Disciplined) {}
+		  edge(CombatEvent.Fail, CombatState.Neutral) {}
+		  edge(CombatEvent.MajorFail, CombatState.Controlled) {}}
 }
 
 class CombatStateTests {
