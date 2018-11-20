@@ -3,7 +3,7 @@ package statemachine
 /**
  * Builds and operates state machines
  */
-class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
+class StateMachine<S, E> private constructor(private val initialState: S, private val globalStateAction: (S) -> Unit) {
     lateinit var currentState: State<S, E>
     val states = mutableListOf<State<S, E>>()
 
@@ -54,7 +54,7 @@ class StateMachine<S : kotlin.Enum<S>, E : kotlin.Enum<E>> private constructor(p
     }
 
     companion object {
-        fun <S : kotlin.Enum<S>,E : kotlin.Enum<E>>buildStateMachine(initialState: S, globalStateAction: (S) -> Unit, init: StateMachine<S, E>.() -> Unit): StateMachine<S, E> {
+        fun <S,E>buildStateMachine(initialState: S, globalStateAction: (S) -> Unit, init: StateMachine<S, E>.() -> Unit): StateMachine<S, E> {
             val stateMachine = StateMachine<S,E>(initialState, globalStateAction)
             stateMachine.init()
             return stateMachine

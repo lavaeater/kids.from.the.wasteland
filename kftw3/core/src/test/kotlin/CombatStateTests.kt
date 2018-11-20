@@ -1,3 +1,4 @@
+import kotlin.test.Test
 import statemachine.StateMachine
 
 /*
@@ -10,7 +11,7 @@ state. Everything you can do in combat affects your ability to
 change your own and your opponents' state.
 
 The Basic States we have are (we might add more later)
-Ambushed - the team has been ambushed, this is a start state
+Overwhelmed - the team has been ambushed, this is a start state
 Pushed Back - the team loses ground and advantage, morale is deteriorating quickly
 Controlled - the team is controlled by the opponents, leaving them little room to act
 Disciplined - the team is in control of their situation and can make good decisions
@@ -40,13 +41,29 @@ Win
 MajorWin
 UltraWin
 
+Perhaps the moves and their definitions should be defining the state machine?
+What if states and events were strings instead of enums?
+
+Could we make a list of moves, states and events that could work with that?
+
+
  */
 
+enum class SkillOutcome {
+	CriticalFailure, //Natural 1
+	Failure, //Not over skill
+	Success, //Over skill
+	MajorSuccess, //High bonus value
+	UltraSuccess //Natural 20 or more, high bonus
+}
+
 enum class CombatEvent {
-  MajorFail,
-  Fail,
-  Success,
-  MajorSuccess,
+  MajorFail, //Critical failure, basically, no good mate.
+  Fail, //Normal failure
+  Success, //Normal success
+  MajorSuccess, //Rare
+  UltraSuccess, //Very very rare
+	Disengage
 }
 
 /**
@@ -56,32 +73,84 @@ enum class CombatEvent {
  * These basically reflect the morale of the team? Kinda?
  */
 enum class CombatState {
-  Ambushed,
-  Controlled,
-  Neutral,
-  Disciplined,
-  Defeated,
-  Victorious,
-  Disengaged
+	Defeated, //Negative
+  Overwhelmed, //Negative - you end up here if ambushed
+  Controlled, //Negative
+  Neutral, //Neutral
+  Disciplined, //Positive
+  Victorious,  //Positive
+	Disengaged //Neutral
 }
 
-class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
-  val stateMachine: StateMachine<CombatState, CombatEvent> = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
-    state(CombatState.Ambushed) {
-      edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-      edge(CombatEvent.Success, CombatState.Controlled) {}
-      edge(CombatEvent.Fail, CombatState.Ambushed) {}
-      edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
-    }
-    state(CombatState.Controlled) {
-      edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-      edge(CombatEvent.Success, CombatState.Controlled) {}
-      edge(CombatEvent.Fail, CombatState.Ambushed) {}
-      edge(CombatEvent.MajorFail, CombatState.Ambushed) {}
-    }
-  }
+class CombatStateMachine(private val globalStateAction: (String)->Unit) {
+	val stateMachine: StateMachine<String, String> =
+      StateMachine.buildStateMachine(CombatStates.Neutral, globalStateAction) {
+		
+		/*
+	  When ambushed, a major succes is getting your team into a neutral
+	  state. Failure means you are defeated. For now.
+	   */
+//		state(CombatState.Overwhelmed) {
+//			edge(CombatEvent.UltraSuccess, CombatState.Disciplined) {}
+//			edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
+//			edge(CombatEvent.Success, CombatState.Controlled) {}
+//			edge(CombatEvent.Fail, CombatState.Overwhelmed) {}
+//			edge(CombatEvent.MajorFail, CombatState.Defeated) {}
+//		}
+	}
+	init {
+		stateMachine.initialize()
+	}
 }
+
+/**
+ * The combatmove class is a definition of a combat move
+ * with its modifiers, requirements, bonuses and of course,
+ * states in which it can be performed. Some combatmoves
+ * can be performed in a special context, i.e. before a combat
+ * one can perform an ambush, for instance.
+ */
+data class CombatMove(val name: String, val validStates: Set<String> = CombatStates.AllStates,
+                      val outcomeMap: Map<SkillOutcome, String>)
+
+object CombatEvents {
+	const val ControlledBy ="ControlledBy"
+}
+
+object CombatStates {
+	const val Ambushed = "Ambushed"
+	const val Overwhelmed = "Overwhelmed" //Not a good look
+	const val Disengaged = "Disengaged" //Combat ends
+	const val Disciplined = "Disciplined" //Team is doing well
+	const val Defeated = "Defeated" //Combat ends
+	const val Controlled = "Controlled" //Limited options
+	const val Neutral = "Neutral" //Neutral
+	const val Victorious = "Victorious"  //combat ends
+
+	val AllStates = setOf(
+			Ambushed,
+			Overwhelmed,
+			Disengaged,
+			Disciplined,
+			Defeated,
+			Controlled,
+			Neutral,
+			Victorious)
+}
+
+class CombatMoves {
+	val combatMoves = mutableSetOf<CombatMove>()
+}
+
 
 class CombatStateTests {
+	@Test
+	fun boilerPlateTest() {
+		val machine = CombatStateMachine {
+			println(it)
+		}
+
+
+	}
 
 }
