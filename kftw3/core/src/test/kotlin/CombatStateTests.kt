@@ -1,5 +1,4 @@
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import statemachine.StateMachine
 
 /*
@@ -50,7 +49,7 @@ Could we make a list of moves, states and events that could work with that?
 
  */
 
-enum class SkillOutcomes {
+enum class SkillOutcome {
 	CriticalFailure, //Natural 1
 	Failure, //Not over skill
 	Success, //Over skill
@@ -83,59 +82,20 @@ enum class CombatState {
 	Disengaged //Neutral
 }
 
-class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
-	val stateMachine: StateMachine<CombatState, CombatEvent> = StateMachine.buildStateMachine(CombatState.Neutral, globalStateAction) {
+class CombatStateMachine(private val globalStateAction: (String)->Unit) {
+	val stateMachine: StateMachine<String, String> = StateMachine.buildStateMachine(CombatStates.Neutral, globalStateAction) {
+		
 		/*
 	  When ambushed, a major succes is getting your team into a neutral
 	  state. Failure means you are defeated. For now.
 	   */
-		state(CombatState.Overwhelmed) {
-			edge(CombatEvent.UltraSuccess, CombatState.Disciplined) {}
-			edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-			edge(CombatEvent.Success, CombatState.Controlled) {}
-			edge(CombatEvent.Fail, CombatState.Overwhelmed) {}
-			edge(CombatEvent.MajorFail, CombatState.Defeated) {}
-		}
-		/*
-	  If you are controlled, this means you are pushed back,
-	  movement is hard to do because of firing ways, the opposing
-	  team has their sights on you. You might be in some kind of cover
-	  but your initiative is very limited.
-	   */
-		state(CombatState.Controlled) {
-			edge(CombatEvent.UltraSuccess, CombatState.Disciplined) {}
-			edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-			edge(CombatEvent.Success, CombatState.Controlled) {}
-			edge(CombatEvent.Fail, CombatState.Overwhelmed) {}
-			edge(CombatEvent.MajorFail, CombatState.Defeated) {}
-			edge(CombatEvent.Disengage, CombatState.Disengaged) {}
-		}
-		/*
-	  The neutral state represents a team being able to do
-	  pretty much anything and not having an advantage nor a
-	  disadvantage.
-	   */
-		state(CombatState.Neutral) {
-			edge(CombatEvent.UltraSuccess, CombatState.Victorious) {}
-			edge(CombatEvent.MajorSuccess, CombatState.Disciplined) {}
-			edge(CombatEvent.Success, CombatState.Neutral) {}
-			edge(CombatEvent.Fail, CombatState.Neutral) {}
-			edge(CombatEvent.MajorFail, CombatState.Controlled) {}
-			edge(CombatEvent.Disengage, CombatState.Disengaged) {}
-		}
-
-		/*
-	  Disciplined is a state where *more* options exists for the
-	  team and success brings victory in a lot more cases.
-	   */
-		state(CombatState.Disciplined) {
-			edge(CombatEvent.UltraSuccess, CombatState.Victorious) {}
-			edge(CombatEvent.MajorSuccess, CombatState.Victorious) {}
-			edge(CombatEvent.Success, CombatState.Disciplined) {}
-			edge(CombatEvent.Fail, CombatState.Neutral) {}
-			edge(CombatEvent.MajorFail, CombatState.Controlled) {}
-			edge(CombatEvent.Disengage, CombatState.Disengaged) {} //Disengage in this context is an option at majorsuccess and up, I guess? It's a move that is a bit dynamic.
-		}
+//		state(CombatState.Overwhelmed) {
+//			edge(CombatEvent.UltraSuccess, CombatState.Disciplined) {}
+//			edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
+//			edge(CombatEvent.Success, CombatState.Controlled) {}
+//			edge(CombatEvent.Fail, CombatState.Overwhelmed) {}
+//			edge(CombatEvent.MajorFail, CombatState.Defeated) {}
+//		}
 	}
 	init {
 		stateMachine.initialize()
@@ -149,45 +109,36 @@ class CombatStateMachine(private val globalStateAction: (CombatState)->Unit) {
  * can be performed in a special context, i.e. before a combat
  * one can perform an ambush, for instance.
  */
-data class CombatMove(val name: String, val validStates: Set<CombatState> = setOf(
-		CombatState.Disciplined,
-		CombatState.Neutral,
-		CombatState.Overwhelmed,
-		CombatState.Controlled))
+data class CombatMove(val name: String, val validStates: Set<String> = CombatStates.AllStates,
+                      val outcomeMap: Map<SkillOutcome, String>)
 
-
-
-data class CombatMoveAdvanced(
-		val name: String,
-		val states: Set<String> = setOf()) {
-
+object CombatEvents {
+	const val ControlledBy ="ControlledBy"
 }
 
-object Combat {
-	val states = setOf("")
+object CombatStates {
+	const val Ambushed = "Ambushed"
+	const val Overwhelmed = "Overwhelmed" //Not a good look
+	const val Disengaged = "Disengaged" //Combat ends
+	const val Disciplined = "Disciplined" //Team is doing well
+	const val Defeated = "Defeated" //Combat ends
+	const val Controlled = "Controlled" //Limited options
+	const val Neutral = "Neutral" //Neutral
+	const val Victorious = "Victorious"  //combat ends
+
+	val AllStates = setOf(
+			Ambushed,
+			Overwhelmed,
+			Disengaged,
+			Disciplined,
+			Defeated,
+			Controlled,
+			Neutral,
+			Victorious)
 }
 
 class CombatMoves {
 	val combatMoves = mutableSetOf<CombatMove>()
-	init {
-		combatMoves.add(CombatMove("Shell"))//Shell is valid everywhere
-		combatMoves.add(CombatMove("Control", setOf(CombatState.Disciplined))) //Control can only be done when disciplined.
-		combatMoves.add(CombatMove("All out attack"))
-		combatMoves.add(CombatMove("Rout"))
-		combatMoves.add(CombatMove("Disengage",
-				setOf(
-						CombatState.Controlled,
-						CombatState.Disciplined,
-						CombatState.Neutral))) //Should be harder when controlled, perhaps?
-		combatMoves.add(CombatMove("Bargain",
-				setOf(CombatState.Controlled,
-						CombatState.Neutral,
-						CombatState.Disciplined)))
-		combatMoves.add(CombatMove("Defensive Posture",
-				setOf(CombatState.Controlled,
-						CombatState.Neutral,
-						CombatState.Disciplined)))
-	}
 }
 
 
