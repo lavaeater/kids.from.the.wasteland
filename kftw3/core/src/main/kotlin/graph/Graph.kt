@@ -37,8 +37,9 @@ class Graph<T, R>(val graphProperties: Map<String, Any>) {
 		labels[label]!!.remove(node)
 	}
 
-	fun addNode(node: Node<T, R>) {
+	fun addNode(node: Node<T, R>) : Node<T, R> {
 		nodes.add(node)
+		return node
 	}
 
 	fun addNodes(nodesToAdd:Collection<Node<T, R>>) {

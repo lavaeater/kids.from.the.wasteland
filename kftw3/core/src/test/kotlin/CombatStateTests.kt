@@ -1,5 +1,11 @@
+import com.fasterxml.jackson.annotation.JsonIdentityInfo
+import com.fasterxml.jackson.annotation.ObjectIdGenerators
+import graph.Graph
+import graph.Node
 import kotlin.test.Test
 import statemachine.StateMachine
+import world.CompassDirection
+import java.util.*
 
 /*
 The state of Combat, USA.
@@ -57,52 +63,6 @@ enum class SkillOutcome {
 	UltraSuccess //Natural 20 or more, high bonus
 }
 
-enum class CombatEvent {
-  MajorFail, //Critical failure, basically, no good mate.
-  Fail, //Normal failure
-  Success, //Normal success
-  MajorSuccess, //Rare
-  UltraSuccess, //Very very rare
-	Disengage
-}
-
-/**
- * There's just to many states here. We're
- * building a prototype, damnit!
- *
- * These basically reflect the morale of the team? Kinda?
- */
-enum class CombatState {
-	Defeated, //Negative
-  Overwhelmed, //Negative - you end up here if ambushed
-  Controlled, //Negative
-  Neutral, //Neutral
-  Disciplined, //Positive
-  Victorious,  //Positive
-	Disengaged //Neutral
-}
-
-class CombatStateMachine(private val globalStateAction: (String)->Unit) {
-	val stateMachine: StateMachine<String, String> =
-      StateMachine.buildStateMachine(CombatStates.Neutral, globalStateAction) {
-		
-		/*
-	  When ambushed, a major succes is getting your team into a neutral
-	  state. Failure means you are defeated. For now.
-	   */
-//		state(CombatState.Overwhelmed) {
-//			edge(CombatEvent.UltraSuccess, CombatState.Disciplined) {}
-//			edge(CombatEvent.MajorSuccess, CombatState.Neutral) {}
-//			edge(CombatEvent.Success, CombatState.Controlled) {}
-//			edge(CombatEvent.Fail, CombatState.Overwhelmed) {}
-//			edge(CombatEvent.MajorFail, CombatState.Defeated) {}
-//		}
-	}
-	init {
-		stateMachine.initialize()
-	}
-}
-
 /**
  * The combatmove class is a definition of a combat move
  * with its modifiers, requirements, bonuses and of course,
@@ -110,13 +70,65 @@ class CombatStateMachine(private val globalStateAction: (String)->Unit) {
  * can be performed in a special context, i.e. before a combat
  * one can perform an ambush, for instance.
  */
-data class CombatMove(val name: String, val validStates: Set<String> = CombatStates.AllStates,
-                      val outcomeMap: Map<SkillOutcome, String>)
 
-object CombatEvents {
-	const val ControlledBy ="ControlledBy"
+/*
+Jesus. Is the combat shit a fucking graph?
+
+Is it a fucking graph I ask you?
+
+If it were, the combatagent could have a current state (a node)
+with a list of possible moves (its relations). If successful,
+every move has a list of outcomes, that are in turn fucking nodes.
+ */
+
+object GraphAss {
+  val allNodes = mutableMapOf<String, Node<CombatNode, CombatRelation>>()
+  val g = Graph<CombatNode, CombatRelation>(emptyMap())
+  init {
+    for (state in CombatStates.AllStates) {
+      allNodes[state] = g.addNode(Node(CombatNode.CombatState(state)))
+    }
+  }
 }
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
+sealed class CombatNode {
+  var id = UUID.randomUUID()
+  data class CombatMove(val name: String) : CombatNode()
+  data class CombatState(val name: String) : CombatNode()
+}
+
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
+sealed class CombatRelation {
+  var id = UUID.randomUUID()
+  data class CombatMoveRelation(val name:String) : CombatRelation()
+  data class StateRelation(val outcome: SkillOutcome) : CombatRelation()
+}
+
+class CombatAgent(val name:String, var state: String)
+
+/**
+ * The event disengaged can be conjured up from some
+ * other state and it would obviously put that team
+ * in the state Disengaged. So we map outcomes -> events
+ * and these events map to states, of course.
+ *
+ * So the state machine is built by saying that all states can be
+ * gotten to from all other states by a certain event (the state)
+ *
+ * For that... we don't need a state machine.
+ *
+ * Or actually, the mapping is now outcomes -> states
+ * But we need a probability mapping for a move -> what states
+ * it can lead to.
+ *
+ * I think, that for now, we could skip the state machine altother and just
+ * consider this an excercise in mapping moves / skills -> outcomes -> states.
+ *
+ * Like if Team A performs some move, it can effect their opponents state AND
+ * their own
+ *
+ */
 object CombatStates {
 	const val Ambushed = "Ambushed"
 	const val Overwhelmed = "Overwhelmed" //Not a good look
