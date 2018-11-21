@@ -82,20 +82,18 @@ every move has a list of outcomes, that are in turn fucking nodes.
  */
 
 object GraphAss {
-  val allNodes = mutableMapOf<String, Node<CombatNode, CombatRelation>>()
-  val g = Graph<CombatNode, CombatRelation>(emptyMap())
+  val allNodes = mutableMapOf<String, Node<String, CombatRelation>>()
+  val g = Graph<String, CombatRelation>(emptyMap())
   init {
     for (state in CombatStates.AllStates) {
-      allNodes[state] = g.addNode(Node(CombatNode.CombatState(state)))
+      allNodes[state] = g.addNode(CombatNode.CombatState(state))
     }
   }
 }
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-sealed class CombatNode {
-  var id = UUID.randomUUID()
-  data class CombatMove(val name: String) : CombatNode()
-  data class CombatState(val name: String) : CombatNode()
+sealed class CombatNode(open val name: String)  : Node<String, CombatRelation>(name) {
+  class CombatMove(override val name:String) : CombatNode(name)
+  class CombatState(override val name:String) : CombatNode(name)
 }
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")

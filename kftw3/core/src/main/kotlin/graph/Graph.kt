@@ -61,7 +61,7 @@ class Graph<T, R>(val graphProperties: Map<String, Any>) {
 }
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-data class Node<T, R>(val data: T) {
+open class Node<T, R>(val data: T) {
 	var id = UUID.randomUUID()
 	var relations = mutableMapOf<R, MutableSet<Node<T, R>>>()
 	//@Json	val allNeighbours: Iterable<Node<T, R>> get() = relations.map { it.value }.flatten()
