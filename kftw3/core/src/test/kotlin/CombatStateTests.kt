@@ -149,18 +149,35 @@ object CombatStates {
 }
 
 class CombatMoves {
-	val combatMoves = mutableSetOf<CombatMove>()
+	val combatMoves = mutableSetOf<CombatNode.CombatMove>()
 }
+
+class SomeThing {
+	val moveName = "Charge"
+	val validInStates =
+			setOf(
+					CombatStates.Controlled,
+					CombatStates.Neutral,
+					CombatStates.Disciplined)
+	val successAndEventsMap = mapOf(
+			SkillOutcome.CriticalFailure to "") //What do we map outcomes TO, really?
+}
+/*
+This is a relevant question. Now, we are thinking about the combat as a graph.
+Every team in the combat has a current node, a combat state. This node dictates
+potential available moves, which we are trying to construct a new map of,
+above.
+
+But who decides what happens to you in this map? Both teams want to affect both
+teams combatstate. One can see it as a board game where using certain nodes
+one can hop to, get to, end of game-nodes. Yes, that's it. We are NOT using a
+state machine, remember this. We use States -> Moves -> SuccessOutcomes -> States
+ */
 
 
 class CombatStateTests {
 	@Test
 	fun boilerPlateTest() {
-		val machine = CombatStateMachine {
-			println(it)
-		}
-
-
 	}
 
 }
