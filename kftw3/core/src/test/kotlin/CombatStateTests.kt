@@ -120,6 +120,7 @@ class CombatAgent(val name: String, var state: String)
  * their own
  *
  */
+
 object CombatStates {
   const val Ambushed = "Ambushed"
   const val Overwhelmed = "Overwhelmed" //Not a good look
@@ -130,6 +131,7 @@ object CombatStates {
   const val Pinned = "Pinned" //Limited options
   const val Neutral = "Neutral" //Neutral
   const val Victorious = "Victorious"  //combat ends
+  const val NeutralOrHigher = "NeutralOrHigher"
 
   val AllStates = setOf(
       Ambushed,
@@ -160,6 +162,7 @@ object SomeMaps {
       1..9 to SkillOutcome.Success,
       -9..0 to SkillOutcome.Failure,
       -200..-10 to SkillOutcome.CriticalFailure)
+
   val regularModifier = mapOf(
       SkillOutcome.UltraSuccess to 10,
       SkillOutcome.MajorSuccess to 5,
@@ -180,10 +183,10 @@ object SomeMaps {
 }
 
 object SkillDifficulty {
-  val Easy = 5
-  val Medium = 10
-  val Hard = 15
-  val Impossible = 20
+  val Easy = 10
+  val Medium = 15
+  val Hard = 20
+  val Impossible = 30
 }
 
 data class CombatMove(
@@ -192,12 +195,34 @@ data class CombatMove(
     val successStates: Map<SkillOutcome, String> = SomeMaps.regularSuccessStates,
     val failStates: Map<SkillOutcome, String> = SomeMaps.regularFailStates,
     val difficulty: Int = SkillDifficulty.Medium,
-    val damageModifier: Map<SkillOutcome, Int>,
-    val defensiveModifier: Map<SkillOutcome, Int>,
-    val disciplineModifier: Map<SkillOutcome, Int>)
+    val damageModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier,
+    val defensiveModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier,
+    val disciplineModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier)
 
 object CombatMoves {
   val moves = setOf(
+      CombatMove("Shell",
+          setOf(
+              CombatStates.Neutral,
+              CombatStates.Overwhelmed,
+              CombatStates.Disciplined,
+              CombatStates.Pinned,
+              CombatStates.Dominating),
+          mapOf(
+              SkillOutcome.Success to CombatStates.Neutral, //Needs work, I guess
+              SkillOutcome.MajorSuccess to CombatStates.Disciplined,
+              SkillOutcome.UltraSuccess to CombatStates.Dominating
+          ),
+          mapOf(
+              SkillOutcome.Failure to CombatStates.NeutralOrHigher,
+              SkillOutcome.CriticalFailure to CombatStates.Pinned
+          )),
+      CombatMove("Fire at will"),
+      CombatMove("Controlled fire"),
+      CombatMove("Negotiate"),
+      CombatMove("Regroup"),
+      CombatMove("Flank"),
+      CombatMove("Disengage"),
       CombatMove("Pin",
           setOf(CombatStates.Disciplined),
           mapOf(
@@ -207,7 +232,7 @@ object CombatMoves {
           mapOf(
               SkillOutcome.Failure to CombatStates.Pinned,
               SkillOutcome.CriticalFailure to CombatStates.Overwhelmed),
-          18,
+          SkillDifficulty.Hard,
           SomeMaps.regularModifier,
           SomeMaps.regularModifier,
           SomeMaps.regularModifier
