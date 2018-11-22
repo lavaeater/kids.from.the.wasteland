@@ -1,11 +1,4 @@
-import com.fasterxml.jackson.annotation.JsonIdentityInfo
-import com.fasterxml.jackson.annotation.ObjectIdGenerators
-import graph.Graph
-import graph.Node
 import kotlin.test.Test
-import statemachine.StateMachine
-import world.CompassDirection
-import java.util.*
 
 /*
 The state of Combat, USA.
@@ -19,7 +12,7 @@ change your own and your opponents' state.
 The Basic States we have are (we might add more later)
 Overwhelmed - the team has been ambushed, this is a start state
 Pushed Back - the team loses ground and advantage, morale is deteriorating quickly
-Controlled - the team is controlled by the opponents, leaving them little room to act
+Pinned - the team is controlled by the opponents, leaving them little room to act
 Disciplined - the team is in control of their situation and can make good decisions
 Dominating - the team controls / dominates the opponent, gains ground, gets advantages
 Defeated - the team has lost - end state
@@ -56,11 +49,11 @@ Could we make a list of moves, states and events that could work with that?
  */
 
 enum class SkillOutcome {
-	CriticalFailure, //Natural 1
-	Failure, //Not over skill
-	Success, //Over skill
-	MajorSuccess, //High bonus value
-	UltraSuccess //Natural 20 or more, high bonus
+  CriticalFailure, //Natural 1
+  Failure, //Not over skill
+  Success, //Over skill
+  MajorSuccess, //High bonus value
+  UltraSuccess //Natural 20 or more, high bonus
 }
 
 /**
@@ -80,30 +73,30 @@ If it were, the combatagent could have a current state (a node)
 with a list of possible moves (its relations). If successful,
 every move has a list of outcomes, that are in turn fucking nodes.
  */
+//
+//object GraphAss {
+//  val allNodes = mutableMapOf<String, Node<String, CombatRelation>>()
+//  val g = Graph<String, CombatRelation>(emptyMap())
+//  init {
+//    for (state in CombatStates.AllStates) {
+//      allNodes[state] = g.addNode(CombatNode.CombatState(state))
+//    }
+//  }
+//}
+//
+//sealed class CombatNode(open val name: String)  : Node<String, CombatRelation>(name) {
+//  class CombatMove(override val name:String) : CombatNode(name)
+//  class CombatState(override val name:String) : CombatNode(name)
+//}
+//
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
+//sealed class CombatRelation {
+//  var id = UUID.randomUUID()
+//  data class CombatMoveRelation(val name:String) : CombatRelation()
+//  data class StateRelation(val outcome: SkillOutcome) : CombatRelation()
+//}
 
-object GraphAss {
-  val allNodes = mutableMapOf<String, Node<String, CombatRelation>>()
-  val g = Graph<String, CombatRelation>(emptyMap())
-  init {
-    for (state in CombatStates.AllStates) {
-      allNodes[state] = g.addNode(CombatNode.CombatState(state))
-    }
-  }
-}
-
-sealed class CombatNode(open val name: String)  : Node<String, CombatRelation>(name) {
-  class CombatMove(override val name:String) : CombatNode(name)
-  class CombatState(override val name:String) : CombatNode(name)
-}
-
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator::class, property = "id")
-sealed class CombatRelation {
-  var id = UUID.randomUUID()
-  data class CombatMoveRelation(val name:String) : CombatRelation()
-  data class StateRelation(val outcome: SkillOutcome) : CombatRelation()
-}
-
-class CombatAgent(val name:String, var state: String)
+class CombatAgent(val name: String, var state: String)
 
 /**
  * The event disengaged can be conjured up from some
@@ -128,40 +121,100 @@ class CombatAgent(val name:String, var state: String)
  *
  */
 object CombatStates {
-	const val Ambushed = "Ambushed"
-	const val Overwhelmed = "Overwhelmed" //Not a good look
-	const val Disengaged = "Disengaged" //Combat ends
-	const val Disciplined = "Disciplined" //Team is doing well
-	const val Defeated = "Defeated" //Combat ends
-	const val Controlled = "Controlled" //Limited options
-	const val Neutral = "Neutral" //Neutral
-	const val Victorious = "Victorious"  //combat ends
+  const val Ambushed = "Ambushed"
+  const val Overwhelmed = "Overwhelmed" //Not a good look
+  const val Disengaged = "Disengaged" //Combat ends
+  const val Disciplined = "Disciplined" //Team is doing well
+  const val Dominating = "Dominating" //Doing lots of damage and disciplined
+  const val Defeated = "Defeated" //Combat ends
+  const val Pinned = "Pinned" //Limited options
+  const val Neutral = "Neutral" //Neutral
+  const val Victorious = "Victorious"  //combat ends
 
-	val AllStates = setOf(
-			Ambushed,
-			Overwhelmed,
-			Disengaged,
-			Disciplined,
-			Defeated,
-			Controlled,
-			Neutral,
-			Victorious)
+  val AllStates = setOf(
+      Ambushed,
+      Overwhelmed,
+      Disengaged,
+      Disciplined,
+      Defeated,
+      Pinned,
+      Neutral,
+      Victorious)
 }
 
-class CombatMoves {
-	val combatMoves = mutableSetOf<CombatNode.CombatMove>()
+/*
+Combat moves are performed with Discipline + Offensive Roll towards the difficulty
+
+If successful, they infer benefits / penalties on
+Damage Roll
+Defensive Roll
+Discipline Roll
+
+
+ */
+
+object SomeMaps {
+  val outcomes = mapOf(
+      15..200 to SkillOutcome.UltraSuccess,
+      10..14 to SkillOutcome.MajorSuccess,
+      1..9 to SkillOutcome.Success,
+      -9..0 to SkillOutcome.Failure,
+      -200..-10 to SkillOutcome.CriticalFailure)
+  val regularModifier = mapOf(
+      SkillOutcome.UltraSuccess to 10,
+      SkillOutcome.MajorSuccess to 5,
+      SkillOutcome.Success to 2,
+      SkillOutcome.Failure to -5,
+      SkillOutcome.CriticalFailure to -10
+  )
+
+  val regularSuccessStates = mapOf(
+      SkillOutcome.Success to CombatStates.Neutral,
+      SkillOutcome.MajorSuccess to CombatStates.Disciplined,
+      SkillOutcome.UltraSuccess to CombatStates.Dominating
+  )
+
+  val regularFailStates = mapOf(
+      SkillOutcome.Failure to CombatStates.Pinned,
+      SkillOutcome.CriticalFailure to CombatStates.Overwhelmed)
 }
 
-class SomeThing {
-	val moveName = "Charge"
-	val validInStates =
-			setOf(
-					CombatStates.Controlled,
-					CombatStates.Neutral,
-					CombatStates.Disciplined)
-	val successAndEventsMap = mapOf(
-			SkillOutcome.CriticalFailure to "") //What do we map outcomes TO, really?
+object SkillDifficulty {
+  val Easy = 5
+  val Medium = 10
+  val Hard = 15
+  val Impossible = 20
 }
+
+data class CombatMove(
+    val name: String,
+    val validStates: Set<String> = CombatStates.AllStates,
+    val successStates: Map<SkillOutcome, String> = SomeMaps.regularSuccessStates,
+    val failStates: Map<SkillOutcome, String> = SomeMaps.regularFailStates,
+    val difficulty: Int = SkillDifficulty.Medium,
+    val damageModifier: Map<SkillOutcome, Int>,
+    val defensiveModifier: Map<SkillOutcome, Int>,
+    val disciplineModifier: Map<SkillOutcome, Int>)
+
+object CombatMoves {
+  val moves = setOf(
+      CombatMove("Pin",
+          setOf(CombatStates.Disciplined),
+          mapOf(
+              SkillOutcome.Success to CombatStates.Disciplined,
+              SkillOutcome.MajorSuccess to CombatStates.Dominating,
+              SkillOutcome.UltraSuccess to CombatStates.Victorious),
+          mapOf(
+              SkillOutcome.Failure to CombatStates.Pinned,
+              SkillOutcome.CriticalFailure to CombatStates.Overwhelmed),
+          18,
+          SomeMaps.regularModifier,
+          SomeMaps.regularModifier,
+          SomeMaps.regularModifier
+      )
+  )
+}
+
 /*
 This is a relevant question. Now, we are thinking about the combat as a graph.
 Every team in the combat has a current node, a combat state. This node dictates
@@ -176,8 +229,8 @@ state machine, remember this. We use States -> Moves -> SuccessOutcomes -> State
 
 
 class CombatStateTests {
-	@Test
-	fun boilerPlateTest() {
-	}
+  @Test
+  fun boilerPlateTest() {
+  }
 
 }
