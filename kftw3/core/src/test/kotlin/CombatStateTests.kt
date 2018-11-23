@@ -189,6 +189,49 @@ object SkillDifficulty {
   val Impossible = 30
 }
 
+/*
+The discipline map should be like a map of modifiers to the discipline
+roll and that gives you what... no, but I like the idea of the states and
+stuff, it just became very weird with the shell thing. We might need more
+states? Or rethink?
+
+See Discipline as a morale-ladder. Different moves boost your own morale
+and / or lowers the opponents morale. So being ambushed basically means that
+you start at a serious morale disadvantage. We don't have nodes,
+we have a level of morale for your team. Not states. And then we have to keep
+track of what happens, well, if morale goes low enough, you route or something,
+which is just a terrible death sentence. NPC's might just use the "give up"
+move because it is the only one that they can reliably use.
+
+So we have Levels of morale:
+Dominating
+Disciplined
+Neutral
+Pinned
+Overwhelmed - same as ambushed then, your opponent succeeds in ambushing you, you start at
+a moral disadvantage
+Routed - panicked
+
+This makes it easy to map going up and down in levels of morale!
+
+To STAY IN THE FIGHT, the team has to succeed their discipline roll, that roll can, if failed,
+result in defeat etc.
+
+But what about moves that have special consequences? Like combat has to have outcomes?
+
+CombatOutcomes comes in pairs, I guess? Like, a dominating party might try to negotiate with the
+enemy, if the enemy can negotiate? Moves can have requirements like that. So they are pairs of
+things:
+
+Defeat - Negotiation / Neutral?
+Victory - Negotiation / Neutral?
+
+This might work. Getting there, slooowly
+
+
+
+ */
+
 data class CombatMove(
     val name: String,
     val validStates: Set<String> = CombatStates.AllStates,
