@@ -128,7 +128,16 @@ enum class SkillOutcome {
 
 class AgentOfConflict(
     val name: String,
-    var discipline: Int = DisciplineLevels.levelOf(DisciplineLevels.Neutral))
+    var discipline: Int = DisciplineLevels.levelOf(DisciplineLevels.Neutral)) {
+
+  var currentStance = ConflictStances.fireAtWill
+  val effects = mutableListOf<CombatEffect>()
+
+
+  fun selectStance(stance: ConflictStance) {
+    currentStance = stance
+  }
+}
 
 object DisciplineLevels {
 
@@ -154,7 +163,7 @@ object DisciplineLevels {
   fun levelOf(level:String):Int {
     return levels.indexOf(level)
   }
-  
+
   fun levelName(level:Int):String {
     return levels.elementAt(level)
   }
@@ -170,7 +179,7 @@ object SomeMaps {
       -19..10 to SkillOutcome.MajorFailure,
       -200..-20 to SkillOutcome.CriticalFailure)
 
-  val regularModifier = mapOf(
+  val neutralEffect = mapOf(
       SkillOutcome.UltraSuccess to 10,
       SkillOutcome.MajorSuccess to 5,
       SkillOutcome.Success to 2,
@@ -179,16 +188,33 @@ object SomeMaps {
       SkillOutcome.CriticalFailure to -10
   )
 
-  val badModifier = mapOf(
-      SkillOutcome.UltraSuccess to 5,
+  val badEffect = mapOf(
+      SkillOutcome.UltraSuccess to 7,
       SkillOutcome.MajorSuccess to 2,
-      SkillOutcome.Success to 1,
+      SkillOutcome.Success to 0,
       SkillOutcome.Failure to -5,
       SkillOutcome.MajorFailure to -7,
       SkillOutcome.CriticalFailure to -10
   )
 
-  val goodModifier = mapOf(
+  val worseEffect = mapOf(
+      SkillOutcome.UltraSuccess to 5,
+      SkillOutcome.MajorSuccess to 2,
+      SkillOutcome.Success to 0,
+      SkillOutcome.Failure to -5,
+      SkillOutcome.MajorFailure to -7,
+      SkillOutcome.CriticalFailure to -10
+  )
+  val worstEffect = mapOf(
+      SkillOutcome.UltraSuccess to 5,
+      SkillOutcome.MajorSuccess to 2,
+      SkillOutcome.Success to 0,
+      SkillOutcome.Failure to -5,
+      SkillOutcome.MajorFailure to -7,
+      SkillOutcome.CriticalFailure to -10
+  )
+
+  val goodEffectMap = mapOf(
       SkillOutcome.UltraSuccess to 15,
       SkillOutcome.MajorSuccess to 10,
       SkillOutcome.Success to 5,
@@ -205,16 +231,13 @@ object SomeMaps {
       SkillOutcome.MajorFailure to -3,
       SkillOutcome.CriticalFailure to -5
   )
-
-  val regularSuccessStates = mapOf(
-      SkillOutcome.Success to DisciplineLevels.Neutral,
-      SkillOutcome.MajorSuccess to DisciplineLevels.Disciplined,
-      SkillOutcome.UltraSuccess to DisciplineLevels.Dominating
-  )
-
-  val regularFailStates = mapOf(
-      SkillOutcome.Failure to DisciplineLevels.Pinned,
-      SkillOutcome.CriticalFailure to DisciplineLevels.Overwhelmed)
+  val regularDuration = mapOf(
+      SkillOutcome.UltraSuccess to 2,
+      SkillOutcome.MajorSuccess to 1,
+      SkillOutcome.Success to 1,
+      SkillOutcome.Failure to 1,
+      SkillOutcome.MajorFailure to 1,
+      SkillOutcome.CriticalFailure to 1)
 }
 
 object SkillDifficulty {
@@ -230,46 +253,101 @@ data class ConflictOutcome(
     val win: String = "The team wins",
     val lose: String = "The team loses")
 
+object EffectTemplates {
+  val fireAtWillTemplate = CombatEffectTemplate(
+      "Fire at will",
+      damage = SomeMaps.goodEffectMap,
+      ourDiscipline = SomeMaps.lowModifier
+      defensiveModifier = SomeMaps.badModifier,
+      disciplineModifier =
+  )
+}
+
+data class CombatEffectTemplate(
+    val name: String,
+    val damage: Map<SkillOutcome, Int> = SomeMaps.neutralEffect, //Damage might be a team-thing...
+    val ourDiscipline: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val ourAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val ourDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val ourDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration,
+    val theirDiscipline: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val theirAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val theirDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val theirDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration) {
+
+  fun getOurEffect(skillOutcome: SkillOutcome) : CombatEffect {
+    return CombatEffect(
+        name,
+        0, //For now, you cannot affect your own damage here... I guess?
+        ourDiscipline[skillOutcome]!!,
+        ourAttack[skillOutcome]!!,
+        ourDefensive[skillOutcome]!!,
+        ourDuration[skillOutcome]!!)
+  }
+  fun getTheirEffect(skillOutcome: SkillOutcome) : CombatEffect {
+    return CombatEffect(
+        name,
+        damage[skillOutcome]!!,
+        theirDiscipline[skillOutcome]!!,
+        theirAttack[skillOutcome]!!,
+        theirDefensive[skillOutcome]!!,
+        theirDuration[skillOutcome]!!)
+  }
+}
+
+data class CombatEffect(
+    val name: String,
+    val damage: Int,
+    val discipline: Int,
+    val attack: Int,
+    val defensive:Int,
+    val duration:Int = 1)
+
 data class ConflictStance(
     val name: String,
     val minDisciplineLevel: Int = DisciplineLevels.levelOf(DisciplineLevels.Neutral),
     val outcome: ConflictOutcome = ConflictOutcome(),
     val difficulty: Int = SkillDifficulty.Medium,
-    val damageModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier,
-    val defensiveModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier,
-    val disciplineModifier: Map<SkillOutcome, Int> = SomeMaps.regularModifier)
+    val damageModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val defensiveModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+    val disciplineModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect)
 
 object ConflictStances {
-  val stances = setOf(
-      ConflictStance("Fire at will",
-          difficulty = SkillDifficulty.Easy,
-          damageModifier = SomeMaps.goodModifier,
-          defensiveModifier = SomeMaps.badModifier,
-          disciplineModifier = SomeMaps.badModifier),
-      ConflictStance("Regroup",
+  val fireAtWill =       ConflictStance("Fire at will",
+      difficulty = SkillDifficulty.Easy,
+      damageModifier = SomeMaps.goodEffectMap,
+      defensiveModifier = SomeMaps.badEffect,
+      disciplineModifier = SomeMaps.badEffect)
+
+  val controlledFire =       ConflictStance("Controlled fire",
+      difficulty = SkillDifficulty.Medium,
+      damageModifier = SomeMaps.neutralEffect,
+      defensiveModifier = SomeMaps.neutralEffect,
+      disciplineModifier = SomeMaps.neutralEffect)
+
+  val regroup = ConflictStance("Regroup",
           difficulty = SkillDifficulty.Hard,
           minDisciplineLevel =  DisciplineLevels.levelOf(DisciplineLevels.Overwhelmed),
-          damageModifier = SomeMaps.badModifier,
-          defensiveModifier = SomeMaps.regularModifier,
-          disciplineModifier = SomeMaps.goodModifier),
-      ConflictStance("Pin",
+          damageModifier = SomeMaps.badEffect,
+          defensiveModifier = SomeMaps.neutralEffect,
+          disciplineModifier = SomeMaps.goodEffectMap)
+  val pin = ConflictStance("Pin",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
-          damageModifier = SomeMaps.regularModifier,
-          defensiveModifier = SomeMaps.badModifier,
-          disciplineModifier = SomeMaps.badModifier),
-      ConflictStance("Disengage",
+          damageModifier = SomeMaps.neutralEffect,
+          defensiveModifier = SomeMaps.badEffect,
+          disciplineModifier = SomeMaps.badEffect)
+  val disengage = ConflictStance("Disengage",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
           damageModifier = SomeMaps.lowModifier,
-          defensiveModifier = SomeMaps.regularModifier,
-          disciplineModifier = SomeMaps.goodModifier),
-      ConflictStance("Controlled fire"),
-      ConflictStance("Negotiate"),
-      ConflictStance("Shell",
-          DisciplineLevels.levelOf(DisciplineLevels.Pinned)),
-      ConflictStance("Flank")
-  )
+          defensiveModifier = SomeMaps.neutralEffect,
+          disciplineModifier = SomeMaps.goodEffectMap)
+//      ,ConflictStance("Controlled fire")
+//      ,ConflictStance("Negotiate")
+//      ,ConflictStance("Shell",
+//          DisciplineLevels.levelOf(DisciplineLevels.Pinned))
+//      ,ConflictStance("Flank")
 }
 
 class ConflictStanceTests {
@@ -279,7 +357,23 @@ class ConflictStanceTests {
     val protagonist = AgentOfConflict("Face")
     val antagonist = AgentOfConflict("Heel")
 
+    /*
+    Every stance has some kind of effect that is applied
+    on both the prot and the ant. Normally lasts a round
+    Yay.
+
+    Use a simple builder for them, it is an object
+    with a modifiers in it.
+
+    The combat effects affect both protagonist and antagonist,
+    so usually one has 1-2 effects at the same time. They can last more than
+    one round, to take into account special effects...
+
+     */
+
     //Round 1
+    protagonist.selectStance(ConflictStances.fireAtWill)
+    antagonist.selectStance(ConflictStances.controlledFire)
 
   }
 
