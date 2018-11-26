@@ -1,3 +1,4 @@
+import kotlin.math.absoluteValue
 import kotlin.test.Test
 
 /*
@@ -214,7 +215,7 @@ object SomeMaps {
       SkillOutcome.CriticalFailure to -10
   )
 
-  val goodEffectMap = mapOf(
+  val goodEffect = mapOf(
       SkillOutcome.UltraSuccess to 15,
       SkillOutcome.MajorSuccess to 10,
       SkillOutcome.Success to 5,
@@ -223,7 +224,7 @@ object SomeMaps {
       SkillOutcome.CriticalFailure to -5
   )
 
-  val lowModifier = mapOf(
+  val lowNeutralEffect = mapOf(
       SkillOutcome.UltraSuccess to 5,
       SkillOutcome.MajorSuccess to 3,
       SkillOutcome.Success to 1,
@@ -231,6 +232,7 @@ object SomeMaps {
       SkillOutcome.MajorFailure to -3,
       SkillOutcome.CriticalFailure to -5
   )
+
   val regularDuration = mapOf(
       SkillOutcome.UltraSuccess to 2,
       SkillOutcome.MajorSuccess to 1,
@@ -256,11 +258,66 @@ data class ConflictOutcome(
 object EffectTemplates {
   val fireAtWillTemplate = CombatEffectTemplate(
       "Fire at will",
-      damage = SomeMaps.goodEffectMap,
-      ourDiscipline = SomeMaps.lowModifier
-      defensiveModifier = SomeMaps.badModifier,
-      disciplineModifier =
+      damage = SomeMaps.goodEffect,
+      ourDiscipline = SomeMaps.lowNeutralEffect,
+      ourAttack = SomeMaps.goodEffect,
+      ourDefensive = SomeMaps.badEffect,
+      theirDiscipline = SomeMaps.goodEffect
   )
+}
+
+fun effectMap(min: Int = -11, max: Int = 12) : Map<SkillOutcome, Int> {
+
+  //Outcomes = 6
+  /*
+  They should stagger so that
+  the two in the middle are the same distance, and then doubling for every step!
+
+  Min = -12,
+  Max = 12
+
+  24 steps. 24 / 6 = 4.
+  24 / 2 = 12 = -6 + 6
+
+  So first is -2 and +2
+
+  Second is that plus double = -2 -8 = -12 WRONG
+   */
+  val range = min..max
+  val steps = range.count()
+  val returnMap = mutableMapOf<SkillOutcome, Int>()
+  var currentStep = 0
+  for(i in 0..5) {
+
+    if(i ==0) {
+      returnMap[SkillOutcome.CriticalFailure] = range.elementAt(currentStep)
+      currentStep += steps / 4
+    }
+    if(i == 1) {
+      returnMap[SkillOutcome.MajorFailure] = range.elementAt(currentStep)
+      currentStep += (steps / 6) -1
+    }
+
+    if(i == 2) {
+      returnMap[SkillOutcome.Failure] = range.elementAt(currentStep)
+      currentStep += steps / 6
+    }
+
+    if(i == 3) {
+      returnMap[SkillOutcome.Success] = range.elementAt(currentStep)
+      currentStep += steps / 4 -2
+    }
+
+    if(i == 4) {
+      returnMap[SkillOutcome.MajorSuccess] = range.elementAt(currentStep)
+
+    }
+
+    if(i == 5) {
+      returnMap[SkillOutcome.UltraSuccess] = max
+    }
+  }
+  return returnMap
 }
 
 data class CombatEffectTemplate(
@@ -278,6 +335,7 @@ data class CombatEffectTemplate(
   fun getOurEffect(skillOutcome: SkillOutcome) : CombatEffect {
     return CombatEffect(
         name,
+        true,
         0, //For now, you cannot affect your own damage here... I guess?
         ourDiscipline[skillOutcome]!!,
         ourAttack[skillOutcome]!!,
@@ -287,6 +345,7 @@ data class CombatEffectTemplate(
   fun getTheirEffect(skillOutcome: SkillOutcome) : CombatEffect {
     return CombatEffect(
         name,
+        false,
         damage[skillOutcome]!!,
         theirDiscipline[skillOutcome]!!,
         theirAttack[skillOutcome]!!,
@@ -297,11 +356,12 @@ data class CombatEffectTemplate(
 
 data class CombatEffect(
     val name: String,
+    val positive: Boolean = true,
     val damage: Int,
     val discipline: Int,
     val attack: Int,
     val defensive:Int,
-    val duration:Int = 1)
+    var durationLeft:Int = 1)
 
 data class ConflictStance(
     val name: String,
@@ -315,7 +375,7 @@ data class ConflictStance(
 object ConflictStances {
   val fireAtWill =       ConflictStance("Fire at will",
       difficulty = SkillDifficulty.Easy,
-      damageModifier = SomeMaps.goodEffectMap,
+      damageModifier = SomeMaps.goodEffect,
       defensiveModifier = SomeMaps.badEffect,
       disciplineModifier = SomeMaps.badEffect)
 
@@ -330,7 +390,7 @@ object ConflictStances {
           minDisciplineLevel =  DisciplineLevels.levelOf(DisciplineLevels.Overwhelmed),
           damageModifier = SomeMaps.badEffect,
           defensiveModifier = SomeMaps.neutralEffect,
-          disciplineModifier = SomeMaps.goodEffectMap)
+          disciplineModifier = SomeMaps.goodEffect)
   val pin = ConflictStance("Pin",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
@@ -340,9 +400,9 @@ object ConflictStances {
   val disengage = ConflictStance("Disengage",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
-          damageModifier = SomeMaps.lowModifier,
+          damageModifier = SomeMaps.lowNeutralEffect,
           defensiveModifier = SomeMaps.neutralEffect,
-          disciplineModifier = SomeMaps.goodEffectMap)
+          disciplineModifier = SomeMaps.goodEffect)
 //      ,ConflictStance("Controlled fire")
 //      ,ConflictStance("Negotiate")
 //      ,ConflictStance("Shell",
@@ -370,6 +430,8 @@ class ConflictStanceTests {
     one round, to take into account special effects...
 
      */
+
+    val test = effectMap()
 
     //Round 1
     protagonist.selectStance(ConflictStances.fireAtWill)
