@@ -277,6 +277,14 @@ object EffectTemplates {
           EffectKey.OwnAttack to SomeMaps.goodEffect,
           EffectKey.OwnDefense to SomeMaps.badEffect,
           EffectKey.TheirDiscipline to SomeMaps.goodEffect))
+  val controlledFireTemplate = CombatEffectTemplate(
+      "Controlled fire")
+  val regroup = CombatEffectTemplate(
+      "Regroup",
+      mapOf(
+          EffectKey.Damage to SomeMaps.badEffect,
+          EffectKey.OwnDefense to SomeMaps.neutralEffect,
+          EffectKey.OwnDiscipline to SomeMaps.goodEffect))
 }
 
 fun effectMap(min: Int = -11, max: Int = 12) : Map<SkillOutcome, Int> {
@@ -347,7 +355,7 @@ enum class EffectKey {
 
 data class CombatEffectTemplate(
     val name: String,
-    private val modifiedEffects: Map<EffectKey, Map<SkillOutcome, Int>>) {
+    private val modifiedEffects: Map<EffectKey, Map<SkillOutcome, Int>> = emptyMap()) {
 
   private val effects = SomeMaps.getStandardEffects()
   init {
@@ -393,29 +401,22 @@ data class ConflictStance(
     val minDisciplineLevel: Int = DisciplineLevels.levelOf(DisciplineLevels.Neutral),
     val outcome: ConflictOutcome = ConflictOutcome(),
     val difficulty: Int = SkillDifficulty.Medium,
-    val damageModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val defensiveModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val disciplineModifier: Map<SkillOutcome, Int> = SomeMaps.neutralEffect)
+    val effectTemplate: CombatEffectTemplate)
 
 object ConflictStances {
   val fireAtWill =       ConflictStance("Fire at will",
       difficulty = SkillDifficulty.Easy,
-      damageModifier = SomeMaps.goodEffect,
-      defensiveModifier = SomeMaps.badEffect,
-      disciplineModifier = SomeMaps.badEffect)
+      effectTemplate = EffectTemplates.fireAtWillTemplate)
+
 
   val controlledFire =       ConflictStance("Controlled fire",
       difficulty = SkillDifficulty.Medium,
-      damageModifier = SomeMaps.neutralEffect,
-      defensiveModifier = SomeMaps.neutralEffect,
-      disciplineModifier = SomeMaps.neutralEffect)
+      effectTemplate = EffectTemplates.controlledFireTemplate)
 
   val regroup = ConflictStance("Regroup",
           difficulty = SkillDifficulty.Hard,
           minDisciplineLevel =  DisciplineLevels.levelOf(DisciplineLevels.Overwhelmed),
-          damageModifier = SomeMaps.badEffect,
-          defensiveModifier = SomeMaps.neutralEffect,
-          disciplineModifier = SomeMaps.goodEffect)
+      effectTemplate = EffectTemplates.regroup)
   val pin = ConflictStance("Pin",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
