@@ -240,6 +240,18 @@ object SomeMaps {
       SkillOutcome.Failure to 1,
       SkillOutcome.MajorFailure to 1,
       SkillOutcome.CriticalFailure to 1)
+  val standardEffect = mapOf(
+
+      EffectKey.Damage to SomeMaps.neutralEffect, //Damage might be a team-thing...
+      EffectKey.OwnDiscipline to SomeMaps.neutralEffect,
+      EffectKey.OwnAttack to SomeMaps.neutralEffect,
+      EffectKey.OwnDefense to SomeMaps.neutralEffect,
+      EffectKey.OwnDuration to SomeMaps.regularDuration,
+      EffectKey.TheirDiscipline to SomeMaps.neutralEffect,
+  val theirAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+  val theirDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
+  val theirDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration
+  )
 }
 
 object SkillDifficulty {
@@ -320,8 +332,21 @@ fun effectMap(min: Int = -11, max: Int = 12) : Map<SkillOutcome, Int> {
   return returnMap
 }
 
+enum class EffectKey {
+  Damage,
+  OwnDiscipline,
+  TheirDiscipline,
+  OwnAttack,
+  TheirAttack,
+  OwnDefense,
+  TheirDefense,
+  OwnDuration,
+  TheirDuration
+}
+
 data class CombatEffectTemplate(
     val name: String,
+    val effects: Map<EffectKey, Map<SkillOutcome, Int>> = SomeMaps.standardEffect,
     val damage: Map<SkillOutcome, Int> = SomeMaps.neutralEffect, //Damage might be a team-thing...
     val ourDiscipline: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
     val ourAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
