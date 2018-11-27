@@ -1,4 +1,4 @@
-import kotlin.math.absoluteValue
+import com.badlogic.gdx.math.MathUtils
 import kotlin.test.Test
 
 /*
@@ -10,15 +10,15 @@ roll and that gives you what... no, but I like the idea of the states and
 stuff, it just became very weird with the shell thing. We might need more
 states? Or rethink?
 
-See Discipline as a morale-ladder. Different stances boost your own morale
-and / or lowers the opponents morale. So being ambushed basically means that
-you start at a serious morale disadvantage. We don't have nodes,
-we have a level of morale for your team. Not states. And then we have to keep
-track of what happens, well, if morale goes low enough, you route or something,
+See Discipline as a discipline-ladder. Different stances boost your own discipline
+and / or lowers the opponents discipline. So being ambushed basically means that
+you start at a serious discipline disadvantage. We don't have nodes,
+we have a level of discipline for your team. Not states. And then we have to keep
+track of what happens, well, if discipline goes low enough, you route or something,
 which is just a terrible death sentence. NPC's might just use the "give up"
 move because it is the only one that they can reliably use.
 
-So we have levels of morale:
+So we have levels of discipline:
 Dominating
 Disciplined
 Neutral
@@ -27,7 +27,7 @@ Overwhelmed - same as ambushed then, your opponent succeeds in ambushing you, yo
 a moral disadvantage
 Panic
 
-This makes it easy to map going up and down in levels of morale!
+This makes it easy to map going up and down in levels of discipline!
 
 To STAY IN THE FIGHT, the team has to succeed their discipline roll, that roll can, if failed,
 result in defeat etc.
@@ -111,11 +111,8 @@ Calculate inflicted damage
 DisciplineRoll
 Check if we go up or down in discipline!
 
-
-If successful, they infer benefits / penalties on
-Damage Roll
-Defensive Roll
-Discipline Roll
+The goal of combat is to stay disciplined - discipline equals control. A team in control
+of themselves have options on what stances to hold, can make choices.
 
  */
 enum class SkillOutcome {
@@ -129,15 +126,44 @@ enum class SkillOutcome {
 
 class AgentOfConflict(
     val name: String,
+    val baseStats: Stats,
     var discipline: Int = DisciplineLevels.levelOf(DisciplineLevels.Neutral)) {
 
   var currentStance = ConflictStances.fireAtWill
-  val effects = mutableListOf<CombatEffect>()
+  private val effects = mutableListOf<CombatEffect>()
+  var intStats = IntStats(baseStats)
 
+  val currentStats: IntStats get() = intStats
 
   fun selectStance(stance: ConflictStance) {
     currentStance = stance
   }
+
+  fun addEffect(effect: CombatEffect) {
+    effects.add(effect)
+    updateStats()
+  }
+
+  private fun updateStats() {
+    intStats = IntStats(
+        baseStats.attack.toInt() - effects.filter { !it.positive }.sumBy { it.attack } + effects.filter { it.positive }.sumBy { it.attack } ,
+        baseStats.defense.toInt() - effects.filter { !it.positive }.sumBy { it.defense } + effects.filter { it.positive }.sumBy { it.defense } ,
+        baseStats.damage.toInt() - effects.filter { !it.positive }.sumBy { it.damage },
+        baseStats.discipline.toInt() - effects.filter { !it.positive }.sumBy { it.discipline } + effects.filter { it.positive }.sumBy { it.discipline } ,
+        baseStats.constitution.toInt(),
+        baseStats.health.toInt())
+  }
+
+  fun duration() {
+
+    for(effect in effects) {
+      effect.durationLeft--
+    }
+
+    effects.removeIf { it.durationLeft <= 0 }
+    updateStats()
+  }
+
 }
 
 object DisciplineLevels {
@@ -409,7 +435,7 @@ data class CombatEffect(
     val damage: Int,
     val discipline: Int,
     val attack: Int,
-    val defensive:Int,
+    val defense:Int,
     var durationLeft:Int = 1)
 
 data class ConflictStance(
@@ -451,12 +477,47 @@ object ConflictStances {
 //      ,ConflictStance("Flank")
 }
 
+class UnlimitedTwentySideDie {
+  val max = 200
+  val min = -200
+
+  fun getSimpleDieRoll() : Int {
+    return MathUtils.random(1, 20)
+  }
+
+  fun getUnlimitedDieRoll() : Int {
+    var finalSum = 0
+    var latestRoll = getSimpleDieRoll()
+    if(latestRoll == 1)
+    {
+      finalSum = latestRoll
+      latestRoll = getSimpleDieRoll()
+      while(latestRoll == 20) {
+        finalSum -= latestRoll
+        latestRoll = getSimpleDieRoll()
+      }
+      finalSum -= latestRoll
+    } else if(latestRoll == 20) {
+      finalSum = latestRoll
+      latestRoll = getSimpleDieRoll()
+      while(latestRoll == 20) {
+        finalSum += latestRoll
+        latestRoll = getSimpleDieRoll()
+      }
+      finalSum += latestRoll
+    } else {
+      finalSum = latestRoll
+    }
+    return latestRoll
+  }
+}
+
 class ConflictStanceTests {
   @Test
   fun boilerPlateTest() {
     //arrange
-    val protagonist = AgentOfConflict("Face")
-    val antagonist = AgentOfConflict("Heel")
+    val protagonist = AgentOfConflict("Face", fastStat(10f))
+    val antagonist = AgentOfConflict("Heel", fastStat(10f))
 
     /*
     Every stance has some kind of effect that is applied
@@ -472,11 +533,56 @@ class ConflictStanceTests {
 
      */
 
-    val test = effectMap()
+    val die = UnlimitedTwentySideDie()
 
     //Round 1
     protagonist.selectStance(ConflictStances.fireAtWill)
     antagonist.selectStance(ConflictStances.controlledFire)
+
+    //Change everything to goddamned floats! - no change stats to goddamned integers instead!
+    var protRoll = die.getUnlimitedDieRoll() + protagonist.intStats.discipline - protagonist.currentStance.difficulty
+    var antRoll = die.getUnlimitedDieRoll() + antagonist.intStats.discipline - antagonist.currentStance.difficulty
+    var oc = SomeMaps.outcomes.entries.first { it.key.contains(protRoll) }.value
+
+    protagonist.addEffect(protagonist.currentStance.effectTemplate.getOurEffect(oc))
+    antagonist.addEffect(protagonist.currentStance.effectTemplate.getTheirEffect(oc))
+
+    oc = SomeMaps.outcomes.entries.first { it.key.contains(antRoll) }.value
+
+    protagonist.addEffect(antagonist.currentStance.effectTemplate.getTheirEffect(oc))
+    antagonist.addEffect(antagonist.currentStance.effectTemplate.getOurEffect(oc))
+    /*
+
+    How does the discipline level of a team affect
+    their ability to roll skill rolls? For now, we ignore that.
+
+    States
+
+    SelectStance
+    Teams select stance for upcoming round -
+    Skill Roll
+        Determine how well the team holds the stance
+
+        Calculate modifiers for upcoming rolls
+
+        AttackRoll
+    Attack skill roll
+
+    DefenseRoll
+
+
+    DamageRoll
+    Calculate inflicted damage
+
+    DisciplineRoll
+    Check if we go up or down in discipline!
+
+    The goal of combat is to stay disciplined - discipline equals control. A team in control
+        of themselves have options on what stances to hold, can make choices.
+
+     */
+
+
 
   }
 

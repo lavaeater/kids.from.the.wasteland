@@ -89,7 +89,7 @@ operator fun Stats.plus(b:Stats):Stats{
   return Stats(attack + b.attack,
       defense + b.defense,
       damage + b.damage,
-      morale + b.morale,
+      discipline + b.discipline,
       constitution + b.constitution,
       health + b.health)
 }
@@ -98,7 +98,7 @@ operator fun Stats.minus(b:Stats) : Stats {
   return Stats(attack - b.attack,
       defense - b.defense,
       damage - b.damage,
-      morale - b.morale,
+      discipline - b.discipline,
       constitution - b.constitution,
       health - b.health)
 }
@@ -108,7 +108,7 @@ operator fun Stats.times(b: Stats) : Stats {
       attack * b.attack,
       defense * b.defense,
       damage * b.damage,
-      morale * b.morale,
+      discipline * b.discipline,
       constitution * b.constitution,
       health * b.health)
 }
@@ -117,13 +117,34 @@ operator fun Stats.div(b: Stats) : Stats {
       attack / b.attack,
       defense / b.defense,
       damage / b.damage,
-      morale / b.morale,
+      discipline / b.discipline,
       constitution / b.constitution,
       health / b.health)
 }
 
 fun Stats.factor(factor: Float): Stats {
   return this * fastStat(factor)
+}
+
+data class IntStats(
+    var attack:Int,
+    var defense: Int,
+    var damage: Int,
+    var discipline: Int,
+    var constitution: Int,
+    var health: Int) {
+
+  constructor(stats: Stats):this(
+      stats.attack.toInt(),
+      stats.defense.toInt(),
+      stats.damage.toInt(),
+      stats.discipline.toInt(),
+      stats.constitution.toInt(),
+      stats.health.toInt())
+}
+
+fun Stats.intStats() : IntStats {
+  return IntStats(this)
 }
 
 fun fastStat(value: Float):Stats = Stats(
@@ -139,6 +160,6 @@ data class Stats(
     var attack: Float = 0f,
     var defense: Float = 0f,
     var damage: Float = 0f,
-    var morale: Float = 0f,
+    var discipline: Float = 0f,
     var constitution: Float = 0f,
     var health: Float = 0f)
