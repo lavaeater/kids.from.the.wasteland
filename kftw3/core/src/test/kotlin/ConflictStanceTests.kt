@@ -240,18 +240,19 @@ object SomeMaps {
       SkillOutcome.Failure to 1,
       SkillOutcome.MajorFailure to 1,
       SkillOutcome.CriticalFailure to 1)
-  val standardEffect = mapOf(
 
-      EffectKey.Damage to SomeMaps.neutralEffect, //Damage might be a team-thing...
-      EffectKey.OwnDiscipline to SomeMaps.neutralEffect,
-      EffectKey.OwnAttack to SomeMaps.neutralEffect,
-      EffectKey.OwnDefense to SomeMaps.neutralEffect,
-      EffectKey.OwnDuration to SomeMaps.regularDuration,
-      EffectKey.TheirDiscipline to SomeMaps.neutralEffect,
-  val theirAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-  val theirDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-  val theirDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration
-  )
+  fun getStandardEffects() : MutableMap<EffectKey, Map<SkillOutcome, Int>> {
+    return mutableMapOf(
+        EffectKey.Damage to SomeMaps.neutralEffect, //Damage might be a team-thing...
+        EffectKey.OwnDiscipline to SomeMaps.neutralEffect,
+        EffectKey.OwnAttack to SomeMaps.neutralEffect,
+        EffectKey.OwnDefense to SomeMaps.neutralEffect,
+        EffectKey.OwnDuration to SomeMaps.regularDuration,
+        EffectKey.TheirDiscipline to SomeMaps.neutralEffect,
+        EffectKey.TheirAttack to SomeMaps.neutralEffect,
+        EffectKey.TheirDefense to SomeMaps.neutralEffect,
+        EffectKey.TheirDuration to SomeMaps.regularDuration)
+  }
 }
 
 object SkillDifficulty {
@@ -270,12 +271,12 @@ data class ConflictOutcome(
 object EffectTemplates {
   val fireAtWillTemplate = CombatEffectTemplate(
       "Fire at will",
-      damage = SomeMaps.goodEffect,
-      ourDiscipline = SomeMaps.lowNeutralEffect,
-      ourAttack = SomeMaps.goodEffect,
-      ourDefensive = SomeMaps.badEffect,
-      theirDiscipline = SomeMaps.goodEffect
-  )
+      mapOf(
+      EffectKey.Damage to SomeMaps.goodEffect,
+          EffectKey.OwnDiscipline to SomeMaps.lowNeutralEffect,
+          EffectKey.OwnAttack to SomeMaps.goodEffect,
+          EffectKey.OwnDefense to SomeMaps.badEffect,
+          EffectKey.TheirDiscipline to SomeMaps.goodEffect))
 }
 
 fun effectMap(min: Int = -11, max: Int = 12) : Map<SkillOutcome, Int> {
@@ -346,36 +347,35 @@ enum class EffectKey {
 
 data class CombatEffectTemplate(
     val name: String,
-    val effects: Map<EffectKey, Map<SkillOutcome, Int>> = SomeMaps.standardEffect,
-    val damage: Map<SkillOutcome, Int> = SomeMaps.neutralEffect, //Damage might be a team-thing...
-    val ourDiscipline: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val ourAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val ourDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val ourDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration,
-    val theirDiscipline: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val theirAttack: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val theirDefensive: Map<SkillOutcome, Int> = SomeMaps.neutralEffect,
-    val theirDuration: Map<SkillOutcome, Int> = SomeMaps.regularDuration) {
+    private val modifiedEffects: Map<EffectKey, Map<SkillOutcome, Int>>) {
+
+  private val effects = SomeMaps.getStandardEffects()
+  init {
+    //If we have supplied some alternative effects, we apply them!
+  	for (effect in modifiedEffects) {
+      effects[effect.key] = effect.value
+    }
+  }
 
   fun getOurEffect(skillOutcome: SkillOutcome) : CombatEffect {
     return CombatEffect(
         name,
         true,
         0, //For now, you cannot affect your own damage here... I guess?
-        ourDiscipline[skillOutcome]!!,
-        ourAttack[skillOutcome]!!,
-        ourDefensive[skillOutcome]!!,
-        ourDuration[skillOutcome]!!)
+        effects[EffectKey.OwnDiscipline]!![skillOutcome]!!,
+        effects[EffectKey.OwnAttack]!![skillOutcome]!!,
+        effects[EffectKey.OwnDefense]!![skillOutcome]!!,
+        effects[EffectKey.OwnDuration]!![skillOutcome]!!)
   }
   fun getTheirEffect(skillOutcome: SkillOutcome) : CombatEffect {
     return CombatEffect(
         name,
         false,
-        damage[skillOutcome]!!,
-        theirDiscipline[skillOutcome]!!,
-        theirAttack[skillOutcome]!!,
-        theirDefensive[skillOutcome]!!,
-        theirDuration[skillOutcome]!!)
+        effects[EffectKey.Damage]!![skillOutcome]!!,
+        effects[EffectKey.TheirDiscipline]!![skillOutcome]!!,
+        effects[EffectKey.TheirAttack]!![skillOutcome]!!,
+        effects[EffectKey.TheirDefense]!![skillOutcome]!!,
+        effects[EffectKey.TheirDuration]!![skillOutcome]!!)
   }
 }
 
