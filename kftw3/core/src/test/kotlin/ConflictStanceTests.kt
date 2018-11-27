@@ -277,14 +277,30 @@ object EffectTemplates {
           EffectKey.OwnAttack to SomeMaps.goodEffect,
           EffectKey.OwnDefense to SomeMaps.badEffect,
           EffectKey.TheirDiscipline to SomeMaps.goodEffect))
+
   val controlledFireTemplate = CombatEffectTemplate(
       "Controlled fire")
+
   val regroup = CombatEffectTemplate(
-      "Regroup",
+      "Regrouping",
       mapOf(
           EffectKey.Damage to SomeMaps.badEffect,
           EffectKey.OwnDefense to SomeMaps.neutralEffect,
           EffectKey.OwnDiscipline to SomeMaps.goodEffect))
+
+  val pin = CombatEffectTemplate(
+      "Pinned",
+      mapOf(
+          EffectKey.Damage to SomeMaps.neutralEffect,
+          EffectKey.TheirDefense to SomeMaps.badEffect,
+          EffectKey.TheirDiscipline to SomeMaps.badEffect))
+
+  val disengage = CombatEffectTemplate(
+      "Disengaging",
+      mapOf(
+          EffectKey.Damage to SomeMaps.lowNeutralEffect,
+      EffectKey.OwnDefense to SomeMaps.neutralEffect,
+      EffectKey.OwnDiscipline to SomeMaps.goodEffect))
 }
 
 fun effectMap(min: Int = -11, max: Int = 12) : Map<SkillOutcome, Int> {
@@ -417,18 +433,17 @@ object ConflictStances {
           difficulty = SkillDifficulty.Hard,
           minDisciplineLevel =  DisciplineLevels.levelOf(DisciplineLevels.Overwhelmed),
       effectTemplate = EffectTemplates.regroup)
+
   val pin = ConflictStance("Pin",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
-          damageModifier = SomeMaps.neutralEffect,
-          defensiveModifier = SomeMaps.badEffect,
-          disciplineModifier = SomeMaps.badEffect)
+      effectTemplate = EffectTemplates.pin)
+
   val disengage = ConflictStance("Disengage",
           DisciplineLevels.levelOf(DisciplineLevels.Disciplined),
           difficulty = SkillDifficulty.Hard,
-          damageModifier = SomeMaps.lowNeutralEffect,
-          defensiveModifier = SomeMaps.neutralEffect,
-          disciplineModifier = SomeMaps.goodEffect)
+      effectTemplate = EffectTemplates.disengage)
+
 //      ,ConflictStance("Controlled fire")
 //      ,ConflictStance("Negotiate")
 //      ,ConflictStance("Shell",
