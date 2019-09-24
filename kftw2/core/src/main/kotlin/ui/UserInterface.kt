@@ -27,6 +27,13 @@ class UserInterface(
     private val inputManager: InputMultiplexer,
     private val factsOfTheWorld: FactsOfTheWorld,
     debug: Boolean = false): IUserInterface {
+
+  override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
+  override val stage = Stage(hudViewPort, batch)
+      .apply {
+        isDebugAll = debug
+      }
+
   override fun showCombat() {
     /*
     So, combat, how's that gonna work?
@@ -68,11 +75,7 @@ class UserInterface(
     combatUI.runCombat()
   }
 
-  override val hudViewPort = ExtendViewport(uiWidth, uiHeight, OrthographicCamera())
-  override val stage = Stage(hudViewPort, batch)
-      .apply {
-    isDebugAll = debug
-  }
+
 
   companion object {
     private const val aspectRatio = 16 / 9
