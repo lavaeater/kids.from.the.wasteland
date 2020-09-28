@@ -1,4 +1,4 @@
-package com.lavaeater.kftw
+package com.lavaeater.kftwclass
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
