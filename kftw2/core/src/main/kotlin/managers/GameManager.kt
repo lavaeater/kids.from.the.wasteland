@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.Viewport
 import factory.ActorFactory
 import map.IMapManager
+import map.MapManager
 import story.FactsOfTheWorld
 import story.fact.Facts
 import systems.GameInputSystem

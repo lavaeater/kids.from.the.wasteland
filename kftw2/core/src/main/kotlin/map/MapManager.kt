@@ -17,8 +17,6 @@ class MapManager(
     private val tileManager: TileManager) : IMapManager {
 
   private val gameSettings: GameSettings by lazy { Ctx.context.inject<GameSettings>() }
-
-
   val widthInTiles = (gameSettings.width / gameSettings.tileSize).roundToInt()
   val currentTileRange: Int = widthInTiles * 2
   val visibleRange = widthInTiles / 4
@@ -45,7 +43,7 @@ class MapManager(
   }
 
   var currentlyVisibleTiles: Array<TileInstance>? = null
-
+  val hitBoxes = mutableListOf<Body>()
   override var currentX = 0
   override var currentY = 0
 
