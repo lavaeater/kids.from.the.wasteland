@@ -1,0 +1,89 @@
+franger.png
+size: 64, 54
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+back1
+  rotate: false
+  xy: 0, 0
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+back2
+  rotate: false
+  xy: 16, 0
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+back3
+  rotate: false
+  xy: 32, 0
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+right1
+  rotate: false
+  xy: 48, 0
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+right2
+  rotate: false
+  xy: 0, 18
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+right3
+  rotate: false
+  xy: 16, 18
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+front1
+  rotate: false
+  xy: 32, 18
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+front2
+  rotate: false
+  xy: 48, 18
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+front3
+  rotate: false
+  xy: 0, 36
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+left1
+  rotate: false
+  xy: 16, 36
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+left2
+  rotate: false
+  xy: 32, 36
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
+left3
+  rotate: false
+  xy: 48, 36
+  size: 16, 18
+  orig: 16, 18
+  offset: 0, 0
+  index: -1
