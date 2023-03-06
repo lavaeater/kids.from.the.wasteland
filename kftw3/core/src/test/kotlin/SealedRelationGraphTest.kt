@@ -4,8 +4,8 @@ import graph.Coordinate
 import graph.Graph
 import graph.Node
 import org.junit.BeforeClass
+import org.junit.Test
 import world.*
-import kotlin.test.Test
 
 /*
 I utforskande programmering arbetar vi med

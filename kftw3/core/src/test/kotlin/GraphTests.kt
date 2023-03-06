@@ -2,8 +2,8 @@
 import graph.Coordinate
 import graph.Node
 import org.junit.BeforeClass
+import org.junit.Test
 import kotlin.system.measureTimeMillis
-import kotlin.test.Test
 
 class GraphTests {
 	companion object {

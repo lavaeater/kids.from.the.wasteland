@@ -1,0 +1,4 @@
+package story
+
+class WorldManager {
+}

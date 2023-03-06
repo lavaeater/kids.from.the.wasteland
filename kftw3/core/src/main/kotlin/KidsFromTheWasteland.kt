@@ -1,13 +1,13 @@
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import graph.Graph
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
 import ktx.graphics.use
 import world.MapBuilder
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 class FirstScreen : KtxScreen {
     private val image = Texture("ktx-logo.png")

@@ -1,0 +1,152 @@
+rock.png
+size: 40, 40
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+center1
+  rotate: false
+  xy: 0, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center2
+  rotate: false
+  xy: 8, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center3
+  rotate: false
+  xy: 16, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center4
+  rotate: false
+  xy: 24, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+northwest
+  rotate: false
+  xy: 32, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+north
+  rotate: false
+  xy: 0, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+northeast
+  rotate: false
+  xy: 8, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center5
+  rotate: false
+  xy: 16, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center6
+  rotate: false
+  xy: 24, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center7
+  rotate: false
+  xy: 32, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+center8
+  rotate: false
+  xy: 0, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+west
+  rotate: false
+  xy: 8, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank1
+  rotate: false
+  xy: 16, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+east
+  rotate: false
+  xy: 24, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank2
+  rotate: false
+  xy: 32, 16
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank3
+  rotate: false
+  xy: 0, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank4
+  rotate: false
+  xy: 8, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blank5
+  rotate: false
+  xy: 16, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+southwest
+  rotate: false
+  xy: 24, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+south
+  rotate: false
+  xy: 32, 24
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+southeast
+  rotate: false
+  xy: 0, 32
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
