@@ -38,5 +38,5 @@ fun Char.toNumber() : Int {
 	if (this !in '0'..'9') {
 		throw NumberFormatException()
 	}
-	return this.toInt() - '0'.toInt()
+	return this.toString().toInt() - "0".toInt()
 }

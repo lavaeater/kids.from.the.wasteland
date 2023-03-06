@@ -35,10 +35,10 @@ class ConversationPresenter(
   private val baseWidth = UserInterface.uiWidth / 2
   private val baseHeight = UserInterface.uiHeight / 3
 
-  private lateinit var antagonistSpeechBubble: Label
+  private var antagonistSpeechBubble: Label
   private var antagonistRoot: Table
 	private var protagonistRoot: Table
-	private lateinit var choiceTable: KTableWidget
+	private var choiceTable: KTableWidget
 	private var rootTable: KTableWidget
 
   val stateMachine : StateMachine<ConversationState, ConversationEvent> =
