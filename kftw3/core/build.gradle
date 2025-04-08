@@ -16,7 +16,6 @@ dependencies {
 	api "com.github.crykn:kryonet:$kryoNetVersion"
 	api "com.github.raeleus.TenPatch:tenpatch:$tenPatchVersion"
 	api "com.github.tommyettinger:anim8-gdx:$anim8Version"
-	api "com.github.tommyettinger:jbump:$jbumpVersion"
 	api "com.github.tommyettinger:libgdx-utils-box2d:$utilsBox2dVersion"
 	api "com.github.tommyettinger:libgdx-utils:$utilsVersion"
 	api "com.github.tommyettinger:regexodus:$regExodusVersion"

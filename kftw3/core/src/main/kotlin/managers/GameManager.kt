@@ -62,7 +62,7 @@ class GameManager(
       }
 
       val randomlySelectedTile = someTilesInRange[MathUtils.random(0, someTilesInRange.count() - 1)]
-      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", spriteKey =  name.replace(" ", "").toLowerCase(), x = randomlySelectedTile.x, y = randomlySelectedTile.y)
+      actorFactory.addNpcAtTileWithAnimation(name = name,type = "orc", spriteKey =  name.replace(" ", "").lowercase(), x = randomlySelectedTile.x, y = randomlySelectedTile.y)
     }
   }
 

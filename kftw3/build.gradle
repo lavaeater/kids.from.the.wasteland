@@ -8,6 +8,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+		classpath "com.github.ben-manes:gradle-versions-plugin:0.52.0"
 	}
 }
 
@@ -23,7 +24,16 @@ configure(subprojects) {
 	compileJava {
 		options.incremental = true
 	}
+	
+	// Configure Kotlin compiler to use the same JVM target as Java
+	tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+		kotlinOptions {
+			jvmTarget = '1.8'
+		}
+	}
 }
+
+apply plugin: "com.github.ben-manes.versions"
 
 subprojects {
 	version = '0.0.1'
